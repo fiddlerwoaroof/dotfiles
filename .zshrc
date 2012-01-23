@@ -22,7 +22,7 @@ export DISABLE_AUTO_TITLE="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git ruby rails osx brew zsh-syntax-highlighting)
 
-source $ZSH/oh-my-zsh.sh
+#source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
 
 # Customize to your needs...
@@ -151,12 +151,10 @@ alias -g .cf="grep -r '<<<' * | grep \.py | grep -vi binary | cut -d: -f1"
 alias la="ls -A"
 alias ,=pydit
 alias tw=twitter_tool
-#alias ::=modpath
 alias v=$VISUAL
 alias e=$EDITOR
 alias cvsdiff='cvs diff -wbB | colordiff'
-alias 's_emen2'='export PYTHONPATH=/Users/edwlan/Programming/jsonrpc/:/Users/edwlan/Programming/emen2/emen2/:$PYTHONPATH'
-alias emen2_env='source $HOME/python_envs/emen2/bin/activate'
+alias cp.='gcp --target-directory=.'
 
 showspaces() {
 	python -c'import sys;print sys.stdin.read().replace(" ",".").replace("\t", "—---")'
