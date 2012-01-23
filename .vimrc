@@ -40,6 +40,7 @@ au BufWrite /private/etc/pw.* set nowritebackup
 :set smartindent
 :autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 :autocmd BufRead *.mako set ft=mako
+:autocmd BufRead *.tac set ft=python
 
 :inoremap # X#
 
