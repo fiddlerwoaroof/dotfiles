@@ -329,5 +329,12 @@ dupfind() {
    gfind \( \( -name .git -o -name CVS \) -prune \) -o  \( -type f \) -print0  | xargs -0 shasum | sort | guniq -w 20 -c | sort -nr
 }
 
+es() {
+   python2.7 -c "e('$1')"
+}
+
+load_snippet() {
+   python -ic "import sitecustomize;ls('$1')"
+}
 
 export VIRTUALENV=/usr

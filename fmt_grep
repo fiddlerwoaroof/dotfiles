@@ -1,5 +1,5 @@
 #!/bin/zsh
-grep --color='yes' -r $*  | python -c "
+egrep --color='yes' -r $*  | python -c "
 import sys,itertools
 for line in sys.stdin:
   try:
@@ -10,7 +10,8 @@ for line in sys.stdin:
   text = text.split()
   texti = iter(text)
   text = [list(v1 for __,v1 in v) for __,v in itertools.groupby(enumerate(text), lambda x: x[0]/20)]
-  print '%s\t\t%s' % (file, ' '.join(text[0]))
+  if text:
+     print '%s\t\t%s' % (file, ' '.join(text[0]))
   for line in text[1:]:
     print '\t\t%s' % ' '.join(line)
 "
