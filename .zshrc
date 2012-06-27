@@ -1,3 +1,5 @@
+echo ".zshrc loaded for $USER on $TTY at `date`" | logger
+
 # Path to your oh-my-zsh configuration.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -43,9 +45,10 @@ fi
 
 $FORTUNE
 
-PS1="\
-(%?)
-%m:%n--%l %/ %!:%# "
+export PYTHONSTARTUP=$HOME/Library/Python/2.7/site-packages/sitecustomize.py
+PS1="---
+(%?) %m:%n--%l %/
+%!:%# "
 export PS1
 RPROMPT="[%T]"
 export RPROMPT
@@ -155,6 +158,13 @@ alias v=$VISUAL
 alias e=$EDITOR
 alias cvsdiff='cvs diff -wbB | colordiff'
 alias cp.='gcp --target-directory=.'
+
+alias notep='note post'
+noteg() {
+  note get "$*"
+}
+alias notel='note list'
+alias clipnote='pbpaste | note post'
 
 showspaces() {
 	python -c'import sys;print sys.stdin.read().replace(" ",".").replace("\t", "—---")'
