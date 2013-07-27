@@ -175,3 +175,5 @@ let g:vimclojure#ParenRainbow = 1
 let vimclojure#WantNailgun = 1 
 
 
+highlight PmenuSel ctermfg=LightGray  ctermbg=DarkRed
+nmap <Leader>ci <Plug>VCSCommit
