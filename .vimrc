@@ -1,3 +1,20 @@
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+
+" OPTIONAL: This enables automatic indentation as you type.
+filetype indent on
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='xelatex'
+let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*' 
+
+
+call pathogen#infect()
+
 " Configuration file for vim
 set modelines=1      " CVE-2007-2438
 
@@ -41,6 +58,7 @@ au BufWrite /private/etc/pw.* set nowritebackup
 :autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 :autocmd BufRead *.mako set ft=mako
 :autocmd BufRead *.tac set ft=python
+:autocmd! BufNewFile * silent! 0r ~/.vim/skel/tmpl.%:e
 
 :inoremap # X#
 
@@ -95,18 +113,65 @@ for p in sys.path:
         vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
 EOF
 
-let counter = 0                                                                          
-inoremap <expr> <C-L> ListItem()                                                         
-inoremap <expr> <C-R> ListReset()                                                        
-                                                                                        
-func ListItem()                                                                          
- let g:counter += 1                                                                     
- return g:counter . '. '                                                                
-endfunc                                                                                  
-                                                                                        
-func ListReset()                                                                         
- let g:counter = 0                                                                      
- return ''                                                                              
-endfunc                                                                                  
+let counter = 0
+inoremap <expr> <C-L> ListItem()
+inoremap <expr> <C-R> ListReset()
+
+func ListItem()
+ let g:counter += 1
+ return g:counter
+endfunc
+
+func ListReset()
+ let g:counter = 0
+ return ''
+endfunc
 
 :set diffopt=vertical,filler,iwhite,foldcolumn:0
+
+map <F8> o:,!pbpaste
+map <F9> o:,!pbpaste
+imap <F8> o:,!pbpaste
+imap <F9> o:,!pbpaste
+
+let $PAGER=''
+let maplocalleader=','
+let g:pandoc_no_empty_implicits=1
+
+command! -range FmtTable python FmtTable(<f-line1>,<f-line2>)
+
+python << EOS
+def FmtTable(line1,line2):
+    import vim, string
+    inputSeparator='|'
+    outputSeparator="|"
+    cb=vim.current.buffer.range(int(line1)-1,int(line2))
+    colLen=[]
+    # first we collect col lengths and calculate the longest
+    for line in cb[1:]:
+        spLine=line.split(inputSeparator)
+        for i in range(len(spLine)):
+            try:
+                if len(spLine[i]) > colLen[i]:
+                    colLen[i] = len(spLine[i])
+            except IndexError:
+                colLen.append(len(spLine[i]))
+    tmpBuf=[]
+    # Then we fill the cols with spaces
+    for line in cb[1:]:
+        spLine=line.split(inputSeparator)
+        newLine=outputSeparator.join([spElt.ljust(colLen[i]) for i, spElt in enumerate(spLine)]) + outputSeparator
+        tmpBuf.append(newLine)
+    cb[1:]=tmpBuf[:]
+EOS
+
+let g:haddock_browser = "open"
+let g:haddock_browser_callformat = "%s %s"
+let g:ghc="/usr/bin/ghc"
+au BufEnter *.hs compiler ghc
+
+let g:vimclojure#HighlightBuiltins = 1
+let g:vimclojure#ParenRainbow = 1
+let vimclojure#WantNailgun = 1 
+
+

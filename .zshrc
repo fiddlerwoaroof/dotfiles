@@ -1,3 +1,4 @@
+echo "begin zshrc"
 echo ".zshrc loaded for $USER on $TTY at `date`" | logger
 
 # Path to your oh-my-zsh configuration.
@@ -22,13 +23,15 @@ export DISABLE_AUTO_TITLE="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git ruby rails osx brew zsh-syntax-highlighting)
+plugins=(git ruby rails osx brew zsh-syntax-highlighting python)
 
-#source $ZSH/oh-my-zsh.sh
+source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
 
+echo "done oh-my-zsh"
+
 # Customize to your needs...
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/texbin:/usr/X11/bin:/Users/edwlan/.rvm/gems/ruby-1.9.2-p180/bin:/Users/edwlan/.rvm/gems/ruby-1.9.2-p180@global/bin:/Users/edwlan/.rvm/rubies/ruby-1.9.2-p180/bin:/Users/edwlan/.rvm/bin:/opt/local/bin:/sbin/usr/sbin:/Users/edwlan/.cabal/bin:/Users/edwlan/bin:/Developer/usr/bin:/Users/edwlan/bin/ImageMagick-6.5.5/bin:/home/edwlan/bin:/usr/local/BerkeleyDB.5.2/bin
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/texbin:/usr/X11/bin:/Users/edwlan/.rvm/gems/ruby-1.9.2-p180/bin:/Users/edwlan/.rvm/gems/ruby-1.9.2-p180@global/bin:/Users/edwlan/.rvm/rubies/ruby-1.9.2-p180/bin:/Users/edwlan/.rvm/bin:/opt/local/bin:/sbin/usr/sbin:/Users/edwlan/.cabal/bin:/Users/edwlan/bin:/Developer/usr/bin
 #source /usr/local/Cellar/coreutils/8.12/aliases
 #unalias kill
 
@@ -54,9 +57,8 @@ RPROMPT="[%T]"
 export RPROMPT
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
 PATH=/home/edwlan/bin:/usr/local/bin:$PATH
-export MAGICK_HOME="/Users/edwlan/bin/ImageMagick-6.5.5"
-export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/bin:/Developer/usr/bin:$MAGICK_HOME/bin:$PATH"
-export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$MAGICK_HOME/lib"
+export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/bin:/Developer/usr/bin:$PATH"
+export VIMCLOJURE_SERVER_JAR="$HOME/bin/jars/server-2.3.6.jar"
 export INFOPATH=/usr/local/share/info:/usr/local/texlive/2009/texmf/doc/info
 
 export SAVEHIST=10000000
@@ -67,16 +69,24 @@ export PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 
 export MANPATH="/opt/local/share/man:$MANPATH"
 
+export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
+    vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
+    -c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
+    -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
+
+export RGBDEF='/opt/X11/share/X11/rgb.txt'
+
 if [ -x /usr/local/bin/vim ]; then
    export VISUAL="/usr/local/bin/vim"
    export EDITOR="/usr/local/bin/vim"
+   export PAGER="col -b | /usr/local/bin/vim -u ~/.vimrc.more -"
 else
    export VISUAL="/usr/bin/vim"
-   export EDITOR="/usr/bin/vim"
+   export PAGER="col -b | /usr/bin/vim -u ~/.vimrc.more -"
 fi
 
-alias run-help > /dev/null && unalias run-help
-alias help=run-help
+#alias run-help > /dev/null && unalias run-help
+#alias help=run-help
 #------------------
 autoload run-help
 autoload -U zfinit
@@ -158,8 +168,10 @@ alias v=$VISUAL
 alias e=$EDITOR
 alias cvsdiff='cvs diff -wbB | colordiff'
 alias cp.='gcp --target-directory=.'
-
 alias notep='note post'
+
+echo "done variables and options"
+
 noteg() {
   note get "$*"
 }
@@ -321,6 +333,10 @@ new_virtual_env() {
 }
 alias ne=new_virtual_env
 
+ge() {
+   cd $VIRTUAL_ENV
+}
+
 messages() {
    egrep --color=yes -IHnro '(TODO|NOTE|FIXME|BUG):.*$' . |
    psc '
@@ -347,4 +363,37 @@ load_snippet() {
    python -ic "import sitecustomize;ls('$1')"
 }
 
+alias page=$PAGER
 export VIRTUALENV=/usr
+
+setopt allexport
+
+export PERL_LOCAL_LIB_ROOT="/Users/edwlan/perl5";
+export PERL_MB_OPT="--install_base /Users/edwlan/perl5";
+export PERL_MM_OPT="INSTALL_BASE=/Users/edwlan/perl5";
+export PERL5LIB="/Users/edwlan/perl5/lib/perl5/darwin-thread-multi-2level:/Users/edwlan/perl5/lib/perl5";
+export PATH="/Users/edwlan/perl5/bin:$PATH";
+export PYTHONPATH=$PYTHONPATH:$HOME/pythonlibs
+
+PASSWD_RIGHT=True
+cuauth() {
+   if [ $PASSWD_RIGHT ]; then
+      passwd=`security find-internet-password -l "ntsrva.cua.edu" -w`
+   else
+      passwd=`prompt_password 69langley`
+   fi
+
+   postdata="buttonClicked=4&err_flag=0&err_msg=&info_flag=0&info_msg=&redirect_url=&username=69langley&password=$passwd"
+   curl https://wirelessauth.cua.edu/login.html -d $postdata 2>&1 | html2ps | ps2ascii && return
+   unset PASSWD_RIGHT
+}
+
+getshelljobtrees() {
+   pstree `pgrep '^login$'`
+}
+
+psgrep() {
+   ps auxw | grep --color=yes $* | grep -v grep --color=no
+}
+
+echo 'zshrc done'
