@@ -1,0 +1,6 @@
+$('body')
+   .css('font-size', 'large')
+   .css('background-color', 'black')
+   .css('color', 'white')
+   .css('font-family', '"Lucida Sans"')
+   .css('line-height', '125%')
