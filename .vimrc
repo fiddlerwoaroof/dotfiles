@@ -1,4 +1,5 @@
 set nocompatible
+
 "NeoBundle Scripts-----------------------------
 if has('vim_starting')
   set nocompatible               " Be iMproved

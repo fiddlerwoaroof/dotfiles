@@ -3,6 +3,7 @@ echo ".zshrc loaded for $USER on $TTY at `date`" | logger
 
 # Path to your oh-my-zsh configuration.
 export ZSH=$HOME/.oh-my-zsh
+export MPD_HOST=fiddlerwoaroof.no-ip.biz
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -19,11 +20,11 @@ export ZSH=$HOME/.oh-my-zsh
 # export DISABLE_LS_COLORS="true"
 
 # Uncomment following line if you want to disable autosetting terminal title.
-export DISABLE_AUTO_TITLE="true"
+#export DISABLE_AUTO_TITLE="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow)
+plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery)
 
 source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
@@ -58,14 +59,14 @@ export PS1
 RPROMPT="[%T]"
 export RPROMPT
 HOSTNAME=`hostname -f`
-PROMPT_COMMAND='echo -ne "\033]0;${USER}@$HOSTNAME: ${PWD}\007"'
+PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
 
 cmdtermtitle() {
    echo -ne "\033]0;${USER}@$HOSTNAME: $1\007"
 }
 
 if [[ $TERM != "linux" ]]; then
- #  add-zsh-hook preexec cmdtermtitle
+   add-zsh-hook preexec cmdtermtitle
 fi
 
 termtitle() {
@@ -261,8 +262,12 @@ archive() {
     echo done.
 }
 editrc() {
+  hash=`md5 $HOME/.zshrc`
   $VISUAL $HOME/.zshrc
-  source $HOME/.zshrc
+  newhash=`md5 $HOME/.zshrc`
+  if [[ $hash != $newhash ]]; then
+     source $HOME/.zshrc
+  fi
 }
 rl() { source $HOME/.zshrc }
 getlink() { #gtdo
@@ -274,7 +279,7 @@ copypwd() { echo -n `pwd` | pbcopy }
 alias sdir='copypwd'
 
 sshto() {
-    TARGET=`egrep ^$1: ~/.ssh_dests | cut -d: -f2`
+    TARGET=`egrep "^$1:" ~/.ssh_dests | cut -d: -f2`
     USER=`grep $TARGET ~/.ssh_dests | cut -d: -f3`
     ssh $USER@$TARGET
 }
