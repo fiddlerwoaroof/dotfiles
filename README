@@ -1,1 +1,3 @@
 dotfiles for various programs
+
+**NOTE: vim dotfile presupposes that NeoBundle has been installed**

@@ -42,6 +42,7 @@ NeoBundle 'christoomey/vim-tmux-navigator'
 NeoBundle 'sjl/gundo.vim'
 NeoBundle 'jmcantrell/vim-virtualenv'
 NeoBundle 'vim-scripts/pydoc.vim'
+NeoBundle 'msanders/snipmate.vim'
 
 " Required:
 call neobundle#end()
