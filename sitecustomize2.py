@@ -130,14 +130,14 @@ try:
 except ImportError:
 	pass
 
-#readline.parse_and_bind ("bind ^I rl_complete")
+readline.parse_and_bind ("tab complete")
 
 import tempfile, subprocess
 def get_interpframe(): return inspect.getouterframes(inspect.currentframe())[-1][0]
 
 def e(name=None):
 	def load_file():
-		result = tempfile.NamedTemporaryFile(delete=False, dir='/Users/edwlan/sandbox/unsorted', prefix='pythonsnippets_', suffix='.py')
+		result = tempfile.NamedTemporaryFile(delete=False, dir=os.path.join(os.environ['HOME'], 'sandbox','unsorted'), prefix='pythonsnippets_', suffix='.py')
 		print >>result, __license__, '\n\n'
 		result.flush()
 		return result
@@ -146,7 +146,7 @@ def e(name=None):
 		def load_file():
 			existed = True
 
-			nm = r'/Users/edwlan/sandbox/%s.py' % name
+			nm = os.path.join(os.environ['HOME'], 'sandbox', '%s.py' % name)
 			mode = 'r+'
 			if not os.path.exists(nm):
 				mode = 'w'

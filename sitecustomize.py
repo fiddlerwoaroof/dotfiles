@@ -1,3 +1,4 @@
+from __future__ import print_function, division
 __license__ = '''\
 # Copyright (c) 2011 Edward Langley
 # All rights reserved.
@@ -30,9 +31,7 @@ __license__ = '''\
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'''
 
 import sys
-sys.path.append('/Users/edwlan/Library/Python/2.7/site-packages')
 
-print 'hello'
 if sys.version_info[0] == 3:
 	try:
 		from sitecustomize3 import *

@@ -23,7 +23,7 @@ export DISABLE_AUTO_TITLE="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git ruby rails osx brew zsh-syntax-highlighting python)
+plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow)
 
 source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
@@ -31,13 +31,15 @@ unsetopt correct_all
 echo "done oh-my-zsh"
 
 # Customize to your needs...
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/texbin:/usr/X11/bin:/Users/edwlan/.rvm/gems/ruby-1.9.2-p180/bin:/Users/edwlan/.rvm/gems/ruby-1.9.2-p180@global/bin:/Users/edwlan/.rvm/rubies/ruby-1.9.2-p180/bin:/Users/edwlan/.rvm/bin:/opt/local/bin:/sbin/usr/sbin:/Users/edwlan/.cabal/bin:/Users/edwlan/bin:/Developer/usr/bin
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/texbin:/usr/X11/bin:/opt/local/bin:/sbin/usr/sbin:$PATH
 #source /usr/local/Cellar/coreutils/8.12/aliases
 #unalias kill
 
 SED=/usr/local/bin/gsed
 if [[ -e /etc/sysconfig/zsh-prompt-$TERM ]]; then
   . /etc/sysconfig/zsh-prompt-$TERM 
+elif [[ -e $HOME/.zsh-prompt-$TERM ]]; then
+  . $HOME/.zsh-prompt-$TERM
 fi
 
 if [ -x /opt/local/bin/fortune ]; then export FORTUNE=/opt/local/bin/fortune
@@ -55,7 +57,26 @@ PS1="---
 export PS1
 RPROMPT="[%T]"
 export RPROMPT
-PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+HOSTNAME=`hostname -f`
+PROMPT_COMMAND='echo -ne "\033]0;${USER}@$HOSTNAME: ${PWD}\007"'
+
+cmdtermtitle() {
+   echo -ne "\033]0;${USER}@$HOSTNAME: $1\007"
+}
+
+if [[ $TERM != "linux" ]]; then
+ #  add-zsh-hook preexec cmdtermtitle
+fi
+
+termtitle() {
+   npwd=${PWD/#$HOME/\~}
+   echo -ne "\033]0;${USER}@$HOSTNAME: ${npwd}\007"
+} 
+
+if [[ $TERM != "linux" ]]; then
+   add-zsh-hook precmd termtitle
+fi
+
 PATH=/home/edwlan/bin:/usr/local/bin:$PATH
 export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/bin:/Developer/usr/bin:$PATH"
 export VIMCLOJURE_SERVER_JAR="$HOME/bin/jars/server-2.3.6.jar"
@@ -69,21 +90,20 @@ export PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 
 export MANPATH="/opt/local/share/man:$MANPATH"
 
-export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
-    vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
-    -c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
-    -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
+#export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
+    #vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
+    #-c 'map <SPACE> <C-D>' -c 'map b <C-U>' \
+    #-c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
+export PAGER="less"
 
 export RGBDEF='/opt/X11/share/X11/rgb.txt'
 
 if [ -x /usr/local/bin/vim ]; then
    export VISUAL="/usr/local/bin/vim"
-   export EDITOR="/usr/local/bin/vim"
-   export PAGER="col -b | /usr/local/bin/vim -u ~/.vimrc.more -"
 else
    export VISUAL="/usr/bin/vim"
-   export PAGER="col -b | /usr/bin/vim -u ~/.vimrc.more -"
 fi
+export EDITOR=$VISUAL
 
 #alias run-help > /dev/null && unalias run-help
 #alias help=run-help
@@ -120,13 +140,12 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' insert-unambiguous true
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=** r:|=**'
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**'
 zstyle ':completion:*' menu select=0
 zstyle ':completion:*' original false
 zstyle ':completion:*' prompt '%e errors:'
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' use-compctl false
-zstyle :compinstall filename '/Users/edwlan/xxx.zsh'
 
 autoload -Uz compinit
 
@@ -145,6 +164,11 @@ bindkey '[3~' delete-char
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
 
 alias vi='vim'
+vim() {
+   stty -ixon
+   env vim $*
+   stty ixany
+}
 alias :e='vim'
 alias :w='cat >'
 
@@ -317,12 +341,33 @@ add_to_sandbox() {
 } 
 
 psc() {
-   python -c "from __future__ import print_function; import sys;$1"
+   python -u -c "from __future__ import print_function; import sys;$1"
 }
 
 activate_env() {
    pushd $HOME/python_envs/ > /dev/null
-   source $1*/bin/activate
+
+   env=$1
+   if [[ $env == "" ]]; then
+      counter=1
+      typeset -A choices
+      unset choice
+      for x in `ls`; do
+         echo $counter\) $x
+         choices[$counter]=$x
+         (( counter++ ))
+      done
+      echo -n "your choice? "
+      choice=-1
+      read choice
+      if [[ $choice == "" ]]; then
+         return
+      fi
+      env=$choices[$choice]
+      echo "you chose $env"
+   fi
+
+   source $env/bin/activate
    popd > /dev/null
 }
 alias ae=activate_env
@@ -347,7 +392,7 @@ for line in sys.stdin:
 
 wiki() {
    pushd $HOME/mywiki > /dev/null
-   $HOME/bin/soywiki
+   soywiki 
    popd > /dev/null
 }
 
@@ -368,11 +413,6 @@ export VIRTUALENV=/usr
 
 setopt allexport
 
-export PERL_LOCAL_LIB_ROOT="/Users/edwlan/perl5";
-export PERL_MB_OPT="--install_base /Users/edwlan/perl5";
-export PERL_MM_OPT="INSTALL_BASE=/Users/edwlan/perl5";
-export PERL5LIB="/Users/edwlan/perl5/lib/perl5/darwin-thread-multi-2level:/Users/edwlan/perl5/lib/perl5";
-export PATH="/Users/edwlan/perl5/bin:$PATH";
 export PYTHONPATH=$PYTHONPATH:$HOME/pythonlibs
 
 PASSWD_RIGHT=True
@@ -392,8 +432,81 @@ getshelljobtrees() {
    pstree `pgrep '^login$'`
 }
 
+open() {
+   xdg-open "$*" &>/dev/null &
+}
+
 psgrep() {
    ps auxw | grep --color=yes $* | grep -v grep --color=no
 }
 
+dis() {
+   jobs
+   echo -n 'disown which? '
+   n=-1
+   read n
+   if [[ $n != "" ]]; then
+      disown %$n
+   fi
+}
+
+alias dq=dmenu_queue_mpd
+alias dqp=dmenu_queueplay_mpd
+
+source $HOME/.localzshrc.sh
 echo 'zshrc done'
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+export CPATH=$CPATH:$HOME/include
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
+export VIMCLOJURE_SERVER_JAR="$HOME/lib/vimclojure/server-2.3.6.jar"
+
+set_colors()
+{
+    local base03="002b36"
+    local base02="073642"
+    local base01="586e75"
+    local base00="657b83"
+    local base0="839496"
+    local base1="93a1a1"
+    local base2="eee8d5"
+    local base3="fdf6e3"
+    local yellow="b58900"
+    local orange="cb4b16"
+    local red="dc322f"
+    local magenta="d33682"
+    local violet="6c71c4"
+    local blue="268bd2"
+    local cyan="2aa198"
+    local green="859900"
+
+    echo -en "\e]P0${base02}" #black
+    echo -en "\e]P8${base03}" #brblack
+    echo -en "\e]P1${red}" #red
+    echo -en "\e]P9${orange}" #brred
+    echo -en "\e]P2${green}" #green
+    echo -en "\e]PA${base01}" #brgreen
+    echo -en "\e]P3${yellow}" #yellow
+    echo -en "\e]PB${base00}" #bryellow
+    echo -en "\e]P4${blue}" #blue
+    echo -en "\e]PC${base0}" #brblue
+    echo -en "\e]P5${magenta}" #magenta
+    echo -en "\e]PD${violet}" #brmagenta
+    echo -en "\e]P6${cyan}" #cyan
+    echo -en "\e]PE${base1}" #brcyan
+    echo -en "\e]P7${base2}" #white
+    echo -en "\e]PF${base3}" #brwhite
+    clear #for background artifacting
+}
+
+if [ "$TERM" = "linux" ]; then
+    set_colors
+fi
+
+unset -f set_colors
+
+# vim: set filetype=sh:
