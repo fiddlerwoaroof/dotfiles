@@ -437,9 +437,6 @@ getshelljobtrees() {
    pstree `pgrep '^login$'`
 }
 
-open() {
-   xdg-open "$*" &>/dev/null &
-}
 
 psgrep() {
    ps auxw | grep --color=yes $* | grep -v grep --color=no
