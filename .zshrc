@@ -261,10 +261,11 @@ archive() {
     tar jhcf $FN $1
     echo done.
 }
+
 editrc() {
-  hash=`md5 $HOME/.zshrc`
+  hash=`$MD5 $HOME/.zshrc`
   $VISUAL $HOME/.zshrc
-  newhash=`md5 $HOME/.zshrc`
+  newhash=`$MD5 $HOME/.zshrc`
   if [[ $hash != $newhash ]]; then
      source $HOME/.zshrc
   fi

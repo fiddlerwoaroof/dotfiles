@@ -322,4 +322,3 @@ let g:syntastic_python_checkers = ['python']
 if filereadable(".vim.custom")
     so .vim.custom
 endif
-
