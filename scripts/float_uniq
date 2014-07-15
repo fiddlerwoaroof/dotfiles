@@ -1,0 +1,11 @@
+import sys
+
+ox = 0
+while True:
+   line = sys.stdin.readline()
+   x = float(line)
+   if abs(x-ox) < 0.25*ox: continue
+   print abs(x-ox),
+   ox = x
+   print x
+   

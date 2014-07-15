@@ -1,0 +1,20 @@
+#!/bin/zsh
+
+INTERPRETER=`which "$1"`
+SCRIPTNAME="$2"
+
+FULLPATH="$HOME/bin/$SCRIPTNAME"
+if [ -e "$FULLPATH" ]; then
+   echo "Script $SCRIPTNAME already exists"
+else
+   echo "Creating new script $SCRIPTNAME with interpreter $INTERPRETER in $HOME/bin"
+   echo '#!'"$INTERPRETER" > "$FULLPATH"
+   echo  >> "$FULLPATH"
+   echo  >> "$FULLPATH"
+   TEMPLATE="$HOME/templates/`basename "$INTERPRETER"`"
+   if [ -e $TEMPLATE ]; then
+      cat "$TEMPLATE" >> "$FULLPATH"
+   fi
+   chmod +x "$FULLPATH"
+fi
+vim + +star "$FULLPATH"

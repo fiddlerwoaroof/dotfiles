@@ -1,0 +1,8 @@
+#!/usr/bin/zsh
+
+chosen=`mpc playlist -f "[%position%: %artist% - %album% - %title%]" | dmenu -l 15 -i | cut -d: -f 1`
+(( target=(`mpc current -f "[%position%]"` + 1) ))
+
+mpc move $chosen $target
+mpc next
+

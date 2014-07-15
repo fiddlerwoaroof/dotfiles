@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+"""Translate Corpus Thomisticum files to LaTeX"""
+
+import lxml.etree
+import lxml.html
+import sys
+
+b = lxml.etree.parse('/home/edwlan/bin/ct.xsl')
+with file(sys.argv[1], 'w') as f:
+  for fil in sys.argv[2:]:
+    a = lxml.html.parse(fil)
+    d = a.xslt(b)
+    print >>f, d
+

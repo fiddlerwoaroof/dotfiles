@@ -1,0 +1,51 @@
+#!/usr/bin/python3
+import sys
+import email
+import html2text
+import markdown
+
+data = sys.stdin.read()
+msg = email.message_from_string(data)
+
+payload = msg.get_payload()
+text = payload
+verbatim = False
+
+if hasattr(payload, '__iter__'):
+    if msg.get_content_maintype() == 'multipart':
+        if msg.get_content_subtype == 'mixed':
+            verbatim = True
+        elif msg.get_content_subtype == 'alternative':
+            print(text)
+            for pl in payload:
+                if pl.get_content_maintype == 'text':
+                    text = pl.get_payload()
+                    if pl.get_content_subtype == 'html':
+                        text = html2text.html2text(text)
+                else:
+                    verbatim = True # Just because I don't want to handle it any more
+else:
+    if msg.get_content_maintype() == 'text' and msg.get_content_subtype() == 'html':
+        text = html2text.html2text(text)
+
+import email.mime.multipart
+import email.mime.text
+import email.mime.application
+import subprocess
+import tempfile
+
+if verbatim == False:
+    outer = email.mime.multipart.MIMEMultipart()
+    for header, value in msg.items():
+        outer[header] = value
+    outer.attach(msg)
+    tempfile = tempfile.NamedTemporaryFile()
+    converter = subprocess.Popen(['/home/edwlan/.cabal/bin/pandoc', '-f', 'markdown', '-t', 'epub', '-o', tempfile.name], stdin=subprocess.PIPE)
+    converter.communicate(text)
+    with open(tempfile.name) as f:
+        file = email.mime.application.MIMEApplication(f.read(), 'epub+zip')
+        outer.attach(file)
+    tempfile.close()
+    msg = outer
+
+print(msg)

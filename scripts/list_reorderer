@@ -1,0 +1,29 @@
+#!/usr/bin/python -u
+from __future__ import print_function, division
+
+import sys
+import os
+
+def line_iter(fil):
+    line = 0
+    counter = 0
+    while line != '':
+        line = fil.readline()
+        counter += 1
+        yield (counter, line)
+
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('order', nargs='+')
+    args = parser.parse_args()
+
+    input = raw_input
+    lines = {}
+    for line in line_iter(sys.stdin):
+        counter, txt = line
+        txt = txt.strip()
+        lines[counter] = txt
+    for i in args.order:
+        print(lines[int(i)])

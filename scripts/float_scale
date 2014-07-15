@@ -1,0 +1,42 @@
+#!/usr/bin/python -u
+import sys
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('old_range')
+parser.add_argument('new_range')
+parser.add_argument('items', nargs='*')
+args = parser.parse_args()
+
+omin, omax = map(float, args.old_range.split('-'))
+nmin, nmax = map(float, args.new_range.split('-'))
+items = None
+if args.items:
+    items = map(int, args.items)
+
+from functools import partial
+def scale(orange, nrange, num):
+    omin, omax = orange
+    nmin, nmax = nrange
+
+    num = float(num)
+    num -= omin
+    num /= (omax - omin)
+    num *= (nmax - nmin)
+    num += nmin
+
+    return num
+
+if items is not None:
+  for arg in items:
+     print scale( (omin, omax), (nmin, nmax), arg )
+else: 
+    while True:
+	line = sys.stdin.readline()
+	if line == '': break
+
+	x = [float(y) for y in line.split()]
+	x = map(partial(scale, (omin,omax), (nmin,nmax)), x)
+
+	print ' '.join('%f' % y for y in x)
+

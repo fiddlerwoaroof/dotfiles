@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+"""Sort output from 'du' command
+
+
+<FileSize> file"""
+#/opt/local/bin/python3.1
+from __future__ import print_function
+import sys
+import re
+import collections
+
+
+SPLITTER = re.compile(r'([0-9.]+)([KMGT]?)')
+def munge(line):
+	size,_, fn = line.partition('\t')
+	size = size.strip()
+	if size:
+		try:
+			s,units = SPLITTER.match(size).groups()
+			return units, float(s), fn.rstrip()
+		except AttributeError:
+			print(size,fn)
+			return 'B', 0.0, fn.rstrip()
+	else:
+		return 'B', 0.0, fn.rstrip()
+
+inp =  inp = collections.defaultdict(list)
+for x in sys.stdin:
+	k,v,line = munge(x)
+	inp[k].append((v,line))
+
+[
+	print('%s%s\t%s' % (size,units,line))
+		for units in ['', 'K', 'M', 'G', 'T']
+		for (size, line) in sorted(inp[units])
+	if (units in inp)
+]

@@ -1,0 +1,23 @@
+#!/usr/bin/python
+
+import argparse
+import os.path
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-n", "--new", action="store_true")
+parser.add_argument("-r", "--read", action="store_true")
+parser.add_argument("name", action="store", nargs=1)
+args = parser.parse_args()
+GPG = "/usr/bin/gpg"
+base = os.path.join(os.environ.get("HOME"), "Dropbox", "secure_notes")
+print base
+
+import subprocess
+if args.new:
+	print args.name
+	proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-o", os.path.join(base, args.name[0]), "-e"])
+elif args.read:
+	proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-d", os.path.join(base, args.name[0])])
+
+
