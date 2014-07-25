@@ -1,0 +1,21 @@
+Config { font = "xft:Source Code Pro:size=8:antialias=true"
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = TopW L 90
+       , commands = [ Run Weather "EGPF" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
+                    , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
+                    , Run Mpris2 "mpd" ["-t", "(<state>) <artist>/<composer>: <title>"] 10
+                    , Run Memory ["-t","Mem: <usedratio>%"] 10
+                    , Run Swap [] 10
+                    , Run Date "%a %b %_d" "date" 36000
+                    , Run Date "%H:%M:%S" "time" 10
+                    , Run Com "cat" ["/proc/loadavg"] "loadavg" 20
+                    , Run Com "echo" ["$USER"] "username" 864000
+                    , Run Com "hostname" ["-s"] "hostname" 864000
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%mpris2% :: %StdinReader% }{ %cpu% | %memory% * %swap% | %loadavg% -- %username%@%hostname%    <fc=#ee9a00>%date% %time%</fc> | %EGPF%"
+       }
+

@@ -154,12 +154,19 @@ compinit
 # End of lines added by compinstall
 
 bindkey -e
-bindkey '[1;5D' backward-word
-bindkey '[5D' backward-word
-bindkey '[1;5C' forward-word
-bindkey '[5C' forward-word
-bindkey 'OH' beginning-of-line
-bindkey 'OF' end-of-line
+if [[ ${TERM%-256color} == "screen" ]]; then
+  bindkey '[D' backward-word
+  bindkey '[C' forward-word
+  bindkey '[1~' beginning-of-line
+  bindkey '[4~' end-of-line
+else
+  bindkey '[1;5D' backward-word
+  bindkey '[5D' backward-word
+  bindkey '[1;5C' forward-word
+  bindkey '[5C' forward-word
+  bindkey 'OH' beginning-of-line
+  bindkey 'OF' end-of-line
+fi
 bindkey '[3~' delete-char
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
@@ -314,6 +321,14 @@ pathswitch() {
 	cd ${PWD/$REMOVE/$REPLACE}
 }
 #debug
+
+dirsave() {
+  pwd | ctext
+}
+dirgo() {
+  cd `ptext`
+}
+
 ccwd() {
     pwd | pbcopy
 }
@@ -468,48 +483,48 @@ export CPATH=$CPATH:$HOME/include
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
 export VIMCLOJURE_SERVER_JAR="$HOME/lib/vimclojure/server-2.3.6.jar"
 
-set_colors()
-{
-    local base03="002b36"
-    local base02="073642"
-    local base01="586e75"
-    local base00="657b83"
-    local base0="839496"
-    local base1="93a1a1"
-    local base2="eee8d5"
-    local base3="fdf6e3"
-    local yellow="b58900"
-    local orange="cb4b16"
-    local red="dc322f"
-    local magenta="d33682"
-    local violet="6c71c4"
-    local blue="268bd2"
-    local cyan="2aa198"
-    local green="859900"
+#set_colors()
+#{
+    #local base03="002b36"
+    #local base02="073642"
+    #local base01="586e75"
+    #local base00="657b83"
+    #local base0="839496"
+    #local base1="93a1a1"
+    #local base2="eee8d5"
+    #local base3="fdf6e3"
+    #local yellow="b58900"
+    #local orange="cb4b16"
+    #local red="dc322f"
+    #local magenta="d33682"
+    #local violet="6c71c4"
+    #local blue="268bd2"
+    #local cyan="2aa198"
+    #local green="859900"
 
-    echo -en "\e]P0${base02}" #black
-    echo -en "\e]P8${base03}" #brblack
-    echo -en "\e]P1${red}" #red
-    echo -en "\e]P9${orange}" #brred
-    echo -en "\e]P2${green}" #green
-    echo -en "\e]PA${base01}" #brgreen
-    echo -en "\e]P3${yellow}" #yellow
-    echo -en "\e]PB${base00}" #bryellow
-    echo -en "\e]P4${blue}" #blue
-    echo -en "\e]PC${base0}" #brblue
-    echo -en "\e]P5${magenta}" #magenta
-    echo -en "\e]PD${violet}" #brmagenta
-    echo -en "\e]P6${cyan}" #cyan
-    echo -en "\e]PE${base1}" #brcyan
-    echo -en "\e]P7${base2}" #white
-    echo -en "\e]PF${base3}" #brwhite
-    clear #for background artifacting
-}
+    #echo -en "\e]P0${base02}" #black
+    #echo -en "\e]P8${base03}" #brblack
+    #echo -en "\e]P1${red}" #red
+    #echo -en "\e]P9${orange}" #brred
+    #echo -en "\e]P2${green}" #green
+    #echo -en "\e]PA${base01}" #brgreen
+    #echo -en "\e]P3${yellow}" #yellow
+    #echo -en "\e]PB${base00}" #bryellow
+    #echo -en "\e]P4${blue}" #blue
+    #echo -en "\e]PC${base0}" #brblue
+    #echo -en "\e]P5${magenta}" #magenta
+    #echo -en "\e]PD${violet}" #brmagenta
+    #echo -en "\e]P6${cyan}" #cyan
+    #echo -en "\e]PE${base1}" #brcyan
+    #echo -en "\e]P7${base2}" #white
+    #echo -en "\e]PF${base3}" #brwhite
+    ##clear #for background artifacting
+#}
 
-if [ "$TERM" = "linux" ]; then
-    set_colors
-fi
+#if [ "$TERM" = "linux" ]; then
+    #set_colors
+#fi
 
-unset -f set_colors
+#unset -f set_colors
 
 # vim: set filetype=sh:
