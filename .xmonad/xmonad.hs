@@ -1,6 +1,7 @@
 import Control.Monad
 
 import Data.List
+import Data.Maybe
 import Data.Ratio ((%))
 
 import System.IO
@@ -38,6 +39,7 @@ import XMonad.Layout.WindowNavigation
 import XMonad.Prompt
 import XMonad.StackSet as W
 import XMonad.StackSet hiding ( workspaces )
+import XMonad.Util.Dzen
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Loggers
 import XMonad.Util.Run(spawnPipe)
@@ -68,13 +70,71 @@ base =     mthree ||| wide ||| Full ||| Accordion ||| Circle ||| spiral (6/7)
 
 
 myLayout = avoidStruts $ smartBorders $
-   onWorkspace "web" myTabbed $
-   onWorkspace "terminal" tiled $
+   onWorkspace "web" (myTabbed ||| Full ||| (TwoPane (3/100) (1/2))) $
+   onWorkspace "terminal" (tiled ||| threeLayout ||| Full) $
    onWorkspace "IM" imLayout $
    onWorkspace "images" (gimpLayout ||| tiled ||| threeLayout ||| base) $
    tiled ||| threeLayout ||| base
  where
    gimpLayout = renamed [Replace "gimp"] $ withIM (11/64) (Role "gimp-toolbox") $ ResizableTall 2 (1/118) (11/20) [1]
+
+myDzenConfig :: DzenConfig
+myDzenConfig = (timeout 1 >=> (onCurr (vCenter 100)) >=> (onCurr (hCenter 300)) >=> XMonad.Util.Dzen.font "xft:Source Code Pro:size=20:antialias=true")
+
+makeLayoutList [] = []
+makeLayoutList (l:ls) = (l,l):(makeLayoutList ls)
+
+changeLayout a =
+  case a of
+     Just x -> sendMessage $ JumpToLayout x
+     _ -> error "this shouldn't happen"
+
+--mySTConfig = STC {
+--   st_font = "Source Code Pro",
+--   st_bg = "black",
+--   st_fg = "red"
+--}
+
+-- This is the currently used layout change
+-- activated with Meta+;
+-- It displays the relevant list of layouts for the current display
+-- TODO: show new layout as a popup message
+nchooseLayout :: GSConfig String -> X ()
+nchooseLayout conf = do
+   loName <- wrapped_loName
+   wsName <- wrapped_wsName 
+
+   a <- gridselect conf $ makeLayoutList $
+      cycleFront loName $ case wsName of
+         "web" -> webList
+         "terminal" -> terminalList
+         "im" -> imList
+         "images" -> imagesList
+         _ -> defaultList
+
+   case a of
+      Just x -> do
+         sendMessage $ JumpToLayout x
+         dzenConfig myDzenConfig x
+   return ()
+ where
+   wrapped_loName :: X [Char]
+   wrapped_loName =  liftM (fromMaybe "") logLayout
+
+   wrapped_wsName :: X [Char]
+   wrapped_wsName =  liftM (fromMaybe "") logCurrent
+
+   cycleFront :: String -> [String] -> [String]
+   cycleFront n l = n:(Data.List.delete n l)
+
+   basicList = ["Accordion", "Full", "Tabbed", "Spiral", "Wide", "ThreeWide", "WideAccordion", "Writing", "WritingNew", "Gridding", "TwoPane", "OneBig"]
+   defaultList = ["Tall", "ThreeCol"] ++ basicList
+   webList = ["Tabbed", "Full", "TwoPane"]
+   terminalList = ["Tall", "ThreeCol", "Full"]
+   imList = ["im"]
+   imagesList = ["gimp", "Tall", "ThreeCol"] ++ basicList
+
+
 
 chooseLayout :: GSConfig String -> X ()
 chooseLayout conf = do
@@ -82,18 +142,12 @@ chooseLayout conf = do
                                           "WritingNew", "Gridding", "TwoPane", "OneBig"]
    changeLayout a
    return ()
-      where
-         makeLayoutList [] = []
-         makeLayoutList (l:ls) = (l,l):(makeLayoutList ls)
-         changeLayout a =
-            case a of
-               Just x -> sendMessage $ JumpToLayout x
 
 myPP = sjanssenPP {
    ppCurrent = xmobarColor "grey" "white",
    ppHidden = xmobarColor "red" "black",
    ppHiddenNoWindows = id,
-   ppTitle = xmobarColor "green" "" . shorten 110
+   ppTitle = xmobarColor "green" "" . shorten 126
 }
 
 myManageHook = composeAll
@@ -116,26 +170,36 @@ copyWin i a = copyWindow a i
 
 viewShift = doF . liftM2 (.) W.greedyView W.shift
 
+dShow = dzenConfig myDzenConfig
+
 copyNSwitch windows target = do
   windows $ copy target
   windows $ W.greedyView target
+  dShow target
 
 shiftNSwitch windows target = do
   windows $ shift target
   windows $ W.greedyView target
+  dShow target
+
+switchWorkspace target = do
+  windows $ W.greedyView target
+  dShow target
 
 main = do
    xmproc <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc"
+   xmproc1 <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc1"
    xmonad $ defaultConfig
       {
          manageHook = myManageHook <+> manageSpawn <+> manageHook defaultConfig,
+         --handleEventHook = handleTimerEvent,
          layoutHook = myLayout,
          logHook = dynamicLogWithPP myPP {
             ppOutput = hPutStrLn xmproc
          },
          modMask = mod4Mask,
          focusFollowsMouse = False,
-         XMonad.workspaces = ["|", "web", "terminal", "1", "2", "3", "4", "5", "6", "images", "IM"]
+         XMonad.workspaces = ["web", "terminal", "1", "2", "3", "4", "5", "6", "images", "IM"]
       } `additionalKeys` (
       [
          (((mod4Mask .|. controlMask, xK_q     ),
@@ -148,15 +212,15 @@ main = do
          ((mod4Mask .|. controlMask, xK_k), killAllOtherCopies),
          ((mod4Mask .|. controlMask, xK_m), withWorkspace defaultXPConfig (windows . shift)),
 
-         ((mod4Mask, numPadKeys !! 1), windows $ W.greedyView "web" ),
-         ((mod4Mask, numPadKeys !! 2), windows $ W.greedyView "terminal" ),
-         ((mod4Mask, numPadKeys !! 3), windows $ W.greedyView "1" ),
-         ((mod4Mask, numPadKeys !! 4), windows $ W.greedyView "2" ),
-         ((mod4Mask, numPadKeys !! 5), windows $ W.greedyView "3" ),
-         ((mod4Mask, numPadKeys !! 6), windows $ W.greedyView "4" ),
-         ((mod4Mask, numPadKeys !! 7), windows $ W.greedyView "5" ),
-         ((mod4Mask, numPadKeys !! 8), windows $ W.greedyView "6" ),
-         ((mod4Mask, numPadKeys !! 9), windows $ W.greedyView "images" ),
+         ((mod4Mask, numPadKeys !! 1), switchWorkspace "web" ),
+         ((mod4Mask, numPadKeys !! 2), switchWorkspace "terminal" ),
+         ((mod4Mask, numPadKeys !! 3), switchWorkspace "1" ),
+         ((mod4Mask, numPadKeys !! 4), switchWorkspace "2" ),
+         ((mod4Mask, numPadKeys !! 5), switchWorkspace "3" ),
+         ((mod4Mask, numPadKeys !! 6), switchWorkspace "4" ),
+         ((mod4Mask, numPadKeys !! 7), switchWorkspace "5" ),
+         ((mod4Mask, numPadKeys !! 8), switchWorkspace "6" ),
+         ((mod4Mask, numPadKeys !! 9), switchWorkspace "images" ),
 
          ((mod4Mask .|. shiftMask, numPadKeys !! 1), copyNSwitch windows "web" ),
          ((mod4Mask .|. shiftMask, numPadKeys !! 2), copyNSwitch windows "terminal" ),
@@ -178,6 +242,17 @@ main = do
          ((mod4Mask .|. controlMask, numPadKeys !! 8), shiftNSwitch windows "6" ),
          ((mod4Mask .|. controlMask, numPadKeys !! 9), shiftNSwitch windows "images" ),
 
+         ((mod4Mask, xK_1), switchWorkspace "web" ),
+         ((mod4Mask, xK_2), switchWorkspace "terminal" ),
+         ((mod4Mask, xK_3), switchWorkspace "1" ),
+         ((mod4Mask, xK_4), switchWorkspace "2" ),
+         ((mod4Mask, xK_5), switchWorkspace "3" ),
+         ((mod4Mask, xK_6), switchWorkspace "4" ),
+         ((mod4Mask, xK_7), switchWorkspace "5" ),
+         ((mod4Mask, xK_8), switchWorkspace "6" ),
+         ((mod4Mask, xK_9), switchWorkspace "images" ),
+         ((mod4Mask, xK_grave), switchWorkspace "IM" ),
+
          ((mod4Mask .|. shiftMask, xK_1), copyNSwitch windows "web" ),
          ((mod4Mask .|. shiftMask, xK_2), copyNSwitch windows "terminal" ),
          ((mod4Mask .|. shiftMask, xK_3), copyNSwitch windows "1" ),
@@ -198,17 +273,6 @@ main = do
          ((mod4Mask .|. controlMask, xK_8), shiftNSwitch windows "6" ),
          ((mod4Mask .|. controlMask, xK_9), shiftNSwitch windows "images" ),
 
-         ((mod4Mask, xK_1), windows $ W.greedyView "web" ),
-         ((mod4Mask, xK_2), windows $ W.greedyView "terminal" ),
-         ((mod4Mask, xK_3), windows $ W.greedyView "1" ),
-         ((mod4Mask, xK_4), windows $ W.greedyView "2" ),
-         ((mod4Mask, xK_5), windows $ W.greedyView "3" ),
-         ((mod4Mask, xK_6), windows $ W.greedyView "4" ),
-         ((mod4Mask, xK_7), windows $ W.greedyView "5" ),
-         ((mod4Mask, xK_8), windows $ W.greedyView "6" ),
-         ((mod4Mask, xK_9), windows $ W.greedyView "images" ),
-         ((mod4Mask, xK_grave), windows $ W.greedyView "IM" ),
-
          ((mod4Mask .|. shiftMask, xK_BackSpace), removeWorkspace),
          ((mod4Mask .|. shiftMask, xK_k), kill1),
          ((mod4Mask .|. shiftMask, xK_m), withWorkspace defaultXPConfig (windows . copy)),
@@ -225,7 +289,7 @@ main = do
          ((mod4Mask, xK_p), spawnHere "/usr/bin/dmenu_run -f"),
 
          ((mod4Mask, xK_q), ((withSelectedWindow $ windows . W.focusWindow) defaultGSConfig) >> (windows $ W.shiftMaster)),
-         ((mod4Mask, xK_semicolon), chooseLayout defaultGSConfig),
+         ((mod4Mask, xK_semicolon), nchooseLayout defaultGSConfig),
          ((mod4Mask, xK_w), gridselectWorkspace defaultGSConfig (\ws -> greedyView ws))
       ] ++ zip (zip (repeat (mod4Mask)) ([xK_0])) (map (withNthWorkspace greedyView) [0..]) ++
          zip (zip (repeat (mod4Mask .|. shiftMask)) ([xK_0])) (map (withNthWorkspace copy) [0..]) 
