@@ -129,13 +129,13 @@ au BufWrite /private/etc/pw.* set nowritebackup
 
 
 
-"Diable the anti-python smart indent of #
 set ignorecase
 set smartcase
 set autoindent
 set nu
 set expandtab
 set tabstop=3 softtabstop=2
+set smarttab
 set shiftwidth=2
 set incsearch
 set scrolloff=4
@@ -190,7 +190,8 @@ autocmd FileType pantondoc set linebreak tw=110 noexpandtab nosmartindent autoin
 autocmd FileType python set complete+=k~/.vim/syntax/python.vim "isk+=.,(
 " when we reload, tell vim to restore the cursor to the saved position
 
-"inoremap  X#
+"Diable the anti-python smart indent of #
+inoremap  # X#
 
 "Turn Syntax Highlighting on by default, and assume the xterm background is black
 imap <C-g> :Unite outlinei

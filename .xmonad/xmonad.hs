@@ -188,7 +188,7 @@ switchWorkspace target = do
 
 main = do
    xmproc <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc"
-   xmproc1 <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc1"
+   --xmproc1 <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc1"
    xmonad $ defaultConfig
       {
          manageHook = myManageHook <+> manageSpawn <+> manageHook defaultConfig,

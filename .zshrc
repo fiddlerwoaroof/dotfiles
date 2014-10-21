@@ -82,7 +82,6 @@ PATH=/home/edwlan/bin:/usr/local/bin:$PATH
 export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/bin:/Developer/usr/bin:$PATH"
 export VIMCLOJURE_SERVER_JAR="$HOME/bin/jars/server-2.3.6.jar"
 export INFOPATH=/usr/local/share/info:/usr/local/texlive/2009/texmf/doc/info
-
 export SAVEHIST=10000000
 export HISTSIZE=10000000
 export HISTFILE=$HOME/.zshistory
@@ -98,6 +97,7 @@ export MANPATH="/opt/local/share/man:$MANPATH"
 export PAGER="less"
 
 export RGBDEF='/opt/X11/share/X11/rgb.txt'
+export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
 
 if [ -x /usr/local/bin/vim ]; then
    export VISUAL="/usr/local/bin/vim"
@@ -201,6 +201,8 @@ alias e=$EDITOR
 alias cvsdiff='cvs diff -wbB | colordiff'
 alias cp.='gcp --target-directory=.'
 alias notep='note post'
+alias bower='noglob bower'
+alias node='nodejs'
 
 echo "done variables and options"
 
@@ -404,6 +406,12 @@ ge() {
 }
 
 messages() {
+   if [[ -d .git ]]; then
+     echo "Git log messages:"
+     git log -n 5 | egrep --color=yes -Io '(TODO|NOTE|FIXME|BUG|DONE):.*$'
+   fi
+
+   echo "Messages from files:"
    egrep --color=yes -IHnro '(TODO|NOTE|FIXME|BUG):.*$' . |
    psc '
 for line in sys.stdin:
