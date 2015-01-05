@@ -24,7 +24,7 @@ export MPD_HOST=srv2.elangley.org
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery)
+plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery scd)
 
 source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
@@ -152,22 +152,6 @@ autoload -Uz compinit
 
 compinit
 # End of lines added by compinstall
-
-bindkey -e
-if [[ ${TERM%-256color} == "screen" ]]; then
-  bindkey '[D' backward-word
-  bindkey '[C' forward-word
-  bindkey '[1~' beginning-of-line
-  bindkey '[4~' end-of-line
-else
-  bindkey '[1;5D' backward-word
-  bindkey '[5D' backward-word
-  bindkey '[1;5C' forward-word
-  bindkey '[5C' forward-word
-  bindkey 'OH' beginning-of-line
-  bindkey 'OF' end-of-line
-fi
-bindkey '[3~' delete-char
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
 
@@ -366,30 +350,34 @@ psc() {
 }
 
 activate_env() {
-   pushd $HOME/python_envs/ > /dev/null
+   if [[ -e bin/activate ]]; then
+     echo "sourcing local env: `pwd`/bin/activate"
+     source bin/activate
+   else
+     env=$1
+     pushd $HOME/python_envs/ > /dev/null
 
-   env=$1
-   if [[ $env == "" ]]; then
-      counter=1
-      typeset -A choices
-      unset choice
-      for x in `ls`; do
-         echo $counter\) $x
-         choices[$counter]=$x
-         (( counter++ ))
-      done
-      echo -n "your choice? "
-      choice=-1
-      read choice
-      if [[ $choice == "" ]]; then
-         return
-      fi
-      env=$choices[$choice]
-      echo "you chose $env"
+     if [[ $env == "" ]]; then
+        counter=1
+        typeset -A choices
+        unset choice
+        for x in `ls`; do
+           echo $counter\) $x
+           choices[$counter]=$x
+           (( counter++ ))
+        done
+        echo -n "your choice? "
+        choice=-1
+        read choice
+        if [[ $choice == "" ]]; then
+           return
+        fi
+        env=$choices[$choice]
+        echo "you chose $env"
+     fi
+     source $env/bin/activate
+     popd > /dev/null
    fi
-
-   source $env/bin/activate
-   popd > /dev/null
 }
 alias ae=activate_env
 
@@ -468,10 +456,36 @@ dis() {
    fi
 }
 
+getcommands() {
+  compgen -acbk -A function | grep -v '^_'
+}
+
 alias dq=dmenu_queue_mpd
 alias dqp=dmenu_queueplay_mpd
 
 source $HOME/.localzshrc.sh
+if [[ $BINDKEYS == "" ]]; then
+  echo 'defining bindkeys in zshrc'
+  BINDKEYS=${TERM%-256color}
+  BINDKEYS=${BINDKEYS%-noit}
+fi
+
+bindkey -e
+if [[ $BINDKEYS == "screen" ]]; then
+  bindkey '[D' backward-word
+  bindkey '[C' forward-word
+  bindkey '[1~' beginning-of-line
+  bindkey '[4~' end-of-line
+else
+  bindkey '[1;5D' backward-word
+  bindkey '[5D' backward-word
+  bindkey '[1;5C' forward-word
+  bindkey '[5C' forward-word
+  bindkey 'OH' beginning-of-line
+  bindkey 'OF' end-of-line
+fi
+bindkey '[3~' delete-char
+
 echo 'zshrc done'
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting

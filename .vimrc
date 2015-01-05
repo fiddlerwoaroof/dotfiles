@@ -14,6 +14,7 @@ call neobundle#begin(expand("$HOME/.vim/bundle"))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " My Bundles here:
+NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'vim-voom/VOoM'
 NeoBundle 'vim-scripts/VimClojure'
 NeoBundle 'scrooloose/nerdcommenter'
