@@ -1,3 +1,33 @@
+let counter = 0
+let g:airline_theme="murmur"
+let g:ghc="/usr/bin/ghc"
+let g:haddock_browser_callformat = "%s %s"
+let g:haddock_browser = "open"
+let g:lisp_rainbow=1 
+let g:pandoc_no_empty_implicits=1
+let g:pandoc_use_hard_wraps = 1
+let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "externals", "metadata","menu", "executors", "motions"]
+let g:pandoc#modules#disabled =  ["command", "bibliographies"]
+let g:pandoc_formatting_settings = "h"
+let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"]
+let g:slimv_disable_clojure=1
+let g:snips_author="Edward Langley"
+let g:solarized_termtrans=1
+let g:syntastic_python_checkers = ['python']
+let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
+let g:tex_flavor='xelatex'
+let g:vimclojure#HighlightBuiltins = 1
+let g:vimclojure#HighlightBuiltins = 1
+let g:vimclojure#ParenRainbow = 1
+let g:vimclojure#ParenRainbow = 1
+let g:virtualenv_directory = "$HOME/python_envs"
+let maplocalleader=','
+let $PAGER=''
+let python_highlight_all = 1
+let python_no_tab_space_error=1
+let python_space_errors=1
+let vimclojure#WantNailgun = 1
+
 "NeoBundle Scripts-----------------------------
 if has('vim_starting')
   set nocompatible               " Be iMproved
@@ -45,6 +75,12 @@ NeoBundle 'sjl/gundo.vim'
 NeoBundle 'jmcantrell/vim-virtualenv'
 NeoBundle 'vim-scripts/pydoc.vim'
 NeoBundle 'msanders/snipmate.vim'
+NeoBundle 'burnettk/vim-angular'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'othree/javascript-libraries-syntax.vim'
+NeoBundle 'matthewsimo/angular-vim-snippets'
+NeoBundle 'curist/vim-angular-template'
+NeoBundle 'sophacles/vim-bundle-mako'
 
 " Required:
 call neobundle#end()
@@ -94,13 +130,13 @@ au BufWrite /private/etc/pw.* set nowritebackup
 
 
 
-"Diable the anti-python smart indent of #
 set ignorecase
 set smartcase
 set autoindent
 set nu
 set expandtab
 set tabstop=3 softtabstop=2
+set smarttab
 set shiftwidth=2
 set incsearch
 set scrolloff=4
@@ -121,37 +157,6 @@ set splitright
 set grepprg=grep\ -nH\ $*
 set modelines=1      " CVE-2007-2438
 set backspace=2      " more powerful backspacing
-
-let counter = 0
-let g:airline_theme="murmur"
-let g:ghc="/usr/bin/ghc"
-let g:haddock_browser_callformat = "%s %s"
-let g:haddock_browser = "open"
-let g:lisp_rainbow=1 
-let g:pandoc_no_empty_implicits=1
-let g:pandoc_use_hard_wraps = 1
-let g:pantondoc_enabled_modules =  ["formatting", "folding", "bibliographies",
-                                       \"completion", "externals", "metadata",
-                                              \"menu", "executors", "motions"]
-let g:pantondoc_formatting_settings = "h"
-let g:pantondoc_handled_filetypes = ["markdown", "rst", "textile"]
-let g:slimv_disable_clojure=1
-let g:snips_author="Edward Langley"
-let g:solarized_termtrans=1
-let g:syntastic_python_checkers = ['python']
-let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
-let g:tex_flavor='xelatex'
-let g:vimclojure#HighlightBuiltins = 1
-let g:vimclojure#HighlightBuiltins = 1
-let g:vimclojure#ParenRainbow = 1
-let g:vimclojure#ParenRainbow = 1
-let g:virtualenv_directory = "$HOME/python_envs"
-let maplocalleader=','
-let $PAGER=''
-let python_highlight_all = 1
-let python_no_tab_space_error=1
-let python_space_errors=1
-let vimclojure#WantNailgun = 1
 
 syntax enable
 colorscheme solarized
@@ -186,7 +191,8 @@ autocmd FileType pantondoc set linebreak tw=110 noexpandtab nosmartindent autoin
 autocmd FileType python set complete+=k~/.vim/syntax/python.vim "isk+=.,(
 " when we reload, tell vim to restore the cursor to the saved position
 
-"inoremap  X#
+"Diable the anti-python smart indent of #
+inoremap  # X#
 
 "Turn Syntax Highlighting on by default, and assume the xterm background is black
 imap <C-g> :Unite outlinei
