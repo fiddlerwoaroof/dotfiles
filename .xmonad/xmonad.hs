@@ -18,6 +18,7 @@ import XMonad.Layout.Accordion
 import XMonad.Layout.Circle
 import XMonad.Layout.Combo
 import XMonad.Layout.DragPane
+import XMonad.Layout.Maximize
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
@@ -193,7 +194,7 @@ main = do
       {
          manageHook = myManageHook <+> manageSpawn <+> manageHook defaultConfig,
          --handleEventHook = handleTimerEvent,
-         layoutHook = myLayout,
+         layoutHook = maximize myLayout,
          logHook = dynamicLogWithPP myPP {
             ppOutput = hPutStrLn xmproc
          },
@@ -205,6 +206,7 @@ main = do
          (((mod4Mask .|. controlMask, xK_q     ),
                spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")),
 
+         ((mod4Mask, xK_backslash), withFocused (sendMessage . maximizeRestore)),
          ((mod4Mask .|. controlMask .|. shiftMask, xK_h ), sendMessage $ Move L),
          ((mod4Mask .|. controlMask .|. shiftMask, xK_j ), sendMessage $ Move D),
          ((mod4Mask .|. controlMask .|. shiftMask, xK_k   ), sendMessage $ Move U),

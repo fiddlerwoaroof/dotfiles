@@ -549,4 +549,10 @@ export VIMCLOJURE_SERVER_JAR="$HOME/lib/vimclojure/server-2.3.6.jar"
 
 #unset -f set_colors
 
+pmkdir() {
+  mkdir $1
+  touch $1/__init__.py
+  cd $1 
+}
+
 # vim: set filetype=sh:
