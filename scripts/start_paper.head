@@ -4,5 +4,5 @@ DEST_DIR=$1
 
 mkdir $DEST_DIR || exit 1
 
-(base64 -d | tar jxf - -C $DEST_DIR --strip-components=1 --transform="s/paper_template/$DEST_DIR/g") <<EOF
+(base64 -d | tar --xz -xf - -C $DEST_DIR --strip-components=1 --transform="s/paper_template/$DEST_DIR/g") <<EOF
 

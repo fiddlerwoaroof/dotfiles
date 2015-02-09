@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+from __future__ import print_function
+
+import sys
+import base64
+import os
+
+
+outfn = os.getenv('OUTFILE', os.path.join(os.getenv('HOME'), '.ctextfile'))
+basename = os.path.basename(sys.argv[0])
+
+def fiter(fil):
+    line = None
+    while line != '':
+        line = fil.readline()
+        yield line
+
+if basename == 'ctext':
+    dat = sys.stdin.read()
+    dat = base64.b64encode(dat)
+    with open(outfn, 'a') as f:
+        print('%%',file=f)
+        print(dat,file=f)
+
+elif basename == 'ptext':
+    jmplist = []
+    with open(outfn, 'r') as f:
+        for line in fiter(f):
+            if line.strip() == '%%':
+                jmplist.append(f.tell()) # We want the pos __after__ the separator
+        if jmplist:
+            f.seek(jmplist[-1],0)
+            dat = f.read().strip()
+            print(base64.b64decode(dat),end='')
+        else:
+            raise ValueError('Empty Clipboard!')
+
+else:
+    print('Bad argv[0]', sys.argv[0])

@@ -187,6 +187,14 @@ switchWorkspace target = do
   windows $ W.greedyView target
   dShow target
 
+maximizeSwitch = do
+  withFocused $ sendMessage . maximizeRestore
+  windows W.focusUp
+
+maximizeFlop = do
+  windows W.focusUp
+  withFocused $ sendMessage . maximizeRestore
+
 main = do
    xmproc <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc"
    --xmproc1 <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc1"
@@ -206,6 +214,8 @@ main = do
          (((mod4Mask .|. controlMask, xK_q     ),
                spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")),
 
+         ((mod4Mask .|. shiftMask, xK_backslash), maximizeSwitch),
+         ((mod4Mask .|. controlMask, xK_backslash), maximizeFlop),
          ((mod4Mask, xK_backslash), withFocused (sendMessage . maximizeRestore)),
          ((mod4Mask .|. controlMask .|. shiftMask, xK_h ), sendMessage $ Move L),
          ((mod4Mask .|. controlMask .|. shiftMask, xK_j ), sendMessage $ Move D),

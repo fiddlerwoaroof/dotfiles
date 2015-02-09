@@ -7,7 +7,8 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--new", action="store_true")
 parser.add_argument("-r", "--read", action="store_true")
-parser.add_argument("name", action="store", nargs=1)
+parser.add_argument("-l", "--list", action="store_true")
+parser.add_argument("name", action="store", nargs='?')
 args = parser.parse_args()
 GPG = "/usr/bin/gpg"
 base = os.path.join(os.environ.get("HOME"), "Dropbox", "secure_notes")
@@ -15,9 +16,14 @@ print base
 
 import subprocess
 if args.new:
-	print args.name
-	proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-o", os.path.join(base, args.name[0]), "-e"])
+    print args.name
+    proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-o", os.path.join(base, args.name), "-e"])
 elif args.read:
-	proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-d", os.path.join(base, args.name[0])])
-
-
+    print args.name
+    proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-d", os.path.join(base, args.name)])
+elif args.list:
+    files = os.listdir(base)
+    max_itm = max(len(x) for x in files)
+    for x in range(len(files)/3 + 1):
+        items = files[x*3:(x+1)*3]
+        print ' '.join(item.rjust(max_itm+3) for item in items)

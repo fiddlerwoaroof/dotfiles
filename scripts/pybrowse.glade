@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
+<interface>
+  <requires lib="gtk+" version="3.12"/>
+  <object class="GtkImage" id="evalImage">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-execute</property>
+  </object>
+  <object class="GtkImage" id="goImage">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-play</property>
+  </object>
+  <object class="GtkListStore" id="historyModel">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkApplicationWindow" id="mainWindow">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">pyBrowse</property>
+    <property name="default_width">500</property>
+    <property name="default_height">600</property>
+    <property name="show_menubar">False</property>
+    <child>
+      <object class="GtkBox" id="topBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkBox" id="box2">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkEntry" id="goTxt">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <signal name="activate" handler="goBtn_clicked_cb" object="goTxt" swapped="yes"/>
+                <accelerator key="l" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="goBtn">
+                <property name="label">_Go</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">goImage</property>
+                <property name="use_underline">True</property>
+                <signal name="clicked" handler="goBtn_clicked_cb" object="goTxt" swapped="yes"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="mainview">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkComboBox" id="combobox1">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="model">historyModel</property>
+                <property name="button_sensitivity">on</property>
+                <property name="has_entry">True</property>
+                <property name="entry_text_column">0</property>
+                <child>
+                  <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+                <child internal-child="entry">
+                  <object class="GtkEntry" id="evalTxt">
+                    <property name="can_focus">True</property>
+                    <property name="placeholder_text" translatable="yes">&lt;python code here&gt;</property>
+                    <signal name="activate" handler="evalBtn_clicked_cb" object="evalTxt" swapped="yes"/>
+                    <accelerator key="e" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="evalBtn">
+                <property name="label" translatable="yes">_Eval</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">evalImage</property>
+                <property name="use_underline">True</property>
+                <signal name="clicked" handler="evalBtn_clicked_cb" object="evalTxt" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

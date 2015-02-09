@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# We have to supress less and grep for the pattern to work accurately
+if [[ $1 == "" ]]; then
+  ps ax | egrep -v '(grep|pslist|less)' | less
+else
+  ps ax | egrep -v '(grep|pslist|less)' | less -p $*
+fi
+
+

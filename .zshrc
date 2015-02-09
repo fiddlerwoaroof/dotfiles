@@ -24,6 +24,7 @@ export MPD_HOST=srv2.elangley.org
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
+fpath=(~/.zsh.d/completion $fpath)
 plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery scd)
 
 source $ZSH/oh-my-zsh.sh
@@ -117,10 +118,9 @@ autoload -U tcp_point
 autoload -U tcp_shoot
 #------------------
 zfinit
-#if [ $TERM != 'dumb' ]; then
-#  eval `dircolors -b`
-#  alias ls='ls --color=auto'
-#f
+if [[ $TERM != 'dumb' ]]; then
+  eval `dircolors $HOME/github_repos/dircolors-solarized/dircolors.256dark`
+fi
 setopt autopushd
 setopt cdablevars
 setopt AUTO_LIST
@@ -554,5 +554,17 @@ pmkdir() {
   touch $1/__init__.py
   cd $1 
 }
+
+mkcd() {
+  mkdir "$1"
+  cd "$1"
+}
+
+### load my plugins
+
+for x in `ls $HOME/.zsh.d/*.zsh`; do
+  source "$x"
+done
+alias cn=current_news
 
 # vim: set filetype=sh:

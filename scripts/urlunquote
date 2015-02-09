@@ -1,0 +1,7 @@
+#!/usr/bin/python3
+
+import urllib.parse
+import sys
+
+for x in sys.argv[1:]:
+    print(urllib.parse.unquote(x))

@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+COMMAND=
+case $1 in
+   next)
+      COMMAND=next
+      ;;
+   prev)
+      COMMAND=prev
+      ;;
+   pause)
+      COMMAND=pause
+      ;;
+   play)
+      COMMAND=play
+     ;;
+esac
+
+zenity --info --text="`mpc $COMMAND`"

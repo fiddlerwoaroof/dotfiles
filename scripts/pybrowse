@@ -1,0 +1,57 @@
+#!/usr/bin/env python3.4
+from gi.repository import Gtk, WebKit
+import os.path
+print(__file__)
+basepath = os.path.dirname(__file__)
+
+builder = Gtk.Builder()
+builder.add_from_file(os.path.join(basepath,"pybrowse.glade"))
+window = builder.get_object("mainWindow")
+webview = WebKit.WebView()
+def onLoad(webview, stat_type):
+    if webview.get_load_status() == WebKit.LoadStatus.FINISHED:
+        builder.get_object("goTxt").set_text(webview.get_uri())
+        window.set_title(webview.get_title())
+webview.connect("notify::load-status", onLoad)
+mv = builder.get_object("mainview")
+mv.add(webview)
+
+
+class SigHandler(object):
+    eval_model = builder.get_object('historyModel')
+
+    def goBtn_clicked_cb(self, v):
+        print(self,v)
+        webview.load_uri(v.get_text())
+    eval_locals = dict()
+    def evalBtn_clicked_cb(self, v):
+        txt = v.get_text()
+        exec(txt, globals(), self.eval_locals)
+        self.eval_model.append([txt])
+    def row_activated(self, s, *a):
+        model, itr = s.get_selected()
+        eval_txt = builder.get_object('evalTxt')
+        eval_txt.set_text(model[itr][0])
+        eval_txt.grab_focus()
+    def row_added(self, *a):
+        print('row_added')
+        print(a)
+
+
+builder.connect_signals(SigHandler())
+window.connect("delete-event", Gtk.main_quit)
+window.show_all()
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('uri', nargs='?', default='http://google.com')
+args = parser.parse_args()
+
+import urllib.parse
+def fix_uri(uri):
+    if '://' not in uri:
+        uri = 'http://%s' % uri
+    return uri
+webview.load_uri(fix_uri(args.uri))
+
+Gtk.main()

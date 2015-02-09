@@ -1,5 +1,8 @@
 #!/usr/bin/zsh
 
-chosen=`mpc playlist -f "[%position%: %artist% - %album% - %title%]" | dmenu -l 15 -i | cut -d: -f 1`
-mpc play $chosen
+chosen=`mpc playlist -f "[%position%: %artist% - %album% - %title%]" |  dmenu -l 15 -i | cut -d: -f 1`
+
+if [[ "$chosen" -ne "" ]]; then
+  mpc play $chosen
+fi
 

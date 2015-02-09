@@ -1,0 +1,49 @@
+#!/usr/bin/python -u
+from __future__ import print_function
+
+import sys
+import itertools
+
+def file_iter(fil):
+    line = None
+    line = fil.readline()
+    while line != '':
+        yield line
+        line = fil.readline()
+
+def row_iter(file_iter, split):
+    for line in file_iter:
+        yield line.split(split)
+
+
+def chunk(itr, chunk_amount=25):
+    lst = itertools.cycle(itertools.chain([0]*chunk_amount, [1]*chunk_amount))
+    def grouper(key):
+        return lst.next()
+    return (list(x[1]) for x in itertools.groupby(itr, grouper))
+
+def tabularize(fil, count, split):
+    itr = row_iter(file_iter(fil), split)
+    for chnk in chunk(itr, count):
+        maxlens = [map(len,x) for x in chnk]
+        maxlens = [max(x) for x in zip(*maxlens)]
+        for line in chnk:
+            print(' '.join(x.ljust(maxlens[idx]) for idx,x in enumerate(line)).rstrip())
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--count', nargs='?', default=25, type=int)
+    parser.add_argument('-s', '--split', nargs='?', default=None)
+    parser.add_argument('inp', nargs='?', default='-')
+    args = parser.parse_args()
+
+    inp = sys.stdin
+    if args.inp != '-':
+        inp = open(args.inp)
+
+    with inp:
+        try:
+            tabularize(inp, count=args.count, split=args.split)
+        except IOError, e:
+            if e.errno != 32: raise
