@@ -274,6 +274,7 @@ main = do
          ((mod4Mask .|. shiftMask, xK_7), copyNSwitch windows "5" ),
          ((mod4Mask .|. shiftMask, xK_8), copyNSwitch windows "6" ),
          ((mod4Mask .|. shiftMask, xK_9), copyNSwitch windows "images" ),
+         ((mod4Mask .|. shiftMask, xK_grave), shiftNSwitch windows "IM" ),
 
          ((mod4Mask .|. controlMask, xK_1), shiftNSwitch windows "web" ),
          ((mod4Mask .|. controlMask, xK_2), shiftNSwitch windows "terminal" ),
@@ -284,6 +285,7 @@ main = do
          ((mod4Mask .|. controlMask, xK_7), shiftNSwitch windows "5" ),
          ((mod4Mask .|. controlMask, xK_8), shiftNSwitch windows "6" ),
          ((mod4Mask .|. controlMask, xK_9), shiftNSwitch windows "images" ),
+         ((mod4Mask .|. controlMask, xK_grave), shiftNSwitch windows "IM" ),
 
          ((mod4Mask .|. shiftMask, xK_BackSpace), removeWorkspace),
          ((mod4Mask .|. shiftMask, xK_k), kill1),

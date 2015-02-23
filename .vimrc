@@ -1,4 +1,5 @@
 let counter = 0
+let g:sql_type_default = 'pgsql'
 let g:airline_theme="murmur"
 let g:ghc="/usr/bin/ghc"
 let g:haddock_browser_callformat = "%s %s"
@@ -81,6 +82,9 @@ NeoBundle 'othree/javascript-libraries-syntax.vim'
 NeoBundle 'matthewsimo/angular-vim-snippets'
 NeoBundle 'curist/vim-angular-template'
 NeoBundle 'sophacles/vim-bundle-mako'
+NeoBundle 'lukerandall/haskellmode-vim'
+NeoBundle 'vim-scripts/dbext.vim'
+NeoBundle 'exu/pgsql.vim'
 
 " Required:
 call neobundle#end()
