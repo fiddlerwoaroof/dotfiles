@@ -24,8 +24,8 @@ export MPD_HOST=srv2.elangley.org
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-fpath=(~/.zsh.d/completion $fpath)
-plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery scd)
+fpath=(~/.zsh.d/completion ~/.zsh.d/functions $fpath)
+plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery)
 
 source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
@@ -67,6 +67,7 @@ cmdtermtitle() {
 }
 
 if [[ $TERM != "linux" ]]; then
+   autoload -U add-zsh-hook
    add-zsh-hook preexec cmdtermtitle
 fi
 
@@ -187,6 +188,7 @@ alias cp.='gcp --target-directory=.'
 alias notep='note post'
 alias bower='noglob bower'
 alias node='nodejs'
+alias find='noglob find'
 
 echo "done variables and options"
 

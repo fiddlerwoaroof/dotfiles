@@ -2,7 +2,9 @@ import Control.Monad
 
 import Data.List
 import Data.Maybe
+import Data.Monoid
 import Data.Ratio ((%))
+import Data.Word
 
 import System.IO
 
@@ -13,18 +15,21 @@ import XMonad.Actions.GridSelect
 import XMonad.Actions.SpawnOn
 import XMonad.Core
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ICCCMFocus
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Accordion
+import XMonad.Layout.BoringWindows hiding (Replace)
 import XMonad.Layout.Circle
 import XMonad.Layout.Combo
+import XMonad.Layout.Decoration
 import XMonad.Layout.DragPane
-import XMonad.Layout.Maximize
-import XMonad.Layout.SubLayouts
 import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
 import XMonad.Layout.IM
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.BoringWindows hiding (Replace)
+import XMonad.Layout.LayoutModifier
+import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders
 import XMonad.Layout.OneBig
 import XMonad.Layout.PerWorkspace
@@ -33,31 +38,59 @@ import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Simplest
 import XMonad.Layout.Spiral
+import XMonad.Layout.SubLayouts
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.TwoPane
 import XMonad.Layout.WindowNavigation
 import XMonad.Prompt
 import XMonad.StackSet as W
-import XMonad.StackSet hiding ( workspaces )
 import XMonad.Util.Dzen
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Loggers
 import XMonad.Util.Run(spawnPipe)
-
+nmaster :: Int
 nmaster = 1
+
 ratio = 13/21
+
 delta = 3/100
+
+tiled :: Tall a
 tiled = Tall nmaster delta ratio
+
 myTabbed = renamed [Replace "Tabbed"] $ tabbedBottom shrinkText defaultTheme
+
+threeLayout :: ThreeCol a
 threeLayout = ThreeColMid nmaster delta ratio
+
+writingLayout :: ModifiedLayout Rename (ModifiedLayout Gaps Full) a
 writingLayout = renamed [Replace "Writing"] $ gaps [(L,500), (R, 500)] Full
 
-imLayout = renamed [Replace "im"] $ withIM ratio empathyRoster Accordion where
-    ratio           = 1%6
+imLayout :: ModifiedLayout Rename (ModifiedLayout AddRoster Accordion) Window
+imLayout = renamed [Replace "im"] $ withIM myRatio empathyRoster Accordion where
+    myRatio           = 1%6
     empathyRoster   = And (ClassName "Empathy") (Role "contact_list")
 
 
+base :: NewSelect
+  (ModifiedLayout Rename (Mirror ThreeCol))
+  (NewSelect (ModifiedLayout Rename (Mirror Tall))
+    (NewSelect Full
+      (NewSelect Accordion
+        (NewSelect Circle
+          (NewSelect SpiralWithDir
+            (NewSelect
+              (ModifiedLayout Rename
+                (ModifiedLayout (Decoration TabbedDecoration DefaultShrinker) Simplest))
+                (NewSelect
+                  (ModifiedLayout Rename (Mirror Accordion))
+                  (NewSelect
+                    (ModifiedLayout Rename (ModifiedLayout Gaps Full))
+                    (NewSelect
+                      (ModifiedLayout Rename DragPane)
+                      (NewSelect (ModifiedLayout Rename Grid)
+                      (NewSelect TwoPane OneBig))))))))))) Word64
 base =     mthree ||| wide ||| Full ||| Accordion ||| Circle ||| spiral (6/7)
        ||| myTabbed ||| wideAccordion ||| writingLayout ||| rows ||| grid
        ||| (TwoPane (3/100) (1/2)) ||| (OneBig (3/4) (3/4))
@@ -82,19 +115,15 @@ myLayout = avoidStruts $ smartBorders $
 myDzenConfig :: DzenConfig
 myDzenConfig = (timeout 1 >=> (onCurr (vCenter 100)) >=> (onCurr (hCenter 300)) >=> XMonad.Util.Dzen.font "xft:Source Code Pro:size=20:antialias=true")
 
+makeLayoutList :: [t] -> [(t,t)] 
 makeLayoutList [] = []
 makeLayoutList (l:ls) = (l,l):(makeLayoutList ls)
 
+changeLayout :: Maybe String -> X ()
 changeLayout a =
   case a of
-     Just x -> sendMessage $ JumpToLayout x
+     Just r -> sendMessage $ JumpToLayout r
      _ -> error "this shouldn't happen"
-
---mySTConfig = STC {
---   st_font = "Source Code Pro",
---   st_bg = "black",
---   st_fg = "red"
---}
 
 -- This is the currently used layout change
 -- activated with Meta+;
@@ -114,9 +143,9 @@ nchooseLayout conf = do
          _ -> defaultList
 
    case a of
-      Just x -> do
-         sendMessage $ JumpToLayout x
-         dzenConfig myDzenConfig x
+      Just r -> do
+         sendMessage $ JumpToLayout r
+         dzenConfig myDzenConfig r
    return ()
  where
    wrapped_loName :: X [Char]
@@ -137,13 +166,7 @@ nchooseLayout conf = do
 
 
 
-chooseLayout :: GSConfig String -> X ()
-chooseLayout conf = do
-   a <- gridselect conf $ makeLayoutList ["Tall", "ThreeCol", "Accordion", "Full", "Tabbed", "Spiral", "Wide", "ThreeWide", "WideAccordion", "Writing",
-                                          "WritingNew", "Gridding", "TwoPane", "OneBig"]
-   changeLayout a
-   return ()
-
+myPP :: PP
 myPP = sjanssenPP {
    ppCurrent = xmobarColor "grey" "white",
    ppHidden = xmobarColor "red" "black",
@@ -151,6 +174,7 @@ myPP = sjanssenPP {
    ppTitle = xmobarColor "green" "" . shorten 126
 }
 
+myManageHook  :: Query (Endo (StackSet WorkspaceId (Layout Window) Window ScreenId ScreenDetail))
 myManageHook = composeAll
    [
    (role =? "gimp-toolbox" <||> role =? "gimp-image-winow") --> (ask >>= doF . W.sink)
@@ -169,8 +193,10 @@ doCopy :: WorkspaceId -> ManageHook
 doCopy i = doF . copyWin i =<< ask
 copyWin i a = copyWindow a i
 
+viewShift :: WorkspaceId -> Query (Endo (StackSet WorkspaceId l Window ScreenId sd))
 viewShift = doF . liftM2 (.) W.greedyView W.shift
 
+dShow :: String -> X ()
 dShow = dzenConfig myDzenConfig
 
 copyNSwitch windows target = do
@@ -183,29 +209,32 @@ shiftNSwitch windows target = do
   windows $ W.greedyView target
   dShow target
 
+switchWorkspace :: WorkspaceId -> X ()
 switchWorkspace target = do
   windows $ W.greedyView target
   dShow target
 
+maximizeSwitch :: X ()
 maximizeSwitch = do
   withFocused $ sendMessage . maximizeRestore
   windows W.focusUp
 
+maximizeFlop :: X ()
 maximizeFlop = do
   windows W.focusUp
   withFocused $ sendMessage . maximizeRestore
 
+main :: IO ()
 main = do
    xmproc <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc"
    --xmproc1 <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc1"
-   xmonad $ defaultConfig
-      {
+   xmonad $ ewmh defaultConfig {
          manageHook = myManageHook <+> manageSpawn <+> manageHook defaultConfig,
          --handleEventHook = handleTimerEvent,
          layoutHook = maximize myLayout,
-         logHook = dynamicLogWithPP myPP {
+         logHook = takeTopFocus >> (dynamicLogWithPP myPP {
             ppOutput = hPutStrLn xmproc
-         },
+         }),
          modMask = mod4Mask,
          focusFollowsMouse = False,
          XMonad.workspaces = ["web", "terminal", "1", "2", "3", "4", "5", "6", "images", "IM"]

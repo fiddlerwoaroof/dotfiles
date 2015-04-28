@@ -1,13 +1,13 @@
 let counter = 0
+let g:syntastic_auto_loc_list=1
 let g:sql_type_default = 'pgsql'
 let g:airline_theme="murmur"
-let g:ghc="/usr/bin/ghc"
 let g:haddock_browser_callformat = "%s %s"
 let g:haddock_browser = "open"
 let g:lisp_rainbow=1 
 let g:pandoc_no_empty_implicits=1
 let g:pandoc_use_hard_wraps = 1
-let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "externals", "metadata","menu", "executors", "motions"]
+let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "metadata","menu"]
 let g:pandoc#modules#disabled =  ["command", "bibliographies"]
 let g:pandoc_formatting_settings = "h"
 let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"]
@@ -17,6 +17,7 @@ let g:solarized_termtrans=1
 let g:syntastic_python_checkers = ['python']
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 let g:tex_flavor='xelatex'
+let g:unite_force_overwrite_statusline = 0
 let g:vimclojure#HighlightBuiltins = 1
 let g:vimclojure#HighlightBuiltins = 1
 let g:vimclojure#ParenRainbow = 1
@@ -28,6 +29,8 @@ let python_highlight_all = 1
 let python_no_tab_space_error=1
 let python_space_errors=1
 let vimclojure#WantNailgun = 1
+
+" This goes here in case a filetype overrides it
 
 "NeoBundle Scripts-----------------------------
 if has('vim_starting')
@@ -45,46 +48,53 @@ call neobundle#begin(expand("$HOME/.vim/bundle"))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " My Bundles here:
-NeoBundle 'Shougo/vimfiler.vim'
-NeoBundle 'vim-voom/VOoM'
-NeoBundle 'vim-scripts/VimClojure'
-NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'bitc/vim-hdevtools'
+NeoBundle 'Blackrush/vim-gocode'
+NeoBundle 'bling/vim-airline'
+NeoBundle 'burnettk/vim-angular'
+NeoBundle 'christoomey/vim-tmux-navigator'
+NeoBundle 'curist/vim-angular-template'
+NeoBundle 'eagletmt/ghcmod-vim'
+NeoBundle 'eagletmt/neco-ghc'
+"NeoBundle 'enomsg/vim-haskellConcealPlus'
+NeoBundle 'exu/pgsql.vim'
+NeoBundle 'godlygeek/tabular'
+NeoBundle 'groenewege/vim-less'
+NeoBundle 'guns/vim-clojure-static'
+NeoBundle 'ivanov/vim-ipython'
+NeoBundle 'jmcantrell/vim-virtualenv'
 NeoBundle 'kien/rainbow_parentheses.vim'
 NeoBundle 'kovisoft/slimv'
+"NeoBundle 'lukerandall/haskellmode-vim'
+NeoBundle 'matthewsimo/angular-vim-snippets'
+NeoBundle 'msanders/snipmate.vim'
+NeoBundle 'othree/javascript-libraries-syntax.vim'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'raichoo/haskell-vim'
+NeoBundle 'scrooloose/nerdcommenter'
 NeoBundle 'scrooloose/syntastic'
-NeoBundle 'godlygeek/tabular'
-NeoBundle 'ytsunetsune/unite-outline-euslisp'
 NeoBundle 'Shougo/unite-outline'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/vimshell.vim'
+NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Shougo/vimproc'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'guns/vim-clojure-static'
-NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'Shougo/vimshell.vim'
+NeoBundle 'sjl/gundo.vim'
+NeoBundle 'sjl/vitality.vim'
+NeoBundle 'sophacles/vim-bundle-mako'
+NeoBundle 'terryma/vim-multiple-cursors'
 NeoBundle 'tpope/vim-fireplace'
 NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'Blackrush/vim-gocode'
-NeoBundle 'Twinside/vim-haskellFold'
-NeoBundle 'ivanov/vim-ipython'
-NeoBundle 'groenewege/vim-less'
-NeoBundle 'terryma/vim-multiple-cursors'
-NeoBundle 'vim-pandoc/vim-pandoc'
 NeoBundle 'tpope/vim-repeat'
 NeoBundle 'tpope/vim-surround'
-NeoBundle 'christoomey/vim-tmux-navigator'
-NeoBundle 'sjl/gundo.vim'
-NeoBundle 'jmcantrell/vim-virtualenv'
-NeoBundle 'vim-scripts/pydoc.vim'
-NeoBundle 'msanders/snipmate.vim'
-NeoBundle 'burnettk/vim-angular'
-NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'othree/javascript-libraries-syntax.vim'
-NeoBundle 'matthewsimo/angular-vim-snippets'
-NeoBundle 'curist/vim-angular-template'
-NeoBundle 'sophacles/vim-bundle-mako'
-NeoBundle 'lukerandall/haskellmode-vim'
+"NeoBundle 'Twinside/vim-haskellFold'
+NeoBundle 'Twinside/vim-hoogle'
+NeoBundle 'vim-pandoc/vim-pandoc'
 NeoBundle 'vim-scripts/dbext.vim'
-NeoBundle 'exu/pgsql.vim'
+NeoBundle 'vim-scripts/pydoc.vim'
+NeoBundle 'vim-scripts/VimClojure'
+NeoBundle 'vim-voom/VOoM'
+NeoBundle 'ytsunetsune/unite-outline-euslisp'
 
 " Required:
 call neobundle#end()
@@ -107,8 +117,7 @@ filetype indent on
 " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
 " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
 " The following changes the default filetype back to 'tex':
-
-
+let g:tex_flavor='latex'
 
 " Configuration file for vim
 
@@ -119,7 +128,6 @@ filetype indent on
 au BufWrite /private/tmp/crontab.* set nowritebackup
 " Don't write backup file if vim is being called by "chpass"
 au BufWrite /private/etc/pw.* set nowritebackup
-
 
 "Enable support for Color xterm
 :if has("terminfo")
@@ -132,8 +140,7 @@ au BufWrite /private/etc/pw.* set nowritebackup
 :  set t_Sb=[4%dm
 :endif
 
-
-
+set omnifunc=syntaxcomplete#Complete
 set ignorecase
 set smartcase
 set autoindent
@@ -147,7 +154,6 @@ set scrolloff=4
 set wildmode=longest,list
 set autoread
 set background=dark
-set omnifunc=syntaxcomplete#Complete
 set pastetoggle=<F12>
 set undodir=~/.vim/undodir
 set undofile
@@ -165,7 +171,6 @@ set backspace=2      " more powerful backspacing
 syntax enable
 colorscheme solarized
 
-
 if &term =~ "xterm\\|rxvt"
   " use an orange cursor in insert mode
   let &t_SI = "\<Esc>]12;blue\x7"
@@ -177,10 +182,10 @@ if &term =~ "xterm\\|rxvt"
   " use \003]12;gray\007 for gnome-terminal
 endif
 
-
-
 "SmartIndent for Python
-autocmd BufEnter *.hs compiler ghc
+"autocmd BufEnter *.hs compiler ghc
+au FocusLost * :wa
+
 autocmd! BufNewFile * silent! 0r ~/.vim/skel/tmpl.%:e
 autocmd BufRead *.mako set ft=mako
 autocmd BufRead *.md set dictionary+=/usr/share/dict/words
@@ -193,14 +198,16 @@ autocmd FileType pandoc set linebreak tw=110 noexpandtab nosmartindent autoinden
 autocmd FileType pantondoc set linebreak tw=110 noexpandtab nosmartindent autoindent
 "autocmd FileType python map K \pW
 autocmd FileType python set complete+=k~/.vim/syntax/python.vim "isk+=.,(
+autocmd FileType haskell set omnifunc=necoghc#omnifunc
+autocmd FileType lisp set omnifunc=SlimvOmniComplete
 " when we reload, tell vim to restore the cursor to the saved position
 
 "Diable the anti-python smart indent of #
 inoremap  # X#
 
 "Turn Syntax Highlighting on by default, and assume the xterm background is black
-imap <C-g> :Unite outlinei
-imap <F7> :Unite outlinei
+imap <C-g> :Unite outline -start-insert
+imap <F7> :Unite outline -start-insert
 imap <F8> o:,!pbpaste
 imap <F9> o:,!pbpaste
 inoremap <expr> <C-L> ListItem()
@@ -214,13 +221,13 @@ inoremap <Space> <Space><C-g>u
 inoremap <Tab> <Tab><C-g>u
 
 map <BS> dh
-map <C-g> :Unite outlinei
+map <C-g> :Unite outline -start-insert -auto-preview
 map CS :sil! :%s/\s\+$//g<CR>``:%s/^\(\t\+\)\( \+\(\t*\)\)\+/\1\3/gc<CR>``
-map <F7> :Unite outlinei
+map <F7> :Unite outline -start-insert
 map <F8> o:,!pbpaste
 map <F9> o:,!pbpaste
-map <leader>f :Unite file<CR>i
-map <leader>q :Unite buffer<CR>i
+map <leader>f :Unite file_rec/async -start-insert
+map <leader>q :Unite buffer -start-insert
 map W wb"_dwP
 map ZX :wq<cr>
 map ZZ :w<CR>
@@ -231,9 +238,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
-noremap <F3> :!spot_control pr<CR>
-noremap <F4> :!spot_control p<CR><CR>
-noremap <F5> :!spot_control n<CR>
 
 python << EOF
 import os
@@ -257,40 +261,73 @@ endfunc
 
 set diffopt=vertical,filler,iwhite,foldcolumn:0
 
-
-"command! -range FmtTable python FmtTable(<f-line1>,<f-line2>)
-
-"python << EOS
-"def FmtTable(line1,line2):
-"    import vim, string
-"    inputSeparator='|'
-"    outputSeparator="|"
-"    cb=vim.current.buffer.range(int(line1)-1,int(line2))
-"    colLen=[]
-"    # first we collect col lengths and calculate the longest
-"    for line in cb[1:]:
-"        spLine=line.split(inputSeparator)
-"        for i in range(len(spLine)):
-"            try:
-"                if len(spLine[i]) > colLen[i]:
-"                    colLen[i] = len(spLine[i])
-"            except IndexError:
-"                colLen.append(len(spLine[i]))
-"    tmpBuf=[]
-"    # Then we fill the cols with spaces
-"    for line in cb[1:]:
-"        spLine=line.split(inputSeparator)
-"        newLine=outputSeparator.join([spElt.ljust(colLen[i]) for i, spElt in enumerate(spLine)]) + outputSeparator
-"        tmpBuf.append(newLine)
-"    cb[1:]=tmpBuf[:]
-"EOS
-
-
-
-
 highlight PmenuSel ctermfg=LightGray  ctermbg=DarkRed
 
 if filereadable(".vim.custom")
     so .vim.custom
 endif
 
+let g:syntastic_javascript_checkers = ['jshint']
+call unite#custom#source('file,file/new,buffer,file_rec','matchers','matcher_fuzzy')
+
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+  " Overwrite settings.
+  let b:SuperTabDisabled=1
+  imap <buffer><expr> <C-v>     unite#do_action('vsplit')
+  imap <buffer><expr> <C-s>     unite#do_action('split')
+  imap <buffer>  <Tab>     <Plug>(unite_complete)
+  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+  imap <buffer> <Down>   <Plug>(unite_select_next_line)
+  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+  imap <buffer> <Up>   <Plug>(unite_select_previous_line)
+
+  " exit with esc
+  nmap <buffer> <ESC> <Plug>(unite_exit)
+ 
+  " exit with ctrl-c
+  imap <buffer> <c-c> <Plug>(unite_exit)
+  nmap <buffer> <c-c> <Plug>(unite_exit)
+endfunction
+
+if executable('ag')
+  " let g:unite_source_file_async_command =
+  "           \ 'ag --follow --nocolor --nogroup --hidden -g ""'
+  " https://github.com/ggreer/the_silver_searcher
+  " Use ag in unite grep source.
+  " let g:unite_source_rec_async_command = 'ag --follow --nocolor --nogroup --hidden ' .
+  "       \ '--ignore ''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
+  "       \ '--ignore ''**/*.pyc'' -g ""'
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts =
+        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+        \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
+        \ '--ignore ''**/*.pyc'''
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack-grep')
+  let g:unite_source_grep_command = 'ack-grep'
+  " Match whole word only. This might/might not be a good idea
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -H'
+  "let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
+  let g:unite_source_grep_default_opts = '--exclude ''\.(git|svn|hg|bzr)'''
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
+  let g:unite_source_grep_default_opts = '--exclude ''\.(git|svn|hg|bzr)'''
+  let g:unite_source_grep_recursive_opt = ''
+endif
+
+nnoremap [unite] <Nop>
+nmap <space> [unite]
+nmap [unite]s :<C-u>Unite -auto-preview grep:.<C-m>
+nmap [unite]o :<C-u>Unite outline -start-insert<C-m>
+nmap  [unite]f  :<C-u>Unite file_rec/async -start-insert<C-m>
+nmap  [unite]F  :<C-u>Unite file -start-insert<C-m>
+nmap  [unite]g  :<C-u>Unite file_rec/git -start-insert<C-m>
+nmap [unite]j :<C-u>Unite buffer -start-insert<C-m>
+
+" Reload
+map <silent> tu :call GHC_BrowseAll()<CR>
+" Type Lookup
+map <silent> tw :call GHC_ShowType(1)<CR>

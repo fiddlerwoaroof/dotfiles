@@ -1,0 +1,6 @@
+[submodule "external/deer"]
+	path = external/deer
+	url = git@github.com:Vifon/deer.git
+[submodule "external/smart-change-directory"]
+	path = external/smart-change-directory
+	url = git@github.com:pavoljuhas/smart-change-directory.git
