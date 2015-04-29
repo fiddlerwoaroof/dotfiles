@@ -1,0 +1,2 @@
+#!/bin/sh
+mpc -f '(%position%) [%artist%: ]%album%—[%disc%/]%track%. %title%' status | head -1 | dzen2 -x 0 -y 0 -l 0 -ta l -w 1920 -p 1 -ta c
