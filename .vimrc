@@ -214,8 +214,8 @@ autocmd FileType lisp set omnifunc=SlimvOmniComplete
 inoremap  # X#
 
 "Turn Syntax Highlighting on by default, and assume the xterm background is black
-imap <C-g> :Unite outline -start-insert
-imap <F7> :Unite outline -start-insert
+imap <C-g> :Unite outline -buffer-name=outline -resume -start-insert
+imap <F7> :Unite outline -buffer-name=outline -resume -start-insert
 imap <F8> o:,!pbpaste
 imap <F9> o:,!pbpaste
 inoremap <expr> <C-L> ListItem()
@@ -229,13 +229,13 @@ inoremap <Return> <Return><C-g>u
 "inoremap <Tab> <Tab><C-g>u
 
 map <BS> dh
-map <C-g> :Unite outline -start-insert -auto-preview
+map <C-g> :Unite outline -buffer-name=outline -resume -start-insert
 map CS :sil! :%s/\s\+$//g<CR>``:%s/^\(\t\+\)\( \+\(\t*\)\)\+/\1\3/gc<CR>``
-map <F7> :Unite outline -start-insert
+map <F7> :Unite outline -buffer-name=files -resume -start-insert
 map <F8> o:,!pbpaste
 map <F9> o:,!pbpaste
-map <leader>f :Unite file_rec/async -start-insert
-map <leader>q :Unite buffer -start-insert
+map <leader>f :Unite file -buffer-name=files -resume<CR>i
+map <leader>q :Unite buffer -buffer-name=buffers -resume<CR>i
 map W wb"_dwP
 map ZX :wq<cr>
 map ZZ :w<CR>
