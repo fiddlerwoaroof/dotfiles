@@ -1,3 +1,5 @@
+{-# LANGUAGE RankNTypes #-}
+
 import Control.Monad
 
 import Data.List
@@ -10,35 +12,36 @@ import System.IO
 
 import XMonad hiding ( (|||) )
 import XMonad.Actions.CopyWindow(copy,copyWindow,kill1,killAllOtherCopies)
+import XMonad.Actions.CycleWindows()
 import XMonad.Actions.DynamicWorkspaces
 import XMonad.Actions.GridSelect
 import XMonad.Actions.SpawnOn
-import XMonad.Core
+import XMonad.Core()
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ICCCMFocus
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Accordion
-import XMonad.Layout.BoringWindows hiding (Replace)
+{-import XMonad.Layout.BoringWindows hiding (Replace)-}
 import XMonad.Layout.Circle
-import XMonad.Layout.Combo
+import XMonad.Layout.Combo()
 import XMonad.Layout.Decoration
 import XMonad.Layout.DragPane
 import XMonad.Layout.Gaps
 import XMonad.Layout.Grid
 import XMonad.Layout.IM
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.LayoutModifier
+import XMonad.Layout.LayoutModifier()
 import XMonad.Layout.Maximize
 import XMonad.Layout.NoBorders
 import XMonad.Layout.OneBig
 import XMonad.Layout.PerWorkspace
-import XMonad.Layout.Reflect
+import XMonad.Layout.Reflect()
 import XMonad.Layout.Renamed
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Simplest
 import XMonad.Layout.Spiral
-import XMonad.Layout.SubLayouts
+import XMonad.Layout.SubLayouts()
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
 import XMonad.Layout.TwoPane
@@ -49,6 +52,7 @@ import XMonad.Util.Dzen
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Loggers
 import XMonad.Util.Run(spawnPipe)
+
 nmaster :: Int
 nmaster = 1
 
@@ -59,6 +63,7 @@ delta = 3/100
 tiled :: Tall a
 tiled = Tall nmaster delta ratio
 
+myTabbed :: ModifiedLayout Rename (ModifiedLayout (Decoration TabbedDecoration DefaultShrinker) Simplest) Word64
 myTabbed = renamed [Replace "Tabbed"] $ tabbedBottom shrinkText defaultTheme
 
 threeLayout :: ThreeCol a
@@ -119,11 +124,11 @@ makeLayoutList :: [t] -> [(t,t)]
 makeLayoutList [] = []
 makeLayoutList (l:ls) = (l,l):(makeLayoutList ls)
 
-changeLayout :: Maybe String -> X ()
-changeLayout a =
-  case a of
-     Just r -> sendMessage $ JumpToLayout r
-     _ -> error "this shouldn't happen"
+--changeLayout :: Maybe String -> X ()
+--changeLayout a =
+--  case a of
+--     Just r -> sendMessage $ JumpToLayout r
+--     _ -> error "this shouldn't happen"
 
 -- This is the currently used layout change
 -- activated with Meta+;
@@ -191,6 +196,8 @@ myManageHook = composeAll
 
 doCopy :: WorkspaceId -> ManageHook
 doCopy i = doF . copyWin i =<< ask
+
+copyWin :: forall a i l s sd . (Eq a, Eq i, Eq s) => i -> a -> StackSet i l a s sd -> StackSet i l a s sd
 copyWin i a = copyWindow a i
 
 viewShift :: WorkspaceId -> Query (Endo (StackSet WorkspaceId l Window ScreenId sd))
@@ -199,14 +206,18 @@ viewShift = doF . liftM2 (.) W.greedyView W.shift
 dShow :: String -> X ()
 dShow = dzenConfig myDzenConfig
 
-copyNSwitch windows target = do
-  windows $ copy target
-  windows $ W.greedyView target
+copyNSwitch :: forall l a s sd a1. (Eq s, Eq a) => ((StackSet String l a s sd -> StackSet String l a s sd) -> X a1)
+                 -> String -> X ()
+copyNSwitch ws target = do
+  ws $ copy target
+  ws $ W.greedyView target
   dShow target
 
-shiftNSwitch windows target = do
-  windows $ shift target
-  windows $ W.greedyView target
+shiftNSwitch :: forall l a s sd a1. (Eq s, Ord a) => ((StackSet String l a s sd -> StackSet String l a s sd) -> X a1)
+                  -> String -> X ()
+shiftNSwitch ws target = do
+  ws $ shift target
+  ws $ W.greedyView target
   dShow target
 
 switchWorkspace :: WorkspaceId -> X ()
@@ -237,6 +248,7 @@ main = do
          }),
          modMask = mod4Mask,
          focusFollowsMouse = False,
+         clickJustFocuses = False,
          XMonad.workspaces = ["web", "terminal", "1", "2", "3", "4", "5", "6", "images", "IM"]
       } `additionalKeys` (
       [
@@ -339,6 +351,7 @@ main = do
          ++ zip (zip (repeat (mod4Mask)) (map (numPadKeys !!) ([0]))) (map (withNthWorkspace greedyView) [0..])
       )
 
+numPadKeys :: [KeySym]
 numPadKeys = [xK_KP_Insert -- 0
              , xK_KP_End,  xK_KP_Down,  xK_KP_Page_Down -- 1, 2, 3
              , xK_KP_Left, xK_KP_Begin, xK_KP_Right     -- 4, 5, 6

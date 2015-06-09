@@ -95,6 +95,7 @@ NeoBundle 'vim-scripts/pydoc.vim'
 NeoBundle 'vim-scripts/VimClojure'
 NeoBundle 'vim-voom/VOoM'
 NeoBundle 'ytsunetsune/unite-outline-euslisp'
+NeoBundle 'mattn/emmet-vim.git'
 
 " Required:
 call neobundle#end()
@@ -186,6 +187,12 @@ endif
 "autocmd BufEnter *.hs compiler ghc
 au FocusLost * :wa
 
+function Checkft()
+  if &filetype==""
+    filetype detect
+  endif
+endfunction
+
 autocmd! BufNewFile * silent! 0r ~/.vim/skel/tmpl.%:e
 autocmd BufRead *.mako set ft=mako
 autocmd BufRead *.md set dictionary+=/usr/share/dict/words
@@ -193,6 +200,7 @@ autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "norm
 autocmd BufRead *.tac set ft=python
 autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
+autocmd bufwritepost * call Checkft()
 autocmd FileType markdown set linebreak tw=110 noexpandtab nosmartindent autoindent
 autocmd FileType pandoc set linebreak tw=110 noexpandtab nosmartindent autoindent
 autocmd FileType pantondoc set linebreak tw=110 noexpandtab nosmartindent autoindent
@@ -217,8 +225,8 @@ inoremap <F3> :!spot_control pr<CR>
 inoremap <F4> :!spot_control p<CR><CR>
 inoremap <F5> :!spot_control n<CR>
 inoremap <Return> <Return><C-g>u
-inoremap <Space> <Space><C-g>u
-inoremap <Tab> <Tab><C-g>u
+"inoremap <Space> <Space><C-g>u
+"inoremap <Tab> <Tab><C-g>u
 
 map <BS> dh
 map <C-g> :Unite outline -start-insert -auto-preview
@@ -331,3 +339,4 @@ nmap [unite]j :<C-u>Unite buffer -start-insert<C-m>
 map <silent> tu :call GHC_BrowseAll()<CR>
 " Type Lookup
 map <silent> tw :call GHC_ShowType(1)<CR>
+autocmd BufRead,BufNewFile *.css,*.scss,*.less setlocal foldmethod=marker foldmarker={,}
