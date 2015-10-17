@@ -1,4 +1,4 @@
-http://clean.cs.ru.nl" This goes here in case a filetype overrides it
+" This goes here in case a filetype overrides it
 
 "NeoBundle Scripts-----------------------------
 if has('vim_starting')
@@ -75,7 +75,8 @@ filetype plugin indent on
 " this will conveniently prompt you to install them.
 NeoBundleCheck
 "End NeoBundle Scripts-------------------------
-
+set mouse=
+set nohlsearch
 let counter = 0
 let g:syntastic_auto_loc_list=1
 let g:sql_type_default = 'pgsql'
@@ -248,14 +249,14 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
 
-python << EOF
-import os
-import sys
-import vim
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
+"python << EOF
+"import os
+"import sys
+"import vim
+"for p in sys.path:
+"    if os.path.isdir(p):
+"        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+"EOF
 
 
 func ListItem()

@@ -1,6 +1,7 @@
 echo "begin zshrc"
 echo ".zshrc loaded for $USER on $TTY at `date`" | logger
 source $HOME/.localzshrc.sh
+autoload -U colors && colors
 
 # Path to your oh-my-zsh configuration.
 export ZSH=$HOME/.oh-my-zsh
@@ -52,12 +53,34 @@ fi
 
 $FORTUNE
 
+function battery_charge() {
+  python "$HOME/bin/batcharge.py" 2>/dev/null
+}
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' actionformats \
+    '%F{5}%f%s%F{5}%F{3}-%F{5}%F{2}%b%F{3}|%F{1}%a%F{5}%f'
+zstyle ':vcs_info:*' formats       \
+  '%F{5}%f%s%F{5}%F{3}-%F{5}%F{2}%b%F{5}%f'
+zstyle ':vcs_info:(sv[nk]|bzr):*' branchformat '%b%F{1}:%F{3}%r'
+
+zstyle ':vcs_info:*' enable git cvs svn
+
+vcs_info_wrapper() {
+  vcs_info
+  if [ -n "$vcs_info_msg_0_" ]; then
+    echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
+  fi
+}
+
 export PYTHONSTARTUP=$HOME/Library/Python/2.7/site-packages/sitecustomize.py
-PS1="---
-(%?) %m:%n--%l %/
-%!:%# "
-export PS1
-RPROMPT="[%T]"
+setopt promptsubst
+PROMPT='---
+(%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge` 
+%!:%# '
+export PROMPT
+RPROMPT='[%T]'
+
 export RPROMPT
 HOSTNAME=`hostname -f`
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
@@ -90,7 +113,7 @@ export HISTFILE=$HOME/.zshistory
 
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
 
-export MANPATH="/opt/local/share/man:$MANPATH"
+export MANPATH="/opt/local/share/man:/Applications/Xcode.app/Contents/Developer/usr/share/man:$MANPATH"
 
 #export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
     #vim -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' \
@@ -573,3 +596,6 @@ done
 alias cn=current_news
 
 # vim: set filetype=sh:
+
+#THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
+[[ -s "/Users/edwlan/.gvm/bin/gvm-init.sh" ]] && source "/Users/edwlan/.gvm/bin/gvm-init.sh"
