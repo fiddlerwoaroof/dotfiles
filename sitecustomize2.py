@@ -172,11 +172,11 @@ def e(name=None):
 		f.close()
 
 def ls(name):
-	load_file = lambda: open('/Users/edwlan/sandbox/unsorted/pythonsnippets_%s.py' % name)
+	load_file = lambda: open('/home/edwlan/sandbox/unsorted/pythonsnippets_%s.py' % name)
 	try:
 		f = load_file()
 	except IOError:
-		load_file = lambda: open('/Users/edwlan/sandbox/%s.py' % name)
+		load_file = lambda: open('/home/edwlan/sandbox/%s.py' % name)
 		f = load_file()
 
 	raw_input('loading %s, press Enter to continue...' % f.name)

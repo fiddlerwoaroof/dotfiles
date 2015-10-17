@@ -1,15 +1,16 @@
-" This goes here in case a filetype overrides it
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
 
 "NeoBundle Scripts-----------------------------
 if has('vim_starting')
   set nocompatible               " Be iMproved
 
   " Required:
-  set runtimepath+=$HOME/.vim/bundle/neobundle.vim/
+  set runtimepath+=$HOME/.nvim/bundle/neobundle.vim/
 endif
 
 " Required:
-call neobundle#begin(expand("$HOME/.vim/bundle"))
+call neobundle#begin(expand("$HOME/.nvim/bundle"))
 
 " Let NeoBundle manage NeoBundle
 " Required:
@@ -23,10 +24,10 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'burnettk/vim-angular'
 NeoBundle 'christoomey/vim-tmux-navigator'
 NeoBundle 'curist/vim-angular-template'
-NeoBundle 'eagletmt/ghcmod-vim'
-NeoBundle 'eagletmt/neco-ghc'
-"NeoBundle 'enomsg/vim-haskellConcealPlus'
+NeoBundle 'edsono/vim-matchit'
 NeoBundle 'exu/pgsql.vim'
+NeoBundle 'fiddlerwoaroof/htmljinja'
+NeoBundle 'fiddlerwoaroof/vim-jinja'
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'groenewege/vim-less'
 NeoBundle 'guns/vim-clojure-static'
@@ -34,20 +35,24 @@ NeoBundle 'ivanov/vim-ipython'
 NeoBundle 'jmcantrell/vim-virtualenv'
 NeoBundle 'kien/rainbow_parentheses.vim'
 NeoBundle 'kovisoft/slimv'
-"NeoBundle 'lukerandall/haskellmode-vim'
+"NeoBundle 'm2mdas/phpcomplete-extended'
+NeoBundle 'markcornick/vim-vagrant'
 NeoBundle 'matthewsimo/angular-vim-snippets'
+NeoBundle 'mattn/emmet-vim.git'
 NeoBundle 'msanders/snipmate.vim'
 NeoBundle 'othree/javascript-libraries-syntax.vim'
 NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'raichoo/haskell-vim'
+"NeoBundle 'rking/ag.vim' "Ag search utility
+NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic'
 NeoBundle 'Shougo/unite-outline'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Shougo/vimproc'
 NeoBundle 'Shougo/vimshell.vim'
-NeoBundle 'sjl/gundo.vim'
+NeoBundle 'simnalamburt/vim-mundo'
 NeoBundle 'sjl/vitality.vim'
 NeoBundle 'sophacles/vim-bundle-mako'
 NeoBundle 'terryma/vim-multiple-cursors'
@@ -55,15 +60,20 @@ NeoBundle 'tpope/vim-fireplace'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-repeat'
 NeoBundle 'tpope/vim-surround'
-"NeoBundle 'Twinside/vim-haskellFold'
-NeoBundle 'Twinside/vim-hoogle'
+"NeoBundle 'Valloric/YouCompleteMe'
 NeoBundle 'vim-pandoc/vim-pandoc'
 NeoBundle 'vim-scripts/dbext.vim'
+NeoBundle 'vim-scripts/php.vim--Garvin'
 NeoBundle 'vim-scripts/pydoc.vim'
 NeoBundle 'vim-scripts/VimClojure'
 NeoBundle 'vim-voom/VOoM'
 NeoBundle 'ytsunetsune/unite-outline-euslisp'
-NeoBundle 'mattn/emmet-vim.git'
+
+NeoBundle 'neovimhaskell/haskell-vim'
+NeoBundle 'enomsg/vim-haskellConcealPlus'
+NeoBundle 'eagletmt/ghcmod-vim'
+NeoBundle 'eagletmt/neco-ghc'
+NeoBundle 'Twinside/vim-hoogle'
 
 " Required:
 call neobundle#end()
@@ -75,31 +85,32 @@ filetype plugin indent on
 " this will conveniently prompt you to install them.
 NeoBundleCheck
 "End NeoBundle Scripts-------------------------
-set mouse=
+
+set mouse= ";; Disable mouse sensitivity !!!
 set nohlsearch
 let counter = 0
-let g:syntastic_auto_loc_list=1
-let g:sql_type_default = 'pgsql'
 let g:airline_theme="murmur"
 let g:haddock_browser_callformat = "%s %s"
 let g:haddock_browser = "open"
 let g:lisp_rainbow=1 
+let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"]
+let g:pandoc_formatting_settings = "h"
+let g:pandoc#modules#disabled =  ["command", "bibliographies"]
+let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "metadata","menu"]
 let g:pandoc_no_empty_implicits=1
 let g:pandoc_use_hard_wraps = 1
-let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "metadata","menu"]
-let g:pandoc#modules#disabled =  ["command", "bibliographies"]
-let g:pandoc_formatting_settings = "h"
-let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"]
+let g:phpcomplete_index_composer_command = "composer"
 let g:slimv_disable_clojure=1
 let g:snips_author="Edward Langley"
 let g:solarized_termtrans=1
+let g:sql_type_default = 'pgsql'
+let g:syntastic_auto_loc_list=1
 let g:syntastic_python_checkers = ['python']
+let g:syntastic_scss_sass_args = "-r sass-css-importer -r susy"
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 let g:tex_flavor='xelatex'
 let g:unite_force_overwrite_statusline = 0
 let g:vimclojure#HighlightBuiltins = 1
-let g:vimclojure#HighlightBuiltins = 1
-let g:vimclojure#ParenRainbow = 1
 let g:vimclojure#ParenRainbow = 1
 let g:virtualenv_directory = "$HOME/python_envs"
 let maplocalleader=','
@@ -108,6 +119,7 @@ let python_highlight_all = 1
 let python_no_tab_space_error=1
 let python_space_errors=1
 let vimclojure#WantNailgun = 1
+" This goes here in case a filetype overrides it
 
 
 " IMPORTANT: grep will sometimes skip displaying the file name if you
@@ -158,7 +170,7 @@ set wildmode=longest,list
 set autoread
 set background=dark
 set pastetoggle=<F12>
-set undodir=~/.vim/undodir
+set undodir=~/.nvim/undodir
 set undofile
 set undolevels=10000
 set undoreload=100000
@@ -195,29 +207,30 @@ function Checkft()
   endif
 endfunction
 
-autocmd! BufNewFile * silent! 0r ~/.vim/skel/tmpl.%:e
-autocmd BufRead *.mako set ft=mako
-autocmd BufRead *.md set dictionary+=/usr/share/dict/words
+" when we reload, tell vim to restore the cursor to the saved position
+"autocmd FileType python map K \pW
+autocmd! BufNewFile * silent! 0r ~/.nvim/skel/tmpl.%:e
+autocmd BufRead,BufNewFile *.twig set filetype=htmljinja
+autocmd BufRead,BufNewFile *.mako set ft=mako
+autocmd BufRead,BufNewFile *.md set dictionary+=/usr/share/dict/words
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-autocmd BufRead *.tac set ft=python
-autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
+autocmd BufRead,BufNewFile *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+autocmd BufRead,BufNewFile *.tac set ft=python
 autocmd bufwritepost * call Checkft()
+autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
+
+autocmd FileType haskell set omnifunc=necoghc#omnifunc
+autocmd FileType lisp set omnifunc=SlimvOmniComplete
 autocmd FileType markdown set linebreak tw=110 noexpandtab nosmartindent autoindent
 autocmd FileType pandoc set linebreak tw=110 noexpandtab nosmartindent autoindent
 autocmd FileType pantondoc set linebreak tw=110 noexpandtab nosmartindent autoindent
-"autocmd FileType python map K \pW
-autocmd FileType python set complete+=k~/.vim/syntax/python.vim "isk+=.,(
-autocmd FileType haskell set omnifunc=necoghc#omnifunc
-autocmd FileType lisp set omnifunc=SlimvOmniComplete
-" when we reload, tell vim to restore the cursor to the saved position
-
+autocmd FileType python set complete+=k~/.nvim/syntax/python.vim "isk+=.,(
 "Diable the anti-python smart indent of #
 inoremap  # X#
 
 "Turn Syntax Highlighting on by default, and assume the xterm background is black
-imap <C-g> :Unite outline -buffer-name=outline -resume -start-insert
-imap <F7> :Unite outline -buffer-name=outline -resume -start-insert
+imap <C-g> :Unite outline -buffer-name=outline -start-insert<CR>
+imap <F7> :Unite outline -buffer-name=outline -start-insert<CR>
 imap <F8> o:,!pbpaste
 imap <F9> o:,!pbpaste
 inoremap <expr> <C-L> ListItem()
@@ -231,13 +244,13 @@ inoremap <Return> <Return><C-g>u
 "inoremap <Tab> <Tab><C-g>u
 
 map <BS> dh
-map <C-g> :Unite outline -buffer-name=outline -resume -start-insert
+map <C-g> :Unite outline -buffer-name=outline -start-insert<CR>
 map CS :sil! :%s/\s\+$//g<CR>``:%s/^\(\t\+\)\( \+\(\t*\)\)\+/\1\3/gc<CR>``
-map <F7> :Unite outline -buffer-name=files -resume -start-insert
-map <F8> o:,!pbpaste
-map <F9> o:,!pbpaste
-map <leader>f :Unite file -buffer-name=files -resume<CR>i
-map <leader>q :Unite buffer -buffer-name=buffers -resume<CR>i
+map <F7> :Unite outline -buffer-name=files -start-insert<CR>
+map <F8> o:,!pbpaste<CR>
+map <F9> o:,!pbpaste<CR>
+map <leader>f :Unite file -buffer-name=files -start-insert<CR>
+map <leader>q :Unite buffer -buffer-name=buffers -start-insert<CR>
 map W wb"_dwP
 map ZX :wq<cr>
 map ZZ :w<CR>
@@ -249,14 +262,14 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
 
-"python << EOF
-"import os
-"import sys
-"import vim
-"for p in sys.path:
-"    if os.path.isdir(p):
-"        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-"EOF
+python << EOF
+import os
+import sys
+import vim
+for p in sys.path:
+    if os.path.isdir(p):
+        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
 
 
 func ListItem()
@@ -273,8 +286,8 @@ set diffopt=vertical,filler,iwhite,foldcolumn:0
 
 highlight PmenuSel ctermfg=LightGray  ctermbg=DarkRed
 
-if filereadable(".vim.custom")
-    so .vim.custom
+if filereadable(".nvim.custom")
+    so .nvim.custom
 endif
 
 let g:syntastic_javascript_checkers = ['jshint']
@@ -301,19 +314,17 @@ function! s:unite_my_settings()
 endfunction
 
 if executable('ag')
-  " let g:unite_source_file_async_command =
-  "           \ 'ag --follow --nocolor --nogroup --hidden -g ""'
-  " https://github.com/ggreer/the_silver_searcher
-  " Use ag in unite grep source.
-  " let g:unite_source_rec_async_command = 'ag --follow --nocolor --nogroup --hidden ' .
-  "       \ '--ignore ''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
-  "       \ '--ignore ''**/*.pyc'' -g ""'
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts =
-        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
-        \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
-        \ '--ignore ''**/*.pyc'''
-  let g:unite_source_grep_recursive_opt = ''
+  let g:unite_source_file_async_command =
+            \ 'ag --follow --nocolor --nogroup --hidden -g "" --ignore ''.sass-cache'''
+  "https://github.com/ggreer/the_silver_searcher
+  "Use ag in unite grep source.
+  let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '', '--ignore', '.git', '--ignore', '.sass-cache']
+  "let g:unite_source_grep_command = 'ag'
+  "let g:unite_source_grep_default_opts =
+  "      \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+  "      \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
+  "      \ '--ignore ''**/*.pyc'''
+  "let g:unite_source_grep_recursive_opt = ''
 elseif executable('ack-grep')
   let g:unite_source_grep_command = 'ack-grep'
   " Match whole word only. This might/might not be a good idea
@@ -336,6 +347,11 @@ nmap  [unite]f  :<C-u>Unite file_rec/async -start-insert<C-m>
 nmap  [unite]F  :<C-u>Unite file -start-insert<C-m>
 nmap  [unite]g  :<C-u>Unite file_rec/git -start-insert<C-m>
 nmap [unite]j :<C-u>Unite buffer -start-insert<C-m>
+nmap [unite]k :<C-u>Unite tab:no-current<C-m>
+nmap [unite]h :<C-u>set hlsearch!<C-m>
+nmap [unite]t :<C-u>NERDTreeToggle<CR>
+nmap [unite]u :<C-u>GundoToggle<CR>
+nmap [unite]r :<C-u>!vagrant rsync<CR>
 
 " Reload
 map <silent> tu :call GHC_BrowseAll()<CR>

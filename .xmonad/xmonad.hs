@@ -22,7 +22,6 @@ import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ICCCMFocus
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Accordion
-{-import XMonad.Layout.BoringWindows hiding (Replace)-}
 import XMonad.Layout.Circle
 import XMonad.Layout.Combo()
 import XMonad.Layout.Decoration
@@ -52,6 +51,8 @@ import XMonad.Util.Dzen
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Loggers
 import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.Scratchpad
+import XMonad.Util.NamedScratchpad
 
 nmaster :: Int
 nmaster = 1
@@ -172,9 +173,9 @@ nchooseLayout conf = do
 
 
 myPP :: PP
-myPP = sjanssenPP {
+myPP = namedScratchpadFilterOutWorkspacePP $ sjanssenPP {
    ppCurrent = xmobarColor "grey" "white",
-   ppHidden = xmobarColor "red" "black",
+   ppHidden = xmobarColor "red" "black", -- . noScratchPad,
    ppHiddenNoWindows = id,
    ppTitle = xmobarColor "green" "" . shorten 126
 }
@@ -190,9 +191,30 @@ myManageHook = composeAll
    , className =? "feh" --> viewShift "images"
    , className =? "Display.im6" --> viewShift "images"
    , manageDocks
-   ]
+   ] <+> manageScratchPad
  where role = stringProperty "WM_WINDOW_ROLE"
 
+manageScratchPad :: ManageHook
+manageScratchPad = namedScratchpadManageHook scratchpads
+
+scratchpads :: [NamedScratchpad]
+scratchpads = [
+  -- run htop in xterm, find it by title, use default floating window placement
+  NS "htop" "xterm -e htop" (title =? "htop") floatStyle ,
+  NS "mutt" "xterm -e mutt" (title =? "mutt") floatStyle ,
+  NS "mcabber" "xterm -e mcabber" (title =? "mcabber") floatStyle ,
+  NS "irc" "xterm -e irssi" (title =? "irssi") floatStyle ,
+  NS "mpc" "stterm -c mpc -e ncmpcpp" (className =? "ncmpcpp") floatStyle ,
+
+  -- run gvim, find by role
+  NS "notes" "bash -c 'cd $HOME/mywiki; source /usr/local/share/chruby/chruby.sh; chruby 2.2.2; SOYWIKI_VIM=\"gvim --role notes\" /home/edwlan/.gem/ruby/2.2.2/bin/soywiki'" (role =? "notes") floatStyle
+  ] where cls = stringProperty "WM_WINDOW_CLASS"
+          role = stringProperty "WM_WINDOW_ROLE"
+          floatStyle = customFloating $ W.RationalRect l t w h
+          w = 1     -- terminal height, 10%
+          h = 0.3333       -- terminal width, 100%
+          t = 0.015  -- distance from top edge, 90%
+          l = 0  -- distance from left edge, 0%
 
 doCopy :: WorkspaceId -> ManageHook
 doCopy i = doF . copyWin i =<< ask
@@ -252,39 +274,6 @@ main = do
          XMonad.workspaces = ["web", "terminal", "1", "2", "3", "4", "5", "6", "images", "IM"]
       } `additionalKeys` (
       [
-         (((mod4Mask .|. controlMask, xK_q     ),
-               spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")),
-
-         ((mod4Mask .|. shiftMask, xK_backslash), maximizeSwitch),
-         ((mod4Mask .|. controlMask, xK_backslash), maximizeFlop),
-         ((mod4Mask, xK_backslash), withFocused (sendMessage . maximizeRestore)),
-         ((mod4Mask .|. controlMask .|. shiftMask, xK_h ), sendMessage $ Move L),
-         ((mod4Mask .|. controlMask .|. shiftMask, xK_j ), sendMessage $ Move D),
-         ((mod4Mask .|. controlMask .|. shiftMask, xK_k   ), sendMessage $ Move U),
-         ((mod4Mask .|. controlMask .|. shiftMask, xK_l), sendMessage $ Move R),
-         ((mod4Mask .|. controlMask, xK_k), killAllOtherCopies),
-         ((mod4Mask .|. controlMask, xK_m), withWorkspace defaultXPConfig (windows . shift)),
-
-         ((mod4Mask, numPadKeys !! 1), switchWorkspace "web" ),
-         ((mod4Mask, numPadKeys !! 2), switchWorkspace "terminal" ),
-         ((mod4Mask, numPadKeys !! 3), switchWorkspace "1" ),
-         ((mod4Mask, numPadKeys !! 4), switchWorkspace "2" ),
-         ((mod4Mask, numPadKeys !! 5), switchWorkspace "3" ),
-         ((mod4Mask, numPadKeys !! 6), switchWorkspace "4" ),
-         ((mod4Mask, numPadKeys !! 7), switchWorkspace "5" ),
-         ((mod4Mask, numPadKeys !! 8), switchWorkspace "6" ),
-         ((mod4Mask, numPadKeys !! 9), switchWorkspace "images" ),
-
-         ((mod4Mask .|. shiftMask, numPadKeys !! 1), copyNSwitch windows "web" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 2), copyNSwitch windows "terminal" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 3), copyNSwitch windows "1" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 4), copyNSwitch windows "2" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 5), copyNSwitch windows "3" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 6), copyNSwitch windows "4" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 7), copyNSwitch windows "5" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 8), copyNSwitch windows "6" ),
-         ((mod4Mask .|. shiftMask, numPadKeys !! 9), copyNSwitch windows "images" ),
-
          ((mod4Mask .|. controlMask, numPadKeys !! 1), shiftNSwitch windows "web" ),
          ((mod4Mask .|. controlMask, numPadKeys !! 2), shiftNSwitch windows "terminal" ),
          ((mod4Mask .|. controlMask, numPadKeys !! 3), shiftNSwitch windows "1" ),
@@ -294,29 +283,10 @@ main = do
          ((mod4Mask .|. controlMask, numPadKeys !! 7), shiftNSwitch windows "5" ),
          ((mod4Mask .|. controlMask, numPadKeys !! 8), shiftNSwitch windows "6" ),
          ((mod4Mask .|. controlMask, numPadKeys !! 9), shiftNSwitch windows "images" ),
-
-         ((mod4Mask, xK_1), switchWorkspace "web" ),
-         ((mod4Mask, xK_2), switchWorkspace "terminal" ),
-         ((mod4Mask, xK_3), switchWorkspace "1" ),
-         ((mod4Mask, xK_4), switchWorkspace "2" ),
-         ((mod4Mask, xK_5), switchWorkspace "3" ),
-         ((mod4Mask, xK_6), switchWorkspace "4" ),
-         ((mod4Mask, xK_7), switchWorkspace "5" ),
-         ((mod4Mask, xK_8), switchWorkspace "6" ),
-         ((mod4Mask, xK_9), switchWorkspace "images" ),
-         ((mod4Mask, xK_grave), switchWorkspace "IM" ),
-
-         ((mod4Mask .|. shiftMask, xK_1), copyNSwitch windows "web" ),
-         ((mod4Mask .|. shiftMask, xK_2), copyNSwitch windows "terminal" ),
-         ((mod4Mask .|. shiftMask, xK_3), copyNSwitch windows "1" ),
-         ((mod4Mask .|. shiftMask, xK_4), copyNSwitch windows "2" ),
-         ((mod4Mask .|. shiftMask, xK_5), copyNSwitch windows "3" ),
-         ((mod4Mask .|. shiftMask, xK_6), copyNSwitch windows "4" ),
-         ((mod4Mask .|. shiftMask, xK_7), copyNSwitch windows "5" ),
-         ((mod4Mask .|. shiftMask, xK_8), copyNSwitch windows "6" ),
-         ((mod4Mask .|. shiftMask, xK_9), copyNSwitch windows "images" ),
-         ((mod4Mask .|. shiftMask, xK_grave), shiftNSwitch windows "IM" ),
-
+         ((mod4Mask .|. controlMask .|. shiftMask, xK_h ), sendMessage $ Move L),
+         ((mod4Mask .|. controlMask .|. shiftMask, xK_j ), sendMessage $ Move D),
+         ((mod4Mask .|. controlMask .|. shiftMask, xK_k   ), sendMessage $ Move U),
+         ((mod4Mask .|. controlMask .|. shiftMask, xK_l), sendMessage $ Move R),
          ((mod4Mask .|. controlMask, xK_1), shiftNSwitch windows "web" ),
          ((mod4Mask .|. controlMask, xK_2), shiftNSwitch windows "terminal" ),
          ((mod4Mask .|. controlMask, xK_3), shiftNSwitch windows "1" ),
@@ -326,30 +296,88 @@ main = do
          ((mod4Mask .|. controlMask, xK_7), shiftNSwitch windows "5" ),
          ((mod4Mask .|. controlMask, xK_8), shiftNSwitch windows "6" ),
          ((mod4Mask .|. controlMask, xK_9), shiftNSwitch windows "images" ),
+         ((mod4Mask .|. controlMask, xK_backslash), maximizeFlop),
          ((mod4Mask .|. controlMask, xK_grave), shiftNSwitch windows "IM" ),
-
+         ((mod4Mask .|. controlMask, xK_m), withWorkspace defaultXPConfig (windows . shift)),
+         (((mod4Mask .|. controlMask, xK_q     ), spawn "if type xmonad; then xmonad --recompile && xmonad --restart; else xmessage xmonad not in \\$PATH: \"$PATH\"; fi")),
+         ((mod4Mask .|. controlMask, xK_t), killAllOtherCopies),
+         ((mod4Mask, numPadKeys !! 1), switchWorkspace "web" ),
+         ((mod4Mask, numPadKeys !! 2), switchWorkspace "terminal" ),
+         ((mod4Mask, numPadKeys !! 3), switchWorkspace "1" ),
+         ((mod4Mask, numPadKeys !! 4), switchWorkspace "2" ),
+         ((mod4Mask, numPadKeys !! 5), switchWorkspace "3" ),
+         ((mod4Mask, numPadKeys !! 6), switchWorkspace "4" ),
+         ((mod4Mask, numPadKeys !! 7), switchWorkspace "5" ),
+         ((mod4Mask, numPadKeys !! 8), switchWorkspace "6" ),
+         ((mod4Mask, numPadKeys !! 9), switchWorkspace "images" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 1), copyNSwitch windows "web" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 2), copyNSwitch windows "terminal" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 3), copyNSwitch windows "1" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 4), copyNSwitch windows "2" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 5), copyNSwitch windows "3" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 6), copyNSwitch windows "4" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 7), copyNSwitch windows "5" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 8), copyNSwitch windows "6" ),
+         ((mod4Mask .|. shiftMask, numPadKeys !! 9), copyNSwitch windows "images" ),
+         ((mod4Mask .|. shiftMask, xK_1), copyNSwitch windows "web" ),
+         ((mod4Mask .|. shiftMask, xK_2), copyNSwitch windows "terminal" ),
+         ((mod4Mask .|. shiftMask, xK_3), copyNSwitch windows "1" ),
+         ((mod4Mask .|. shiftMask, xK_4), copyNSwitch windows "2" ),
+         ((mod4Mask .|. shiftMask, xK_5), copyNSwitch windows "3" ),
+         ((mod4Mask .|. shiftMask, xK_6), copyNSwitch windows "4" ),
+         ((mod4Mask .|. shiftMask, xK_7), copyNSwitch windows "5" ),
+         ((mod4Mask .|. shiftMask, xK_8), copyNSwitch windows "6" ),
+         ((mod4Mask .|. shiftMask, xK_9), copyNSwitch windows "images" ),
+         ((mod4Mask .|. shiftMask, xK_backslash), maximizeSwitch),
          ((mod4Mask .|. shiftMask, xK_BackSpace), removeWorkspace),
-         ((mod4Mask .|. shiftMask, xK_k), kill1),
+         ((mod4Mask .|. shiftMask, xK_grave), shiftNSwitch windows "IM" ),
          ((mod4Mask .|. shiftMask, xK_m), withWorkspace defaultXPConfig (windows . copy)),
          ((mod4Mask .|. shiftMask, xK_n), addWorkspacePrompt defaultXPConfig),
          ((mod4Mask .|. shiftMask, xK_Return), spawnHere "/usr/bin/x-terminal-emulator"),
          ((mod4Mask .|. shiftMask, xK_r), renameWorkspace defaultXPConfig),
+         ((mod4Mask .|. shiftMask, xK_t), kill1),
          ((mod4Mask .|. shiftMask, xK_w), gridselectWorkspace defaultGSConfig (\ws -> greedyView ws . shift ws)),
+         ((mod4Mask, xK_1), switchWorkspace "web" ),
+         ((mod4Mask, xK_2), switchWorkspace "terminal" ),
+         ((mod4Mask, xK_3), switchWorkspace "1" ),
+         ((mod4Mask, xK_4), switchWorkspace "2" ),
+         ((mod4Mask, xK_5), switchWorkspace "3" ),
+         ((mod4Mask, xK_6), switchWorkspace "4" ),
+         ((mod4Mask, xK_7), switchWorkspace "5" ),
+         ((mod4Mask, xK_8), switchWorkspace "6" ),
+         ((mod4Mask, xK_9), switchWorkspace "images" ),
+         --((mod4Mask, xK_apostrophe), scratchpadSpawnActionTerminal "gvim"),
+         ((mod4Mask, xK_backslash), withFocused (sendMessage . maximizeRestore)),
          ((mod4Mask, xK_b), sendMessage ToggleStruts),
          ((mod4Mask, xK_g), goToSelected defaultGSConfig),
-         ((mod4Mask, xK_KP_Subtract), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_queueplay_mpd"),
-         ((mod4Mask, xK_KP_Multiply), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_queue_mpd"),
-         ((mod4Mask, xK_KP_Divide), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_play_mpd"),
+         --((mod4Mask, xK_grave), scratchpadSpawnActionTerminal "urxvt"),
+         {-((mod4Mask, xK_grave), switchWorkspace "IM" ),-}
          ((mod4Mask, xK_KP_Add), spawn "/usr/bin/zsh /home/edwlan/bin/dzen_mpc_status"),
+         ((mod4Mask, xK_KP_Divide), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_play_mpd"),
+         ((mod4Mask, xK_KP_Multiply), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_queue_mpd"),
+         ((mod4Mask, xK_KP_Subtract), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_queueplay_mpd"),
          ((mod4Mask, xK_p), spawnHere "/usr/bin/dmenu_run -f"),
-
          ((mod4Mask, xK_q), ((withSelectedWindow $ windows . W.focusWindow) defaultGSConfig) >> (windows $ W.shiftMaster)),
          ((mod4Mask, xK_semicolon), nchooseLayout defaultGSConfig),
          ((mod4Mask, xK_w), gridselectWorkspace defaultGSConfig (\ws -> greedyView ws))
-      ] ++ zip (zip (repeat (mod4Mask)) ([xK_0])) (map (withNthWorkspace greedyView) [0..]) ++
-         zip (zip (repeat (mod4Mask .|. shiftMask)) ([xK_0])) (map (withNthWorkspace copy) [0..]) 
-         ++ zip (zip (repeat (mod4Mask)) (map (numPadKeys !!) ([0]))) (map (withNthWorkspace greedyView) [0..])
-      )
+      ]
+      ++ zip (zip (repeat (mod4Mask)) ([xK_0])) (map (withNthWorkspace greedyView) [0..])
+      ++ zip (zip (repeat (mod4Mask .|. shiftMask)) ([xK_0])) (map (withNthWorkspace copy) [0..]) 
+      ++ zip (zip (repeat (mod4Mask)) (map (numPadKeys !!) ([0]))) (map (withNthWorkspace greedyView) [0..])
+      ++ [
+         ((mod4Mask .|. mod1Mask, xK_1), namedScratchpadAction scratchpads "notes"),
+         ((mod4Mask .|. mod1Mask, numPadKeys !! 1), namedScratchpadAction scratchpads "notes"),
+         ((mod4Mask .|. mod1Mask, xK_2), namedScratchpadAction scratchpads "mutt"),
+         ((mod4Mask .|. mod1Mask, numPadKeys !! 2), namedScratchpadAction scratchpads "mutt"),
+         ((mod4Mask .|. mod1Mask, xK_3), namedScratchpadAction scratchpads "irc"),
+         ((mod4Mask .|. mod1Mask, numPadKeys !! 3), namedScratchpadAction scratchpads "irc"),
+         ((mod4Mask .|. mod1Mask, xK_4), namedScratchpadAction scratchpads "htop"),
+         ((mod4Mask .|. mod1Mask, numPadKeys !! 4), namedScratchpadAction scratchpads "htop"),
+         ((mod4Mask .|. mod1Mask, xK_5), namedScratchpadAction scratchpads "mpc"),
+         ((mod4Mask .|. mod1Mask, numPadKeys !! 5), namedScratchpadAction scratchpads "mpc"),
+         ((mod4Mask .|. mod1Mask, xK_6), namedScratchpadAction scratchpads "mcabber"),
+         ((mod4Mask .|. mod1Mask, numPadKeys !! 6), namedScratchpadAction scratchpads "mcabber")
+      ]) 
 
 numPadKeys :: [KeySym]
 numPadKeys = [xK_KP_Insert -- 0

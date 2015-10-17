@@ -27,12 +27,13 @@ export MPD_HOST=srv2.elangley.org
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
 fpath=(~/.zsh.d/completion ~/.zsh.d/functions $fpath)
-plugins=(git ruby rails osx brew zsh-syntax-highlighting python git-extra git-flow battery)
+plugins=(git rails osx brew zsh-syntax-highlighting python git-extra git-flow battery)
 
 source $ZSH/oh-my-zsh.sh
 unsetopt correct_all
 
 echo "done oh-my-zsh"
+unalias sp
 
 # Customize to your needs...
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/texbin:/usr/X11/bin:/opt/local/bin:/sbin/usr/sbin:$PATH
@@ -51,7 +52,9 @@ elif [ -x /usr/games/fortune ]; then export FORTUNE=/usr/games/fortune
 else export FORTUNE=/usr/bin/fortune
 fi
 
-$FORTUNE
+if [ -x "$FORTUNE" ]; then
+  $FORTUNE
+fi
 
 function battery_charge() {
   python "$HOME/bin/batcharge.py" 2>/dev/null
@@ -104,7 +107,7 @@ if [[ $TERM != "linux" ]]; then
 fi
 
 PATH=/home/edwlan/bin:/usr/local/bin:$PATH
-export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/bin:/Developer/usr/bin:$PATH"
+export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/.local/bin:$HOME/bin:/Developer/usr/bin:$PATH"
 export VIMCLOJURE_SERVER_JAR="$HOME/bin/jars/server-2.3.6.jar"
 export INFOPATH=/usr/local/share/info:/usr/local/texlive/2009/texmf/doc/info
 export SAVEHIST=10000000
@@ -169,7 +172,7 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' insert-unambiguous true
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**'
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[-._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[-._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[-._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[-._]=** r:|=**'
 zstyle ':completion:*' menu select=0
 zstyle ':completion:*' original false
 zstyle ':completion:*' prompt '%e errors:'
@@ -381,34 +384,39 @@ psc() {
 }
 
 activate_env() {
-   if [[ -e bin/activate ]]; then
-     echo "sourcing local env: `pwd`/bin/activate"
-     source bin/activate
-   else
-     env=$1
-     pushd $HOME/python_envs/ > /dev/null
+  venv=.
+  if [[ -e bin/activate ]]; then
+    echo "sourcing local env: `pwd`/bin/activate"
+  elif [[ -e venv/bin/activate ]]; then
+    echo "sourcing local env: `pwd`/venv/bin/activate"
+    venv=venv
+  else
+    env=$1
+    pushd $HOME/python_envs/ > /dev/null
+    venv="$PWD/$env"
+    popd
 
-     if [[ $env == "" ]]; then
-        counter=1
-        typeset -A choices
-        unset choice
-        for x in `ls`; do
-           echo $counter\) $x
-           choices[$counter]=$x
-           (( counter++ ))
-        done
-        echo -n "your choice? "
-        choice=-1
-        read choice
-        if [[ $choice == "" ]]; then
-           return
-        fi
-        env=$choices[$choice]
-        echo "you chose $env"
-     fi
-     source $env/bin/activate
-     popd > /dev/null
-   fi
+    if [[ $env == "" ]]; then
+      counter=1
+      typeset -A choices
+      unset choice
+      for x in `ls "$venv"`; do
+        echo $counter\) `basename $x`
+        choices[$counter]=$x
+        (( counter++ ))
+      done
+      echo -n "your choice? "
+      choice=-1
+      read choice
+      if [[ $choice == "" ]]; then
+        return
+      fi
+      venv="$venv/$choices[$choice]"
+      echo "you chose $venv"
+    fi
+  fi
+  source $venv/bin/activate
+  unset venv env;
 }
 alias ae=activate_env
 
@@ -588,6 +596,10 @@ mkcd() {
   cd "$1"
 }
 
+groot() {
+  cd `git rev-parse --show-toplevel`
+}
+
 ### load my plugins
 
 for x in `ls $HOME/.zsh.d/*.zsh`; do
@@ -595,6 +607,7 @@ for x in `ls $HOME/.zsh.d/*.zsh`; do
 done
 alias cn=current_news
 
+#chruby ruby-2.2.2
 # vim: set filetype=sh:
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
