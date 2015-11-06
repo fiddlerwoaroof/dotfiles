@@ -57,7 +57,8 @@ if [ -x "$FORTUNE" ]; then
 fi
 
 function battery_charge() {
-  python "$HOME/bin/batcharge.py" 2>/dev/null
+  # the -S is for performance
+  python -S "$HOME/bin/batcharge.py" 2>/dev/null
 }
 
 autoload -Uz vcs_info
@@ -82,9 +83,7 @@ PROMPT='---
 (%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge` 
 %!:%# '
 export PROMPT
-RPROMPT='[%T]'
 
-export RPROMPT
 HOSTNAME=`hostname -f`
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
 

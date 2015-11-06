@@ -11,10 +11,22 @@ spf() {
   tmux split-window "$*"
 }
 
+_vman_helper() {
+  inp="`mktemp -u`"
+  mkfifo "$inp"
+  echo "$inp"
+  vsp man -l "$inp"
+}
+
 vman() {
-  if [[ x"" != x"$TMUX" ]]; then
-    vsp man $*
+  if [[ x"$TMUX" != x"" ]]; then
+    if [[ x"$1" == "x" ]]; then
+      cat - > `_vman_helper`
+    else
+      vsp man $*
+    fi
   else
     man $*
   fi
 }
+

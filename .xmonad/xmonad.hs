@@ -259,7 +259,7 @@ maximizeFlop = do
 
 main :: IO ()
 main = do
-   xmproc <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc"
+   xmproc <- spawnPipe "/home/edwlan/.local/bin/xmobar /home/edwlan/.xmobarrc"
    --xmproc1 <- spawnPipe "/home/edwlan/.cabal/bin/xmobar /home/edwlan/.xmobarrc1"
    xmonad $ ewmh defaultConfig {
          manageHook = myManageHook <+> manageSpawn <+> manageHook defaultConfig,
@@ -356,7 +356,7 @@ main = do
          ((mod4Mask, xK_KP_Divide), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_play_mpd"),
          ((mod4Mask, xK_KP_Multiply), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_queue_mpd"),
          ((mod4Mask, xK_KP_Subtract), spawn "/usr/bin/zsh /home/edwlan/bin/dmenu_queueplay_mpd"),
-         ((mod4Mask, xK_p), spawnHere "/usr/bin/dmenu_run -f"),
+         ((mod4Mask, xK_p), spawnHere "/home/edwlan/bin/yeganesh_run -f"),
          ((mod4Mask, xK_q), ((withSelectedWindow $ windows . W.focusWindow) defaultGSConfig) >> (windows $ W.shiftMaster)),
          ((mod4Mask, xK_semicolon), nchooseLayout defaultGSConfig),
          ((mod4Mask, xK_w), gridselectWorkspace defaultGSConfig (\ws -> greedyView ws))
