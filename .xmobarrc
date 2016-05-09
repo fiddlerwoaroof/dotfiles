@@ -1,7 +1,7 @@
 Config { font = "xft:Source Code Pro:size=8:antialias=true"
        , bgColor = "black"
        , fgColor = "grey"
-       , position = TopW L 90
+       , position = TopW L 100
        , commands = [ Run Weather "EGPF" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
                     , Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10
                     , Run Memory ["-t","Mem: <usedratio>%"] 10

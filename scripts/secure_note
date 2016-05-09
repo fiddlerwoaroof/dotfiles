@@ -15,11 +15,27 @@ base = os.path.join(os.environ.get("HOME"), "Dropbox", "secure_notes")
 print base
 
 import subprocess
+
+class Menu(object):
+    def __init__(self, choices):
+        self.choices = sorted(choices)
+    def choose(self, choice):
+        choice = int(choice)
+        return self.choices[choice-1]
+    def __str__(self):
+        return '\n'.join('%4d) %s' % x for x in  enumerate(self.choices, 1))
+
 if args.new:
     print args.name
     proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-o", os.path.join(base, args.name), "-e"])
 elif args.read:
     print args.name
+    if args.name is None:
+        menu = Menu(os.listdir(base))
+        print menu
+        choice = raw_input('choice? ').strip()
+        if choice.isdigit():
+            args.name = menu.choose(choice)
     proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-d", os.path.join(base, args.name)])
 elif args.list:
     files = os.listdir(base)

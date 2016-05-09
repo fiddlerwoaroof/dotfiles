@@ -15,7 +15,8 @@ _secure_note() {
     file)
       case $words[2] in
         '-r')
-          pushd $HOME/Dropbox/secure_notes > /dev/null
+          pushd $HOME/Dropbox/secure_notes  > /dev/null
+          #echo *
           compadd "$@" *
           popd > /dev/null
           ;;
