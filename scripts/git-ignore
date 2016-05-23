@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('files_to_ignore', nargs='*')
+args = parser.parse_args()
+
+try:
+  lines = []
+
+  if args.files_to_ignore != []:
+    lines.extend(args.files_to_ignore)
+
+  else:
+    lines = []
+    try:
+      getline = lambda: raw_input('? ').strip()
+      line = getline()
+      while line != '.':
+        lines.append(line)
+        line = getline()
+    except EOFError:
+      pass
+
+
+  with open('.gitignore', 'a') as f:
+    for line in lines:
+      print 'ignoring %s' % line
+      print >> f, line
+except KeyboardInterrupt:
+  pass

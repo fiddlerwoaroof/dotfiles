@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+if tmux list-sessions; then
+  echo -n "Choose session? "
+  read SESS
+  tmux attach -d -t $SESS
+else
+  tmux
+fi

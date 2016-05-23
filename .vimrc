@@ -52,6 +52,8 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 
 
 
+NeoBundle 'dbakker/vim-paragraph-motion'
+ NeoBundle 'jceb/vim-editqf'
  NeoBundle 'mustache/vim-mustache-handlebars'
  NeoBundle 'davidoc/taskpaper.vim'
  NeoBundle 'altercation/vim-colors-solarized'
@@ -85,7 +87,7 @@ NeoBundleFetch 'Shougo/neobundle.vim'
  NeoBundle 'othree/javascript-libraries-syntax.vim'
  NeoBundle 'pangloss/vim-javascript'
  NeoBundle 'raichoo/haskell-vim'
- "NeoBundle 'rking/ag.vim' "Ag search utility
+ NeoBundle 'rking/ag.vim' "Ag search utility
  NeoBundle 'rust-lang/rust.vim'
  NeoBundle 'scrooloose/nerdcommenter'
  NeoBundle 'scrooloose/nerdtree'
@@ -361,12 +363,12 @@ if executable('ag')
   "Use ag in unite grep source.
   let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '', '--ignore', '.git', '--ignore', '.sass-cache']
   let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '', '--ignore', '.git', '--ignore', '.sass-cache']
-  "let g:unite_source_grep_command = 'ag'
-  "let g:unite_source_grep_default_opts =
-  "      \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
-  "      \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
-  "      \ '--ignore ''**/*.pyc'''
-  "let g:unite_source_grep_recursive_opt = ''
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts =
+        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+        \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
+        \ '--ignore ''**/*.pyc'''
+  let g:unite_source_grep_recursive_opt = ''
 elseif executable('ack-grep')
   let g:unite_source_grep_command = 'ack-grep'
   " Match whole word only. This might/might not be a good idea

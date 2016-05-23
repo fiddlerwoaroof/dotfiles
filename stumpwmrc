@@ -1,0 +1,114 @@
+(in-package :stumpwm)
+
+(eval-when (:load-toplevel :compile-toplevel :execute)
+  (load "~/quicklisp/setup.lisp")
+  (ql:quickload :swank))
+
+(defcommand start-swank () ()
+  (swank:start-server :port 4587 :dont-close t))
+
+
+(set-prefix-key (kbd "s-space"))
+
+(defparameter *browser-command* "/usr/bin/google-chrome-beta")
+
+(defun cat (&rest strings)
+  (apply 'concatenate 'string strings))
+
+(defgeneric get-search-url (provider &rest strings)
+  (:method-combination append :most-specific-last)
+  (:method :around (provider &rest r)
+   (declare (ignore r))
+   (apply #'concatenate 'string (call-next-method)))
+
+  (:method append (provider &rest r)
+   (declare (ignore r))
+   (list "https://duckduckgo.com/?q="))
+  (:method append ((provider (eql nil)) &rest strings)
+   (list* (car strings) (loop for string in (cdr strings) nconcing (list "+" string))))
+
+  (:method append ((provider (eql :google)) &rest strings)
+   (list* "%21google" (loop for string in strings nconcing (list "+" string)))))
+
+(defmacro add-provider (name ddg-shortcut)
+  `(defmethod get-search-url append ((provider (eql ,name)) &rest strings)
+     (list* (concatenate 'string "%21" ,ddg-shortcut)
+            (loop for string in strings nconcing (list "+" string)))))
+
+(defmacro add-providers (&body definitions)
+  `(progn
+     ,@(loop for (name shortcut) in definitions
+             collect `(add-provider ,name ,shortcut))))
+
+
+(add-providers
+  (:amazon "a")
+  (:php "php")
+  (:python "python")
+  (:stack-overflow "sof")
+  (:lisp "lisp")
+  (:wikipedia "w"))
+
+(defcommand google (provider search-string) ((:string "Search Provider? ") (:string "Search Google for: "))
+  "Search google for a given string"
+  (check-type search-string (or null string))
+  (when search-string)
+  (run-shell-command (cat *browser-command* " "
+                          (get-search-url :google (substitute #\+ #\space search-string)))))
+
+
+(defcommand do-search (provider search-string) ((:string "Provider: ") (:string "Search for: "))
+  "Run a search against a specified provider"
+  (check-type provider (or null string))
+  (check-type search-string (or null string))
+  (when (and provider search-string)
+    (let ((provider (intern (string-upcase provider) :keyword)))
+      (run-shell-command (cat *browser-command* " "
+                              (get-search-url provider (substitute #\+ #\space search-string)))))))
+
+(defcommand google (search-string) ((:string "Search Google for: "))
+  "Search google for a given string"
+  (check-type search-string (or null string))
+  (when search-string
+    (run-shell-command (cat *browser-command* " "
+                            (get-search-url :google (substitute #\+ #\space search-string))))))
+
+(defcommand duckduckgo (search-string) ((:string "Search DDG for: "))
+  "Search duckduckgo gor a given string"
+  (check-type search-string (or null string))
+  (when search-string
+    (run-shell-command (cat *browser-command* " "
+                            (get-search-url nil (substitute #\+ #\space search-string))))))
+
+(defcommand search-for-selection (provider) ((:string "Search Provider?"))
+  "Search for the x selection with provider"
+  (do-search provider (get-x-selection)))
+
+(defparameter *selection-search-map* nil "selection search map")
+(fill-keymap *selection-search-map*
+             (kbd "g") "search-for-search google"
+             (kbd "/") "search-for-search google"
+             (kbd "s-/") "search-for-search google" 
+             (kbd "l") "search-for-selection lisp")
+
+(defparameter *search-map* nil "search map")
+(fill-keymap *search-map*
+             (kbd "a") "do-search amazon"
+             (kbd "h") "do-search php"
+             (kbd "p") "do-search python"
+             (kbd "o") "do-search stack-overflow"
+             (kbd "y") "do-search youtube"
+             (kbd "l") "do-search lisp"
+             (kbd "w") "do-search wikipedia"
+             (kbd "d") "do-search duckduckgo"
+             (kbd "g") "do-search google"
+             (kbd "s") *selection-search-map*
+             (kbd "/") "do-search google"
+             (kbd "Return") "search-for-selection google"
+             (kbd "s-/") "do-search google")
+
+(define-key *top-map* (kbd "s-/") *search-map*)
+(define-key *top-map* (kbd "s-TAB") "fnext")
+(define-key *top-map* (kbd "s-ISO_Left_Tab") "fother")
+
+; vim: set ft=lisp:

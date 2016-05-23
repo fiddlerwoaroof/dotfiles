@@ -1,0 +1,22 @@
+#!/bin/python -u
+import collections
+import os
+
+items = collections.OrderedDict()
+
+import sys
+
+def file_iter(fil):
+    line = 0;
+    while line != '':
+        line = fil.readline()
+        yield line
+
+if __name__ == '__main__':
+    for lin in file_iter(sys.stdin):
+        head, _, tail = os.path.basename(lin).rpartition('__')
+        items.setdefault(head, []).append(lin)
+
+    for key in items:
+        if len(items[key]) > 1:
+            print '\n'.join(sorted(items[key]))

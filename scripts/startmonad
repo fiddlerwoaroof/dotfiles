@@ -61,6 +61,5 @@ export SSH_AUTH_SOCK
 export GPG_AGENT_INFO
 export GNOME_KEYRING_PID
 
-
 exec ssh-agent /home/edwlan/bin/stumpwm
 #exec xmonad

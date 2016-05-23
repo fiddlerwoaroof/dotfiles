@@ -1,0 +1,16 @@
+#!/usr/bin/python2
+import subprocess
+import random
+import argparse
+
+p = argparse.ArgumentParser()
+p.add_argument('probability', nargs=2)
+p.add_argument('program')
+
+args = p.parse_args()
+
+prob = map(float, args.probability)
+prob = prob[0]/prob[1]
+
+if random.random() < prob:
+    subprocess.call(args.program)
