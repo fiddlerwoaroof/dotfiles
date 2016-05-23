@@ -56,11 +56,6 @@ if [ -x "$FORTUNE" ]; then
   $FORTUNE
 fi
 
-function battery_charge() {
-  # the -S is for performance
-  python -S "$HOME/bin/batcharge.py" 2>/dev/null
-}
-
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' actionformats \
     '%F{5}%f%s%F{5}%F{3}->%F{5}%F{2}%b%F{3}|%F{1}%a%F{5}%f'
@@ -79,10 +74,6 @@ vcs_info_wrapper() {
 
 export PYTHONSTARTUP=$HOME/Library/Python/2.7/site-packages/sitecustomize.py
 setopt promptsubst
-PROMPT='---
-(%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge`
-%!:%# '
-export PROMPT
 
 HOSTNAME=`hostname -f`
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
@@ -517,14 +508,15 @@ mkcd() {
   cd "$1"
 }
 
-groot() {
-  cd `git rev-parse --show-toplevel`
-}
-
 for x in `ls $HOME/.zsh.d/*.zsh`; do
   source "$x"
 done
 alias cn=current_news
+
+PROMPT='---
+(%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge 2>/dev/null`
+%!:%# '
+export PROMPT
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/Users/edwlan/.gvm/bin/gvm-init.sh" ]] && source "/Users/edwlan/.gvm/bin/gvm-init.sh"

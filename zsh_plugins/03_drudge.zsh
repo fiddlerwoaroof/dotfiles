@@ -1,7 +1,7 @@
 # Drudge Report Reader
 # requires my rss2json script, my interface to python-goose, pandoc and my rss zsh plugin
 check_drudge() {
-  rss2json http://www.drudgereportarchives.com/rss/popular.xml | jq  '[.[0].entries[] | {title:.title, link:.link}]' 
+  rss2json http://www.drudgereportfeed.com/rss.xml | jq  '[.[0].entries[] | {title:.title, link:.link}]' 
 }
 
 read_drudge() {

@@ -12,9 +12,8 @@ alias html2man='2man html'
 alias md2man='2man markdown'
 alias latex2man='2man latex'
 
-man_fun="man -l -"
 _pandoc_view() {
-  2man $1 $2 | $man_fun
+  2man $1 $2 | man -l -
 }
 
 pandoc_view() {
