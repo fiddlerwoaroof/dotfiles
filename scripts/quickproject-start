@@ -1,0 +1,29 @@
+#!/usr/bin/sbcl --script
+(load #p"~/.sbclrc")
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ql:quickload :fwoar.lisputils)
+  (ql:quickload :swank-client)
+  (ql:quickload :quickproject))
+
+(defparameter *host* "localhost")
+(defparameter *port* 4005)
+
+(defparameter *out* 
+  (fw.lu:let-each (:be *)
+    (cadr sb-ext:*posix-argv*)
+    (uiop:ensure-directory-pathname *)
+    (merge-pathnames *)))
+
+(quickproject:make-project *out*
+                           :depends-on '(:fwoar.lisputils
+                                          :alexandria
+                                          :serapeum))
+
+(swank-client:with-slime-connection (conn *host* *port*)
+  (swank-client:slime-eval
+    `(progn
+       (push ,(car asdf:*central-registry*) asdf:*central-registry*))
+    conn))
+
+; vim: set ft=lisp:
