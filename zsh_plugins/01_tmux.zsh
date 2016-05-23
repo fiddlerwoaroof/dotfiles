@@ -30,6 +30,25 @@ vman() {
   fi
 }
 
+_vless_helper() {
+  inp="`mktemp -u`"
+  mkfifo "$inp"
+  echo "$inp"
+  vsp $PAGER "$inp"
+}
+
+vless() {
+  if [[ x"$TMUX" != x"" ]]; then
+    if [[ x"$1" == "x" ]]; then
+      cat - > `_vless_helper`
+    else
+      vsp ${PAGER:-less} "$@"
+    fi
+  else
+    ${PAGER:-less} "$@"
+  fi
+}
+
 tmux_ps() {
   (for s in `tmux list-sessions -F '#{session_name}'` ; do
     echo -e "\ntmux session name: $s\n--------------------"

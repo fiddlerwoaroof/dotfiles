@@ -15,7 +15,7 @@ if [[ "$GIT_CMD"x != ""x ]]; then
   g() {
     POSSIBLE_CMD="git-$1"
     if is-function $POSSIBLE_CMD; then
-      $POSSIBLE_CMD
+      $POSSIBLE_CMD "${@[2,-1]}"
     else
       git "$@"
     fi
