@@ -56,6 +56,12 @@ if [ -x "$FORTUNE" ]; then
   $FORTUNE
 fi
 
+function battery_charge() {
+  if [[ $LAPTOP[1] == 'y' &&  $TERM != "xterm" ]]; then
+    python "$HOME/bin/batcharge.py" 2>/dev/null
+  fi
+}
+
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' actionformats \
     '%F{5}%f%s%F{5}%F{3}->%F{5}%F{2}%b%F{3}|%F{1}%a%F{5}%f'
@@ -72,8 +78,24 @@ vcs_info_wrapper() {
   fi
 }
 
+function zle-line-init zle-keymap-select {
+  RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
+  RPS2=$RPS1
+  zle reset-prompt
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+
 export PYTHONSTARTUP=$HOME/Library/Python/2.7/site-packages/sitecustomize.py
 setopt promptsubst
+
+PROMPT='---
+(%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge` 
+%!:%# '
+export PROMPT
+#RPROMPT='[%T]'
 
 HOSTNAME=`hostname -f`
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
@@ -109,7 +131,7 @@ if [[ $TERM != "linux" ]]; then
    add-zsh-hook precmd termtitle
 fi
 
-PATH=/home/edwlan/bin:/usr/local/bin:$PATH
+PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH="/opt/local/bin:/usr/sbin:/sbin/usr/sbin:/sbin:$HOME/.cabal/bin:$HOME/.local/bin:$HOME/bin:/Developer/usr/bin:$PATH"
 export VIMCLOJURE_SERVER_JAR="$HOME/bin/jars/server-2.3.6.jar"
 export INFOPATH=/usr/local/share/info:/usr/local/texlive/2009/texmf/doc/info
@@ -169,7 +191,7 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' insert-unambiguous true
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._]=** r:|=**'
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._\ ]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._\ ]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._\ ]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._\ ]=** r:|=**'
 zstyle ':completion:*' menu select=0
 zstyle ':completion:*' original false
 zstyle ':completion:*' prompt '%e errors:'
@@ -517,6 +539,9 @@ PROMPT='---
 (%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge 2>/dev/null`
 %!:%# '
 export PROMPT
+
+set -o vi
+bindkey -M vicmd '?' history-incremental-search-backward
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/Users/edwlan/.gvm/bin/gvm-init.sh" ]] && source "/Users/edwlan/.gvm/bin/gvm-init.sh"

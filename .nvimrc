@@ -1,3 +1,5 @@
+set t_kb=
+
 let g:python_host_prog = '/usr/bin/python'
 let g:python3_host_prog = '/usr/bin/python3'
 
@@ -75,16 +77,17 @@ NeoBundle 'eagletmt/ghcmod-vim'
 NeoBundle 'eagletmt/neco-ghc'
 NeoBundle 'Twinside/vim-hoogle'
 
+" If there are uninstalled bundles found on startup,
+" this will conveniently prompt you to install them.
+NeoBundleCheck
+"End NeoBundle Scripts-------------------------
+
 " Required:
 call neobundle#end()
 
 " Required:
 filetype plugin indent on
 
-" If there are uninstalled bundles found on startup,
-" this will conveniently prompt you to install them.
-NeoBundleCheck
-"End NeoBundle Scripts-------------------------
 
 set mouse= ";; Disable mouse sensitivity !!!
 set nohlsearch
@@ -352,6 +355,7 @@ nmap [unite]h :<C-u>set hlsearch!<C-m>
 nmap [unite]t :<C-u>NERDTreeToggle<CR>
 nmap [unite]u :<C-u>GundoToggle<CR>
 nmap [unite]r :<C-u>!vagrant rsync<CR>
+nmap [unite]R      <C-W>t:buffer REPL<CR>
 
 " Reload
 map <silent> tu :call GHC_BrowseAll()<CR>

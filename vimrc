@@ -405,3 +405,4 @@ map <silent> tw :call GHC_ShowType(1)<CR>
 autocmd BufRead,BufNewFile *.css,*.scss,*.less setlocal foldmethod=marker foldmarker={,}
 
 command -nargs=+ Gadd Git add <q-args>
+" set runtimepath+=/Applications/LilyPond.app/Contents/Resources/share/lilypond/current/vim

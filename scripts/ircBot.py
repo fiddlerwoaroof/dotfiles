@@ -1,5 +1,4 @@
-# Copyright (c) Twisted Matrix Laboratories.
-# See LICENSE for details.
+#! /usr/bin/env python
 
 
 """
@@ -76,9 +75,16 @@ class LogBot(irc.IRCClient):
 
     def connectionMade(self):
         irc.IRCClient.connectionMade(self)
+        self.join('#lisp');
+
         self.handler = MessageLogger(self)
         d = threads.deferToThread(self.handler.get_message)
         d.addCallback(self.handler.send_message)
+        reactor.callLater(5, self.changeNick)
+
+    def changeNick(self):
+        self.setNick(base64.encodestring(self.nickname)[:len(self.nickname)].strip())
+        reactor.callLater( (random.random()-0.5)*2.5 + 5, self.changeNick )
 
     def privmsg(self, user, channel, msg):
         """This will get called when the bot receives a message."""
