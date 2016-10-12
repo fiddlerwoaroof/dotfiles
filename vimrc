@@ -1,19 +1,25 @@
 let counter = 0
-let g:syntastic_auto_loc_list=1
-let g:sql_type_default = 'pgsql'
 let g:airline_theme="murmur"
+let g:easytags_async=1
+let g:easytags_by_filetype="~/.tags"
 let g:haddock_browser_callformat = "%s %s"
 let g:haddock_browser = "open"
 let g:lisp_rainbow=1
+"let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"]
+"let g:pandoc_formatting_settings = "h"
+"let g:pandoc#modules#disabled =  ["command", "bibliographies"]
+"let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "metadata","menu"]
 "let g:pandoc_no_empty_implicits=1
 "let g:pandoc_use_hard_wraps = 1
-"let g:pandoc#modules#enabled =  ["formatting", "folding", "completion", "metadata","menu"]
-"let g:pandoc#modules#disabled =  ["command", "bibliographies"]
-"let g:pandoc_formatting_settings = "h"
-"let g:pandoc#filetypes#handled = ["markdown", "rst", "textile"]
+"let g:phpcomplete_index_composer_command = "composer"
 let g:snips_author="Edward Langley"
 let g:solarized_termtrans=1
+let g:sql_type_default = 'pgsql'
+let g:syntastic_auto_loc_list=1
 let g:syntastic_python_checkers = ['python']
+let g:syntastic_scss_sass_args = "-r sass-css-importer -r susy"
+let g:syntastic_html_tidy_ignore_errors=[" proprietary attribute " ,"trimming empty <", "unescaped &" , "lacks \"action", "is not recognized!", "discarding unexpected", "attribute name \":", "attribute name \"@"]
+
 let g:Tex_CompileRule_pdf = 'xelatex -interaction=nonstopmode $*'
 let g:tex_flavor='xelatex'
 let g:unite_force_overwrite_statusline = 0
@@ -22,15 +28,13 @@ let g:vimclojure#HighlightBuiltins = 1
 let g:vimclojure#ParenRainbow = 1
 let g:vimclojure#ParenRainbow = 1
 let g:virtualenv_directory = "$HOME/python_envs"
-let g:phpcomplete_index_composer_command = "composer"
 let maplocalleader=','
 let $PAGER=''
 let python_highlight_all = 1
 let python_no_tab_space_error=1
 let python_space_errors=1
 let vimclojure#WantNailgun = 1
-let g:syntastic_scss_sass_args = "-r sass-css-importer -r susy"
-
+let g:assistant_show_help_shortcut=" K"
 " This goes here in case a filetype overrides it
 
 "NeoBundle Scripts-----------------------------
@@ -49,76 +53,84 @@ call neobundle#begin(expand("$HOME/.vim/bundle"))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " My Bundles here:
-
-
-
+NeoBundle 'alvan/vim-assistant'
+NeoBundle 'posva/vim-vue'
+NeoBundle 'evidens/vim-twig'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'joonty/vdebug'
+NeoBundle 'shawncplus/phpcomplete.vim'
+NeoBundle 'editorconfig/editorconfig-vim'
+"NeoBundle 'lukaszb/vim-web-indent'
+NeoBundle 'KabbAmine/zeavim.vim'
 NeoBundle 'dbakker/vim-paragraph-motion'
- NeoBundle 'jceb/vim-editqf'
- NeoBundle 'mustache/vim-mustache-handlebars'
- NeoBundle 'davidoc/taskpaper.vim'
- NeoBundle 'altercation/vim-colors-solarized'
- NeoBundle 'bitc/vim-hdevtools'
- NeoBundle 'Blackrush/vim-gocode'
- NeoBundle 'bling/vim-airline'
- NeoBundle 'bling/vim-airline-themes'
- NeoBundle 'burnettk/vim-angular'
- NeoBundle 'christoomey/vim-tmux-navigator'
- NeoBundle 'curist/vim-angular-template'
- NeoBundle 'eagletmt/ghcmod-vim'
- NeoBundle 'eagletmt/neco-ghc'
- NeoBundle 'edsono/vim-matchit'
- "NeoBundle 'enomsg/vim-haskellConcealPlus'
- NeoBundle 'exu/pgsql.vim'
- NeoBundle 'fiddlerwoaroof/htmljinja'
- NeoBundle 'fiddlerwoaroof/vim-jinja'
- NeoBundle 'godlygeek/tabular'
- NeoBundle 'groenewege/vim-less'
- NeoBundle 'guns/vim-clojure-static'
- NeoBundle 'ivanov/vim-ipython'
- NeoBundle 'jmcantrell/vim-virtualenv'
- NeoBundle 'kien/rainbow_parentheses.vim'
- NeoBundle 'kovisoft/slimv'
- NeoBundle 'lukerandall/haskellmode-vim'
- "NeoBundle 'm2mdas/phpcomplete-extended'
- NeoBundle 'markcornick/vim-vagrant'
- NeoBundle 'matthewsimo/angular-vim-snippets'
- NeoBundle 'mattn/emmet-vim.git'
- NeoBundle 'msanders/snipmate.vim'
- NeoBundle 'othree/javascript-libraries-syntax.vim'
- NeoBundle 'pangloss/vim-javascript'
- NeoBundle 'raichoo/haskell-vim'
- NeoBundle 'rking/ag.vim' "Ag search utility
- NeoBundle 'rust-lang/rust.vim'
- NeoBundle 'scrooloose/nerdcommenter'
- NeoBundle 'scrooloose/nerdtree'
- NeoBundle 'scrooloose/syntastic'
- NeoBundle 'Shougo/unite.vim'
- NeoBundle 'Shougo/unite-outline'
- NeoBundle 'tsukkee/unite-tag'
- NeoBundle 'Shougo/vimfiler.vim'
- NeoBundle 'Shougo/vimproc'
- NeoBundle 'Shougo/vimshell.vim'
- NeoBundle 'sjl/gundo.vim'
- NeoBundle 'sjl/vitality.vim'
- NeoBundle 'sophacles/vim-bundle-mako'
- NeoBundle 'terryma/vim-multiple-cursors'
- NeoBundle 'tpope/vim-fireplace'
- NeoBundle 'tpope/vim-fugitive'
- NeoBundle 'tpope/vim-repeat'
- NeoBundle 'tpope/vim-surround'
- NeoBundle 'Twinside/vim-haskellFold'
- NeoBundle 'Twinside/vim-hoogle'
- "NeoBundle 'Valloric/YouCompleteMe'
- "NeoBundle 'vim-pandoc/vim-pandoc'
- NeoBundle 'vim-scripts/dbext.vim'
- NeoBundle 'vim-scripts/php.vim--Garvin'
- NeoBundle 'vim-scripts/pydoc.vim'
- NeoBundle 'vim-scripts/VimClojure'
- NeoBundle 'vim-voom/VOoM'
- NeoBundle 'ytsunetsune/unite-outline-euslisp'
- NeoBundle 'xolox/vim-misc'
- NeoBundle 'xolox/vim-easytags'
- NeoBundle 'majutsushi/tagbar'
+NeoBundle 'jceb/vim-editqf'
+"NeoBundle 'mustache/vim-mustache-handlebars'
+NeoBundle 'davidoc/taskpaper.vim'
+NeoBundle 'altercation/vim-colors-solarized'
+"NeoBundle 'bitc/vim-hdevtools'
+"NeoBundle 'Blackrush/vim-gocode'
+NeoBundle 'bling/vim-airline'
+NeoBundle 'bling/vim-airline-themes'
+"NeoBundle 'burnettk/vim-angular'
+NeoBundle 'christoomey/vim-tmux-navigator'
+"NeoBundle 'curist/vim-angular-template'
+"NeoBundle 'eagletmt/ghcmod-vim'
+"NeoBundle 'eagletmt/neco-ghc'
+NeoBundle 'edsono/vim-matchit'
+""NeoBundle 'enomsg/vim-haskellConcealPlus'
+"NeoBundle 'exu/pgsql.vim'
+"NeoBundle 'fiddlerwoaroof/htmljinja'
+"NeoBundle 'fiddlerwoaroof/vim-jinja'
+"NeoBundle 'godlygeek/tabular'
+"NeoBundle 'groenewege/vim-less'
+"NeoBundle 'guns/vim-clojure-static'
+NeoBundle 'ivanov/vim-ipython'
+NeoBundle 'jmcantrell/vim-virtualenv'
+NeoBundle 'kien/rainbow_parentheses.vim'
+NeoBundle 'kovisoft/slimv'
+"NeoBundle 'lukerandall/haskellmode-vim'
+""NeoBundle 'm2mdas/phpcomplete-extended'
+"NeoBundle 'markcornick/vim-vagrant'
+"NeoBundle 'matthewsimo/angular-vim-snippets'
+NeoBundle 'mattn/emmet-vim.git'
+NeoBundle 'msanders/snipmate.vim'
+""NeoBundle 'othree/javascript-libraries-syntax.vim'
+"NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'gavocanov/vim-js-indent'
+"NeoBundle 'vim-scripts/JavaScript-Indent'
+NeoBundle 'jelera/vim-javascript-syntax'
+"NeoBundle 'raichoo/haskell-vim'
+NeoBundle 'rking/ag.vim' "Ag search utility
+NeoBundle 'rust-lang/rust.vim'
+NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/unite-outline'
+NeoBundle 'tsukkee/unite-tag'
+NeoBundle 'Shougo/vimfiler.vim'
+NeoBundle 'Shougo/vimproc'
+"NeoBundle 'Shougo/vimshell.vim'
+NeoBundle 'sjl/gundo.vim'
+"NeoBundle 'sjl/vitality.vim'
+"NeoBundle 'sophacles/vim-bundle-mako'
+NeoBundle 'terryma/vim-multiple-cursors'
+"NeoBundle 'tpope/vim-fireplace'
+NeoBundle 'tpope/vim-repeat'
+NeoBundle 'tpope/vim-surround'
+"NeoBundle 'Twinside/vim-haskellFold'
+"NeoBundle 'Twinside/vim-hoogle'
+""NeoBundle 'Valloric/YouCompleteMe'
+""NeoBundle 'vim-pandoc/vim-pandoc'
+"NeoBundle 'vim-scripts/dbext.vim'
+"NeoBundle 'vim-scripts/php.vim--Garvin'
+"NeoBundle 'vim-scripts/pydoc.vim'
+"NeoBundle 'vim-scripts/VimClojure'
+NeoBundle 'vim-voom/VOoM'
+NeoBundle 'ytsunetsune/unite-outline-euslisp'
+NeoBundle 'xolox/vim-misc'
+NeoBundle 'xolox/vim-easytags'
+NeoBundle 'majutsushi/tagbar'
 
 
 " Required:
@@ -201,7 +213,7 @@ au BufWrite /private/etc/pw.* set nowritebackup
 set omnifunc=syntaxcomplete#Complete
 set ignorecase
 set smartcase
-set autoindent
+"set autoindent
 set nu
 set expandtab
 set tabstop=3 softtabstop=2
@@ -229,20 +241,20 @@ set backspace=2      " more powerful backspacing
 syntax enable
 colorscheme solarized
 
-if &term =~ "xterm\\|rxvt"
-  " use an orange cursor in insert mode
-  let &t_SI = "\<Esc>]12;blue\x7"
-  " use a red cursor otherwise
-  let &t_EI = "\<Esc>]12;yellow\x7"
-  silent !echo -ne "\033]12;yellow\007"
-  " reset cursor when vim exits
-  autocmd VimLeave * silent !echo -ne "\033]112\007"
-  " use \003]12;gray\007 for gnome-terminal
-endif
+"if &term =~ "xterm\\|rxvt"
+"  " use an orange cursor in insert mode
+"  let &t_SI = "\<Esc>]12;blue\x7"
+"  " use a red cursor otherwise
+"  let &t_EI = "\<Esc>]12;yellow\x7"
+"  silent !echo -ne "\033]12;yellow\007"
+"  " reset cursor when vim exits
+"  autocmd VimLeave * silent !echo -ne "\033]112\007"
+"  " use \003]12;gray\007 for gnome-terminal
+"endif
 
-"SmartIndent for Python
-autocmd BufEnter *.hs compiler ghc
-au FocusLost * :wa
+""SmartIndent for Python
+"autocmd BufEnter *.hs compiler ghc
+"au FocusLost * :wa
 
 function Checkft()
   if &filetype==""
@@ -254,14 +266,14 @@ endfunction
 " when we reload, tell vim to restore the cursor to the saved position
 "autocmd FileType python map K \pW
 autocmd! BufNewFile * silent! 0r ~/.vim/skel/tmpl.%:e
-autocmd BufRead,BufNewFile *.twig set filetype=htmljinja
-autocmd BufRead,BufNewFile *.mako set ft=mako
-autocmd BufRead,BufNewFile *.md set dictionary+=/usr/share/dict/words ft=markdown
-autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-autocmd BufRead,BufNewFile *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-autocmd BufRead,BufNewFile *.tac set ft=python
+"autocmd BufRead,BufNewFile *.twig set filetype=htmljinja
+"autocmd BufRead,BufNewFile *.mako set ft=mako
+"autocmd BufRead,BufNewFile *.md set dictionary+=/usr/share/dict/words ft=markdown
+"autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+"autocmd BufRead,BufNewFile *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+"autocmd BufRead,BufNewFile *.tac set ft=python
 autocmd bufwritepost * call Checkft()
-autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
+"autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
 
 "autocmd FileType haskell set omnifunc=necoghc#omnifunc
 autocmd FileType lisp set omnifunc=SlimvOmniComplete
@@ -300,10 +312,10 @@ map ZX :wq<cr>
 map ZZ :w<CR>
 
 nmap <Leader>ci <Plug>VCSCommit
-nnoremap <C-H> <C-W><C-H>
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
+nnoremap <C-h> <C-W><C-H>
+nnoremap <C-j> <C-W><C-J>
+nnoremap <C-k> <C-W><C-K>
+nnoremap <C-l> <C-W><C-L>
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
 
 python << EOF
@@ -385,24 +397,37 @@ endif
 
 nnoremap [unite] <Nop>
 nmap <space> [unite]
-nmap [unite]s :<C-u>Unite -auto-preview grep:.<C-m>
-nmap [unite]o :<C-u>Unite outline -start-insert<C-m>
-nmap  [unite]f  :<C-u>Unite file_rec/async -start-insert<C-m>
-nmap  [unite]F  :<C-u>Unite file -start-insert<C-m>
-nmap  [unite]g  :<C-u>Unite file_rec/git -start-insert<C-m>
-nmap [unite]j :<C-u>Unite buffer -start-insert<C-m>
-nmap [unite]k :<C-u>Unite tab:no-current<C-m>
-nmap [unite]t :NERDTreeToggle<CR>
-nmap [unite]u :GundoToggle<CR>
-nmap [unite]r :!vagrant rsync<CR>
-nmap [unite]h :set hlsearch!<CR>
-nmap [unite]l :set list!<CR>
+
+nmap                 [unite]s :<C-u>Unite -auto-preview grep:.<C-m>
+nmap                 [unite]o :<C-u>Unite outline -start-insert<C-m>
+nmap                 [unite]f :<C-u>Unite file_rec/async -start-insert<C-m>
+nmap                 [unite]F :<C-u>Unite file -start-insert<C-m>
+nmap                 [unite]g :<C-u>Unite file_rec/git -start-insert<C-m>
+nmap                 [unite]j :<C-u>Unite buffer -start-insert<C-m>
+nmap                 [unite]k :<C-u>Unite tab:no-current<C-m>
+
+nmap                 [unite]t :NERDTreeToggle<CR>
+nmap                 [unite]u :GundoToggle<CR>
+"nmap                 [unite]r :!vagrant rsync<CR>
+nmap                 [unite]h :set hlsearch!<CR>
+nmap                 [unite]l :set list!<CR>
+nmap <silent> <expr> [unite]z FS_ToggleFoldAroundSearch({'context':2})
+nmap          <expr> [unite]x FS_ToggleFoldAroundSearch({'context':0})
+nmap                 [unite]w :let @/='\<<C-r><C-w>\>'<CR>:set hlsearch<CR>
+nmap                 [unite]r :s/<C-r><C-w>/<C-r>=input('replacement? ').'/g'<CR>
+nmap                 [unite]R :%s/<C-r><C-w>/<C-r>=input('replacement? ').'/g'<CR>
+
+nmap                 <C-x>o <C-w><C-w>
+
+:autocmd BufRead,BufNewFile .vimrc nmap [unite]1 /\(["].*\)\@<!\<[ni]\?\(no\)\?\(re\)\?map\><cr> x
 
 " Reload
 map <silent> tu :call GHC_BrowseAll()<CR>
 " Type Lookup
 map <silent> tw :call GHC_ShowType(1)<CR>
 autocmd BufRead,BufNewFile *.css,*.scss,*.less setlocal foldmethod=marker foldmarker={,}
+autocmd BufRead,BufNewFile *.php setlocal breakindent breakindentopt=sbr,shift:7,min:5
 
 command -nargs=+ Gadd Git add <q-args>
 " set runtimepath+=/Applications/LilyPond.app/Contents/Resources/share/lilypond/current/vim
+au BufNewFile,BufRead *.phn set filetype=clojure

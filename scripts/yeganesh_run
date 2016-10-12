@@ -12,4 +12,4 @@ fi
 	else
 		/home/edwlan/.local/bin/yeganesh "$@" < "$cache"
 	fi
-) | ${SHELL:-"/bin/sh"} &
+)# | ${SHELL:-"/bin/sh"} &

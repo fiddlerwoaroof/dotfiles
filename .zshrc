@@ -198,6 +198,7 @@ zstyle ':completion:*' prompt '%e errors:'
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' use-compctl false
 
+export fpath=($HOME/.zsh.d/completion $fpath)
 autoload -Uz compinit
 
 compinit
@@ -514,10 +515,12 @@ PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+export PATH=$HOME/vim8/bin:$PATH
 
 export CPATH=$CPATH:$HOME/include
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
 export VIMCLOJURE_SERVER_JAR="$HOME/lib/vimclojure/server-2.3.6.jar"
+export CLON_THEME=el
 
 pmkdir() {
   mkdir $1
@@ -543,7 +546,11 @@ export PROMPT
 set -o vi
 bindkey -M vicmd '?' history-incremental-search-backward
 
+#zprof
+
+export NVM_DIR="/home/edwlan/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/Users/edwlan/.gvm/bin/gvm-init.sh" ]] && source "/Users/edwlan/.gvm/bin/gvm-init.sh"
 
-#zprof
