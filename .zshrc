@@ -16,25 +16,10 @@ cat <<'EOP'
 EOP
 
 echo "begin zshrc"
-echo "shell session started for $USER on $TTY at `date`" | logger
+echo "shell session started for $USER on $TTY at `date`" | tee /dev/stderr | logger
 source $HOME/.localzshrc.sh
 autoload -U colors && colors
 autoload zsh/parameter
-
-# Experimenting with disabling oh-my-zsh
-#
-# # Path to your oh-my-zsh configuration.
-# #export ZSH=$HOME/.oh-my-zsh
-# #export MPD_HOST=srv2.elangley.org
-# #
-# #fpath=(~/.zsh.d/completion ~/.zsh.d/functions $fpath)
-# #plugins=(git rails osx brew zsh-syntax-highlighting python git-extra git-flow battery)
-# #
-# #source $ZSH/oh-my-zsh.sh
-# #unsetopt correct_all
-# #
-# #echo "done oh-my-zsh"
-# unalias sp
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/texbin:/usr/X11/bin:/opt/local/bin:/sbin/usr/sbin:$PATH
 
@@ -113,8 +98,8 @@ cmdtermtitle() {
   fi
 }
 
-if [[ $TERM != "linux" ]]; then
-   autoload -U add-zsh-hook
+autoload -U add-zsh-hook
+if [[ $TERM != "linux" && ${TERM%-color} != "eterm" ]]; then
    add-zsh-hook preexec cmdtermtitle
 fi
 
@@ -127,7 +112,7 @@ termtitle() {
   fi
 }
 
-if [[ $TERM != "linux" ]]; then
+if [[ $TERM != "linux" && ${TERM%-color} != "eterm" ]]; then
    add-zsh-hook precmd termtitle
 fi
 
@@ -509,9 +494,9 @@ else
 fi
 bindkey '[3~' delete-char
 
-echo 'zshrc done'
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+rvm use system &>/dev/null
 
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
@@ -550,6 +535,8 @@ bindkey -M vicmd '?' history-incremental-search-backward
 
 export NVM_DIR="/home/edwlan/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
+echo 'zshrc done'
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/Users/edwlan/.gvm/bin/gvm-init.sh" ]] && source "/Users/edwlan/.gvm/bin/gvm-init.sh"

@@ -1,0 +1,16 @@
+#compdef choose_tmux
+
+_choose_tmux() {
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  _arguments '1: :->session'
+
+  case $state in
+    session)
+      for session in $(tmux list-sessions -F '#{session_name}'); do
+        compadd "$@" $session
+      done
+      ;;
+  esac
+}
