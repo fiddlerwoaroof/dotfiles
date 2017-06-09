@@ -44,9 +44,15 @@ git-cd() {
 }
 alias groot=git-cd
 
+git-graph() {
+  git log --graph --format=oneline --decorate "$@"
+}
+alias gl=git-graph
+
 is-function () {
   whence -w $1 | grep --color=auto -I function > /dev/null
 }
+
 
 GIT_CMD="`which -p git 2>/dev/null`"
 
