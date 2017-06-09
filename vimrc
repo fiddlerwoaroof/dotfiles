@@ -256,7 +256,7 @@ colorscheme solarized
 "autocmd BufEnter *.hs compiler ghc
 "au FocusLost * :wa
 
-function Checkft()
+function! Checkft()
   if &filetype==""
     filetype detect
   endif
@@ -317,16 +317,6 @@ nnoremap <C-j> <C-W><C-J>
 nnoremap <C-k> <C-W><C-K>
 nnoremap <C-l> <C-W><C-L>
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
-
-python << EOF
-import os
-import sys
-import vim
-for p in sys.path:
-    if os.path.isdir(p):
-        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
-EOF
-
 
 func ListItem()
  let g:counter += 1
@@ -431,3 +421,14 @@ autocmd BufRead,BufNewFile *.php setlocal breakindent breakindentopt=sbr,shift:7
 command -nargs=+ Gadd Git add <q-args>
 " set runtimepath+=/Applications/LilyPond.app/Contents/Resources/share/lilypond/current/vim
 au BufNewFile,BufRead *.phn set filetype=clojure
+
+python << EOF
+import os
+import sys
+import vim
+for p in sys.path:
+    if os.path.isdir(p):
+        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
+
+
