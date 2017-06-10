@@ -10,6 +10,7 @@
 
 (package-initialize)
 (when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
   (package-install 'use-package))
 
 (require 'use-package)
@@ -24,6 +25,9 @@
 ;;;;; SLIME SETUP {{{
 (progn ;slime isn't loaded via use-package because quicklisp-helper keeps it uptodate
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+  ;; Replace "sbcl" with the path to your implementation
+  (setq inferior-lisp-program "~/sbcl/bin/sbcl")
 
   (defun slime-ecl ()
     (interactive)
@@ -59,9 +63,6 @@
 (use-package projectile
   :ensure t)
 
-(use-package ensime
-  :ensure t)
-
 (use-package sbt-mode
   :ensure t
   :pin melpa-stable)
@@ -69,6 +70,9 @@
 (use-package scala-mode
   :ensure t
   :pin melpa-stable)
+
+(use-package ensime
+  :ensure t)
 
 (use-package intero
   :ensure t)
@@ -192,7 +196,9 @@
   :ensure t)
 
 (use-package evil-nerd-commenter
-  :ensure t)
+  :ensure t
+  :config
+  (evilnc-default-hotkeys))
 
 (use-package evil-leader
   :ensure t)
@@ -215,6 +221,22 @@
 (use-package slime-company
   :ensure t)
 
+(use-package :toml-mode
+  )
+
+(use-package project-explorer
+  :ensure t
+  )
+
+(use-package ggtags
+  :ensure t
+  :config
+  (ggtags-mode 1)
+  (add-hook 'c-mode-common-hook
+	    (lambda ()
+	      (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+		(ggtags-mode 1)))))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -228,9 +250,9 @@
  '(browse-url-generic-program "x-www-browser")
  '(company-backends
    (quote
-    (company-capf company-bbdb company-nxml company-css company-semantic company-clang company-xcode company-cmake company-files
-		  (company-dabbrev-code company-gtags company-etags company-keywords)
-		  company-oddmuse company-dabbrev)))
+    (company-clang company-bbdb company-nxml company-css company-xcode company-cmake company-capf company-files
+		      (company-dabbrev-code company-gtags company-etags company-keywords)
+		      company-oddmuse company-dabbrev)))
  '(custom-enabled-themes (quote (zenburn)))
  '(custom-safe-themes
    (quote
@@ -242,6 +264,8 @@
  '(evil-leader/leader ",")
  '(evil-visual-mark-mode t)
  '(font-use-system-font t)
+ '(ggtags-sort-by-nearness t)
+ '(ggtags-update-on-save t)
  '(global-evil-surround-mode t)
  '(global-linum-mode t)
  '(haskell-mode-hook
@@ -251,10 +275,20 @@
  '(jdee-server-dir "~/.emacs.d/jdee-server/")
  '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
  '(line-number-mode nil)
- '(mac-option-modifier (quote (:function meta :mouse meta)))
+ '(mac-option-modifier (quote meta))
+ '(nrepl-message-colors
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
+    (srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
+ '(pe/omit-gitignore t)
+ '(safe-local-variable-values
+   (quote
+    ((company-clang-arguments "-I.")
+     (Base . 10)
+     (Package . CL-USER)
+     (Syntax . COMMON-LISP))))
  '(slime-company-completion (quote fuzzy)))
 
 
@@ -266,19 +300,16 @@
 (helm-mode)
 (require 'js2-mode)
 (require 'evil-numbers)
-;(require 'evil-nerd-commenter)
-;(load-theme 'tango-dark)
+                               
+                         
 (require 'projectile)
 (projectile-mode)
 
-;(evilnc-default-hotkeys)
-
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "~/sbcl/bin/sbcl")
+                         
 
 (evil-mode)
 (paredit-mode)
-;; ;(js2-mode)
+              
 (evil-paredit-mode)
 (rainbow-delimiters-mode)
 
@@ -462,3 +493,28 @@
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 (add-hook 'scala-mode-hook 'flycheck-mode)
 (add-hook 'haskell-mode-hook 'intero-mode)
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+	      (global-semanticdb-minor-mode 1)
+	      (global-semantic-idle-scheduler-mode 1)
+	      (global-semantic-stickyfunc-mode 1)
+
+	      (semantic-mode 1)
+
+	      (helm-gtags-mode)
+	      (ggtags-mode 1))))
+
+(setq company-backends (delete 'company-semantic company-backends))
+
+(defun alexott/cedet-hook ()
+  (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
+  (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
+
+(add-hook 'c-mode-common-hook 'alexott/cedet-hook)
+(add-hook 'c-mode-hook 'alexott/cedet-hook)
+(add-hook 'c++-mode-hook 'alexott/cedet-hook)
+
+(require 'ede)
+(global-ede-mode)
