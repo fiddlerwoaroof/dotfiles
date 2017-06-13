@@ -6,7 +6,10 @@
 			 ("org" . "http://orgmode.org/elpa/")
 			 ("melpa" . "https://melpa.org/packages/")
 			 ("melpa-stable" . "http://stable.melpa.org/packages/"))
-      package-archive-priorities '(("melpa-stable" . 1)))
+      package-archive-priorities '(("melpa-stable" . 1)
+                                   ("gnu" . 0)
+                                   ("melpa" . 2)
+                                   ("org" . 3)))
 
 (package-initialize)
 (when (not (package-installed-p 'use-package))
@@ -20,6 +23,21 @@
   (define-key evil-normal-state-map " o" 'slime-selector)
   (define-key evil-insert-state-map (kbd "TAB") 'company-complete)
   
+  )
+
+(use-package slime-company
+  :ensure t)
+
+(use-package company
+  :ensure t
+  :config
+  ;; keybindings
+  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
+	 (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
+	 (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
+	 (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
+	 (define-key company-active-map (kbd "[") (kbd "RET ["))
+	 )
   )
 
 ;;;;; SLIME SETUP {{{
@@ -206,21 +224,6 @@
 (use-package emmet-mode
   :ensure t)
 
-(use-package company
-  :ensure t
-  :config
-  ;; keybindings
-  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
-	 (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
-	 (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
-	 (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
-	 (define-key company-active-map (kbd "[") (kbd "RET ["))
-	 )
-  )
-
-(use-package slime-company
-  :ensure t)
-
 (use-package :toml-mode
   )
 
@@ -244,19 +247,17 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-faces-vector
    [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#e090d7" "#8cc4ff" "#eeeeec"])
  '(browse-url-browser-function (quote browse-url-generic))
  '(browse-url-generic-program "x-www-browser")
  '(company-backends
    (quote
-    (company-clang company-bbdb company-nxml company-css company-xcode company-cmake company-capf company-files
-		      (company-dabbrev-code company-gtags company-etags company-keywords)
-		      company-oddmuse company-dabbrev)))
+    (company-capf company-bbdb company-nxml company-css company-clang company-xcode company-cmake company-files
+		  (company-dabbrev-code company-gtags company-etags company-keywords)
+		  company-oddmuse company-dabbrev)))
  '(custom-enabled-themes (quote (zenburn)))
  '(custom-safe-themes
    (quote
-    ("f5512c02e0a6887e987a816918b7a684d558716262ac7ee2dd0437ab913eaec6" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "ab04c00a7e48ad784b52f34aa6bfa1e80d0c3fcacc50e1189af3651013eb0d58" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" default)))
+    ("9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "ab04c00a7e48ad784b52f34aa6bfa1e80d0c3fcacc50e1189af3651013eb0d58" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" default)))
  '(erc-modules
    (quote
     (autoaway autojoin button capab-identify completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring stamp spelling track)))
@@ -264,32 +265,31 @@
  '(evil-leader/leader ",")
  '(evil-visual-mark-mode t)
  '(font-use-system-font t)
- '(ggtags-sort-by-nearness t)
- '(ggtags-update-on-save t)
  '(global-evil-surround-mode t)
  '(global-linum-mode t)
  '(haskell-mode-hook
    (quote
-    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)) t)
+    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)))
  '(helm-ls-git-fuzzy-match t)
- '(jdee-server-dir "~/.emacs.d/jdee-server/")
  '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
  '(line-number-mode nil)
- '(mac-option-modifier (quote meta))
- '(nrepl-message-colors
-   (quote
-    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
- '(pe/omit-gitignore t)
+    (znc slime-company flymake-haskell-multi flx-ido less-css-mode css-eldoc npm-mode flycheck-haskell ag haskell-mode ember-mode geben-helm-projectile geben company-php company evil-vimish-fold graphviz-dot-mode muttrc-mode zenburn-theme tide zeal-at-point yaml-mode xml-rpc web-mode vue-mode vagrant typescript-mode twig-mode tramp-term tabbar slime scss-mode scion rvm rust-mode robe rhtml-mode rainbow-delimiters php-mode php-eldoc org-jira mingus markdown-mode magit jira highlight-parentheses helm-robe helm-projectile helm-ls-git helm-git helm-css-scss helm-cider helm-ag-r helm-ag haml-mode evil-visual-mark-mode evil-surround evil-rails evil-paredit evil-numbers evil-nerd-commenter evil-leader emmet-mode elein eldoc-eval editorconfig csv-mode color-theme-sanityinc-solarized color-theme ansible alect-themes ac-js2)))
  '(safe-local-variable-values
    (quote
-    ((company-clang-arguments "-I.")
-     (Base . 10)
+    ((Package . CHUNGA)
      (Package . CL-USER)
+     (Base . 10)
+     (Package . FLEXI-STREAMS)
      (Syntax . COMMON-LISP))))
- '(slime-company-completion (quote fuzzy)))
+ '(slime-company-completion (quote fuzzy))
+ '(znc-servers
+   (quote
+    (("localhost" 6697 t
+      ((freenode "edwlan/freenode" "t31ch3rtb")
+       (hhgs "edwlan/hhgs" "t31ch3rtb")
+       (oftc "edwlan/oftc" "t31ch3rtb")))))))
 
 
 (when (< emacs-major-version 24)
@@ -399,9 +399,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal))))
- '(rainbow-delimiters-depth-1-face ((t (:foreground "color-238"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "color-235")))))
+ '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal)))))
 
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
