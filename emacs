@@ -1,5 +1,8 @@
+;;;; -*- mode: Emacs-Lisp;-*-
+
 (setq default-directory "~/emacs-home/")
 (make-directory default-directory t)
+(setq vc-follow-symlinks t)
 
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
@@ -21,24 +24,7 @@
   :ensure t
   :config
   (define-key evil-normal-state-map " o" 'slime-selector)
-  (define-key evil-insert-state-map (kbd "TAB") 'company-complete)
-  
-  )
-
-(use-package slime-company
-  :ensure t)
-
-(use-package company
-  :ensure t
-  :config
-  ;; keybindings
-  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
-	 (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
-	 (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
-	 (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
-	 (define-key company-active-map (kbd "[") (kbd "RET ["))
-	 )
-  )
+  (define-key evil-insert-state-map (kbd "TAB") 'company-complete))
 
 ;;;;; SLIME SETUP {{{
 (progn ;slime isn't loaded via use-package because quicklisp-helper keeps it uptodate
@@ -67,17 +53,44 @@
     (let ((inferior-lisp-program "ccl"))
       (slime)))
 
-
-  (slime-setup '(slime-fancy slime-macrostep slime-company slime-trace-dialog  slime-sprof
-			     slime-mdot-fu ))
-
   (add-hook 'lisp-mode-hook
 	    '(lambda ()
 	       ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
 	       (unless (string= "*slime-scratch*" (buffer-name))
 		 (paredit-mode)
-		 (evil-paredit-mode)))))
+		 (evil-paredit-mode)))) 
+  (setq slime-contribs  '(slime-fancy slime-company slime-macrostep slime-trace-dialog slime-mdot-fu ))
+  )
+
+(use-package slime-company
+  :no-require t
+  :defer t
+  :ensure t)
+
 ;;;;; }}}
+(use-package company
+  :ensure t
+  :config
+  ;; keybindings
+  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
+	 (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
+	 (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
+	 (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
+	 (define-key company-active-map (kbd "[") (kbd "RET [")))
+
+  (message "backends: %s" company-backends)
+  (setq company-backends '(company-clang company-bbdb company-nxml company-css
+					 company-xcode company-cmake company-capf company-files
+					 (company-dabbrev-code company-gtags company-etags
+							       company-keywords) company-oddmuse
+							       company-dabbrev))
+  )
+
+;; NOTE: this must be here...
+(slime-setup)
+
+(global-company-mode 1)
+
 (use-package projectile
   :ensure t)
 
@@ -95,8 +108,8 @@
 (use-package intero
   :ensure t)
 
-(use-package jdee
-  :ensure t)
+;; (use-package jdee
+;;   :ensure t)
 
 (use-package mvn
   :ensure t)
@@ -132,8 +145,8 @@
   :ensure t)
 
 (advice-add 'evil-delete-marks :after
-              (lambda (&rest args)
-                (evil-visual-mark-render)))
+	    (lambda (&rest args)
+	      (evil-visual-mark-render)))
 
 (use-package  evil-paredit
   :ensure t)
@@ -195,8 +208,8 @@
 (use-package helm-ls-git
   :ensure t)
 
-;(use-package helm-git
-;  :ensure t)
+					;(use-package helm-git
+					;  :ensure t)
 
 (use-package helm-css-scss
   :ensure t)
@@ -224,9 +237,6 @@
 (use-package emmet-mode
   :ensure t)
 
-(use-package :toml-mode
-  )
-
 (use-package project-explorer
   :ensure t
   )
@@ -240,68 +250,15 @@
 	      (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
 		(ggtags-mode 1)))))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(browse-url-browser-function (quote browse-url-generic))
- '(browse-url-generic-program "x-www-browser")
- '(company-backends
-   (quote
-    (company-capf company-bbdb company-nxml company-css company-clang company-xcode company-cmake company-files
-		  (company-dabbrev-code company-gtags company-etags company-keywords)
-		  company-oddmuse company-dabbrev)))
- '(custom-enabled-themes (quote (zenburn)))
- '(custom-safe-themes
-   (quote
-    ("9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "ab04c00a7e48ad784b52f34aa6bfa1e80d0c3fcacc50e1189af3651013eb0d58" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" default)))
- '(erc-modules
-   (quote
-    (autoaway autojoin button capab-identify completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring stamp spelling track)))
- '(erc-truncate-mode t)
- '(evil-leader/leader ",")
- '(evil-visual-mark-mode t)
- '(font-use-system-font t)
- '(global-evil-surround-mode t)
- '(global-linum-mode t)
- '(haskell-mode-hook
-   (quote
-    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)))
- '(helm-ls-git-fuzzy-match t)
- '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
- '(line-number-mode nil)
- '(package-selected-packages
-   (quote
-    (znc slime-company flymake-haskell-multi flx-ido less-css-mode css-eldoc npm-mode flycheck-haskell ag haskell-mode ember-mode geben-helm-projectile geben company-php company evil-vimish-fold graphviz-dot-mode muttrc-mode zenburn-theme tide zeal-at-point yaml-mode xml-rpc web-mode vue-mode vagrant typescript-mode twig-mode tramp-term tabbar slime scss-mode scion rvm rust-mode robe rhtml-mode rainbow-delimiters php-mode php-eldoc org-jira mingus markdown-mode magit jira highlight-parentheses helm-robe helm-projectile helm-ls-git helm-git helm-css-scss helm-cider helm-ag-r helm-ag haml-mode evil-visual-mark-mode evil-surround evil-rails evil-paredit evil-numbers evil-nerd-commenter evil-leader emmet-mode elein eldoc-eval editorconfig csv-mode color-theme-sanityinc-solarized color-theme ansible alect-themes ac-js2)))
- '(safe-local-variable-values
-   (quote
-    ((Package . CHUNGA)
-     (Package . CL-USER)
-     (Base . 10)
-     (Package . FLEXI-STREAMS)
-     (Syntax . COMMON-LISP))))
- '(slime-company-completion (quote fuzzy))
- '(znc-servers
-   (quote
-    (("localhost" 6697 t
-      ((freenode "edwlan/freenode" "t31ch3rtb")
-       (hhgs "edwlan/hhgs" "t31ch3rtb")
-       (oftc "edwlan/oftc" "t31ch3rtb")))))))
 
 
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 
 (require 'helm-config)
 (helm-mode)
 (require 'js2-mode)
 (require 'evil-numbers)
-                               
-                         
+			       
+			 
 (require 'projectile)
 (projectile-mode)
 
@@ -445,25 +402,25 @@
 
 (global-auto-revert-mode t)
 
-;;; Use auto-complete for ensime
+ ;;; Use auto-complete for ensime
 
 (defun scala/enable-eldoc ()
   "Show error message or type name at point by Eldoc."
   (setq-local eldoc-documentation-function
-              #'(lambda ()
-                  (when (ensime-connected-p)
-                    (let ((err (ensime-print-errors-at-point)))
-                      (or (and err (not (string= err "")) err)
-                          (ensime-print-type-at-point))))))
+	      #'(lambda ()
+		  (when (ensime-connected-p)
+		    (let ((err (ensime-print-errors-at-point)))
+		      (or (and err (not (string= err "")) err)
+			  (ensime-print-type-at-point))))))
   (eldoc-mode +1))
 
 (defun scala/completing-dot-company ()
   (cond (company-backend
-         (company-complete-selection)
-         (scala/completing-dot))
-        (t
-         (insert ".")
-         (company-complete))))
+	 (company-complete-selection)
+	 (scala/completing-dot))
+	(t
+	 (insert ".")
+	 (company-complete))))
 
 (defun scala/completing-dot-ac ()
   (insert ".")
@@ -477,14 +434,14 @@
   (eval-and-compile (require 'ensime))
   (eval-and-compile (require 's))
   (when (s-matches? (rx (+ (not space)))
-                    (buffer-substring (line-beginning-position) (point)))
+		    (buffer-substring (line-beginning-position) (point)))
     (delete-horizontal-space t))
   (cond ((not (and (ensime-connected-p) ensime-completion-style))
-         (insert "."))
-        ((eq ensime-completion-style 'company)
-         (scala/completing-dot-company))
-        ((eq ensime-completion-style 'auto-complete)
-         (scala/completing-dot-ac))))
+	 (insert "."))
+	((eq ensime-completion-style 'company)
+	 (scala/completing-dot-company))
+	((eq ensime-completion-style 'auto-complete)
+	 (scala/completing-dot-ac))))
 
 ;; Initialization
 (add-hook 'ensime-mode-hook #'scala/enable-eldoc)
@@ -493,14 +450,14 @@
 (add-hook 'haskell-mode-hook 'intero-mode)
 
 (add-hook 'c-mode-common-hook
-          (lambda ()
+	  (lambda ()
 	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
 	      (global-semanticdb-minor-mode 1)
 	      (global-semantic-idle-scheduler-mode 1)
 	      (global-semantic-stickyfunc-mode 1)
-
+	      
 	      (semantic-mode 1)
-
+	      
 	      (helm-gtags-mode)
 	      (ggtags-mode 1))))
 
@@ -516,8 +473,8 @@
 
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match that used by the user's shell.
-
-This is particularly useful under Mac OSX, where GUI apps are not started from a shell."
+ 
+ This is particularly useful under Mac OSX, where GUI apps are not started from a shell."
   (interactive)
   (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
@@ -527,3 +484,48 @@ This is particularly useful under Mac OSX, where GUI apps are not started from a
 (require 'ede)
 (global-ede-mode)
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(browse-url-browser-function (quote browse-url-generic))
+ '(browse-url-generic-program "x-www-browser")
+ '(custom-enabled-themes (quote (zenburn)))
+ '(custom-safe-themes
+   (quote
+    ("9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "ab04c00a7e48ad784b52f34aa6bfa1e80d0c3fcacc50e1189af3651013eb0d58" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" default)))
+ '(erc-modules
+   (quote
+    (autoaway autojoin button capab-identify completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring stamp spelling track)))
+ '(erc-truncate-mode t)
+ '(evil-leader/leader ",")
+ '(evil-visual-mark-mode t)
+ '(font-use-system-font t)
+ '(global-evil-surround-mode t)
+ '(global-linum-mode t)
+ '(haskell-mode-hook
+   (quote
+    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)))
+ '(helm-ls-git-fuzzy-match t)
+ '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
+ '(line-number-mode nil)
+ '(package-selected-packages
+   (quote
+    (aggressive-indent znc flymake-haskell-multi flx-ido less-css-mode css-eldoc npm-mode flycheck-haskell ag haskell-mode ember-mode geben-helm-projectile geben company-php company evil-vimish-fold graphviz-dot-mode muttrc-mode zenburn-theme tide zeal-at-point yaml-mode xml-rpc web-mode vue-mode vagrant typescript-mode twig-mode tramp-term tabbar slime scss-mode scion rvm rust-mode robe rhtml-mode rainbow-delimiters php-mode php-eldoc org-jira mingus markdown-mode magit jira highlight-parentheses helm-robe helm-projectile helm-ls-git helm-git helm-css-scss helm-cider helm-ag-r helm-ag haml-mode evil-visual-mark-mode evil-surround evil-rails evil-paredit evil-numbers evil-nerd-commenter evil-leader emmet-mode elein eldoc-eval editorconfig csv-mode color-theme-sanityinc-solarized color-theme ansible alect-themes ac-js2)))
+ '(safe-local-variable-values
+   (quote
+    ((Package . CHUNGA)
+     (Package . CL-USER)
+     (Base . 10)
+     (Package . FLEXI-STREAMS)
+     (Syntax . COMMON-LISP))))
+ '(slime-company-completion (quote fuzzy))
+ '(znc-servers
+   (quote
+    (("localhost" 6697 t
+      ((freenode "edwlan/freenode" "t31ch3rtb")
+       (hhgs "edwlan/hhgs" "t31ch3rtb")
+       (oftc "edwlan/oftc" "t31ch3rtb")))))))
