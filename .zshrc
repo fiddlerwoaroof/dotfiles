@@ -1,4 +1,6 @@
 #zmodload zsh/zprof
+[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+
 
 cat <<'EOP'
              :
