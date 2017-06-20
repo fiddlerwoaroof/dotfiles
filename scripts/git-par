@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+git remote | (
+    while read -r remote; do
+	printf "Pushing to %s\n" "$remote..."
+	git push --all "$@" "$remote"
+	git push --tags "$remote"
+    done
+)

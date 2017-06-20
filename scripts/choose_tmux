@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh
+tmux ls
+
+attach_tmux () {
+  TMUX_SESSION="$1"
+  tmux attach -t "$TMUX_SESSION" -d
+}
+
+new_tmux () {
+  TMUX_SESSION="$1"
+  exec tmux new-session -s "$TMUX_SESSION"
+}
+
+if [[ x"$1" == x ]]; then
+
+  echo -n "Which session? "
+  read TMUX_SESSION
+
+  if [[ "$TMUX_SESSION"x != ""x ]]; then
+    attach_tmux "$TMUX_SESSION" && exit 0
+  fi
+
+  echo -n "No such session '$TMUX_SESSION', new session [y/N]? "
+  read NEW_SESSION
+  NEW_SESSION="${NEW_SESSION/Y/y}"
+
+  if [[ x"${NEW_SESSION[1]}" == x'y' ]]; then
+    new_tmux "$TMUX_SESSION"
+  fi
+
+  echo "Either you decided not to create a new session or something went _horribly_ wrong!"
+  read BOB
+else
+  attach_tmux "$1" || new_tmux "$1"
+fi

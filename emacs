@@ -318,11 +318,15 @@
 
 
 
-(add-hook 'after-init-hook (evil-mode))
-(add-hook 'after-init-hook 'paredit-mode)
-(add-hook 'after-init-hook 'evil-paredit-mode)
-(add-hook 'after-init-hook 'global-company-mode)
-(add-hook 'after-init-hook 'global-linum-mode)
+(add-hook 'after-init-hook
+	  (lambda ()
+	    (unless (server-running-p)
+	      (server-start))
+	    (evil-mode)
+	    (paredit-mode)
+	    (evil-paredit-mode)
+	    (global-company-mode)
+	    (global-linum-mode)))
 
 (progn ; linum
   (setq linum-format "%5d\u2502"))
