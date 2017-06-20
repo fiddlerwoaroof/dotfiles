@@ -58,7 +58,8 @@
 	       ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
 	       (unless (string= "*slime-scratch*" (buffer-name))
 		 (paredit-mode)
-		 (evil-paredit-mode)))) 
+		 (evil-paredit-mode))
+	       (rainbow-delimiters-mode))) 
   (setq slime-contribs  '(slime-fancy slime-company slime-macrostep slime-trace-dialog slime-mdot-fu ))
   )
 
@@ -121,7 +122,9 @@
   :ensure t)
 
 (use-package evil-vimish-fold
-  :ensure t)
+  :ensure t
+  :config
+  (evil-vimish-fold-mode 1))
 
 (use-package zenburn-theme
   :ensure t)
@@ -148,17 +151,58 @@
 	    (lambda (&rest args)
 	      (evil-visual-mark-render)))
 
+(use-package paredit
+  :ensure t
+  :config
+  (defun paredit-wiggle-back ()
+    (paredit-forward)
+    (paredit-backward))
+
+  (defmacro defparedit-wrapper (name invoked-wrapper)
+    `(defun ,name ()
+       (interactive)
+       (paredit-wiggle-back)
+       (,invoked-wrapper)))
+
+  (defparedit-wrapper back-then-wrap paredit-wrap-sexp)
+  (defparedit-wrapper back-then-wrap-square paredit-wrap-square)
+  (defparedit-wrapper back-then-wrap-curly paredit-wrap-curly)
+  (defparedit-wrapper back-then-wrap-angled paredit-wrap-angled)
+  (defparedit-wrapper back-then-wrap-doublequote paredit-meta-doublequote)
+
+  (define-key evil-normal-state-map ",W" 'back-then-wrap)
+  (define-key evil-normal-state-map ",w]" 'back-then-wrap-square)
+  (define-key evil-normal-state-map ",w}" 'back-then-wrap-curly)
+  (define-key evil-normal-state-map ",w>" 'back-then-wrap-angled)
+  (define-key evil-normal-state-map ",w\"" 'back-then-wrap-doublequote)
+
+  (define-key evil-normal-state-map ",S" 'paredit-splice-sexp)
+  (define-key evil-normal-state-map ",A" 'paredit-splice-sexp-killing-backward)
+  (define-key evil-normal-state-map ",D" 'paredit-splice-sexp-killing-forward)
+  (define-key evil-normal-state-map ",|" 'paredit-split-sexp)
+  (define-key evil-normal-state-map ",J" 'paredit-join-sexps)
+  (define-key evil-normal-state-map ",<" 'paredit-backward-slurp-sexp)
+  (define-key evil-normal-state-map ",," 'paredit-backward-barf-sexp) 
+  (define-key evil-normal-state-map ",>" 'paredit-forward-slurp-sexp)
+  (define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
+  (define-key evil-normal-state-map ",~" 'paredit-convolute-sexp))
+
 (use-package  evil-paredit
   :ensure t)
 
 (use-package evil-numbers
-  :ensure t)
+  :ensure t
+  :config
+  (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+  (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt))
 
 (use-package eldoc-eval
   :ensure t)
 
 (use-package editorconfig
-  :ensure t)
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
 (use-package csv-mode
   :ensure t)
@@ -208,8 +252,8 @@
 (use-package helm-ls-git
   :ensure t)
 
-					;(use-package helm-git
-					;  :ensure t)
+;;(use-package helm-git
+;;  :ensure t)
 
 (use-package helm-css-scss
   :ensure t)
@@ -252,72 +296,40 @@
 
 
 
+(use-package pollen-mode
+  :config
+  (defun insert-lozenge ()
+    (interactive)
+    (insert-char 9674))
+  (define-key evil-insert-state-map (kbd "C-c C-l") 'insert-lozenge))
 
-(require 'helm-config)
-(helm-mode)
+(progn ; helm
+  (require 'helm-config)
+  (helm-mode)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (define-key evil-normal-state-map " f" 'helm-projectile)
+  (define-key evil-normal-state-map " j" 'helm-buffers-list)
+  (global-set-key (kbd "M-x") 'helm-M-x))
+
 (require 'js2-mode)
-(require 'evil-numbers)
-			       
-			 
+
 (require 'projectile)
 (projectile-mode)
 
-                         
 
-(evil-mode)
-(paredit-mode)
-;; ;(js2-mode)
-(evil-paredit-mode)
-(rainbow-delimiters-mode)
 
-(global-linum-mode)
-(setq linum-format "%5d\u2502")
+(add-hook 'after-init-hook (evil-mode))
+(add-hook 'after-init-hook 'paredit-mode)
+(add-hook 'after-init-hook 'evil-paredit-mode)
+(add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'after-init-hook 'global-linum-mode)
 
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(progn ; linum
+  (setq linum-format "%5d\u2502"))
 
-(global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
-(global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
-
-(global-set-key (kbd "M-x") 'helm-M-x)
-;(global-set-key (kbd ":") 'helm-M-x)
-
-(define-key evil-normal-state-map " f" 'helm-projectile)
-(define-key evil-normal-state-map " j" 'helm-buffers-list)
+(require 'evil-numbers)
 
 (define-key evil-normal-state-map "ZZ" 'save-buffer)
-
-(defun paredit-wiggle-back ()
-  (paredit-forward)
-  (paredit-backward))
-
-(defmacro defparedit-wrapper (name invoked-wrapper)
-  `(defun ,name ()
-     (interactive)
-     (paredit-wiggle-back)
-     (,invoked-wrapper)))
-
-(defparedit-wrapper back-then-wrap paredit-wrap-sexp)
-(defparedit-wrapper back-then-wrap-square paredit-wrap-square)
-(defparedit-wrapper back-then-wrap-curly paredit-wrap-curly)
-(defparedit-wrapper back-then-wrap-angled paredit-wrap-angled)
-(defparedit-wrapper back-then-wrap-doublequote paredit-meta-doublequote)
-
-(define-key evil-normal-state-map ",W" 'back-then-wrap)
-(define-key evil-normal-state-map ",w]" 'back-then-wrap-square)
-(define-key evil-normal-state-map ",w}" 'back-then-wrap-curly)
-(define-key evil-normal-state-map ",w>" 'back-then-wrap-angled)
-(define-key evil-normal-state-map ",w\"" 'back-then-wrap-doublequote)
-
-(define-key evil-normal-state-map ",S" 'paredit-splice-sexp)
-(define-key evil-normal-state-map ",A" 'paredit-splice-sexp-killing-backward)
-(define-key evil-normal-state-map ",D" 'paredit-splice-sexp-killing-forward)
-(define-key evil-normal-state-map ",|" 'paredit-split-sexp)
-(define-key evil-normal-state-map ",J" 'paredit-join-sexps)
-(define-key evil-normal-state-map ",<" 'paredit-backward-slurp-sexp)
-(define-key evil-normal-state-map ",," 'paredit-backward-barf-sexp) 
-(define-key evil-normal-state-map ",>" 'paredit-forward-slurp-sexp)
-(define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
-(define-key evil-normal-state-map ",~" 'paredit-convolute-sexp)
 
 (define-key evil-normal-state-map ",zz" 'zeal-at-point)
 
@@ -368,8 +380,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.cljs\\.hl\\'" . clojurescript-mode))
 
-(add-hook 'after-init-hook 'global-company-mode)
-
 (add-hook 'ruby-mode-hook
 	  '(lambda ()
 	     (eldoc-mode)
@@ -389,16 +399,6 @@
 			     (cond-tpl . 'defun)))
 	       (put-clojure-indent (car pair)
 				   (car (last pair))))))
-
-(setq jiralib-url "https://atomampd.atlassian.net:443")
-(setq org-jira-working-dir "~/org-jira")
-(setq org-agenda-files '("~/org-jira"))
-
-(require 'evil-vimish-fold)
-(evil-vimish-fold-mode 1)
-
-(require 'editorconfig)
-(editorconfig-mode 1)
 
 (setq tls-program '("openssl s_client -connect %h:%p -no_ssl2 -ign_eof"))
 
@@ -454,11 +454,11 @@
 (add-hook 'c-mode-common-hook
 	  (lambda ()
 	    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+	      (semantic-mode 1)
+	      
 	      (global-semanticdb-minor-mode 1)
 	      (global-semantic-idle-scheduler-mode 1)
 	      (global-semantic-stickyfunc-mode 1)
-	      
-	      (semantic-mode 1)
 	      
 	      (helm-gtags-mode)
 	      (ggtags-mode 1))))
@@ -532,7 +532,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (js2-refactor npm-mode helm-dash aggressive-indent company-tern tern srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
+    (geiser pollen-mode js2-refactor npm-mode helm-dash aggressive-indent company-tern tern srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
  '(pe/omit-gitignore t)
  '(safe-local-variable-values
    (quote
