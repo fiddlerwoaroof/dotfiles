@@ -1,17 +1,23 @@
 #!/usr/bin/sbcl --script
-(load #p"~/.sbclrc")
+#+sbcl (load #p"~/.sbclrc")
+#+ecl (load #p"~/.eclrc")
+
+(defun get-project-name ()
+  #+sbcl (cadr sb-ext:*posix-argv*)
+  #+ecl (car (last si:*command-args*)))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ql:quickload :fwoar.lisputils)
-  (ql:quickload :swank-client)
+  ;(ql:quickload :swank-client)
   (ql:quickload :quickproject))
 
 (defparameter *host* "localhost")
 (defparameter *port* 4005)
+(defparameter *project-name* (get-project-name))
 
 (defparameter *out* 
   (fw.lu:let-each (:be *)
-    (cadr sb-ext:*posix-argv*)
+    *project-name*
     (uiop:ensure-directory-pathname *)
     (merge-pathnames *)))
 
@@ -20,10 +26,11 @@
                                           :alexandria
                                           :serapeum))
 
-(swank-client:with-slime-connection (conn *host* *port*)
-  (swank-client:slime-eval
-    `(progn
-       (push ,(car asdf:*central-registry*) asdf:*central-registry*))
-    conn))
+;(swank-client:with-slime-connection (conn *host* *port*)
+;  (swank-client:slime-eval
+;    `(progn
+;       (push ,(car asdf:*central-registry*) asdf:*central-registry*)
+;       (ql:quickload ,*project-name*))
+;    conn))
 
 ; vim: set ft=lisp:

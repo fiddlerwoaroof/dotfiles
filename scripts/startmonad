@@ -1,6 +1,8 @@
 #!/bin/zsh
+
 export PATH=$HOME/bin:$PATH
-export LD_LIBRARY_PATH=/home/edwlan/gtk-git/inst/lib/:/home/edwlan/lib:$LD_LIBRARY_PATH
+#export LD_LIBRARY_PATH=/home/edwlan/gtk-git/inst/lib/:/home/edwlan/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/home/edwlan/lib:$LD_LIBRARY_PATH
 #xrandr --output HDMI-0 --mode 1920x1200 --left-of VGA-0
 #xrandr --output HDMI-0 --primary
 #xrandr --output VGA-0 --mode 1024x768
@@ -15,54 +17,62 @@ xmodmap $HOME/.xmodmap
 xsetroot -solid black
 xsetbg $HOME/.xmonad/cheatsheet.png
 if [ -e $HOME/Pictures/background.png ]; then
-   xloadimage -onroot -quiet $HOME/Pictures/background.png
+  xloadimage -onroot -quiet $HOME/Pictures/background.png
 fi
 
-conky -bd -a middle_left &
+init () {
+  #conky -bd -a middle_left &
 
-xscreensaver -no-splash &
-
-
-# Set up an icon tray
-#trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 10 --transparent true --tint 0x000000 --height 17 &
-
-#synergy
-synergys
-
-# notifications
-
-dunst &
-
-# dropbox
-
-dropbox start &
-btsync
-
-# notes
-
-tomboy &
-
-# mixer
-
-qasmixer -t &
-
-# Fire up apps
+  xscreensaver -no-splash &
 
 
-$HOME/github_repos/shairport/shairport -a srv2 -o pulse -d | swap_variable SHAIRPORT_PID
+  # Set up an icon tray
+  #trayer --edge top --align right --SetDockType true --SetPartialStrut true --expand true --width 10 --transparent true --tint 0x000000 --height 17 &
 
-sonata --hidden &
+  #synergy
+  #synergys
 
-if [[ -x /usr/bin/nm-applet ]] ; then
-  nm-applet --sm-disable &
-fi
+  # notifications
 
-gnome-settings-daemon &
+  dunst &
+
+  # dropbox
+
+  dropbox start &
+  btsync
+
+  # notes
+
+  tomboy &
+
+  # mixer
+
+  qasmixer -t &
+
+  # Fire up apps
+
+  SHAIRPORT=$HOME/github_repos/shairport/shairport 
+  if [[ -x $SHAIRPORT ]]; then
+    $SHAIRPORT -a srv2 -o pulse -d | swap_variable SHAIRPORT_PID
+  fi
+
+  #sonata --hidden &
+
+  if [[ -x /usr/bin/nm-applet ]] ; then
+    nm-applet --sm-disable &
+  fi
+
+  gnome-settings-daemon &
+
+}
+
+( init ) &
+
 eval `gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh`
 export GNOME_KEYRING_CONTROL
 export SSH_AUTH_SOCK
 export GPG_AGENT_INFO
 export GNOME_KEYRING_PID
 
-exec ssh-agent /home/edwlan/bin/stumpwm
+exec /home/edwlan/bin/stumpwm
 #exec xmonad
