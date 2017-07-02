@@ -1,6 +1,11 @@
 #!/usr/bin/env zsh
 
-git remote | (
+if git remote | grep origin; then
+  git push --all "$@" origin
+  git push --tags origin
+fi
+
+git remote | grep -v origin | (
     while read -r remote; do
 	printf "Pushing to %s\n" "$remote..."
 	git push --all "$@" "$remote"
