@@ -39,8 +39,8 @@ zstyle ':completion::complete:cd::' group-order directory-stack local-directorie
 zstyle :compinstall filename '/Users/elangley/.zsh.d/99-completion.zsh'
 
 
-source $HOME/.zsh.d/completion/nix.plugin.zsh
-fpath=($HOME/.zsh.d/completion $fpath)
+source $HOME/.zsh.d/nix-zsh-completions/nix.plugin.zsh
+fpath=($HOME/.zsh.d/completion $fpath $HOME/.zsh.d/nix-zsh-completions)
 autoload -U compinit && compinit
 
 compinit
