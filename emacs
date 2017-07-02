@@ -72,8 +72,12 @@
 		 (paredit-mode)
 		 (evil-paredit-mode))
 	       (rainbow-delimiters-mode))) 
-  (setq slime-contribs  '(slime-fancy slime-company slime-macrostep slime-trace-dialog slime-mdot-fu ))
-  )
+  (setq slime-contribs
+	'(slime-fancy
+	  slime-company
+	  slime-macrostep
+	  slime-trace-dialog
+	  slime-mdot-fu)))
 
 (use-package slime-company
   :no-require t
@@ -92,11 +96,21 @@
 	 (define-key company-active-map (kbd "[") (kbd "RET [")))
 
   (message "backends: %s" company-backends)
-  (setq company-backends '(company-clang company-bbdb company-nxml company-css
-					 company-xcode company-cmake company-capf company-files
-					 (company-dabbrev-code company-gtags company-etags
-							       company-keywords) company-oddmuse
-							       company-dabbrev))
+  (setq company-backends
+	'(company-clang
+	  company-bbdb
+	  company-nxml
+	  company-css
+	  company-xcode
+	  company-cmake
+	  company-capf
+	  company-files
+	  (company-dabbrev-code
+	   company-gtags
+	   company-etags
+	   company-keywords)
+	  company-oddmuse
+	  company-dabbrev))
   )
 
 ;; NOTE: this must be here...
@@ -162,6 +176,11 @@
 (advice-add 'evil-delete-marks :after
 	    (lambda (&rest args)
 	      (evil-visual-mark-render)))
+
+(use-package evil-nerd-commenter
+  :ensure t
+  :config
+  (evilnc-default-hotkeys t))
 
 (use-package paredit
   :ensure t
@@ -282,11 +301,6 @@
 (use-package evil-surround
   :ensure t)
 
-(use-package evil-nerd-commenter
-  :ensure t
-  :config
-  (evilnc-default-hotkeys t))
-
 (use-package evil-leader
   :ensure t)
 
@@ -384,9 +398,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal))))
- '(rainbow-delimiters-depth-1-face ((t (:foreground "color-238"))))
- '(rainbow-delimiters-depth-2-face ((t (:foreground "color-235")))))
+ '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal))))) 
 
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
