@@ -26,6 +26,18 @@
   (define-key evil-normal-state-map " o" 'slime-selector)
   (define-key evil-insert-state-map (kbd "TAB") 'company-complete))
 
+;;;;; INDENTATION SETUP  {{{
+(progn
+  (setq-default indent-tabs-mode nil
+                tab-width 2)
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'sh-basic-offset 'tab-width)
+  (defvaralias 'js2-basic-offset 'tab-width)
+  (defvaralias 'sgml-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width))
+
+;;;;; }}}
+
 ;;;;; SLIME SETUP {{{
 (progn ;slime isn't loaded via use-package because quicklisp-helper keeps it uptodate
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
@@ -273,7 +285,7 @@
 (use-package evil-nerd-commenter
   :ensure t
   :config
-  (evilnc-default-hotkeys))
+  (evilnc-default-hotkeys t))
 
 (use-package evil-leader
   :ensure t)
@@ -523,7 +535,7 @@
  '(global-linum-mode t)
  '(haskell-mode-hook
    (quote
-    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)) t)
+    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)))
  '(helm-ls-git-fuzzy-match t)
  '(jdee-server-dir "~/.emacs.d/jdee-server/")
  '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
@@ -536,7 +548,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (geiser pollen-mode js2-refactor npm-mode helm-dash aggressive-indent company-tern tern srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
+    (deft geiser pollen-mode js2-refactor npm-mode helm-dash aggressive-indent company-tern tern srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
  '(pe/omit-gitignore t)
  '(safe-local-variable-values
    (quote

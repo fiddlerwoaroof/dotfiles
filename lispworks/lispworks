@@ -1,0 +1,18 @@
+(defun load-init-file (filename &optional (conf-dir ".lispworks.d"))
+  (load (merge-pathnames
+         (make-pathname :directory `(:relative ,conf-dir)
+                        :name filename)
+         (user-homedir-pathname))))
+
+(change-directory (user-homedir-pathname))
+
+(load-init-file "editor-color-theme")
+
+(editor-color-theme:color-theme "solarized-dark")
+
+(setf (editor:variable-value "Input Format Default")
+      :default)
+(setf (editor:variable-value "Output Format Default")
+      '(:utf-8 :eol-style :lf))
+
+(load "~/quicklisp/setup.lisp")

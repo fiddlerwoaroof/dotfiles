@@ -1,5 +1,11 @@
 GIT_DEBUG=0
 
+git-ub() {
+  git stash || exit 1
+  git pull --rebase
+  git stash pop
+}
+
 git-ufgrep() {
   PATTERN="$1"
   if [[ ${PATTERN}x == ""x ]]; then
@@ -28,6 +34,10 @@ git-back() {
 }
 
 git-ff() {
+  git merge --ff-only
+}
+
+git-pff() {
   git pull --ff-only
 }
 
@@ -36,7 +46,7 @@ git-root() {
 }
 
 git-ag() {
-  ag "$@" -- $(git-root)
+  ag "$@" -- "$(git-root)"
 }
 
 git-cd() {
@@ -48,25 +58,40 @@ git-graph() {
   git log --graph --format=oneline --decorate "$@"
 }
 alias gl=git-graph
+alias git-l=git-graph
+alias git-hist=git-graph
+alias g=git
 
-is-function () {
-  whence -w $1 | grep --color=auto -I function > /dev/null
+git-messages() {
+  if [[ -d .git ]]; then
+    echo "Git log messages:"
+    git log -n 5 | egrep --color=yes -Io '(TODO|NOTE|FIXME|BUG|DONE):.*$'
+  fi
+
+  echo "Messages from files:"
+  egrep --color=yes -IHnro '(TODO|NOTE|FIXME|BUG):.*$' . |
+    psc '
+for line in sys.stdin:
+      line = line.strip().split(":", 2)
+      print("%s\n\t%s" % (":".join(line[2:]), ":".join(line[:2])))'
 }
 
+alias git-msg=git-messages
 
 GIT_CMD="`which -p git 2>/dev/null`"
+GTI_CMD="`which -p gti 2>/dev/null`"
 
-if [[ "$GIT_CMD"x != ""x ]]; then
+if [[ ! -z "$GIT_CMD" ]]; then
   # git wrapper that mimics the functionality of git for commandlets but also
   # searches shell functions.
   git() {
-    POSSIBLE_CMD="git-$1"
-    if is-function $POSSIBLE_CMD; then
+    local POSSIBLE_CMD
+    POSSIBLE_CMD="$(expand-alias git-$1)"
+
+    if is-function "$POSSIBLE_CMD"; then
       $POSSIBLE_CMD "${@[2,-1]}"
     else
-      $GIT_CMD "$@"
+      "$GIT_CMD" "$@"
     fi
   }
 fi
-
-
