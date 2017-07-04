@@ -306,7 +306,10 @@ get_depends() {
 }
 
 build_depends() {
-    for depend in ${(f)$(get_depends "$1")}; do
+    local -a depends
+    depends=${(@f)$(get_depends "$1")}
+    for depend in $depends; do
+	echo dependency found: $depend
 	script_depends[$1]+="$depend:"
     done
 }

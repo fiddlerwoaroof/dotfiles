@@ -1,10 +1,12 @@
-#:depends-on:00-utils
+#:depends-on:utils
+#:depends-on:nix
+#:depends-on:java
+#:depends-on:pfff
 ###
 PATH="${PATH%%:<<<:*}:${PATH##*:>>>:}"
 
 prepend_exe_path "$HOME/cj-projects/software/bin"
 prepend_exe_path "$HOME/cj-projects/software/resin/3.1.8-pro/bin"
-prepend_exe_path "$HOME/pfff/bin"
 prepend_exe_path "$HOME/Library/Python/2.7/bin"
 prepend_exe_path "$HOME/go/bin"
 prepend_exe_path "$HOME/.rvm/bin"
@@ -20,7 +22,7 @@ prepend_exe_path /usr/X11/bin
 prepend_exe_path "$HOME/vim8/bin"
 prepend_exe_path "$HOME/.cabal/bin"
 prepend_exe_path "$HOME/.local/bin"
-prepend_exe_path /Library/Java/Home/bin
+prepend_exe_path "$JAVA_HOME"/bin
 prepend_exe_path "$HOME/.nix-profile/bin"
 prepend_exe_path "$HOME/bin"
 

@@ -1,3 +1,4 @@
+#:depends-on:todo
 if [[ -e /etc/sysconfig/zsh-prompt-$TERM ]]; then
   . /etc/sysconfig/zsh-prompt-$TERM
 elif [[ -e $HOME/.zsh-prompt-$TERM ]]; then
