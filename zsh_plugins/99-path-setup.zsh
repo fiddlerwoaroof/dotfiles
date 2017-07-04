@@ -5,8 +5,6 @@
 ###
 PATH="${PATH%%:<<<:*}:${PATH##*:>>>:}"
 
-prepend_exe_path "$HOME/cj-projects/software/bin"
-prepend_exe_path "$HOME/cj-projects/software/resin/3.1.8-pro/bin"
 prepend_exe_path "$HOME/Library/Python/2.7/bin"
 prepend_exe_path "$HOME/go/bin"
 prepend_exe_path "$HOME/.rvm/bin"
