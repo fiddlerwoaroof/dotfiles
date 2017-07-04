@@ -1,3 +1,4 @@
+#:depends-on:foobar
 add_exe_path() {
   if [[ -d $1 ]]; then
     export PATH="$PATH:$1"

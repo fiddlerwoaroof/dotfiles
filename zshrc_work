@@ -299,12 +299,56 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
 export VIMCLOJURE_SERVER_JAR="$HOME/lib/vimclojure/server-2.3.6.jar"
 export CLON_THEME=el
 
+typeset -A script_depends
+typeset -A loaded_depends
+get_depends() {
+    awk -F: '$0=="###" || $1 != "#" { exit } $1="depends-on" {print $3}' "$1"
+}
+
+build_depends() {
+    for depend in ${(f)$(get_depends "$1")}; do
+	script_depends[$1]+="$depend:"
+    done
+}
+
+load_depends() {
+    for depend in ${(s<:>)script_depends[$1]}; do
+	if [[ -z $loaded_depends[$depend] ]]; then
+	  local fn="$HOME/.zsh.d/dependencies/$depend.zsh"
+	  echo -n "loading dependency $fn ... "
+	  if [[ -f $fn ]]; then
+	    if [[ -z $script_depends[$fn] ]]; then
+	      build_depends "$fn"
+	    fi
+	    load_depends "$fn"
+	    source $fn
+	    echo "done."
+	  else
+	      echo "missing."
+	  fi
+	  loaded_depends[$depend]=1
+	else
+	    echo "dependency $depend already loaded."
+	fi
+    done
+}
+
 init_scripts=( $HOME/.zsh.d/*.{,z}sh(N) ) 
 
 PATH="<<<:$PATH:>>>"
+echo 
+echo 
+echo 
 for x in $init_scripts; do
+    echo loading module $x
+    build_depends "$x"
+    load_depends "$x"
+    echo loading $x
     source "$x"
 done
+echo 
+echo 
+echo 
 
 FORTUNE="$(command -v fortune)"
 if [ -x "$FORTUNE" ]; then

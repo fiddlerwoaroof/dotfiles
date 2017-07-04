@@ -1,3 +1,5 @@
+#:depends-on:
+###
 if [[ $TERM != 'dumb' ]]; then
   # Solarized dircolors:
   CLICOLOR=1

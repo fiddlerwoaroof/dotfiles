@@ -1,3 +1,5 @@
+#:depends-on:00-utils
+###
 PATH="${PATH%%:<<<:*}:${PATH##*:>>>:}"
 
 prepend_exe_path "$HOME/cj-projects/software/bin"
