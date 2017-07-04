@@ -14,7 +14,7 @@ cat <<'EOP'
              :
 EOP
 
-echo "begin zshrc"
+# echo "begin zshrc"
 echo "shell session started for $USER on $TTY at `date`" | tee /dev/stderr | logger
 
 source $HOME/.localzshrc.sh
@@ -107,8 +107,6 @@ alias e=$EDITOR
 alias cvsdiff='cvs diff -wbB | colordiff'
 alias cp.="${GNU_PREFIX}cp --target-directory=."
 alias find='noglob find'
-
-echo "done variables and options"
 
 showspaces() {
     python -c'import sys;print sys.stdin.read().replace(" ","_").replace("\t", "----")'
@@ -266,7 +264,7 @@ bindkey -M viins '^O?' _complete_debug
 # detecting the terminal to get the keybindings right
 # TODO: check if obsoleted by other things
 if [[ -z $BINDKEYS ]]; then
-    echo 'defining bindkeys in zshrc'
+    # echo 'defining bindkeys in zshrc'
     BINDKEYS=${TERM%-256color}
     BINDKEYS=${BINDKEYS%-noit}
 fi
@@ -278,7 +276,6 @@ if [[ $BINDKEYS == "screen" ]]; then
     bindkey '[1~' beginning-of-line
     bindkey '[4~' end-of-line
 else
-    echo foo
     bindkey -M viins '[1;5D' backward-word
     # bindkey '[5D' backward-word
     bindkey -M viins '[1;5C' forward-word

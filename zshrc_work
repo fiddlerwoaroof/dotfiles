@@ -1,4 +1,6 @@
 #zmodload zsh/zprof
+PLUGIN_DIR="$HOME/.zsh.d"
+
 local script_depends loaded_depends
 typeset -A script_depends
 typeset -A loaded_depends
@@ -10,7 +12,6 @@ build_depends() {
     local -a depends
     depends=${(@f)$(get_depends "$1")}
     for depend in $depends; do
-	echo dependency found: $depend
 	script_depends[$1]+="$depend:"
     done
 }
@@ -18,38 +19,27 @@ build_depends() {
 load_depends() {
     for depend in ${(s<:>)script_depends[$1]}; do
 	if [[ -z $loaded_depends[$depend] ]]; then
-	  local fn="$HOME/.zsh.d/dependencies/$depend.zsh"
-	  echo -n "loading dependency $fn ... "
+	  local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
 	  if [[ -f $fn ]]; then
 	    if [[ -z $script_depends[$fn] ]]; then
 	      build_depends "$fn"
 	    fi
 	    load_depends "$fn"
 	    source $fn
-	    echo "done."
 	  else
-	      echo "missing."
+	      echo "$fn missing for $1"
 	  fi
 	  loaded_depends[$depend]=1
 	else
-	    echo "dependency $depend already loaded."
 	fi
     done
 }
 
-init_scripts=( $HOME/.zsh.d/*.{,z}sh(N) ) 
+init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) ) 
 
 PATH="<<<:$PATH:>>>"
-echo 
-echo 
-echo 
 for x in $init_scripts; do
-    echo loading module $x
     build_depends "$x"
     load_depends "$x"
-    echo loading $x
     source "$x"
 done
-echo 
-echo 
-echo 
