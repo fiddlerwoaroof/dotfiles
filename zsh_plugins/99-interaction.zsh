@@ -78,7 +78,6 @@ if [[ $TERM != "linux" && ${TERM%-color} != "eterm" ]]; then
    add-zsh-hook precmd termtitle
 fi
 
-  ""
 if battery_charge 2>&1 >/dev/null; then
   PROMPT='---
 (%?) %m:%n--%l %~ `vcs_info_wrapper` `battery_charge 2>/dev/null`
