@@ -1,13 +1,19 @@
 add_exe_path() {
-  export PATH="$PATH:$1"
+  if [[ -d $1 ]]; then
+    export PATH="$PATH:$1"
+  fi
 }
 
 push_exe_path() {
-  export PATH="$PATH:$1"
+  if [[ -d $1 ]]; then
+    export PATH="$PATH:$1"
+  fi
 }
 
 prepend_exe_path() {
-  export PATH="$1:$PATH"
+  if [[ -d $1 ]]; then
+    export PATH="$1:$PATH"
+  fi
 }
 
 mkcd() {
