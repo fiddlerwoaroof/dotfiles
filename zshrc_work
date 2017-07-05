@@ -1,5 +1,5 @@
 #zmodload zsh/zprof
-PLUGIN_DIR="$HOME/.zsh.d"
+PLUGIN_DIR="${PLUGIN_DIR:-$HOME/.zsh.d}"
 
 local script_depends loaded_depends
 typeset -A script_depends
