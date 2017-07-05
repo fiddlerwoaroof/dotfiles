@@ -43,3 +43,8 @@ for x in $init_scripts; do
     load_depends "$x"
     source "$x"
 done
+
+# Local Variables:
+# mode: sh
+# sh-shell: zsh
+# End:
