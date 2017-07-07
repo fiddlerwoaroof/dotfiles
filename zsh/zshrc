@@ -1,3 +1,4 @@
+# -*- mode: sh; sh-shell: zsh;-*-
 #zmodload zsh/zprof
 [[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
 
