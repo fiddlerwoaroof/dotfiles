@@ -171,6 +171,9 @@ setopt autocd
 setopt chaselinks
 setopt markdirs
 
+source $HOME/git_repos/3dp/nix-zsh-completions/nix.plugin.zsh
+fpath=($HOME/git_repos/3dp/nix-zsh-completions $fpath)
+
 # The following lines were added by compinstall
 zstyle ':completion:*' completer _expand _complete #_match _prefix
 zstyle ':completion:*' format 'Completing %D %d'
@@ -518,6 +521,10 @@ pmkdir() {
 mkcd() {
   mkdir "$1"
   cd "$1"
+}
+
+gtmpdir() {
+  cd "$(mktemp -d "$@")"
 }
 
 for x in `ls $HOME/.zsh.d/*.zsh`; do

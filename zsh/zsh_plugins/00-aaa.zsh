@@ -66,6 +66,10 @@ gta() {
     echo $cmd >> $HOME/.gtaliases
 }
 
+gtmpdir() {
+  cd "$(mktemp -d "$@")"
+}
+
 source $HOME/.gtaliases
 gthaskell() { gtp haskell }
 gtprolog() { gtp prolog }

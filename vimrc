@@ -131,6 +131,7 @@ NeoBundle 'ytsunetsune/unite-outline-euslisp'
 NeoBundle 'xolox/vim-misc'
 NeoBundle 'xolox/vim-easytags'
 NeoBundle 'majutsushi/tagbar'
+NeoBundle 'LnL7/vim-nix'
 
 
 " Required:

@@ -1,7 +1,9 @@
 if command -v emacsclient 2>&1 >/dev/null; then
-  function newemacs() {
-    emacsclient -c "$@"
-  }
+  cat > "$HOME/bin/newemacs" <<"EOF"
+#!/bin/sh
+emacsclient -c "$@"
+EOF
+  chmod +x "$HOME/bin/newemacs"
   export VISUAL=newemacs
 elif command -v vim 2>&1 >/dev/null; then
   export VISUAL=$(which vim)
