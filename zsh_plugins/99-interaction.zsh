@@ -1,4 +1,19 @@
 #:depends-on:todo
+cat <<'EOP'
+             :
+    `.       ;        .'
+      `.  .-'''-.   .'
+        ;'  __   _;'
+       /   '_    _`\
+      |  _( a (  a  |
+ '''''| (_)    >    |``````
+       \    \    / /
+        `.   `--'.'
+       .' `-,,,-' `.
+     .'      :      `.  hjw
+             :
+EOP
+
 if [[ -e /etc/sysconfig/zsh-prompt-$TERM ]]; then
   . /etc/sysconfig/zsh-prompt-$TERM
 elif [[ -e $HOME/.zsh-prompt-$TERM ]]; then
