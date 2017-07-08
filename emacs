@@ -2,6 +2,12 @@
 
 (setq default-directory "~/emacs-home/")
 (make-directory default-directory t)
+
+(let ((default-directory  "~/.emacs.d/lisp/"))
+  (make-directory default-directory t)
+  (normal-top-level-add-to-load-path '("."))
+  (normal-top-level-add-subdirs-to-load-path))
+
 (setq vc-follow-symlinks t)
 
 (require 'package)
@@ -24,7 +30,23 @@
   :ensure t
   :config
   (define-key evil-normal-state-map " o" 'slime-selector)
-  (define-key evil-insert-state-map (kbd "TAB") 'company-complete))
+  (define-key evil-insert-state-map (kbd "TAB") 'company-complete)
+
+  (use-package lisp-skeletons
+    :ensure t
+    :config
+    (add-hook 'skeleton-end-hook 'skeleton-make-markers))
+  (defun helm-generate-lisp-skeleton ()
+    (interactive)
+    (let ((skeletons '(("defunction" . skel-defun)
+                       ("defmacro" . skel-defmacro)
+                       ("defparameter" . skel-defparameter)
+                       ("defvar" . skel-defvar))))
+      (funcall (helm-comp-read "code template: " skeletons))))
+  
+  (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
+  (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton)
+  )
 
 ;;;;; INDENTATION SETUP  {{{
 (progn
@@ -398,7 +420,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal))))) 
+ '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal)))))
+ 
 
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
@@ -528,8 +551,8 @@
  '(company-backends
    (quote
     (company-semantic company-bbdb company-nxml company-css company-xcode company-cmake company-capf company-files
-		      (company-dabbrev-code company-gtags company-etags company-keywords)
-		      company-oddmuse company-dabbrev)))
+                      (company-dabbrev-code company-gtags company-etags company-keywords)
+                      company-oddmuse company-dabbrev)))
  '(custom-enabled-themes (quote (zenburn)))
  '(custom-safe-themes
    (quote
@@ -547,7 +570,7 @@
  '(global-linum-mode t)
  '(haskell-mode-hook
    (quote
-    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)))
+    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)) t)
  '(helm-ls-git-fuzzy-match t)
  '(jdee-server-dir "~/.emacs.d/jdee-server/")
  '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
