@@ -3,8 +3,8 @@
 #:depends-on:java
 #:depends-on:pfff
 ###
-PATH="${PATH%%:<<<:*}:${PATH##*:>>>:}"
 
+PATH="${PATH%%:<<<:*}:${PATH##*:>>>:}"
 prepend_exe_path "$HOME/Library/Python/2.7/bin"
 prepend_exe_path "$HOME/go/bin"
 prepend_exe_path "$HOME/.rvm/bin"

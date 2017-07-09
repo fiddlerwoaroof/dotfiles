@@ -1,4 +1,7 @@
-if command -v emacsclient 2>&1 >/dev/null; then
+#:depends-on:path-setup
+if command -v emacsclient.scpt 2>&1 >/dev/null; then
+    export VISUAL="emacsclient.scpt"
+elif command -v emacsclient 2>&1 >/dev/null; then
   cat > "$HOME/bin/newemacs" <<"EOF"
 #!/bin/sh
 emacsclient -c "$@"
