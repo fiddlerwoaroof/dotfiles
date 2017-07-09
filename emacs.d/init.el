@@ -46,7 +46,29 @@
   
   (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
   (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton)
-  )
+
+  (use-package  evil-paredit
+    :ensure t
+    :after paredit
+    :config
+    (evil-paredit-mode))
+
+  (use-package evil-numbers
+    :ensure t
+    :config
+    (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
+    (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt))
+
+  (use-package evil-surround
+    :ensure t
+    :config
+    (global-evil-surround-mode))
+
+  (use-package evil-leader
+    :ensure t
+    :config
+    (global-evil-leader-mode)
+    (evil-leader/set-leader ",")))
 
 ;;;;; INDENTATION SETUP  {{{
 (progn
@@ -240,15 +262,6 @@
   (define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
   (define-key evil-normal-state-map ",~" 'paredit-convolute-sexp))
 
-(use-package  evil-paredit
-  :ensure t)
-
-(use-package evil-numbers
-  :ensure t
-  :config
-  (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
-  (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt))
-
 (use-package eldoc-eval
   :ensure t)
 
@@ -320,12 +333,6 @@
 (use-package helm-ag
   :ensure t)
 
-(use-package evil-surround
-  :ensure t)
-
-(use-package evil-leader
-  :ensure t)
-
 (use-package emmet-mode
   :ensure t)
 
@@ -372,7 +379,6 @@
 	      (server-start))
 	    (evil-mode)
 	    (paredit-mode)
-	    (evil-paredit-mode)
 	    (global-company-mode)
 	    (global-linum-mode)))
 
@@ -537,58 +543,5 @@
 (require 'ede)
 (global-ede-mode)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   ["#212526" "#ff4b4b" "#b4fa70" "#fce94f" "#729fcf" "#e090d7" "#8cc4ff" "#eeeeec"])
- '(browse-url-browser-function (quote browse-url-generic))
- '(browse-url-generic-program "x-www-browser")
- '(company-backends
-   (quote
-    (company-semantic company-bbdb company-nxml company-css company-xcode company-cmake company-capf company-files
-                      (company-dabbrev-code company-gtags company-etags company-keywords)
-                      company-oddmuse company-dabbrev)))
- '(custom-enabled-themes (quote (zenburn)))
- '(custom-safe-themes
-   (quote
-    ("f5512c02e0a6887e987a816918b7a684d558716262ac7ee2dd0437ab913eaec6" "9d91458c4ad7c74cf946bd97ad085c0f6a40c370ac0a1cbeb2e3879f15b40553" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "ab04c00a7e48ad784b52f34aa6bfa1e80d0c3fcacc50e1189af3651013eb0d58" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" default)))
- '(erc-modules
-   (quote
-    (autoaway autojoin button capab-identify completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring stamp spelling track)))
- '(erc-truncate-mode t)
- '(evil-leader/leader ",")
- '(evil-visual-mark-mode t)
- '(font-use-system-font t)
- '(ggtags-sort-by-nearness t)
- '(ggtags-update-on-save t)
- '(global-evil-surround-mode t)
- '(global-linum-mode t)
- '(haskell-mode-hook
-   (quote
-    (capitalized-words-mode haskell-decl-scan-mode haskell-indentation-mode highlight-uses-mode imenu-add-menubar-index interactive-haskell-mode)) t)
- '(helm-ls-git-fuzzy-match t)
- '(jdee-server-dir "~/.emacs.d/jdee-server/")
- '(jira-url "https://atomampd.atlassian.net/rpc/xmlrpc")
- '(line-number-mode nil)
- '(mac-command-modifier nil)
- '(mac-option-modifier (quote meta))
- '(mac-pass-command-to-system t)
- '(nrepl-message-colors
-   (quote
-    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
- '(package-selected-packages
-   (quote
-    (deft geiser pollen-mode js2-refactor npm-mode helm-dash aggressive-indent company-tern tern srefactor ac-slime znc helm-ag ag helm-projectile notmuch zenburn-theme zeal-at-point use-package tabbar slime-company rainbow-delimiters projectile mvn jdee intero helm evil-visual-mark-mode evil-vimish-fold evil-paredit evil-numbers ensime eldoc-eval editorconfig color-theme ansible alect-themes ac-js2)))
- '(pe/omit-gitignore t)
- '(safe-local-variable-values
-   (quote
-    ((company-clang-arguments "-I.")
-     (Base . 10)
-     (Package . CL-USER)
-     (Syntax . COMMON-LISP))))
- '(slime-company-completion (quote fuzzy)))
+(setq custom-file "~/.emacs.d/custom.el")
+
