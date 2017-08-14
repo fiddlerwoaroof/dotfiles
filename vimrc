@@ -423,6 +423,7 @@ command -nargs=+ Gadd Git add <q-args>
 " set runtimepath+=/Applications/LilyPond.app/Contents/Resources/share/lilypond/current/vim
 au BufNewFile,BufRead *.phn set filetype=clojure
 
+if has('python')
 python << EOF
 import os
 import sys
@@ -431,5 +432,14 @@ for p in sys.path:
     if os.path.isdir(p):
         vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
 EOF
-
-
+endif
+if has('python3')
+python3 << EOF
+import os
+import sys
+import vim
+for p in sys.path:
+    if os.path.isdir(p):
+        vim.command(r"set path+=%s" % (p.replace(" ", r"\ ")))
+EOF
+endif

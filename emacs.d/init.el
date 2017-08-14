@@ -29,6 +29,7 @@
 (use-package evil
   :ensure t
   :config
+
   (define-key evil-normal-state-map " o" 'slime-selector)
   (define-key evil-insert-state-map (kbd "TAB") 'company-complete)
 
@@ -82,9 +83,17 @@
 
 ;;;;; }}}
 
+(setq browse-url-browser-function
+      'eww-browse-url)
+
 ;;;;; SLIME SETUP {{{
 (progn ;slime isn't loaded via use-package because quicklisp-helper keeps it uptodate
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+  (when (and (boundp 'common-lisp-hyperspec-root)
+             (string-prefix-p "/" common-lisp-hyperspec-root))
+    (setq common-lisp-hyperspec-root
+          (concat "file://" common-lisp-hyperspec-root)))
 
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "~/sbcl/bin/sbcl")
@@ -334,7 +343,10 @@
   :ensure t)
 
 (use-package emmet-mode
-  :ensure t)
+  :ensure t
+  :config
+  (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line)
+  )
 
 (use-package project-explorer
   :ensure t
@@ -421,13 +433,6 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro" :foundry "adobe" :slant normal :weight semi-bold :height 113 :width normal)))))
- 
 
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
@@ -544,4 +549,4 @@
 (global-ede-mode)
 
 (setq custom-file "~/.emacs.d/custom.el")
-
+(load-file custom-file)
