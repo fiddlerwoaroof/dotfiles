@@ -1,4 +1,4 @@
-;;; lisp-skeletons.el --- Skeletons for generating Common Lisp code       -*- lexical-binding: t; -*-
+;;; lisp-skeletons.el --- Skeletons for generating Common Lisp code       -*- lexical-binding: t; tab-width: 8; -*-
 
 ;; Copyright (C) 2017 Edward Langley
 
@@ -59,6 +59,10 @@ REVERSE - Jump to previous position in skeleton"
   (when (fboundp 'evil-insert)
     (evil-insert 1)))
 
+(defun skeleton-prev-position ()
+      (interactive "P")
+      (skeleton-next-position t))
+
 (define-skeleton skel-defun
   "Insert a defun template."
   "Name: "
@@ -86,6 +90,28 @@ REVERSE - Jump to previous position in skeleton"
   "(defvar " str @ _ ")"  \n
   '(evil-insert 1))
 
-
-(provide 'lisp-skeletons)
-;;; lisp-skeletons.el ends here
+(define-skeleton skel-defsystem
+  "Insert a defsystem template"
+  (skeleton-read "System Name: " (if v1
+                                     (file-name-sans-extension
+                                      (file-name-nondirectory
+                                       (buffer-file-name)))))
+  & (if (setq v1 (bobp))
+        ";;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Package: ASDF-USER -*-")
+  & \n
+  & "(in-package :asdf-user)"
+  & \n
+  & \n
+  "(defsystem :" @ str " 
+  :description \"\"
+  :author \"Ed L <edward@elangley.org>\"
+  :license \"MIT\"
+  :depends-on (#:alexandria
+               #:uiop
+               #:serapeum
+               " @ - ")
+  :serial t
+  :components (" @ "
+  " _ "))"
+  '(save-excursion
+     (indent-region (point-min) (point-max) nil)))

@@ -1,4 +1,4 @@
-;;;; -*- mode: Emacs-Lisp;-*-
+;;;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
 
 (setq default-directory "~/emacs-home/")
 (make-directory default-directory t)
@@ -12,9 +12,9 @@
 
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-			 ("org" . "http://orgmode.org/elpa/")
-			 ("melpa" . "https://melpa.org/packages/")
-			 ("melpa-stable" . "http://stable.melpa.org/packages/"))
+                         ("org" . "http://orgmode.org/elpa/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("melpa-stable" . "http://stable.melpa.org/packages/"))
       package-archive-priorities '(("melpa-stable" . 1)
                                    ("gnu" . 0)
                                    ("melpa" . 2)
@@ -36,17 +36,22 @@
   (use-package lisp-skeletons
     :ensure t
     :config
-    (add-hook 'skeleton-end-hook 'skeleton-make-markers))
-  (defun helm-generate-lisp-skeleton ()
-    (interactive)
-    (let ((skeletons '(("defunction" . skel-defun)
-                       ("defmacro" . skel-defmacro)
-                       ("defparameter" . skel-defparameter)
-                       ("defvar" . skel-defvar))))
-      (funcall (helm-comp-read "code template: " skeletons))))
-  
-  (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
-  (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton)
+    (add-hook 'skeleton-end-hook 'skeleton-make-markers)
+
+    (defun helm-generate-lisp-skeleton ()
+      (interactive)
+      (let ((skeletons '(("defunction" . skel-defun)
+                         ("defmacro" . skel-defmacro)
+                         ("defsystem" . skel-defsystem)
+                         ("defparameter" . skel-defparameter)
+                         ("defvar" . skel-defvar))))
+        (funcall (helm-comp-read "code template: " skeletons))
+        (evil-insert 1)))
+    
+    (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
+    (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
+    (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
+    (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
 
   (use-package  evil-paredit
     :ensure t
@@ -98,6 +103,14 @@
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "~/sbcl/bin/sbcl")
 
+  (defun create-system-files ()
+    (interactive)
+    (mapcar (lambda (it) (save-buffer (find-file (format "%s.lisp" (cadr it)))))
+            (getf (cddar (read-from-string
+                          (buffer-substring (point)
+                                            (mark))))
+                  :components)))
+
   (defun slime-ecl ()
     (interactive)
     (let ((inferior-lisp-program "ecl"))
@@ -119,18 +132,18 @@
       (slime)))
 
   (add-hook 'lisp-mode-hook
-	    '(lambda ()
-	       ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-	       (unless (string= "*slime-scratch*" (buffer-name))
-		 (paredit-mode)
-		 (evil-paredit-mode))
-	       (rainbow-delimiters-mode))) 
+            '(lambda ()
+               ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
+               (unless (string= "*slime-scratch*" (buffer-name))
+                 (paredit-mode)
+                 (evil-paredit-mode))
+               (rainbow-delimiters-mode))) 
   (setq slime-contribs
-	'(slime-fancy
-	  slime-company
-	  slime-macrostep
-	  slime-trace-dialog
-	  slime-mdot-fu)))
+        '(slime-fancy
+          slime-company
+          slime-macrostep
+          slime-trace-dialog
+          slime-mdot-fu)))
 
 (use-package slime-company
   :no-require t
@@ -143,27 +156,27 @@
   :config
   ;; keybindings
   (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
-	 (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
-	 (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
-	 (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
-	 (define-key company-active-map (kbd "[") (kbd "RET [")))
+         (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
+         (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
+         (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
+         (define-key company-active-map (kbd "[") (kbd "RET [")))
 
   (message "backends: %s" company-backends)
   (setq company-backends
-	'(company-clang
-	  company-bbdb
-	  company-nxml
-	  company-css
-	  company-xcode
-	  company-cmake
-	  company-capf
-	  company-files
-	  (company-dabbrev-code
-	   company-gtags
-	   company-etags
-	   company-keywords)
-	  company-oddmuse
-	  company-dabbrev))
+        '(company-clang
+          company-bbdb
+          company-nxml
+          company-css
+          company-xcode
+          company-cmake
+          company-capf
+          company-files
+          (company-dabbrev-code
+           company-gtags
+           company-etags
+           company-keywords)
+          company-oddmuse
+          company-dabbrev))
   )
 
 ;; NOTE: this must be here...
@@ -227,8 +240,8 @@
   :ensure t)
 
 (advice-add 'evil-delete-marks :after
-	    (lambda (&rest args)
-	      (evil-visual-mark-render)))
+            (lambda (&rest args)
+              (evil-visual-mark-render)))
 
 (use-package evil-nerd-commenter
   :ensure t
