@@ -33,25 +33,7 @@
   (define-key evil-normal-state-map " o" 'slime-selector)
   (define-key evil-insert-state-map (kbd "TAB") 'company-complete)
 
-  (use-package lisp-skeletons
-    :ensure t
-    :config
-    (add-hook 'skeleton-end-hook 'skeleton-make-markers)
-
-    (defun helm-generate-lisp-skeleton ()
-      (interactive)
-      (let ((skeletons '(("defunction" . skel-defun)
-                         ("defmacro" . skel-defmacro)
-                         ("defsystem" . skel-defsystem)
-                         ("defparameter" . skel-defparameter)
-                         ("defvar" . skel-defvar))))
-        (funcall (helm-comp-read "code template: " skeletons))
-        (evil-insert 1)))
-    
-    (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
-    (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
-    (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
-    (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
+  
 
   (use-package  evil-paredit
     :ensure t
@@ -75,6 +57,26 @@
     :config
     (global-evil-leader-mode)
     (evil-leader/set-leader ",")))
+
+(use-package lisp-skeletons
+    :config
+    (add-hook 'skeleton-end-hook 'skeleton-make-markers)
+
+    (defun helm-generate-lisp-skeleton ()
+      (interactive)
+      (let ((skeletons '(("defunction" . skel-defun)
+                         ("defmacro" . skel-defmacro)
+                         ("defsystem" . skel-defsystem)
+                         ("defpackage" . skel-defpackage)
+                         ("defparameter" . skel-defparameter)
+                         ("defvar" . skel-defvar))))
+        (funcall (helm-comp-read "code template: " skeletons))
+        (evil-insert 1)))
+    
+    (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
+    (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
+    (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
+    (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
 
 ;;;;; INDENTATION SETUP  {{{
 (progn
