@@ -1,7 +1,9 @@
 (in-package :cl-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (load "~/quicklisp/setup.lisp")  
+  (load "~/quicklisp/setup.lisp"))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (ql:quickload :xembed)
   (ql:quickload :stumpwm)
   (ql:quickload :serapeum)
