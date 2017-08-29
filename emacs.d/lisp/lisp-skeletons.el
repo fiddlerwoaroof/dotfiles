@@ -101,7 +101,8 @@ REVERSE - Jump to previous position in skeleton"
   "(defpackage :" @ str "
   (:use :cl "  _ @ - ")
   (:export " @  "))
-(in-package :" str ")" \n)
+(in-package :" str ")" \n
+@)
 
 
 (define-skeleton skel-defsystem
