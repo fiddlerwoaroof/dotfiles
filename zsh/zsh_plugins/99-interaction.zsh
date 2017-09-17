@@ -1,4 +1,6 @@
 #:depends-on:todo
+#:depends-on:key-bindings
+#:depends-on:named-directories
 cat <<'EOP'
              :
     `.       ;        .'
@@ -51,15 +53,7 @@ function zle-line-init zle-keymap-select {
   RPS2=$RPS1
   zle reset-prompt
 }
-zle -N zle-line-init
-zle -N zle-keymap-select
-
 export PYTHONSTARTUP=$HOME/Library/Python/2.7/site-packages/sitecustomize.py
-
-PROMPT='---
-(%?) %m:%n--%l ${PWD/$HOME/~} `vcs_info_wrapper` `battery_charge` 
-%!:%# '
-export PROMPT
 
 HOSTNAME=`hostname -f`
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'

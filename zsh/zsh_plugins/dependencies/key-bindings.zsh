@@ -1,7 +1,24 @@
 set -o vi
+bindkey -v
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+# We want the up + down arrows to do completion
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey -M viins "^[[A" up-line-or-beginning-search # Up
+bindkey -M vicmd "^[[A" up-line-or-beginning-search # Up
+bindkey -M viins "^[[B" down-line-or-beginning-search # Down
+bindkey -M vicmd "^[[B" down-line-or-beginning-search # Down
+bindkey -M vicmd "k" up-line-or-beginning-search # Up
+bindkey -M vicmd "j" down-line-or-beginning-search # Down
+
 bindkey -M vicmd '?' history-incremental-search-backward
-bindkey '^X^e' edit-command-line
-bindkey '^I' complete-word
+bindkey -M viins '^X^e' edit-command-line
+bindkey -M viins '^I' complete-word
 bindkey -M viins '^Oc' _correct_word
 bindkey -M viins '^O?' _complete_debug
 
@@ -13,7 +30,6 @@ if [[ -z $BINDKEYS ]]; then
     BINDKEYS=${BINDKEYS%-noit}
 fi
 
-bindkey -e
 if [[ $BINDKEYS == "screen" ]]; then
     bindkey '[D' backward-word
     bindkey '[C' forward-word

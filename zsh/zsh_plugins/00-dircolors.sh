@@ -1,4 +1,4 @@
-#:depends-on:
+#:depends-on:detect-gnu
 ###
 if [[ $TERM != 'dumb' ]]; then
   # Solarized dircolors:

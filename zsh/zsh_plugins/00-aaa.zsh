@@ -1,8 +1,8 @@
+#:depends-on:utils
 #:depends-on:nix
 #:depends-on:autoloads
 #:depends-on:sh-opts
 #:depends-on:detect-gnu
-#:depends-on:key-bindings
 #:depends-on:editor-setup
 
 # echo "begin zshrc"
@@ -35,45 +35,6 @@ showspaces() {
     python -c'import sys;print sys.stdin.read().replace(" ","_").replace("\t", "----")'
 }
 
-truncfile() {
-    echo $1
-    (( number = $1 - 1 ))
-    ${GNU_PREFIX}sed -i "${number}q" $2
-}
-
-
-savedir() {
-    cmd="export "`basename $PWD`"=$PWD"
-    eval $cmd
-    truncfile 50 $HOME/.gtaliases
-    echo $cmd >> $HOME/.gtaliases
-}
-
-hash -d "desktop=$HOME/Desktop"
-hash -d "downloads=$HOME/Downloads"
-hash -d "programming=$HOME/Programming"
-gtde() { cd ~desktop/"${(j</>)*}" }
-gtdo() { cd ~downloads/"${(j</>)*}" }
-gtp() {cd ~programming/"${(j</>)*}" }
-gt() { cd ~"${(j</>)*}" }
-[[ -e $HOME/.gtaliases ]] || touch $HOME/.gtaliases
-
-gta() {
-    cmd="hash -d \"$1\"=\"$PWD/${(j</>)*}\""
-    eval $cmd
-    gt $1
-    truncfile 50 $HOME/.gtaliases
-    echo $cmd >> $HOME/.gtaliases
-}
-
-gtmpdir() {
-  cd "$(mktemp -d "$@")"
-}
-
-source $HOME/.gtaliases
-gthaskell() { gtp haskell }
-gtprolog() { gtp prolog }
-gtpython() { gtp python }
 
 despace() { echo ${1// /} }
 escape() { echo ${(j<\\ >)*} }

@@ -55,3 +55,9 @@ expand-alias () {
     fi
   fi
 }
+
+truncfile() {
+    echo $1
+    (( number = $1 - 1 ))
+    ${GNU_PREFIX}sed -i "${number}q" $2
+}
