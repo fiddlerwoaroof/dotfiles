@@ -6,7 +6,7 @@ local script_depends loaded_depends
 typeset -A script_depends
 typeset -A loaded_depends
 get_depends() {
-    awk -F: '$0=="###" || $1 != "#" { exit } $1="depends-on" {print $3}' "$1"
+  awk -F: '$0=="###" || $1 != "#" { exit } $1="depends-on" {print $3}' "$1"
 }
 
 build_depends() {
@@ -18,29 +18,29 @@ build_depends() {
 }
 
 load_depends() {
-    for depend in ${(s<:>)script_depends[$1]}; do
-	if [[ -z $loaded_depends[$depend] ]]; then
-	  local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
-	  if [[ -f $fn ]]; then
-	    if [[ -z $script_depends[$fn] ]]; then
-	      build_depends "$fn"
-	    fi
-	    load_depends "$fn"
-	    source $fn
-	  else
-	      echo "$fn missing for $1"
-	  fi
-	  loaded_depends[$depend]=1
-	else
-	fi
-    done
+  for depend in ${(s<:>)script_depends[$1]}; do
+    if [[ -z $loaded_depends[$depend] ]]; then
+      local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
+      if [[ -f $fn ]]; then
+        if [[ -z $script_depends[$fn] ]]; then
+          build_depends "$fn"
+        fi
+        load_depends "$fn"
+        source $fn
+      else
+        echo "$fn missing for $1"
+      fi
+      loaded_depends[$depend]=1
+    else
+    fi
+  done
 }
 
 init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) ) 
 
 PATH="<<<:$PATH:>>>"
 for x in $init_scripts; do
-    build_depends "$x"
-    load_depends "$x"
-    source "$x"
+  build_depends "$x"
+  load_depends "$x"
+  source "$x"
 done
