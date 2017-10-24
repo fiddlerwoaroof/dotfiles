@@ -10,11 +10,11 @@ get_depends() {
 }
 
 build_depends() {
-    local -a depends
-    depends=${(@f)$(get_depends "$1")}
-    for depend in $depends; do
-	script_depends[$1]+="$depend:"
-    done
+  local -a depends
+  depends=(${(@f)$(get_depends "$1")})
+  for depend in $depends; do
+    script_depends[$1]+="$depend:"
+  done
 }
 
 load_depends() {
