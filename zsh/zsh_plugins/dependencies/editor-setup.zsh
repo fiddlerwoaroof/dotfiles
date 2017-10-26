@@ -1,6 +1,8 @@
 #:depends-on:path-setup
-if command -v emacsclient.applescript 2>&1 >/dev/null; then
-    export VISUAL="emacsclient.applescript"
+if command -v emacsclient.scpt 2>&1 >/dev/null; then
+    export VISUAL="emacsclient.scpt"
+elif command -v newemacs 2>&1 >/dev/null; then
+  export VISUAL=newemacs
 elif command -v emacsclient 2>&1 >/dev/null; then
   cat > "$HOME/bin/newemacs" <<"EOF"
 #!/bin/sh
