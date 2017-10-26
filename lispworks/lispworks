@@ -15,4 +15,9 @@
 (setf (editor:variable-value "Output Format Default")
       '(:utf-8 :eol-style :lf))
 
-(load "~/quicklisp/setup.lisp")
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (load "~/quicklisp/setup.lisp"))
+
+(ql:quickload :lw-add-ons)
+
+(editor:bind-key "Insert Space And Show Arglist" "Space")

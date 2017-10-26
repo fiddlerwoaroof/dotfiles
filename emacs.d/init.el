@@ -1,5 +1,8 @@
 ;;;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
 
+(when (file-exists-p "/usr/local/bin/gls")
+  (setq insert-directory-program "/usr/local/bin/gls"))
+
 (setq default-directory "~/emacs-home/")
 (make-directory default-directory t)
 
@@ -33,7 +36,6 @@
   (define-key evil-normal-state-map " o" 'slime-selector)
   (define-key evil-insert-state-map (kbd "TAB") 'company-complete)
 
-  
 
   (use-package  evil-paredit
     :ensure t
@@ -61,6 +63,7 @@
 (use-package lisp-skeletons
     :config
     (add-hook 'skeleton-end-hook 'skeleton-make-markers)
+
 
     (defun helm-generate-lisp-skeleton ()
       (interactive)
@@ -187,7 +190,14 @@
 (global-company-mode 1)
 
 (use-package projectile
-  :ensure t)
+  :ensure t
+  :config
+  (projectile-register-project-type
+   'npm '("package.json")
+   :compile "npm install"
+   :test "npm test"
+   :run "npm start"
+   :test-suffix ".spec"))
 
 (use-package sbt-mode
   :ensure t
@@ -198,7 +208,8 @@
   :pin melpa-stable)
 
 (use-package ensime
-  :ensure t)
+  :ensure t
+  :pin melpa-stable)
 
 (use-package intero
   :ensure t)
