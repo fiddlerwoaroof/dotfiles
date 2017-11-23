@@ -1,46 +1,56 @@
 # -*- mode: sh; sh-shell: zsh;-*-
 #zmodload zsh/zprof
-PLUGIN_DIR="${PLUGIN_DIR:-$HOME/.zsh.d}"
 
-local script_depends loaded_depends
-typeset -A script_depends
-typeset -A loaded_depends
-get_depends() {
-  awk -F: '$0=="###" || $1 != "#" { exit } $1="depends-on" {print $3}' "$1"
-}
+if [[ "$TERM" == "dumb" ]]; then
+  unsetopt zle
+  unsetopt prompt_cr
+  unsetopt prompt_subst
+  unfunction precmd
+  unfunction preexec
+  PS1='$ '
+else 
+  PLUGIN_DIR="${PLUGIN_DIR:-$HOME/.zsh.d}"
 
-build_depends() {
-  local -a depends
-  depends=(${(@f)$(get_depends "$1")})
-  for depend in $depends; do
-    script_depends[$1]+="$depend:"
-  done
-}
+  local script_depends loaded_depends
+  typeset -A script_depends
+  typeset -A loaded_depends
+  get_depends() {
+    awk -F: '$0=="###" || $1 != "#" { exit } $1="depends-on" {print $3}' "$1"
+  }
 
-load_depends() {
-  for depend in ${(s<:>)script_depends[$1]}; do
-    if [[ -z $loaded_depends[$depend] ]]; then
-      local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
-      if [[ -f $fn ]]; then
-        if [[ -z $script_depends[$fn] ]]; then
-          build_depends "$fn"
+  build_depends() {
+    local -a depends
+    depends=(${(@f)$(get_depends "$1")})
+    for depend in $depends; do
+      script_depends[$1]+="$depend:"
+    done
+  }
+
+  load_depends() {
+    for depend in ${(s<:>)script_depends[$1]}; do
+      if [[ -z $loaded_depends[$depend] ]]; then
+        local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
+        if [[ -f $fn ]]; then
+          if [[ -z $script_depends[$fn] ]]; then
+            build_depends "$fn"
+          fi
+          load_depends "$fn"
+          source $fn
+        else
+          echo "$fn missing for $1"
         fi
-        load_depends "$fn"
-        source $fn
+        loaded_depends[$depend]=1
       else
-        echo "$fn missing for $1"
       fi
-      loaded_depends[$depend]=1
-    else
-    fi
+    done
+  }
+
+  init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) ) 
+
+  PATH="<<<:$PATH:>>>"
+  for x in $init_scripts; do
+    build_depends "$x"
+    load_depends "$x"
+    source "$x"
   done
-}
-
-init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) ) 
-
-PATH="<<<:$PATH:>>>"
-for x in $init_scripts; do
-  build_depends "$x"
-  load_depends "$x"
-  source "$x"
-done
+fi
