@@ -2,12 +2,12 @@
 #zmodload zsh/zprof
 
 if [[ "$TERM" == "dumb" ]]; then
-  unsetopt zle
-  unsetopt prompt_cr
-  unsetopt prompt_subst
-  unfunction precmd
-  unfunction preexec
-  PS1='$ '
+    unsetopt zle
+    unsetopt prompt_cr
+    unsetopt prompt_subst
+    unfunction precmd
+    unfunction preexec
+    PS1='$ '
 else 
   PLUGIN_DIR="${PLUGIN_DIR:-$HOME/.zsh.d}"
 
@@ -29,17 +29,17 @@ else
   load_depends() {
     for depend in ${(s<:>)script_depends[$1]}; do
       if [[ -z $loaded_depends[$depend] ]]; then
-        local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
-        if [[ -f $fn ]]; then
-          if [[ -z $script_depends[$fn] ]]; then
-            build_depends "$fn"
+          loaded_depends[$depend]=1
+          local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
+          if [[ -f $fn ]]; then
+              if [[ -z $script_depends[$fn] ]]; then
+                  build_depends "$fn"
+              fi
+              load_depends "$fn"
+              source $fn
+          else
+            echo "$fn missing for $1"
           fi
-          load_depends "$fn"
-          source $fn
-        else
-          echo "$fn missing for $1"
-        fi
-        loaded_depends[$depend]=1
       else
       fi
     done
