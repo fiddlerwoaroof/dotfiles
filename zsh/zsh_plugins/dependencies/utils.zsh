@@ -1,4 +1,9 @@
-#:depends-on:foobar
+interactive_echo() {
+  case "$-" in
+    *i*) echo $*
+  esac
+}
+
 add_exe_path() {
   if [[ -d $1 ]]; then
     export PATH="$PATH:$1"

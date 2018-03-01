@@ -1,5 +1,15 @@
 GIT_DEBUG=0
 
+git-update-repos() {
+  find . -name .git | (
+    while read -r repo; do
+      printf "---\n$repo\n";
+      git --work-tree="${repo%/*}" --git-dir="$repo" pull --ff-only ;
+      printf "\n\n"
+    done
+  )
+}
+
 git-ub() {
   git stash || exit 1
   git pull --rebase

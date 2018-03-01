@@ -1,3 +1,4 @@
+#:depends-on:path-setup
 #:depends-on:utils
 #:depends-on:nix
 #:depends-on:autoloads
@@ -6,7 +7,8 @@
 #:depends-on:editor-setup
 
 # echo "begin zshrc"
-echo "shell session started for $USER on $TTY at `date`" | tee /dev/stderr | logger
+
+interactive_echo "shell session started for $USER on $TTY at `date`" | tee /dev/stderr | logger
 
 source $HOME/.localzshrc.sh
 
