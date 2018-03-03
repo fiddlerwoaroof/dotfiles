@@ -1,3 +1,5 @@
+; --*- Mode: lisp -*--
+
 (in-package :stumpwm)
 (defvar *selection-search-map* nil "selection search map")
 (defvar *search-map* nil "search map")

@@ -71,6 +71,9 @@
 (color-theme-initialize)
 (load-theme 'zenburn t)
 
+;(use-package erc
+;  :config
+;  (add-hook 'erc-insert-post-hook 'erc-truncate-buffer))
 (use-package evil
   :ensure t
   :config
