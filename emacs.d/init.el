@@ -139,7 +139,7 @@
 (setq browse-url-browser-function
       'eww-browse-url)
 
- ;;;;; SLIME SETUP {{{
+;;;; SLIME SETUP {{{
 (use-package slime-company
   :no-require t
   :ensure t)
@@ -316,6 +316,7 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load-file custom-file)
 
+<<<<<<< HEAD
 (setq gc-cons-threshold (* 100 1024))
 
 (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
@@ -324,3 +325,28 @@
   (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
   (require 'cjpad)
   (find-file "~/notes.org"))
+=======
+(defun fwoar--slime-find-system ()
+  (let ((systems (directory-files
+                  (locate-dominating-file default-directory
+                                          (lambda (n)
+                                            (directory-files n nil "^[^.#][^#]*[.]asd$")))
+                  t "^[^.#][^#]*[.]asd$")))
+    (find-file (if (not (null (cdr systems)))
+                   (helm-comp-read "system:" systems)
+                 (car systems)))))
+
+(pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
+         slime-selector-methods
+         :key #'car)
+
+(defun ansi-term-post (&rest r)
+  (message "Loading ansi term...")
+  (evil-set-initial-state 'term-mod 'emacs))
+
+(advice-add 'ansi-term :after 'ansi-term-post)
+
+(defun edit-init-el ()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+>>>>>>> emacs init.el updates
