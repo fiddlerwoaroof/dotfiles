@@ -316,16 +316,6 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load-file custom-file)
 
-<<<<<<< HEAD
-(setq gc-cons-threshold (* 100 1024))
-
-(setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
-
-(unless fwoar.is-ordinary
-  (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
-  (require 'cjpad)
-  (find-file "~/notes.org"))
-=======
 (defun fwoar--slime-find-system ()
   (let ((systems (directory-files
                   (locate-dominating-file default-directory
@@ -349,4 +339,12 @@
 (defun edit-init-el ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
->>>>>>> emacs init.el updates
+
+(setq gc-cons-threshold (* 100 1024))
+
+(setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
+
+(unless fwoar.is-ordinary
+  (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
+  (require 'cjpad)
+  (find-file "~/notes.org"))
