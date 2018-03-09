@@ -1,27 +1,35 @@
+man-() {
+  (echo ".ll 18.0i"; echo ".nr LL 18.0i"; /bin/cat) | /usr/bin/tbl | /usr/bin/groff -Wall -mtty-char -Tascii -mandoc -c
+}
+
 vspf() {
-  tmux split-window -h "$*"
+  tmux split-window -h "$*; sleep 1"
 }
 vsp() {
-  tmux split-window -d -h "$*"
+  tmux split-window -d -h "$*; sleep 1"
 }
 sp() {
-  tmux split-window -d "$*"
+  tmux split-window -d "$*; sleep 1"
 }
 spf() {
-  tmux split-window "$*"
+  tmux split-window "$*; sleep 1"
+}
+
+pager() {
+  $PAGER -f "$*"
 }
 
 _vman_helper() {
   inp="`mktemp -u`"
   mkfifo "$inp"
   echo "$inp"
-  vsp man -l "$inp"
+  vsp man- "$inp"
 }
 
 vman() {
   if [[ x"$TMUX" != x"" ]]; then
     if [[ x"$1" == "x" ]]; then
-      cat - > `_vman_helper`
+      cat - | man- > `_vman_helper`
     else
       vsp man $*
     fi
@@ -34,7 +42,7 @@ _vless_helper() {
   inp="`mktemp -u`"
   mkfifo "$inp"
   echo "$inp"
-  vsp $PAGER "$inp"
+  vsp ${PAGER:-less} -f "$inp"
 }
 
 vless() {

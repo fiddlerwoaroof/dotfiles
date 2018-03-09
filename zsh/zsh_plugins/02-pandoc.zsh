@@ -1,9 +1,5 @@
 # Requires pandoc
 
-man-() {
-  (echo ".ll 18.0i"; echo ".nr LL 18.0i"; /bin/cat) | /usr/bin/tbl | /usr/bin/groff -Wall -mtty-char -Tascii -mandoc -c
-}
-
 2man() {
   input="$2"
   if [[ "$input" == "" ]]; then
@@ -17,11 +13,11 @@ alias md2man='2man markdown'
 alias latex2man='2man latex'
 
 _pandoc_view() {
-  2man $1 $2 | man -l -
+  2man $1 $2 | man-
 }
 
 pandoc_view() {
-  man_fun="man -l -"
+  man_fun="man-"
   _pandoc_view $*
 }
 
@@ -34,7 +30,7 @@ dump_md() {
 }
 
 vpandoc_view() {
-  man_fun=vman
+  man_fuvman
   _pandoc_view $*
 }
 

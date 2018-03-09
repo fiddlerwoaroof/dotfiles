@@ -6,6 +6,7 @@
 
 ;;(let ((file-name-handler-alist nil))
 
+(setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
 (add-hook 'after-init-hook
           (lambda ()
             ;; (require 'projectile)
@@ -13,8 +14,11 @@
 
             (unless (fboundp 'server-running-p)
               (require 'server))
-            (unless (server-running-p)
-              (server-start))
+            (let ((server-name (if fwoar.is-ordinary
+                                   server-name
+                                 "notes")))
+                               (unless (server-running-p)
+               (server-start)))
             (projectile-mode)
             (evil-mode)
             (paredit-mode)
@@ -29,7 +33,6 @@
             (global-company-mode 1)
 
             ))
-
 
 (when (file-exists-p "/usr/local/bin/gls")
   (setq insert-directory-program "/usr/local/bin/gls"))
@@ -341,8 +344,6 @@
   (find-file "~/.emacs.d/init.el"))
 
 (setq gc-cons-threshold (* 100 1024))
-
-(setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
 
 (unless fwoar.is-ordinary
   (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
