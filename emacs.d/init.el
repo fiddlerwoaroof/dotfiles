@@ -45,6 +45,15 @@
 
   (load "utils"))
 
+
+(defmacro ensure-use-packages (&rest packages)
+  (list* 'progn
+         (mapcar (lambda (pck)
+                   `(use-package ,(car pck)
+                      :ensure t
+                      ,@(cdr pck)))
+                 packages)))
+
 (setq default-directory "~/emacs-home/")
 (make-directory default-directory t)
 
@@ -111,6 +120,33 @@
     :config
     (global-evil-leader-mode)
     (evil-leader/set-leader ",")))
+
+(use-package org
+  :pin "org"
+  :ensure t
+  :config
+  (setq org-directory "~/org")
+  (setq org-default-notes-file (concat org-directory "/scratch.org"))
+  (define-key global-map "\C-cc" 'org-capture)
+  (define-key evil-visual-state-map " c" 'org-capture)
+
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a")
+          ("s" "Snippet" entry (file "~/org/snippets.org")
+           "* %?\n#+BEGIN_SRC\n%i\n#+END_SRC")
+          ("b" "Bookmarks" entry (file+olp+datetree "~/org/bookmarks.org")
+           "* %? %^g\n%c\n")))
+
+  )
+
+(use-package deft
+  :ensure t
+  :config
+  (define-key evil-normal-state-map " v" 'deft)
+  )
 
 (use-package emmet-mode
   :ensure t
@@ -187,12 +223,28 @@
    (modify-syntax-entry ?= "w" lisp-mode-syntax-table)
    (modify-syntax-entry ?< "w" lisp-mode-syntax-table)
    (modify-syntax-entry ?> "w" lisp-mode-syntax-table)
+   (modify-syntax-entry 91 "(" lisp-mode-syntax-table)
+   (modify-syntax-entry 93 ")" lisp-mode-syntax-table)
    ;;(modify-syntax-entry ?@ "w" lisp-mode-syntax-table)
 
    (modify-syntax-entry ?^ "w" lisp-mode-syntax-table)
    (modify-syntax-entry ?_ "w" lisp-mode-syntax-table)
    (modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
    (modify-syntax-entry ?. "w" lisp-mode-syntax-table)
+
+   (defun fwoar--slime-find-system ()
+     (let ((systems (directory-files
+                     (locate-dominating-file default-directory
+                                             (lambda (n)
+                                               (directory-files n nil "^[^.#][^#]*[.]asd$")))
+                     t "^[^.#][^#]*[.]asd$")))
+       (find-file (if (not (null (cdr systems)))
+                      (helm-comp-read "system:" systems)
+                    (car systems)))))
+
+   (pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
+            slime-selector-methods
+            :key #'car)
 
    ))
 
@@ -202,7 +254,6 @@
   :config
   ;; keybindings
   (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
-         (define-key company-active-map (kbd "SPC") (kbd "RET SPC"))
          (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
          (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
          (define-key company-active-map (kbd "[") (kbd "RET [")))
@@ -238,69 +289,64 @@
    :run "npm start"
    :test-suffix ".spec"))
 
-(defmacro ensure-use-packages (&rest packages)
-  (list* 'progn
-         (mapcar (op `(use-package ,_
-                        :ensure t))
-                 packages)))
-
-(use-package css-eldoc :ensure t)
-(use-package ag :ensure t)
-(use-package rainbow-delimiters :ensure t)
-(use-package helm :ensure t)
-(use-package helm-projectile :ensure t)
-(use-package eldoc-eval :ensure t)
-(use-package csv-mode :ensure t)
-(use-package yaml-mode :ensure t)
-(use-package web-mode :ensure t)
-(use-package vue-mode :ensure t)
-(use-package scss-mode :ensure t)
-(use-package markdown-mode :ensure t)
-(use-package magit :ensure t :defer 2)
-(use-package highlight-parentheses :ensure t)
-(use-package helm-projectile :ensure t)
-(use-package helm-ls-git :ensure t)
-(use-package helm-css-scss :ensure t)
-;;(use-package ac-js2 :ensure t)
-;;(use-package helm-cider :ensure t :defer 5)
-(use-package helm-ag-r :ensure t)
-(use-package helm-ag :ensure t)
-(use-package project-explorer :ensure t)
+(ensure-use-packages
+ (css-eldoc)
+ (ag)
+ (rainbow-delimiters)
+ (helm)
+ (helm-projectile)
+ (eldoc-eval)
+ (csv-mode)
+ (yaml-mode)
+ (web-mode)
+ (vue-mode)
+ (scss-mode)
+ (markdown-mode)
+ (magit :defer 2)
+ (highlight-parentheses)
+ (helm-projectile)
+ (helm-ls-git)
+ (helm-css-scss)
+ ;;(ac-js2)
+ ;;(helm-cider :defer 5)
+ (helm-ag-r)
+ (helm-ag)
+ (project-explorer))
 
 
-(progn ; helm
-  (require 'helm-config)
-  (helm-mode)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (define-key evil-normal-state-map " f" 'helm-projectile)
-  (define-key evil-normal-state-map " j" 'helm-buffers-list)
-  (global-set-key (kbd "M-x") 'helm-M-x))
+ (progn ; helm
+   (require 'helm-config)
+   (helm-mode)
+   (global-set-key (kbd "C-x C-f") 'helm-find-files)
+   (define-key evil-normal-state-map " f" 'helm-projectile)
+   (define-key evil-normal-state-map " j" 'helm-buffers-list)
+   (global-set-key (kbd "M-x") 'helm-M-x))
 
 
-(use-package paredit
-  :ensure t
-  :config
-  (defparedit-wrapper back-then-wrap paredit-wrap-sexp)
-  (defparedit-wrapper back-then-wrap-square paredit-wrap-square)
-  (defparedit-wrapper back-then-wrap-curly paredit-wrap-curly)
-  (defparedit-wrapper back-then-wrap-angled paredit-wrap-angled)
-  (defparedit-wrapper back-then-wrap-doublequote paredit-meta-doublequote)
-  (define-key evil-normal-state-map ",W" 'back-then-wrap)
-  (define-key evil-normal-state-map ",w]" 'back-then-wrap-square)
-  (define-key evil-normal-state-map ",w}" 'back-then-wrap-curly)
-  (define-key evil-normal-state-map ",w>" 'back-then-wrap-angled)
-  (define-key evil-normal-state-map ",w\"" 'back-then-wrap-doublequote)
+ (use-package paredit
+   :ensure t
+   :config
+   (defparedit-wrapper back-then-wrap paredit-wrap-sexp)
+   (defparedit-wrapper back-then-wrap-square paredit-wrap-square)
+   (defparedit-wrapper back-then-wrap-curly paredit-wrap-curly)
+   (defparedit-wrapper back-then-wrap-angled paredit-wrap-angled)
+   (defparedit-wrapper back-then-wrap-doublequote paredit-meta-doublequote)
+   (define-key evil-normal-state-map ",W" 'back-then-wrap)
+   (define-key evil-normal-state-map ",w]" 'back-then-wrap-square)
+   (define-key evil-normal-state-map ",w}" 'back-then-wrap-curly)
+   (define-key evil-normal-state-map ",w>" 'back-then-wrap-angled)
+   (define-key evil-normal-state-map ",w\"" 'back-then-wrap-doublequote)
 
-  (define-key evil-normal-state-map ",S" 'paredit-splice-sexp)
-  (define-key evil-normal-state-map ",A" 'paredit-splice-sexp-killing-backward)
-  (define-key evil-normal-state-map ",D" 'paredit-splice-sexp-killing-forward)
-  (define-key evil-normal-state-map ",|" 'paredit-split-sexp)
-  (define-key evil-normal-state-map ",J" 'paredit-join-sexps)
-  (define-key evil-normal-state-map ",<" 'paredit-backward-slurp-sexp)
-  (define-key evil-normal-state-map ",," 'paredit-backward-barf-sexp) 
-  (define-key evil-normal-state-map ",>" 'paredit-forward-slurp-sexp)
-  (define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
-  (define-key evil-normal-state-map ",~" 'paredit-convolute-sexp))
+   (define-key evil-normal-state-map ",S" 'paredit-splice-sexp)
+   (define-key evil-normal-state-map ",A" 'paredit-splice-sexp-killing-backward)
+   (define-key evil-normal-state-map ",D" 'paredit-splice-sexp-killing-forward)
+   (define-key evil-normal-state-map ",|" 'paredit-split-sexp)
+   (define-key evil-normal-state-map ",J" 'paredit-join-sexps)
+   (define-key evil-normal-state-map ",<" 'paredit-backward-slurp-sexp)
+   (define-key evil-normal-state-map ",," 'paredit-backward-barf-sexp) 
+   (define-key evil-normal-state-map ",>" 'paredit-forward-slurp-sexp)
+   (define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
+   (define-key evil-normal-state-map ",~" 'paredit-convolute-sexp))
 
 (use-package editorconfig
   :ensure t
@@ -319,25 +365,16 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load-file custom-file)
 
-(defun fwoar--slime-find-system ()
-  (let ((systems (directory-files
-                  (locate-dominating-file default-directory
-                                          (lambda (n)
-                                            (directory-files n nil "^[^.#][^#]*[.]asd$")))
-                  t "^[^.#][^#]*[.]asd$")))
-    (find-file (if (not (null (cdr systems)))
-                   (helm-comp-read "system:" systems)
-                 (car systems)))))
+;; (use-package ansi-term :no-require t
+;;   :config
+;;   (eval-after-load 'evil
+;;     (evil-set-initial-state 'term-mode 'emacs)))
 
-(pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
-         slime-selector-methods
-         :key #'car)
+;; (defun ansi-term-post (&rest r)
+;;   (message "Loading ansi term...")
+;;   (evil-set-initial-state 'term-mode 'emacs))
 
-(defun ansi-term-post (&rest r)
-  (message "Loading ansi term...")
-  (evil-set-initial-state 'term-mod 'emacs))
-
-(advice-add 'ansi-term :after 'ansi-term-post)
+;; (advice-add 'ansi-term :after 'ansi-term-post)
 
 (defun edit-init-el ()
   (interactive)
@@ -348,4 +385,23 @@
 (unless fwoar.is-ordinary
   (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
   (require 'cjpad)
-  (find-file "~/notes.org"))
+  (find-file "~/org/notes.org"))
+
+;; (use-package org-brain :ensure t
+;;   :init
+;;   (setq org-brain-path "~/org-brain/")
+;;
+;;   :config
+;;   ;; For Evil users
+;;   (eval-after-load 'evil
+;;     (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+;;
+;;   (setq org-id-track-globally t)
+;;   (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+;;   (push '("b" "Brain" plain (function org-brain-goto-end)
+;;           "* %i%?" :empty-lines 1)
+;;         org-capture-templates)
+;;   (setq org-brain-visualize-default-choices 'all)
+;;   (setq org-brain-title-max-length 12))
+
+(put 'narrow-to-region 'disabled nil)
