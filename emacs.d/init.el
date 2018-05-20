@@ -360,7 +360,10 @@
 (modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
 (modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
 
+
 ;;)
+
+(global-set-key (kbd "s-v") 'yank)
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load-file custom-file)
@@ -404,4 +407,9 @@
 ;;   (setq org-brain-visualize-default-choices 'all)
 ;;   (setq org-brain-title-max-length 12))
 
-(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-region
+     'disabled
+     nil)
+
+(global-set-key (kbd "C-x C-b")
+                'ibuffer)
