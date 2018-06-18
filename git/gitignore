@@ -1,0 +1,9 @@
+.dir-locals.el
+.tern-port
+.tern-project
+.vscode
+10180
+.[#]*
+[#]*
+10180
+cjo/ztest-container*
