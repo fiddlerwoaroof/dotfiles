@@ -42,7 +42,7 @@ _vless_helper() {
   inp="`mktemp -u`"
   mkfifo "$inp"
   echo "$inp"
-  vsp ${PAGER:-less} -f "$inp"
+  vsp ${PAGER:-less} -R -f "$inp"
 }
 
 vless() {
