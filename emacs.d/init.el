@@ -11,27 +11,23 @@
           (lambda ()
             ;; (require 'projectile)
             ;; (require 'evil-numbers)
-
             (unless (fboundp 'server-running-p)
               (require 'server))
             (let ((server-name (if fwoar.is-ordinary
                                    server-name
                                  "notes")))
-                               (unless (server-running-p)
-               (server-start)))
+              (unless (server-running-p)
+                (server-start)))
             (projectile-mode)
             (evil-mode)
             (paredit-mode)
             ;;(global-company-mode)
-            (setq linum-format "%5d\u2502")
+            ;; (setq linum-format "%5d\u2502")
             (global-linum-mode)
             (set-exec-path-from-shell-PATH)
-
             ;; NOTE: this must be here...
             (slime-setup)
-
             (global-company-mode 1)
-
             ))
 
 (when (file-exists-p "/usr/local/bin/gls")
@@ -83,6 +79,11 @@
 (color-theme-initialize)
 (load-theme 'zenburn t)
 
+(use-package multifiles
+  :config
+  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
+  )
+
 ;(use-package erc
 ;  :config
 ;  (add-hook 'erc-insert-post-hook 'erc-truncate-buffer))
@@ -120,6 +121,11 @@
     :config
     (global-evil-leader-mode)
     (evil-leader/set-leader ",")))
+
+(use-package tern
+  :config
+  (add-hook 'js-mode-hook (lambda () (tern-mode t)))
+  (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
 
 (use-package org
   :pin "org"
@@ -178,75 +184,88 @@
 (setq browse-url-browser-function
       'eww-browse-url)
 
+
 ;;;; SLIME SETUP {{{
 (use-package slime-company
   :no-require t
   :ensure t)
 
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+(add-to-list 'load-path "~/git_repos/3dp/slime/")
+(require 'slime)
+(global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
-(run-with-idle-timer
- 5 nil  ;slime isn't loaded via use-package because quicklisp-helper keeps it uptodate
- (lambda ()
+(when (and (boundp 'common-lisp-hyperspec-root)
+           (string-prefix-p "/" common-lisp-hyperspec-root))
+  (setq common-lisp-hyperspec-root
+        (concat "file://" common-lisp-hyperspec-root)))
 
-   (when (and (boundp 'common-lisp-hyperspec-root)
-              (string-prefix-p "/" common-lisp-hyperspec-root))
-     (setq common-lisp-hyperspec-root
-           (concat "file://" common-lisp-hyperspec-root)))
+;; Replace "sbcl" with the path to your implementation
+(setq inferior-lisp-program "~/sbcl/bin/sbcl")
 
-   ;; Replace "sbcl" with the path to your implementation
-   (setq inferior-lisp-program "~/sbcl/bin/sbcl")
+(add-hook 'lisp-mode-hook
+          '(lambda ()
+             ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
+             (unless (string= "*slime-scratch*" (buffer-name))
+               (paredit-mode)
+               (evil-paredit-mode))
+             (rainbow-delimiters-mode))) 
 
-   (add-hook 'lisp-mode-hook
-             '(lambda ()
-                ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-                (unless (string= "*slime-scratch*" (buffer-name))
-                  (paredit-mode)
-                  (evil-paredit-mode))
-                (rainbow-delimiters-mode))) 
-   (setq slime-contribs
-         '(slime-fancy
-           slime-company
-           slime-macrostep
-           slime-trace-dialog
-           slime-mdot-fu))
-   
+(setq slime-contribs
+      '(slime-fancy
+        slime-company
+        slime-macrostep
+        slime-trace-dialog
+        slime-mdot-fu))
 
-   (modify-syntax-entry ?- "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?* "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?+ "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?! "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?$ "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?% "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?& "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?% "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?= "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?< "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?> "w" lisp-mode-syntax-table)
-   (modify-syntax-entry 91 "(" lisp-mode-syntax-table)
-   (modify-syntax-entry 93 ")" lisp-mode-syntax-table)
-   ;;(modify-syntax-entry ?@ "w" lisp-mode-syntax-table)
 
-   (modify-syntax-entry ?^ "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?_ "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
-   (modify-syntax-entry ?. "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?- "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?* "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?+ "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?! "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?$ "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?% "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?& "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?% "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?= "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?< "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?> "w" lisp-mode-syntax-table)
+(modify-syntax-entry 91 "(" lisp-mode-syntax-table)
+(modify-syntax-entry 93 ")" lisp-mode-syntax-table)
+;;(modify-syntax-entry ?@ "w" lisp-mode-syntax-table)
 
-   (defun fwoar--slime-find-system ()
-     (let ((systems (directory-files
-                     (locate-dominating-file default-directory
-                                             (lambda (n)
-                                               (directory-files n nil "^[^.#][^#]*[.]asd$")))
-                     t "^[^.#][^#]*[.]asd$")))
-       (find-file (if (not (null (cdr systems)))
-                      (helm-comp-read "system:" systems)
-                    (car systems)))))
+(modify-syntax-entry ?^ "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?_ "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
+(modify-syntax-entry ?. "w" lisp-mode-syntax-table)
 
-   (pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
-            slime-selector-methods
-            :key #'car)
+(setq shr-inhibit-images t
+      shr-use-fonts nil)
 
-   ))
+(defun fwoar--clhs-lookup (&rest args)
+  (let ((browse-url-browser-function 'eww-browse-url))
+    (hyperspec-lookup (word-at-point))))
+
+(pushnew (list ?h "Check hyperspec" #'fwoar--clhs-lookup)
+         slime-selector-methods
+         :key #'car)
+
+(defun fwoar--slime-find-system ()
+  (let ((systems (directory-files
+                  (locate-dominating-file default-directory
+                                          (lambda (n)
+                                            (directory-files n nil "^[^.#][^#]*[.]asd$")))
+                  t "^[^.#][^#]*[.]asd$")))
+    (find-file (if (not (null (cdr systems)))
+                   (helm-comp-read "system:" systems)
+                 (car systems)))))
+
+(pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
+         slime-selector-methods
+         :key #'car)
+
+
+
 
  ;;;;; }}}
 (use-package company
@@ -289,6 +308,19 @@
    :run "npm start"
    :test-suffix ".spec"))
 
+(use-package cider
+  :config
+  (define-key evil-normal-state-map " t" 'cider-test-run-ns-tests)
+  (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'cider-mode-hook 'evil-paredit-mode)
+  (add-hook 'cider-mode-hook 'paredit-mode)
+
+  (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
+  (modify-syntax-entry ?- "w" clojure-mode-syntax-table)
+  (modify-syntax-entry ?~ "w" clojure-mode-syntax-table)
+  (modify-syntax-entry ?. "w" clojure-mode-syntax-table)
+  )
+
 (ensure-use-packages
  (css-eldoc)
  (ag)
@@ -320,6 +352,7 @@
    (global-set-key (kbd "C-x C-f") 'helm-find-files)
    (define-key evil-normal-state-map " f" 'helm-projectile)
    (define-key evil-normal-state-map " j" 'helm-buffers-list)
+   (define-key evil-normal-state-map " s" 'helm-occur)
    (global-set-key (kbd "M-x") 'helm-M-x))
 
 
@@ -353,9 +386,29 @@
   :config
   (editorconfig-mode 1))
 
+(use-package js2-mode
+  :ensure t
+  :defer t
+  :commands js2-mode
+  :init
+  (progn
+    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
+    (setq-default js2-basic-offset 4)
+    (setq-default js-indent-level 4)
+    (customize-set-variable 'js2-mode-show-parse-errors nil)
+    (customize-set-variable 'js2-strict-missing-semi-warning nil)
+    (customize-set-variable 'js2-strict-trailing-comma-warning nil)
+    (customize-set-variable 'js2-strict-inconsistent-return-warning nil)))
+
+(use-package rjsx-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
+
 (define-key evil-normal-state-map "ZZ" 'save-buffer)
 
-;;(modify-syntax-entry ?_ "w" js-mode-syntax-table)
+(modify-syntax-entry ?_ "w" js-mode-syntax-table)
+(modify-syntax-entry ?_ "w" js2-mode-syntax-table)
 
 (modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
 (modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
@@ -413,3 +466,6 @@
 
 (global-set-key (kbd "C-x C-b")
                 'ibuffer)
+
+(setq org-agenda-files '("~/org/notes.org"))
+

@@ -1,3 +1,5 @@
+(in-package :cl-user)
+
 (defun load-init-file (filename &optional (conf-dir ".lispworks.d"))
   (load (merge-pathnames
          (make-pathname :directory `(:relative ,conf-dir)
@@ -21,3 +23,18 @@
 (ql:quickload :lw-add-ons)
 
 (editor:bind-key "Insert Space And Show Arglist" "Space")
+
+(defun ed-asdf-component (system component)
+  (let ((component (asdf:find-component system component)))
+    (ed (asdf:component-pathname component))))
+
+
+(defun utf-8-file-encoding (pathname ef-spec buffer length)
+  (declare (ignore pathname buffer length))
+  (system:merge-ef-specs ef-spec :utf-8))
+
+(setq system:*file-encoding-detection-algorithm*
+      (substitute 'utf-8-file-encoding
+                  'system:locale-file-encoding
+                  system:*file-encoding-detection-algorithm*))
+(set-default-character-element-type 'simple-char)
