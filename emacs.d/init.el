@@ -1,4 +1,5 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
+(setq gc-cons-threshold 100000000)
 (message invocation-name)
 (setq gc-cons-threshold 100000000)
 (setq inhibit-splash-screen t)
@@ -22,8 +23,8 @@
 
 (use-package multifiles
   :config
-  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile))
-
+  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
+  )
 
 (use-package tern
   :config
