@@ -80,15 +80,18 @@
   (interactive)
   (slime-eval-async `(ql:quickload ',(find-use-clause (list-at-point)))))
 
-(defun paredit-wiggle-back ()
-  (paredit-forward)
-  (paredit-backward))
+(defmacro comment (&rest _))
 
-(defmacro defparedit-wrapper (name invoked-wrapper)
-  `(defun ,name ()
-     (interactive)
-     (paredit-wiggle-back)
-     (,invoked-wrapper)))
+(comment
+ (defun paredit-wiggle-back ()
+   (paredit-forward)
+   (paredit-backward))
+
+ (defmacro defparedit-wrapper (name invoked-wrapper)
+   `(defun ,name ()
+      (interactive)
+      (paredit-wiggle-back)
+      (,invoked-wrapper))))
 
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match
@@ -104,3 +107,16 @@ started from a shell."
 )))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
+
+(defun load-package-configuration (package)
+  (load (concat "~/.emacs.d/lisp/configurations/"
+                (symbol-name package)
+                ".el")))
+
+(defmacro ensure-use-packages (&rest packages)
+  (list* 'progn
+         (mapcar (lambda (pck)
+                   `(use-package ,(car pck)
+                      :ensure t
+                      ,@(cdr pck)))
+                 packages)))

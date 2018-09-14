@@ -1,54 +1,55 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
-(setq gc-cons-threshold 100000000)
 (message invocation-name)
+(setq gc-cons-threshold 100000000)
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
 
-;;(let ((file-name-handler-alist nil))
+(defun do-init ()
+            ;;;;; INDENTATION SETUP  {{{
+  (progn
+    (setq-default indent-tabs-mode nil
+                  tab-width 2)
+    (defvaralias 'c-basic-offset 'tab-width)
+    (defvaralias 'sh-basic-offset 'tab-width)
+    (defvaralias 'js2-basic-offset 'tab-width)
+    (defvaralias 'sgml-basic-offset 'tab-width)
+    (defvaralias 'cperl-indent-level 'tab-width))
+            ;;;;; }}}
+
+  ;; (require 'projectile)
+  ;; (require 'evil-numbers)
+  (unless (fboundp 'server-running-p)
+    (require 'server))
+  (let ((server-name (if fwoar.is-ordinary
+                         server-name
+                       "notes")))
+    (unless (server-running-p)
+      (server-start)))
+  (projectile-mode)
+  (evil-mode)
+  ;; (paredit-mode)
+  ;;(global-company-mode)
+  ;; (setq linum-format "%5d\u2502")
+  (global-linum-mode)
+  (set-exec-path-from-shell-PATH)
+  ;; NOTE: this must be here...
+  (global-company-mode 1)
+  (slime-setup))
 
 (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
-(add-hook 'after-init-hook
-          (lambda ()
-            ;; (require 'projectile)
-            ;; (require 'evil-numbers)
-            (unless (fboundp 'server-running-p)
-              (require 'server))
-            (let ((server-name (if fwoar.is-ordinary
-                                   server-name
-                                 "notes")))
-              (unless (server-running-p)
-                (server-start)))
-            (projectile-mode)
-            (evil-mode)
-            (paredit-mode)
-            ;;(global-company-mode)
-            ;; (setq linum-format "%5d\u2502")
-            (global-linum-mode)
-            (set-exec-path-from-shell-PATH)
-            ;; NOTE: this must be here...
-            (slime-setup)
-            (global-company-mode 1)
-            ))
+(add-hook 'after-init-hook 'do-init)
 
 (when (file-exists-p "/usr/local/bin/gls")
   (setq insert-directory-program "/usr/local/bin/gls"))
-
 
 (let ((default-directory  "~/.emacs.d/lisp/"))
   (make-directory default-directory t)
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path)
-
   (load "utils"))
 
-
-(defmacro ensure-use-packages (&rest packages)
-  (list* 'progn
-         (mapcar (lambda (pck)
-                   `(use-package ,(car pck)
-                      :ensure t
-                      ,@(cdr pck)))
-                 packages)))
+(use-package smartparens
+  :ensure t)
 
 (setq default-directory "~/emacs-home/")
 (make-directory default-directory t)
@@ -76,51 +77,17 @@
 (require 'use-package)
 (use-package color-theme :ensure t)
 (use-package zenburn-theme :ensure t)
+(load "~/.emacs.d/el-zenburn-theme.el")
 (color-theme-initialize)
-(load-theme 'zenburn t)
+(load-theme 'el-zenburn t)
+
+(load-package-configuration 'evil)
 
 (use-package multifiles
   :config
   (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
   )
 
-;(use-package erc
-;  :config
-;  (add-hook 'erc-insert-post-hook 'erc-truncate-buffer))
-(use-package evil
-  :ensure t
-  :config
-
-  (advice-add 'evil-delete-marks :after
-              (lambda (&rest args)
-                (evil-visual-mark-render)))
-
-  (define-key evil-normal-state-map " o" 'slime-selector)
-  (define-key evil-insert-state-map (kbd "TAB") 'company-indent-or-complete-common)
-  (evil-mode)
-  (use-package  evil-paredit
-    :ensure t
-    :after paredit
-    :config
-    (evil-paredit-mode))
-
-
-  ;;(use-package evil-numbers
-  ;;  :ensure t
-  ;;  :config
-  ;;  (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
-  ;;  (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt))
-
-  (use-package evil-surround
-    :ensure t
-    :config
-    (global-evil-surround-mode))
-
-  (use-package evil-leader
-    :ensure t
-    :config
-    (global-evil-leader-mode)
-    (evil-leader/set-leader ",")))
 
 (use-package tern
   :config
@@ -131,20 +98,24 @@
   :pin "org"
   :ensure t
   :config
-  (setq org-directory "~/org")
-  (setq org-default-notes-file (concat org-directory "/scratch.org"))
+  (setq org-directory "~/org"
+        org-default-notes-file (concat org-directory "/scratch.org")
+        org-refile-use-outline-path 'file
+        org-outline-path-complete-in-steps nil
+        org-capture-templates '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+                                 "* TODO %?\n  %i\n  %a")
+                                ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
+                                 "* %?\nEntered on %U\n  %i\n  %a")
+                                ("s" "Snippet" entry (file "~/org/snippets.org")
+                                 "* %?\n#+BEGIN_SRC\n%i\n#+END_SRC")
+                                ("b" "Bookmarks" entry (file+olp+datetree "~/org/bookmarks.org")
+                                 "* %? %^g\n%c\n"))
+        org-refile-targets '((nil . (:maxlevel . 2))))
+
   (define-key global-map "\C-cc" 'org-capture)
   (define-key evil-visual-state-map " c" 'org-capture)
 
-  (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-           "* TODO %?\n  %i\n  %a")
-          ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
-           "* %?\nEntered on %U\n  %i\n  %a")
-          ("s" "Snippet" entry (file "~/org/snippets.org")
-           "* %?\n#+BEGIN_SRC\n%i\n#+END_SRC")
-          ("b" "Bookmarks" entry (file+olp+datetree "~/org/bookmarks.org")
-           "* %? %^g\n%c\n")))
+
 
   )
 
@@ -169,30 +140,18 @@
   (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
   (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
 
-;;;;; INDENTATION SETUP  {{{
-(progn
-  (setq-default indent-tabs-mode nil
-                tab-width 2)
-  (defvaralias 'c-basic-offset 'tab-width)
-  (defvaralias 'sh-basic-offset 'tab-width)
-  (defvaralias 'js2-basic-offset 'tab-width)
-  (defvaralias 'sgml-basic-offset 'tab-width)
-  (defvaralias 'cperl-indent-level 'tab-width))
-
-;;;;; }}}
-
 (setq browse-url-browser-function
       'eww-browse-url)
 
 
 ;;;; SLIME SETUP {{{
-(use-package slime-company
-  :no-require t
-  :ensure t)
-
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (add-to-list 'load-path "~/git_repos/3dp/slime/")
 (require 'slime)
+
+(use-package slime-company
+  :ensure t)
+
 (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
 (when (and (boundp 'common-lisp-hyperspec-root)
@@ -206,9 +165,9 @@
 (add-hook 'lisp-mode-hook
           '(lambda ()
              ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-             (unless (string= "*slime-scratch*" (buffer-name))
-               (paredit-mode)
-               (evil-paredit-mode))
+             ;; (unless (string= "*slime-scratch*" (buffer-name))
+             ;;   (paredit-mode)
+             ;;   (evil-paredit-mode))
              (rainbow-delimiters-mode))) 
 
 (setq slime-contribs
@@ -268,6 +227,8 @@
 
 
  ;;;;; }}}
+(use-package company-posframe
+  :ensure t)
 (use-package company
   :defer 5
   :config
@@ -293,11 +254,16 @@
            company-keywords)
           company-oddmuse
           company-dabbrev))
+  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1)))
   )
 
 (use-package projectile
   :ensure t
   :config
+  (define-key evil-normal-state-map " g" 'helm-projectile-find-file-dwim)
+  (projectile-register-project-type
+   'clojure '("project.clj" "build.boot" "deps.edn"))
+
   (projectile-register-project-type
    'lisp '("*.asd"))
   
@@ -311,9 +277,16 @@
 (use-package cider
   :config
   (define-key evil-normal-state-map " t" 'cider-test-run-ns-tests)
-  (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'cider-mode-hook 'evil-paredit-mode)
-  (add-hook 'cider-mode-hook 'paredit-mode)
+  (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
+  (evil-define-key 'normal clojure-mode-map " o" 'cider-selector)
+  (evil-define-key 'normal cider-repl-mode-map " o" 'cider-selector)
+  (add-hook 'cider-mode-hook
+            (lambda ()
+              (rainbow-delimiters-mode)
+              ;; (evil-paredit-mode)
+              ;; (paredit-mode)
+              (aggressive-indent-mode)
+              (helm-cider-mode)))
 
   (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?- "w" clojure-mode-syntax-table)
@@ -346,40 +319,15 @@
  (project-explorer))
 
 
- (progn ; helm
-   (require 'helm-config)
-   (helm-mode)
-   (global-set-key (kbd "C-x C-f") 'helm-find-files)
-   (define-key evil-normal-state-map " f" 'helm-projectile)
-   (define-key evil-normal-state-map " j" 'helm-buffers-list)
-   (define-key evil-normal-state-map " s" 'helm-occur)
-   (global-set-key (kbd "M-x") 'helm-M-x))
+(progn ; helm
+  (require 'helm-config)
+  (helm-mode)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (define-key evil-normal-state-map " f" 'helm-projectile)
+  (define-key evil-normal-state-map " j" 'helm-buffers-list)
+  (define-key evil-normal-state-map " s" 'helm-occur)
+  (global-set-key (kbd "M-x") 'helm-M-x))
 
-
- (use-package paredit
-   :ensure t
-   :config
-   (defparedit-wrapper back-then-wrap paredit-wrap-sexp)
-   (defparedit-wrapper back-then-wrap-square paredit-wrap-square)
-   (defparedit-wrapper back-then-wrap-curly paredit-wrap-curly)
-   (defparedit-wrapper back-then-wrap-angled paredit-wrap-angled)
-   (defparedit-wrapper back-then-wrap-doublequote paredit-meta-doublequote)
-   (define-key evil-normal-state-map ",W" 'back-then-wrap)
-   (define-key evil-normal-state-map ",w]" 'back-then-wrap-square)
-   (define-key evil-normal-state-map ",w}" 'back-then-wrap-curly)
-   (define-key evil-normal-state-map ",w>" 'back-then-wrap-angled)
-   (define-key evil-normal-state-map ",w\"" 'back-then-wrap-doublequote)
-
-   (define-key evil-normal-state-map ",S" 'paredit-splice-sexp)
-   (define-key evil-normal-state-map ",A" 'paredit-splice-sexp-killing-backward)
-   (define-key evil-normal-state-map ",D" 'paredit-splice-sexp-killing-forward)
-   (define-key evil-normal-state-map ",|" 'paredit-split-sexp)
-   (define-key evil-normal-state-map ",J" 'paredit-join-sexps)
-   (define-key evil-normal-state-map ",<" 'paredit-backward-slurp-sexp)
-   (define-key evil-normal-state-map ",," 'paredit-backward-barf-sexp) 
-   (define-key evil-normal-state-map ",>" 'paredit-forward-slurp-sexp)
-   (define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
-   (define-key evil-normal-state-map ",~" 'paredit-convolute-sexp))
 
 (use-package editorconfig
   :ensure t
@@ -421,17 +369,6 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load-file custom-file)
 
-;; (use-package ansi-term :no-require t
-;;   :config
-;;   (eval-after-load 'evil
-;;     (evil-set-initial-state 'term-mode 'emacs)))
-
-;; (defun ansi-term-post (&rest r)
-;;   (message "Loading ansi term...")
-;;   (evil-set-initial-state 'term-mode 'emacs))
-
-;; (advice-add 'ansi-term :after 'ansi-term-post)
-
 (defun edit-init-el ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
@@ -443,23 +380,6 @@
   (require 'cjpad)
   (find-file "~/org/notes.org"))
 
-;; (use-package org-brain :ensure t
-;;   :init
-;;   (setq org-brain-path "~/org-brain/")
-;;
-;;   :config
-;;   ;; For Evil users
-;;   (eval-after-load 'evil
-;;     (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
-;;
-;;   (setq org-id-track-globally t)
-;;   (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
-;;   (push '("b" "Brain" plain (function org-brain-goto-end)
-;;           "* %i%?" :empty-lines 1)
-;;         org-capture-templates)
-;;   (setq org-brain-visualize-default-choices 'all)
-;;   (setq org-brain-title-max-length 12))
-
 (put 'narrow-to-region
      'disabled
      nil)
@@ -469,3 +389,62 @@
 
 (setq org-agenda-files '("~/org/notes.org"))
 
+;;;;; junk drawer ....
+
+(comment
+ (use-package paredit
+   :ensure t
+   :config
+   (defparedit-wrapper back-then-wrap paredit-wrap-sexp)
+   (defparedit-wrapper back-then-wrap-square paredit-wrap-square)
+   (defparedit-wrapper back-then-wrap-curly paredit-wrap-curly)
+   (defparedit-wrapper back-then-wrap-angled paredit-wrap-angled)
+   (defparedit-wrapper back-then-wrap-doublequote paredit-meta-doublequote)
+   (define-key evil-normal-state-map ",W" 'back-then-wrap)
+   (define-key evil-normal-state-map ",w]" 'back-then-wrap-square)
+   (define-key evil-normal-state-map ",w}" 'back-then-wrap-curly)
+   (define-key evil-normal-state-map ",w>" 'back-then-wrap-angled)
+   (define-key evil-normal-state-map ",w\"" 'back-then-wrap-doublequote)
+
+   (define-key evil-normal-state-map ",S" 'paredit-splice-sexp)
+   (define-key evil-normal-state-map ",A" 'paredit-splice-sexp-killing-backward)
+   (define-key evil-normal-state-map ",D" 'paredit-splice-sexp-killing-forward)
+   (define-key evil-normal-state-map ",|" 'paredit-split-sexp)
+   (define-key evil-normal-state-map ",J" 'paredit-join-sexps)
+   (define-key evil-normal-state-map ",<" 'paredit-backward-slurp-sexp)
+   (define-key evil-normal-state-map ",," 'paredit-backward-barf-sexp) 
+   (define-key evil-normal-state-map ",>" 'paredit-forward-slurp-sexp)
+   (define-key evil-normal-state-map ",." 'paredit-forward-barf-sexp) 
+   (define-key evil-normal-state-map ",~" 'paredit-convolute-sexp))
+
+ (use-package erc
+   :config
+   (add-hook 'erc-insert-post-hook 'erc-truncate-buffer))
+
+ (use-package ansi-term :no-require t
+   :config
+   (eval-after-load 'evil
+     (evil-set-initial-state 'term-mode 'emacs)))
+
+ (defun ansi-term-post (&rest r)
+   (message "Loading ansi term...")
+   (evil-set-initial-state 'term-mode 'emacs))
+
+ (advice-add 'ansi-term :after 'ansi-term-post)
+
+ (use-package org-brain :ensure t
+   :init
+   (setq org-brain-path "~/org-brain/")
+
+   :config
+   ;; For Evil users
+   (eval-after-load 'evil
+     (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+
+   (setq org-id-track-globally t)
+   (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+   (push '("b" "Brain" plain (function org-brain-goto-end)
+           "* %i%?" :empty-lines 1)
+         org-capture-templates)
+   (setq org-brain-visualize-default-choices 'all)
+   (setq org-brain-title-max-length 12)))
