@@ -151,6 +151,7 @@ started from a shell."
   (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
   (global-company-mode 1)
+  (message (format "s-c-c is: %s" slime-company-completion))
   (slime-setup))
 
 (defun cold-boot ()

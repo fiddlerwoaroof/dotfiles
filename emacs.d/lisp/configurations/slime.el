@@ -14,8 +14,8 @@
         (concat "file://" common-lisp-hyperspec-root)))
 
 ;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "~/sbcl/bin/sbcl")
-
+(setq inferior-lisp-program "~/sbcl/bin/sbcl"
+      slime-company-completion 'fuzzy) 
 (add-hook 'lisp-mode-hook
           '(lambda ()
              ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)

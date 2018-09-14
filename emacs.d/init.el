@@ -213,7 +213,6 @@
 (global-set-key (kbd "s-v") 'yank)
 
 (setq custom-file "~/.emacs.d/custom.el")
-(load-file custom-file)
 
 (defun edit-init-el ()
   (interactive)
@@ -295,4 +294,4 @@
    (setq org-brain-visualize-default-choices 'all)
    (setq org-brain-title-max-length 12)))
 
-(message (format "s-c-c is: %s" slime-company-completion))
+(load-file custom-file)
