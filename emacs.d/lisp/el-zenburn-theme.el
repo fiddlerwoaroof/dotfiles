@@ -1,3 +1,12 @@
+;;; el-zenburn-theme.el --- A low contrast color theme for Emacs.
+
+;; Copyright (C) 2018- Edward Langley
+
+;; Author: Edward Langley <el@nowhere.example.com>
+;; URL: http://nowhere.example.com
+;; Package-Version: 20180913.2210
+;; Version: 0.1
+
 (deftheme el-zenburn
   "Created 2018-09-13.")
 

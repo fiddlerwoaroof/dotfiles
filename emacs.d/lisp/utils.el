@@ -120,3 +120,69 @@ started from a shell."
                       :ensure t
                       ,@(cdr pck)))
                  packages)))
+
+(defun post-init ()
+            ;;;;; INDENTATION SETUP  {{{
+  (progn
+    (setq-default indent-tabs-mode nil
+                  tab-width 2)
+    (defvaralias 'c-basic-offset 'tab-width)
+    (defvaralias 'sh-basic-offset 'tab-width)
+    (defvaralias 'js2-basic-offset 'tab-width)
+    (defvaralias 'sgml-basic-offset 'tab-width)
+    (defvaralias 'cperl-indent-level 'tab-width))
+            ;;;;; }}}
+
+  ;; (require 'projectile)
+  ;; (require 'evil-numbers)
+  (unless (fboundp 'server-running-p)
+    (require 'server))
+  (let ((server-name (if fwoar.is-ordinary
+                         server-name
+                       "notes")))
+    (unless (server-running-p)
+      (server-start)))
+  (projectile-mode)
+  (evil-mode)
+  ;; (paredit-mode)
+  ;;(global-company-mode)
+  ;; (setq linum-format "%5d\u2502")
+  (global-linum-mode)
+  (set-exec-path-from-shell-PATH)
+  ;; NOTE: this must be here...
+  (global-company-mode 1)
+  (slime-setup))
+
+(defun cold-boot ()
+  (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
+  (add-hook 'after-init-hook 'post-init)
+
+  (when (file-exists-p "/usr/local/bin/gls")
+    (setq insert-directory-program "/usr/local/bin/gls"))
+
+  (setq default-directory "~/emacs-home/")
+  (make-directory default-directory t)
+
+  (setq vc-follow-symlinks t)
+
+  (require 'package)
+
+  (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                           ("org" . "http://orgmode.org/elpa/")
+                           ("melpa" . "https://melpa.org/packages/")
+                           ("melpa-stable" . "http://stable.melpa.org/packages/"))
+        package-archive-priorities '(("melpa-stable" . 1)
+                                     ("gnu" . 0)
+                                     ("melpa" . 2)
+                                     ("org" . 3)))
+
+  (package-initialize)
+  (when (not (package-installed-p 'use-package))
+    (package-refresh-contents)
+    (package-install 'use-package))
+
+  (setq browse-url-browser-function
+        'eww-browse-url)
+
+  (require 'use-package))
+

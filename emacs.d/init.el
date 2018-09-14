@@ -4,80 +4,17 @@
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
 
-(defun do-init ()
-            ;;;;; INDENTATION SETUP  {{{
-  (progn
-    (setq-default indent-tabs-mode nil
-                  tab-width 2)
-    (defvaralias 'c-basic-offset 'tab-width)
-    (defvaralias 'sh-basic-offset 'tab-width)
-    (defvaralias 'js2-basic-offset 'tab-width)
-    (defvaralias 'sgml-basic-offset 'tab-width)
-    (defvaralias 'cperl-indent-level 'tab-width))
-            ;;;;; }}}
-
-  ;; (require 'projectile)
-  ;; (require 'evil-numbers)
-  (unless (fboundp 'server-running-p)
-    (require 'server))
-  (let ((server-name (if fwoar.is-ordinary
-                         server-name
-                       "notes")))
-    (unless (server-running-p)
-      (server-start)))
-  (projectile-mode)
-  (evil-mode)
-  ;; (paredit-mode)
-  ;;(global-company-mode)
-  ;; (setq linum-format "%5d\u2502")
-  (global-linum-mode)
-  (set-exec-path-from-shell-PATH)
-  ;; NOTE: this must be here...
-  (global-company-mode 1)
-  (slime-setup))
-
-(setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
-(add-hook 'after-init-hook 'do-init)
-
-(when (file-exists-p "/usr/local/bin/gls")
-  (setq insert-directory-program "/usr/local/bin/gls"))
-
 (let ((default-directory  "~/.emacs.d/lisp/"))
   (make-directory default-directory t)
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path)
   (load "utils"))
 
-(use-package smartparens
-  :ensure t)
+(cold-boot)
 
-(setq default-directory "~/emacs-home/")
-(make-directory default-directory t)
-
-(setq vc-follow-symlinks t)
-
-(require 'package)
-
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("melpa-stable" . "http://stable.melpa.org/packages/"))
-      package-archive-priorities '(("melpa-stable" . 1)
-                                   ("gnu" . 0)
-                                   ("melpa" . 2)
-                                   ("org" . 3)))
-
-(package-initialize)
-(when (not (package-installed-p 'use-package))
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-
-
-(require 'use-package)
 (use-package color-theme :ensure t)
-(use-package zenburn-theme :ensure t)
-(load "~/.emacs.d/el-zenburn-theme.el")
+;; (use-package zenburn-theme :ensure t)
+(require 'el-zenburn-theme)
 (color-theme-initialize)
 (load-theme 'el-zenburn t)
 
@@ -85,8 +22,7 @@
 
 (use-package multifiles
   :config
-  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
-  )
+  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile))
 
 
 (use-package tern
@@ -113,23 +49,17 @@
         org-refile-targets '((nil . (:maxlevel . 2))))
 
   (define-key global-map "\C-cc" 'org-capture)
-  (define-key evil-visual-state-map " c" 'org-capture)
-
-
-
-  )
+  (define-key evil-visual-state-map " c" 'org-capture))
 
 (use-package deft
   :ensure t
   :config
-  (define-key evil-normal-state-map " v" 'deft)
-  )
+  (define-key evil-normal-state-map " v" 'deft))
 
 (use-package emmet-mode
   :ensure t
   :config
-  (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line)
-  )
+  (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line))
 
 (use-package lisp-skeletons
   :config
@@ -140,93 +70,8 @@
   (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
   (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
 
-(setq browse-url-browser-function
-      'eww-browse-url)
+(load-package-configuration 'slime)
 
-
-;;;; SLIME SETUP {{{
-;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-(add-to-list 'load-path "~/git_repos/3dp/slime/")
-(require 'slime)
-
-(use-package slime-company
-  :ensure t)
-
-(global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
-
-(when (and (boundp 'common-lisp-hyperspec-root)
-           (string-prefix-p "/" common-lisp-hyperspec-root))
-  (setq common-lisp-hyperspec-root
-        (concat "file://" common-lisp-hyperspec-root)))
-
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "~/sbcl/bin/sbcl")
-
-(add-hook 'lisp-mode-hook
-          '(lambda ()
-             ;;(define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-             ;; (unless (string= "*slime-scratch*" (buffer-name))
-             ;;   (paredit-mode)
-             ;;   (evil-paredit-mode))
-             (rainbow-delimiters-mode))) 
-
-(setq slime-contribs
-      '(slime-fancy
-        slime-company
-        slime-macrostep
-        slime-trace-dialog
-        slime-mdot-fu))
-
-
-(modify-syntax-entry ?- "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?* "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?+ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?! "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?$ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?% "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?& "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?% "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?= "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?< "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?> "w" lisp-mode-syntax-table)
-(modify-syntax-entry 91 "(" lisp-mode-syntax-table)
-(modify-syntax-entry 93 ")" lisp-mode-syntax-table)
-;;(modify-syntax-entry ?@ "w" lisp-mode-syntax-table)
-
-(modify-syntax-entry ?^ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?_ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?. "w" lisp-mode-syntax-table)
-
-(setq shr-inhibit-images t
-      shr-use-fonts nil)
-
-(defun fwoar--clhs-lookup (&rest args)
-  (let ((browse-url-browser-function 'eww-browse-url))
-    (hyperspec-lookup (word-at-point))))
-
-(pushnew (list ?h "Check hyperspec" #'fwoar--clhs-lookup)
-         slime-selector-methods
-         :key #'car)
-
-(defun fwoar--slime-find-system ()
-  (let ((systems (directory-files
-                  (locate-dominating-file default-directory
-                                          (lambda (n)
-                                            (directory-files n nil "^[^.#][^#]*[.]asd$")))
-                  t "^[^.#][^#]*[.]asd$")))
-    (find-file (if (not (null (cdr systems)))
-                   (helm-comp-read "system:" systems)
-                 (car systems)))))
-
-(pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
-         slime-selector-methods
-         :key #'car)
-
-
-
-
- ;;;;; }}}
 (use-package company-posframe
   :ensure t)
 (use-package company
@@ -295,28 +140,29 @@
   )
 
 (ensure-use-packages
- (css-eldoc)
- (ag)
- (rainbow-delimiters)
- (helm)
- (helm-projectile)
- (eldoc-eval)
- (csv-mode)
- (yaml-mode)
- (web-mode)
- (vue-mode)
- (scss-mode)
- (markdown-mode)
- (magit :defer 2)
- (highlight-parentheses)
- (helm-projectile)
- (helm-ls-git)
- (helm-css-scss)
  ;;(ac-js2)
- ;;(helm-cider :defer 5)
- (helm-ag-r)
+ (ag)
+ (css-eldoc)
+ (csv-mode)
+ (eldoc-eval)
+ (helm)
  (helm-ag)
- (project-explorer))
+ (helm-ag-r)
+ ;;(helm-cider :defer 5)
+ (helm-css-scss)
+ (helm-ls-git)
+ (helm-projectile)
+ (helm-projectile)
+ (highlight-parentheses)
+ (magit :defer 2)
+ (markdown-mode)
+ (project-explorer)
+ (rainbow-delimiters)
+ (scss-mode)
+ (smartparens :ensure t)
+ (vue-mode)
+ (web-mode)
+ (yaml-mode))
 
 
 (progn ; helm
@@ -448,3 +294,5 @@
          org-capture-templates)
    (setq org-brain-visualize-default-choices 'all)
    (setq org-brain-title-max-length 12)))
+
+(message (format "s-c-c is: %s" slime-company-completion))
