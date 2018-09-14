@@ -1,4 +1,5 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
+(toggle-debug-on-error)
 (setq gc-cons-threshold 100000000)
 (message invocation-name)
 (setq inhibit-splash-screen t)
@@ -79,11 +80,6 @@
 (color-theme-initialize)
 (load-theme 'zenburn t)
 
-(use-package multifiles
-  :config
-  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
-  )
-
 ;(use-package erc
 ;  :config
 ;  (add-hook 'erc-insert-post-hook 'erc-truncate-buffer))
@@ -121,6 +117,11 @@
     :config
     (global-evil-leader-mode)
     (evil-leader/set-leader ",")))
+
+(use-package multifiles
+  :config
+  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
+  )
 
 (use-package tern
   :config
