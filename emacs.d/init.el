@@ -15,8 +15,11 @@
 
 (use-package color-theme :ensure t)
 ;; (use-package zenburn-theme :ensure t)
+(add-to-list 'load-path "~/.emacs.d/themes/")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (require 'el-zenburn-theme)
 (color-theme-initialize)
+
 (load-theme 'el-zenburn t)
 
 (load-package-configuration 'evil)
@@ -62,21 +65,10 @@
   :config
   (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line))
 
-(use-package lisp-skeletons
-  :config
-  (add-hook 'skeleton-end-hook 'skeleton-make-markers)
-
-  (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
-  (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
-  (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
-  (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
-
-(load-package-configuration 'slime)
 
 (use-package company-posframe
   :ensure t)
 (use-package company
-  :defer 5
   :config
   ;; keybindings
   (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
@@ -93,6 +85,7 @@
           company-xcode
           company-cmake
           company-capf
+          company-slime
           company-files
           (company-dabbrev-code
            company-gtags
@@ -102,6 +95,18 @@
           company-dabbrev))
   (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1)))
   )
+
+(use-package lisp-skeletons
+  :config
+  (add-hook 'skeleton-end-hook 'skeleton-make-markers)
+
+  (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
+  (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
+  (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
+  (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
+
+(load-package-configuration 'slime)
+(global-company-mode 1)
 
 (use-package projectile
   :ensure t
@@ -143,6 +148,7 @@
 (ensure-use-packages
  ;;(ac-js2)
  (ag)
+ (aggressive-indent)
  (css-eldoc)
  (csv-mode)
  (eldoc-eval)

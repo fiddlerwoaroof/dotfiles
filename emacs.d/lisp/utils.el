@@ -44,42 +44,6 @@
                                             (mark))))
                   :components)))
 
-(defun slime-ecl ()
-  (interactive)
-  (let ((inferior-lisp-program "ecl"))
-    (slime)))
-
-(defun slime-cmucl ()
-  (interactive)
-  (let ((inferior-lisp-program "cmucl"))
-    (slime)))
-
-(defun slime-sbcl ()
-  (interactive)
-  (let ((inferior-lisp-program "sbcl"))
-    (slime)))
-
-(defun slime-ccl ()
-  (interactive)
-  (let ((inferior-lisp-program "ccl"))
-    (slime)))
-
-(defun find-use-clause (current-form)
-  (when current-form
-    (destructuring-bind (discriminator . packages) current-form
-      (case discriminator
-        (:use (remove-if (op (or (eql :cl _)))
-                         (cdr current-form)))
-        (defpackage (find-use-clause
-                     (find-if (lambda (f)
-                                (and (listp f)
-                                     (eql (car f) :use)))
-                              '(defpackage :tracking-sim (:use :cl :alexandria :serapeum) (:export)))))))))
-
-(defun load-package-uses ()
-  (interactive)
-  (slime-eval-async `(ql:quickload ',(find-use-clause (list-at-point)))))
-
 (defmacro comment (&rest _))
 
 (comment
@@ -150,9 +114,7 @@ started from a shell."
   (global-linum-mode)
   (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
-  (global-company-mode 1)
-  (message (format "s-c-c is: %s" slime-company-completion))
-  (slime-setup))
+  (global-company-mode 1))
 
 (defun cold-boot ()
   (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
