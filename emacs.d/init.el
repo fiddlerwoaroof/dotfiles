@@ -414,18 +414,18 @@
 (global-set-key (kbd "C-x C-b")
                 'ibuffer)
 
+
+(defun read-sexps-in-file (fn)
+  (with-temp-buffer
+   (save-excursion
+     (insert-string "(")
+     (insert-file fn)
+     (goto-char (point-max))
+     (insert-string "\n)"))
+   (read (current-buffer))))
+
 (use-package circe
   :config
   (setq circe-server-buffer-name "{host}:{port}"
-        circe-network-options '(("znc-freenode"
-                                 :tls t
-                                 :user "edwlan/freenode"
-                                 :pass "t31ch3rtb" ;NOCOMMIT
-                                 :host "localhost"
-                                 :port 6697)
-                                ("znc-moz"
-                                 :tls t
-                                 :user "edwlan/moz"
-                                 :pass "t31ch3rtb" ;NOCOMMIT
-                                 :host "localhost"
-                                 :port 6697))))
+        circe-reduce-lurker-spam t
+        circe-network-options (read-sexps-in-file "~/.circe-info"))
