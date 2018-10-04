@@ -413,3 +413,19 @@
 
 (global-set-key (kbd "C-x C-b")
                 'ibuffer)
+
+(use-package circe
+  :config
+  (setq circe-server-buffer-name "{host}:{port}"
+        circe-network-options '(("znc-freenode"
+                                 :tls t
+                                 :user "edwlan/freenode"
+                                 :pass "t31ch3rtb" ;NOCOMMIT
+                                 :host "localhost"
+                                 :port 6697)
+                                ("znc-moz"
+                                 :tls t
+                                 :user "edwlan/moz"
+                                 :pass "t31ch3rtb" ;NOCOMMIT
+                                 :host "localhost"
+                                 :port 6697))))
