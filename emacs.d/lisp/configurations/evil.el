@@ -1,3 +1,7 @@
+(defun wrap-with-doublequote (&optional arg)
+  (interactive "P")
+  (sp-wrap-with-pair "\""))
+
 (use-package evil
   :ensure t
   :config
@@ -25,7 +29,9 @@
       (define-key evil-normal-state-map ",w}" 'sp-wrap-curly)
 
       (define-key evil-normal-state-map ",w[" 'sp-wrap-square)
-      (define-key evil-normal-state-map ",w]" 'sp-wrap-square))
+      (define-key evil-normal-state-map ",w]" 'sp-wrap-square)
+
+      (define-key evil-normal-state-map ",w\"" 'wrap-with-doublequote))
 
     (progn ;; splicing
       (define-key evil-normal-state-map ",S" 'sp-splice-sexp)

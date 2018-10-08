@@ -17,20 +17,12 @@
 (setq inferior-lisp-program "~/sbcl/bin/sbcl") 
 
 (defun setup-lisp-mode ()
-  (comment
-   (unless (string= "*slime-scratch*" (buffer-name))
-     (paredit-mode)
-     (evil-paredit-mode)))
-
   (unless (string= "*slime-scratch*" (buffer-name))
     (smartparens-strict-mode 1)
     (evil-smartparens-mode 1)
     (aggressive-indent-mode 1))
 
   (define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-  (unless (string= "*slime-scratch*" (buffer-name))
-    (paredit-mode)
-    (evil-paredit-mode))
   (rainbow-delimiters-mode))
 
 (add-hook 'lisp-mode-hook 'setup-lisp-mode) 
@@ -131,3 +123,4 @@
 (slime-setup)
 
  ;;;;; }}}
+

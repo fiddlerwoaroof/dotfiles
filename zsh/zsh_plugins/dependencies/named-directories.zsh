@@ -17,25 +17,15 @@ else
   echo no git directories
 fi
 
-gtde() { cd ~desktop/"${(j</>)*}" }
 gtdo() { cd ~downloads/"${(j</>)*}" }
-gtp() {cd ~programming/"${(j</>)*}" }
-gt() { cd ~"${(j</>)*}" }
-[[ -e $HOME/.gtaliases ]] || touch $HOME/.gtaliases
 
-gta() {
-    cmd="hash -d \"$1\"=\"$PWD/${(j</>)*}\""
-    eval $cmd
-    gt $1
-    truncfile 50 $HOME/.gtaliases
-    echo $cmd >> $HOME/.gtaliases
-}
-
-gtmpdir() {
-  cd "$(mktemp -d "$@")"
-}
-
-source $HOME/.gtaliases
-gthaskell() { gtp haskell }
-gtprolog() { gtp prolog }
-gtpython() { gtp python }
+if [[ -d $HOME/dotfiles ]]; then
+  hash -d zsh_conf=$HOME/dotfiles/zsh
+  hash -d dotfiles=$HOME/dotfiles
+elif [[ -d $HOME/git_repos ]]; then
+  hash -d zsh_conf=$HOME/git_repos/dotfiles/zsh
+  hash -d dotfiles=$HOME/git_repos/dotfiles
+elif [[ -d $HOME/github_repos ]]; then
+  hash -d zsh_conf=$HOME/github_repos/dotfiles/zsh
+  hash -d dotfiles=$HOME/github_repos/dotfiles
+fi

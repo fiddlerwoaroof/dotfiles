@@ -1,14 +1,5 @@
-;;; el-zenburn-theme.el --- A low contrast color theme for Emacs.
-
-;; Copyright (C) 2018- Edward Langley
-
-;; Author: Edward Langley <el@nowhere.example.com>
-;; URL: http://nowhere.example.com
-;; Package-Version: 20180913.2210
-;; Version: 0.1
-
 (deftheme el-zenburn
-  "Created 2018-09-13.")
+  "Created 2018-10-01.")
 
 (custom-theme-set-variables
  'el-zenburn
@@ -24,17 +15,17 @@
 
 (custom-theme-set-faces
  'el-zenburn
- '(default ((t (:inherit nil :stipple nil :background "#3F3F3F" :foreground "#DCDCCC" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight ultra-light :height 131 :width normal :foundry "nil" :family "Source Code Pro"))))
  '(fringe ((t (:background "#3f3f3f" :foreground "#DCDCCC"))))
  '(header-line ((t (:background "#2B2B2B" :foreground "#F0DFAF" :box nil))))
  '(linum ((t (:foreground "gray45" :box nil :underline nil))))
- '(mode-line ((t (:background "dark slate gray" :foreground "#8FB28F" :box nil))))
+ '(mode-line ((t (:background "dark slate gray" :foreground "#8FB28F" :box nil :overline t))))
  '(mode-line-highlight ((t nil)))
  '(mode-line-inactive ((t (:background "slate gray" :foreground "#5F7F5F" :box nil))))
  '(region ((t (:inverse-video t))))
  '(show-paren-mismatch ((t (:background "#6F6F6F" :foreground "red" :weight bold))))
  '(tool-bar ((t (:background "grey75" :foreground "black" :box nil))))
  '(variable-pitch ((t (:family "Lato"))))
- '(vertical-border ((t (:foreground "slate gray")))))
+ '(vertical-border ((t (:foreground "slate gray"))))
+ '(default ((t (:inherit nil :stipple nil :background "#3F3F3F" :foreground "#DCDCCC" :inverse-video nil ...)))))
 
 (provide-theme 'el-zenburn)

@@ -1,5 +1,11 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
 (setq gc-cons-threshold 100000000)
+
+(tool-bar-mode 0)
+(scroll-bar-mode 0)
+
+(defvar zen-mode)
+
 (message invocation-name)
 (setq gc-cons-threshold 100000000)
 (setq inhibit-splash-screen t)
@@ -52,6 +58,10 @@
                                  "* %? %^g\n%c\n"))
         org-refile-targets '((nil . (:maxlevel . 2))))
 
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((lisp . t)))
+
   (define-key global-map "\C-cc" 'org-capture)
   (define-key evil-visual-state-map " c" 'org-capture))
 
@@ -64,7 +74,6 @@
   :ensure t
   :config
   (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line))
-
 
 (use-package company-posframe
   :ensure t)
@@ -108,12 +117,52 @@
 (load-package-configuration 'slime)
 (global-company-mode 1)
 
+(defun more-than-one-project-file-p ()
+  (= (length (projectile-select-files (projectile-current-project-files)))
+     1))
+
+(defun global-find-known-file ())
+
+(defun helm-find-known-file (&optional arg)
+  "Use projectile with Helm for finding files in project
+
+With a prefix ARG invalidates the cache first."
+  (interactive "P")
+  (let ((projectile-enable-caching t))
+    (if (projectile-project-p)
+        (projectile-maybe-invalidate-cache arg)
+      (unless t
+        (error "You're not in a project"))))
+  (let ((helm-ff-transformer-show-only-basename nil)
+        (helm-boring-file-regexp-list nil))
+    (helm :sources 'helm-source-projectile-files-in-all-projects-list
+          :buffer (concat "*helm projectile: "
+                          (projectile-project-name)
+                          "*")
+          :truncate-lines helm-projectile-truncate-lines
+          :prompt (projectile-prepend-project-name "Find file in projects: "))))
+
+(defun project-aware-ffap (&rest args)
+  (interactive "F")
+  (apply (if (and (projectile-project-p)
+                  (more-than-one-project-file-p))
+             'helm-projectile-find-file-dwim
+           'find-file-at-point)
+         args))
+
 (use-package projectile
   :ensure t
   :config
-  (define-key evil-normal-state-map " g" 'helm-projectile-find-file-dwim)
+  (define-key evil-normal-state-map " h" 'helm-projectile-find-file-dwim)
+  (setq
+   ;;       projectile-enable-caching t
+   projectile-generic-command "rg --files -0"
+   )
+
   (projectile-register-project-type
-   'clojure '("project.clj" "build.boot" "deps.edn"))
+   'clojure '("project.clj")
+   :compile "lein uberjar"
+   :test-dir "src/test/")
 
   (projectile-register-project-type
    'lisp '("*.asd"))
@@ -123,7 +172,9 @@
    :compile "npm install"
    :test "npm test"
    :run "npm start"
-   :test-suffix ".spec"))
+   :test-suffix ".spec")
+
+  (define-key evil-normal-state-map "gf" 'project-aware-ffap))
 
 (use-package cider
   :config
@@ -131,18 +182,41 @@
   (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
   (evil-define-key 'normal clojure-mode-map " o" 'cider-selector)
   (evil-define-key 'normal cider-repl-mode-map " o" 'cider-selector)
+
   (add-hook 'cider-mode-hook
             (lambda ()
-              (rainbow-delimiters-mode)
-              ;; (evil-paredit-mode)
-              ;; (paredit-mode)
-              (aggressive-indent-mode)
-              (helm-cider-mode)))
+              (rainbow-delimiters-mode 1)
+              (evil-smartparens-mode 1)
+              (smartparens-strict-mode 1)
+              (aggressive-indent-mode 1)
+              (helm-cider-mode 1)
+              (cider-company-enable-fuzzy-completion)))
+
+  (add-hook 'cider-repl-mode-hook
+            (lambda ()
+              (rainbow-delimiters-mode 1)
+              (evil-smartparens-mode 1)
+              (smartparens-strict-mode 1)
+              (aggressive-indent-mode 1)
+              (helm-cider-mode 1)
+              (cider-company-enable-fuzzy-completion)))
 
   (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?- "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?~ "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?. "w" clojure-mode-syntax-table)
+  (setq cider-save-file-on-load t)
+
+  ;; https://github.com/clojure-emacs/cider/issues/2435
+  (defun cider--gather-session-params (session)
+    "Gather all params for a SESSION."
+    (let (params)
+      (dolist (repl (cdr session))
+        (when (buffer-name repl)
+          (setq params (cider--gather-connect-params params repl))))
+      (when-let* ((server (cider--session-server session)))
+        (setq params (cider--gather-connect-params params server)))
+      params))
   )
 
 (ensure-use-packages
@@ -152,35 +226,53 @@
  (css-eldoc)
  (csv-mode)
  (eldoc-eval)
- (helm)
- (helm-ag)
- (helm-ag-r)
- ;;(helm-cider :defer 5)
- (helm-css-scss)
- (helm-ls-git)
- (helm-projectile)
- (helm-projectile)
- (highlight-parentheses)
- (magit :defer 2)
- (markdown-mode)
- (project-explorer)
- (rainbow-delimiters)
- (scss-mode)
- (smartparens :ensure t)
- (vue-mode)
- (web-mode)
- (yaml-mode))
-
-
-(progn ; helm
+ (helm
+  :config
   (require 'helm-config)
+
   (helm-mode)
+  (global-set-key (kbd "M-x") 'helm-M-x)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key evil-normal-state-map " f" 'helm-projectile)
   (define-key evil-normal-state-map " j" 'helm-buffers-list)
   (define-key evil-normal-state-map " s" 'helm-occur)
-  (global-set-key (kbd "M-x") 'helm-M-x))
+  (define-key evil-normal-state-map " S" 'helm-projectile-rg)
+  (define-key helm-map (kbd "C-r") 'evil-paste-from-register))
 
+ (helm-ag)
+ (helm-ag-r)
+ (helm-rg)
+ (helm-cider)
+ (helm-css-scss)
+ (helm-ls-git)
+ (helm-projectile)
+ (helm-projectile)
+ (highlight-parentheses
+  :config
+  (global-highlight-parentheses-mode 1))
+ (magit
+  :config
+  (evil-define-key 'normal magit-file-mode-map " a" 'magit-dispatch-popup)
+  (magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote))
+ (markdown-mode)
+ (project-explorer)
+ (rainbow-delimiters)
+ (ripgrep)
+ (projectile-ripgrep)
+ (scss-mode)
+ (smartparens
+  :ensure t
+  :config
+  (sp-with-modes sp--lisp-modes
+    ;; disable ', it's the quote character!
+    (sp-local-pair "'" nil :actions nil)
+    (sp-local-pair "`" nil :actions nil))
+
+  (add-hook 'smartparens-enabled-hook
+            'evil-smartparens-mode))
+ (vue-mode)
+ (web-mode)
+ (yaml-mode))
 
 (use-package editorconfig
   :ensure t
@@ -317,3 +409,18 @@
   (setq circe-server-buffer-name "{host}:{port}"
         circe-reduce-lurker-spam t
         circe-network-options (read-sexps-in-file "~/.circe-info")))
+
+(defun delete-mru-window ()
+  (interactive)
+  (delete-window
+   (get-mru-window nil nil t)))
+(define-key evil-motion-state-map (kbd "C-w C-o") 'delete-mru-window)
+(define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
+
+(defvar passwords ())
+(defun get-passwd (id prompt)
+  (let ((val (assoc id passwords)))
+    (cdr
+     (if val val
+       (car (push (cons id (read-passwd prompt))
+                  passwords))))))
