@@ -428,4 +428,4 @@
   :config
   (setq circe-server-buffer-name "{host}:{port}"
         circe-reduce-lurker-spam t
-        circe-network-options (read-sexps-in-file "~/.circe-info"))
+        circe-network-options (read-sexps-in-file "~/.circe-info")))
