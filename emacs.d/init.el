@@ -302,3 +302,18 @@
    (setq org-brain-title-max-length 12)))
 
 (load-file custom-file)
+
+(defun read-sexps-in-file (fn)
+  (with-temp-buffer
+   (save-excursion
+     (insert-string "(")
+     (insert-file fn)
+     (goto-char (point-max))
+     (insert-string "\n)"))
+   (read (current-buffer))))
+
+(use-package circe
+  :config
+  (setq circe-server-buffer-name "{host}:{port}"
+        circe-reduce-lurker-spam t
+        circe-network-options (read-sexps-in-file "~/.circe-info")))
