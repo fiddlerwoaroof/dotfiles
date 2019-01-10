@@ -48,6 +48,7 @@
         org-default-notes-file (concat org-directory "/scratch.org")
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
+        org-log-done 'time
         org-capture-templates '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
                                  "* TODO %?\n  %i\n  %a")
                                 ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
@@ -205,7 +206,8 @@ With a prefix ARG invalidates the cache first."
   (modify-syntax-entry ?- "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?~ "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?. "w" clojure-mode-syntax-table)
-  (setq cider-save-file-on-load t)
+  (setq cider-save-file-on-load t
+        cider-repl-history-file "~/.emacs.d/cider-history.clj")
 
   ;; https://github.com/clojure-emacs/cider/issues/2435
   (defun cider--gather-session-params (session)
@@ -333,6 +335,48 @@ With a prefix ARG invalidates the cache first."
 
 (setq org-agenda-files '("~/org/notes.org"))
 
+(load-file custom-file)
+
+(defun read-sexps-in-file (fn)
+  (with-temp-buffer
+    (save-excursion
+      (insert "(")
+      (insert-file fn)
+      (goto-char (point-max))
+      (insert "\n)"))
+    (read (current-buffer))))
+
+(use-package circe
+  :config
+  (setq circe-server-buffer-name "{host}:{port}"
+        circe-reduce-lurker-spam t
+        circe-network-options (read-sexps-in-file "~/.circe-info")))
+
+(defvar url-pattern (car (read-sexps-in-file "~/.pastebin-name")))
+(defun pastebin-buffer ()
+  (interactive)
+  (let* ((extension (file-name-extension (buffer-name)))
+         (htmlized-buffer (htmlize-buffer)))
+    (with-current-buffer htmlized-buffer
+      (let ((result-name-hash (sha1 (current-buffer))))
+        (write-file (format url-pattern result-name-hash extension))
+        (message "Wrote file to: %s.%s.html" result-name-hash extension)))))
+
+(defun delete-mru-window ()
+  (interactive)
+  (delete-window
+   (get-mru-window nil nil t)))
+(define-key evil-motion-state-map (kbd "C-w C-o") 'delete-mru-window)
+(define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
+
+(defvar passwords ())
+(defun get-passwd (id prompt)
+  (let ((val (assoc id passwords)))
+    (cdr
+     (if val val
+       (car (push (cons id (read-passwd prompt))
+                  passwords))))))
+
 ;;;;; junk drawer ....
 
 (comment
@@ -393,34 +437,3 @@ With a prefix ARG invalidates the cache first."
    (setq org-brain-visualize-default-choices 'all)
    (setq org-brain-title-max-length 12)))
 
-(load-file custom-file)
-
-(defun read-sexps-in-file (fn)
-  (with-temp-buffer
-   (save-excursion
-     (insert-string "(")
-     (insert-file fn)
-     (goto-char (point-max))
-     (insert-string "\n)"))
-   (read (current-buffer))))
-
-(use-package circe
-  :config
-  (setq circe-server-buffer-name "{host}:{port}"
-        circe-reduce-lurker-spam t
-        circe-network-options (read-sexps-in-file "~/.circe-info")))
-
-(defun delete-mru-window ()
-  (interactive)
-  (delete-window
-   (get-mru-window nil nil t)))
-(define-key evil-motion-state-map (kbd "C-w C-o") 'delete-mru-window)
-(define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
-
-(defvar passwords ())
-(defun get-passwd (id prompt)
-  (let ((val (assoc id passwords)))
-    (cdr
-     (if val val
-       (car (push (cons id (read-passwd prompt))
-                  passwords))))))

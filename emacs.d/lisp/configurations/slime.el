@@ -49,6 +49,11 @@
 (modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
 (modify-syntax-entry ?. "w" lisp-mode-syntax-table)
 
+(modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
+(modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
+(modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
+(modify-syntax-entry ?\} "){" lisp-mode-syntax-table)
+
 (setq shr-inhibit-images t
       shr-use-fonts nil)
 
