@@ -254,7 +254,7 @@ With a prefix ARG invalidates the cache first."
   (global-highlight-parentheses-mode 1))
  (magit
   :config
-  (evil-define-key 'normal magit-file-mode-map " a" 'magit-dispatch-popup)
+  (evil-define-key 'normal magit-file-mode-map " a" 'magit)
   (magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote))
  (markdown-mode)
  (project-explorer)
