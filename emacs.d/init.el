@@ -360,7 +360,8 @@ With a prefix ARG invalidates the cache first."
     (with-current-buffer htmlized-buffer
       (let ((result-name-hash (sha1 (current-buffer))))
         (write-file (format url-pattern result-name-hash extension))
-        (message "Wrote file to: %s.%s.html" result-name-hash extension)))))
+        (message "Wrote file to: %s.%s.html" result-name-hash extension)
+        (browse-url (format "https://fwoar.co/pastebin/%s.%s.html" result-name-hash extension))))))
 
 (defun delete-mru-window ()
   (interactive)
