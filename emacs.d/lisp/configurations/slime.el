@@ -81,22 +81,26 @@
 
 (defun slime-ecl ()
   (interactive)
-  (let ((inferior-lisp-program "ecl"))
+  (let ((inferior-lisp-program "ecl")
+        (slime-lisp-implementations nil))
     (slime)))
 
 (defun slime-cmucl ()
   (interactive)
-  (let ((inferior-lisp-program "cmucl"))
+  (let ((inferior-lisp-program "cmucl")
+        (slime-lisp-implementations nil))
     (slime)))
 
 (defun slime-sbcl ()
   (interactive)
-  (let ((inferior-lisp-program "sbcl"))
+  (let ((inferior-lisp-program "sbcl")
+        (slime-lisp-implementations nil))
     (slime)))
 
 (defun slime-ccl ()
   (interactive)
-  (let ((inferior-lisp-program "ccl"))
+  (let ((inferior-lisp-program "ccl")
+        (slime-lisp-implementations nil))
     (slime)))
 
 (defun find-use-clause (current-form)
@@ -123,9 +127,34 @@
         slime-company
         slime-macrostep
         slime-trace-dialog
-        slime-mdot-fu))
+        slime-mdot-fu
+        slime-buffer-streams
+        slime-indentation))
 
 (slime-setup)
 
- ;;;;; }}}
+;;;;; }}}
+
+(defmacro define-lisp-implementations (&rest decl)
+  `(progn
+     ,@(cl-loop for (symbol . args) in decl
+                collect `(progn
+                           (defun ,symbol ()
+                             (interactive)
+                             (slime ',symbol))
+                           (cl-pushnew '(,symbol ,@args) slime-lisp-implementations
+                                       :key 'car)))))
+
+(with-eval-after-load "slime"
+  (when (or (eq system-type 'gnu/linux)
+            (eq system-type 'darwin))
+    (define-lisp-implementations
+      (abcl  ("abcl"))
+      (ccl ("ccl"))
+      (clisp ("clisp"))
+      (cmucl ("cmucl" "-quiet"))
+      (ecl   ("ecl"))
+      ;;(mkcl  ("mkcl"))
+      ;;(xcl   ("xcl"))
+      (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
 
