@@ -4,3 +4,6 @@
 [submodule "external/smart-change-directory"]
 	path = external/smart-change-directory
 	url = git@github.com:pavoljuhas/smart-change-directory.git
+[submodule "stumpwm.d/contrib"]
+  path = stumpwm.d/contrib
+  url = git@github.com:stumpwm/stumpwm-contrib.git
