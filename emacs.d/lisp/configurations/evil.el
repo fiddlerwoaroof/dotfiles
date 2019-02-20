@@ -10,7 +10,6 @@
               (lambda (&rest args)
                 (evil-visual-mark-render)))
 
-  (evil-define-key 'normal lisp-mode-map " o" 'slime-selector)
   (define-key evil-insert-state-map (kbd "TAB") 'company-indent-or-complete-common)
   (evil-mode)
   (use-package evil-smartparens

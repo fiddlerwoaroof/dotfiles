@@ -177,12 +177,24 @@ With a prefix ARG invalidates the cache first."
 
   (define-key evil-normal-state-map "gf" 'project-aware-ffap))
 
+(use-package cl-generic
+  :ensure t)
+
+(cl-defgeneric fwoar--pl-selector ()
+  (:method ()
+           (slime-selector))
+  (:method (&context (major-mode clojure-mode))
+           (cider-selector)))
+(defun fwoar-pl-selector ()
+  (interactive)
+  (fwoar--pl-selector))
+(define-key evil-normal-state-map " o" 'fwoar--pl-selector)
+
+
 (use-package cider
   :config
   (define-key evil-normal-state-map " t" 'cider-test-run-ns-tests)
   (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
-  (evil-define-key 'normal clojure-mode-map " o" 'cider-selector)
-  (evil-define-key 'normal cider-repl-mode-map " o" 'cider-selector)
 
   (add-hook 'cider-mode-hook
             (lambda ()
@@ -315,9 +327,11 @@ With a prefix ARG invalidates the cache first."
 
 (setq custom-file "~/.emacs.d/custom.el")
 
+(defvar *dotfiles-repo* "~/git_repos/dotfiles/")
 (defun edit-init-el ()
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (let ((default-directory *dotfiles-repo*))
+    (helm-projectile-find-file)))
 
 (setq gc-cons-threshold (* 100 1024))
 
@@ -371,7 +385,7 @@ With a prefix ARG invalidates the cache first."
 (define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
 
 (defvar passwords ())
-(defun get-passwd (id prompt)
+(defslimefun get-passwd (id prompt)
   (let ((val (assoc id passwords)))
     (cdr
      (if val val

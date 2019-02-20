@@ -122,14 +122,14 @@
 
 (message (format "s-c-c is: %s" slime-company-completion))
 
-(setq slime-contribs
-      '(slime-fancy
-        slime-company
-        slime-macrostep
-        slime-trace-dialog
-        slime-mdot-fu
-        slime-buffer-streams
-        slime-indentation))
+(setq slime-contribs '(slime-fancy
+                       slime-company
+                       slime-macrostep
+                       slime-trace-dialog
+                       slime-mdot-fu
+                       slime-buffer-streams
+                       slime-indentation)
+      slime-export-save-file t)
 
 (slime-setup)
 
@@ -158,3 +158,34 @@
       ;;(xcl   ("xcl"))
       (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
 
+
+(defun sp-absorb-forward-sexp (&optional arg)
+  "Absorb previous expression.
+
+Save the expressions preceding point and delete them.  Then slurp
+an expression backward and insert the saved expressions.
+
+With ARG positive N, absorb that many expressions.
+
+Examples:
+
+​  (do-stuff 1)         (save-excursion
+​  (save-excursion  ->   |(do-stuff 1)
+​   |(do-stuff 2))        (do-stuff 2))
+
+  foo bar (concat |baz quux) -> (concat |foo bar baz quux) ;; 2"
+  (interactive "p")
+  (sp-forward-whitespace)
+  (let* ((old (point))
+         (raise (progn
+                  (sp-end-of-sexp)
+                  (buffer-substring (point) old))))
+    (delete-region old (point))
+    (sp-forward-slurp-sexp arg)
+    (sp-backward-whitespace)
+    (sp-end-of-sexp)
+    (insert raise)
+    (save-excursion
+      (sp-backward-up-sexp)
+      (indent-sexp)))
+  (sp-backward-whitespace))
