@@ -188,7 +188,7 @@ With a prefix ARG invalidates the cache first."
 (defun fwoar-pl-selector ()
   (interactive)
   (fwoar--pl-selector))
-(define-key evil-normal-state-map " o" 'fwoar--pl-selector)
+(define-key evil-normal-state-map " o" 'fwoar-pl-selector)
 
 
 (use-package cider
