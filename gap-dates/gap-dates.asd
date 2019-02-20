@@ -9,6 +9,6 @@
                #:uiop
                #:serapeum
                #:alexandria
-               #:fwoar.lisputils)
+               #:fwoar-lisputils)
   :serial t
   :components ((:file "gap-dates")))

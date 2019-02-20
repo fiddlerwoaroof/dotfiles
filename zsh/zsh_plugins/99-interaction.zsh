@@ -1,6 +1,7 @@
 #:depends-on:todo
 #:depends-on:key-bindings
 #:depends-on:named-directories
+#:depends-on:aliases
 
 cat <<'EOP'
              :

@@ -94,15 +94,16 @@ REVERSE - Jump to previous position in skeleton"
   "Insert a defpackage template"
   (skeleton-read "Package Name: "
                  (if v1
-                     (file-name-sans-extension
-                      (file-name-nondirectory
-                       (buffer-file-name)))))
+                     (concat "fwoar."
+                             (file-name-sans-extension
+                              (file-name-nondirectory
+                               (buffer-file-name))))))
   '(setq v1 (bobp))
   "(defpackage :" @ str "
   (:use :cl "  _ @ - ")
   (:export " @  "))
 (in-package :" str ")" \n
-@)
+  @)
 
 
 (define-skeleton skel-defsystem

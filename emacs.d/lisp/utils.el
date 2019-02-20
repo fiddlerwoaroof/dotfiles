@@ -37,12 +37,13 @@
     (evil-insert 1)))
 
 (defun create-system-files ()
-    (interactive)
+  (interactive)
+  (save-excursion
     (mapcar (lambda (it) (save-buffer (find-file (format "%s.lisp" (cadr it)))))
             (getf (cddar (read-from-string
                           (buffer-substring (point)
                                             (mark))))
-                  :components)))
+                  :components))))
 
 (defmacro comment (&rest _))
 

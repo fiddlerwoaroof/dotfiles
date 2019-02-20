@@ -52,7 +52,8 @@ git-pff() {
 }
 
 git-root() {
-  git rev-parse --show-toplevel
+  rootpath="$(git rev-parse --show-toplevel)"
+  echo "$rootpath/$1"
 }
 
 git-ag() {
@@ -68,9 +69,14 @@ git-graph() {
   git log --graph --format=oneline --decorate "$@"
 }
 alias gl=git-graph
-alias git-l=git-graph
-alias git-hist=git-graph
-alias g=git
+
+git-find-tag() {
+  git log --format=oneline --all |
+    gawk -vtofind="$*" -vFS=$'[ ]+|:[ ]*' \
+         'tolower($2) == "code" {$2=$2" "$3; for (i=3;i<NF;i++) $i=$(i+1); $NF=""} \
+          {code=$2; hash=$1; for (i=1;i<=NF-2;i++) $i=$(i+2); NF=NF-2} \
+          code ~ tofind {print code": "hash" "$0}'
+}
 
 git-messages() {
   if [[ -d .git ]]; then

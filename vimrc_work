@@ -1,0 +1,224 @@
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
+endif
+
+" Required:
+set runtimepath+=$HOME/.vim/repos/github.com/Shougo/dein.vim
+
+let vim_config_directory=$HOME.'/.vim'
+" Required:
+if dein#load_state(vim_config_directory)
+  call dein#begin(vim_config_directory)
+
+  " Let dein manage dein
+  " Required:
+  call dein#add(vim_config_directory.'/repos/github.com/Shougo/dein.vim')
+
+  call dein#add('LnL7/vim-nix')
+  call dein#add('Shougo/vimproc', {'build': 'make'})
+  call dein#add('Shougo/unite-outline')
+  call dein#add('Shougo/unite.vim')
+  call dein#add('Shougo/vimfiler.vim')
+  call dein#add('altercation/vim-colors-solarized')
+  call dein#add('christoomey/vim-tmux-navigator')
+  call dein#add('dbakker/vim-paragraph-motion')
+  call dein#add('editorconfig/editorconfig-vim')
+  call dein#add('jceb/vim-editqf')
+  call dein#add('kien/rainbow_parentheses.vim')
+  call dein#add('kovisoft/slimv')
+  call dein#add('mattn/emmet-vim')
+  call dein#add('scrooloose/nerdcommenter')
+  call dein#add('scrooloose/nerdtree')
+  call dein#add('scrooloose/syntastic')
+  call dein#add('sjl/gundo.vim.git')
+  call dein#add('terryma/vim-multiple-cursors')
+  call dein#add('tpope/vim-fireplace')
+  call dein#add('tpope/vim-fugitive')
+  call dein#add('tpope/vim-repeat')
+  call dein#add('tpope/vim-surround')
+  call dein#add('tsukkee/unite-tag')
+  call dein#add('vim-airline/vim-airline')
+  call dein#add('vim-airline/vim-airline-themes')
+  call dein#add('vim-scripts/matchit.zip')
+  call dein#add('vim-voom/VOoM')
+  call dein#add('jnurmine/zenburn')
+
+
+  " Required:
+  call dein#end()
+  call dein#save_state()
+endif
+
+" Required:
+filetype plugin indent on
+syntax enable
+
+" If you want to install not installed plugins on startup.
+if dein#check_install()
+  call dein#install()
+endif
+"End dein Scripts-------------------------
+
+let g:airline_theme="murmur"
+let maplocalleader=','
+
+filetype indent on
+
+"Enable support for Color xterm
+:if has("terminfo")
+:  set t_Co=8
+:  set t_Sf=^[[3%p1%dm
+:  set t_Sb=^[[4%p1%dm
+:else
+:  set  t_Co=8
+:  set t_Sf=^[[3%dm
+:  set t_Sb=^[[4%dm
+:endif
+
+set ignorecase
+set smartcase
+set nu
+set expandtab
+set tabstop=3
+set softtabstop=2
+set smarttab
+set shiftwidth=2
+set incsearch
+set scrolloff=4
+set wildmode=list:longest
+set autoread
+set background=dark
+set pastetoggle=<F12>
+set undodir=~/.vim/undodir
+set undofile
+set undolevels=10000
+set undoreload=100000
+set foldlevel=9
+set hidden
+set laststatus=2
+set splitbelow
+set splitright
+set grepprg=grep\ -nH\ $*
+set modelines=1      " CVE-2007-2438
+set backspace=2      " more powerful backspacing
+
+syntax enable
+colorscheme zenburn
+
+function! Checkft()
+  if &filetype==""
+    filetype detect
+  endif
+endfunction
+
+autocmd! BufNewFile * silent! 0r ~/.vim/skel/tmpl.%:e
+autocmd bufwritepost * call Checkft()
+
+autocmd FileType markdown set linebreak tw=110 noexpandtab nosmartindent autoindent spelllang=en spell
+
+nnoremap <C-h> <C-W>h
+nnoremap <C-j> <C-W><C-J>
+nnoremap <C-k> <C-W><C-K>
+nnoremap <C-l> <C-W><C-L>
+inoremap <F2> ^O:set nonumber! foldcolumn=0<CR>
+
+map <BS> dh
+
+if filereadable(".vim.custom")
+    so .vim.custom
+endif
+
+call unite#custom#source('file,file/new,buffer,file_rec','matchers','matcher_fuzzy')
+
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+  " Overwrite settings.
+  let b:SuperTabDisabled=1
+  imap <buffer><expr> <C-v>     unite#do_action('vsplit')
+  imap <buffer><expr> <C-s>     unite#do_action('split')
+  imap <buffer>  <Tab>     <Plug>(unite_complete)
+  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+  imap <buffer> <Down>   <Plug>(unite_select_next_line)
+  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+  imap <buffer> <Up>   <Plug>(unite_select_previous_line)
+
+  " exit with esc
+  nmap <buffer> <ESC> <Plug>(unite_exit)
+
+  " exit with ctrl-c
+  imap <buffer> <c-c> <Plug>(unite_exit)
+  nmap <buffer> <c-c> <Plug>(unite_exit)
+endfunction
+
+if executable('ag')
+  let g:unite_source_file_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '""', '--ignore', '''.sass-cache''']
+  "https://github.com/ggreer/the_silver_searcher
+  "Use ag in unite grep source.
+  let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '', '--ignore', '.git', '--ignore', '.sass-cache']
+  let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '', '--ignore', '.git', '--ignore', '.sass-cache']
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts =
+        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+        \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'' ' .
+        \ '--ignore ''**/*.pyc'''
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack-grep')
+  let g:unite_source_grep_command = 'ack-grep'
+  " Match whole word only. This might/might not be a good idea
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -H'
+  "let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
+  let g:unite_source_grep_default_opts = '--exclude ''\.(git|svn|hg|bzr)'''
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
+  let g:unite_source_grep_default_opts = '--exclude ''\.(git|svn|hg|bzr)'''
+  let g:unite_source_grep_recursive_opt = ''
+endif
+
+nmap <F2> :set nu!<CR>
+imap <F2> <C-o>:set nu!<CR>
+
+nnoremap [unite] <Nop>
+nmap <space> [unite]
+
+nmap                 [unite]s :<C-u>Unite -auto-preview grep:.<C-m>
+nmap                 [unite]o :<C-u>Unite outline -start-insert<C-m>
+nmap                 [unite]f :<C-u>Unite file_rec/async -start-insert<C-m>
+nmap                 [unite]F :<C-u>Unite file -start-insert<C-m>
+nmap                 [unite]g :<C-u>Unite file_rec/git -start-insert<C-m>
+nmap                 [unite]j :<C-u>Unite buffer -start-insert<C-m>
+nmap                 [unite]k :<C-u>Unite tab:no-current<C-m>
+
+nmap                 [unite]t :NERDTreeToggle<CR>
+nmap                 [unite]u :GundoToggle<CR>
+"nmap                 [unite]r :!vagrant rsync<CR>
+nmap                 [unite]h :set hlsearch!<CR>
+nmap                 [unite]l :set list!<CR>
+nmap <silent> <expr> [unite]z FS_ToggleFoldAroundSearch({'context':2})
+nmap          <expr> [unite]x FS_ToggleFoldAroundSearch({'context':0})
+nmap                 [unite]w :let @/='\<<C-r><C-w>\>'<CR>:set hlsearch<CR>
+nmap                 [unite]r :s/<C-r><C-w>/<C-r>=input('replacement? ').'/g'<CR>
+nmap                 [unite]R :%s/<C-r><C-w>/<C-r>=input('replacement? ').'/g'<CR>
+
+nmap                 <C-x>o <C-w><C-w>
+
+autocmd BufRead,BufNewFile *.css,*.scss,*.less setlocal foldmethod=marker foldmarker={,}
+
+command -nargs=+ Gadd Git add <q-args>
+
+if &term =~ '^\(xterm\)\|\(screen\)'
+  " solid underscore
+  let &t_SI .= "\<Esc>[3 q"
+  " solid block
+  let &t_EI .= "\<Esc>[2 q"
+  " 1 or 0 -> blinking block
+  " 3 -> blinking underscore
+  " Recent versions of xterm (282 or above) also support
+  " 5 -> blinking vertical bar
+  " 6 -> solid vertical bar
+endif
+set timeoutlen=1000 ttimeoutlen=0
+
+command FwoarSc ':let g:syntastic_sh_shellcheck_tail = " -x"'
