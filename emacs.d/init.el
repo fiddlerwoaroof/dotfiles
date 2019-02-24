@@ -1,4 +1,5 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
+
 (setq gc-cons-threshold 100000000)
 
 (tool-bar-mode 0)
@@ -369,7 +370,7 @@ With a prefix ARG invalidates the cache first."
 (defvar url-pattern (car (read-sexps-in-file "~/.pastebin-name")))
 (defun pastebin-buffer ()
   (interactive)
-  (let* ((extension (file-name-extension (buffer-name)))
+  (let* ((extension (file-name-extension (elt (split-string (buffer-name) "<") 0)))
          (htmlized-buffer (htmlize-buffer)))
     (with-current-buffer htmlized-buffer
       (let ((result-name-hash (sha1 (current-buffer))))
