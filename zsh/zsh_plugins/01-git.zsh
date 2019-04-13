@@ -1,3 +1,4 @@
+#:depends-on:git-get
 GIT_DEBUG=0
 
 git-update-repos() {
@@ -93,6 +94,10 @@ for line in sys.stdin:
 }
 
 alias git-msg=git-messages
+alias git-cj="git-get cj"
+alias git-hub="git-get github"
+alias git-lab="git-get gitlab"
+alias gh="git-hub"
 
 GIT_CMD="`which -p git 2>/dev/null`"
 GTI_CMD="`which -p gti 2>/dev/null`"
@@ -101,11 +106,18 @@ if [[ ! -z "$GIT_CMD" ]]; then
   # git wrapper that mimics the functionality of git for commandlets but also
   # searches shell functions.
   git() {
-    local POSSIBLE_CMD
-    POSSIBLE_CMD="$(expand-alias git-$1)"
+    local possible_cmd
+    local cmdlets
 
-    if is-function "$POSSIBLE_CMD"; then
-      $POSSIBLE_CMD "${@[2,-1]}"
+    possible_cmd="${${$(expand-alias "git-$1")#'}%'}"
+    printf "%s" "$possible_cmd" | read -A cmdlets 
+
+    if [[ "$GIT_DEBUG" != "0" ]]; then
+      echo "git: looking for: \"$possible_cmd\" command: \"${cmdlets[1]}\""
+    fi
+
+    if is-function "${cmdlets[1]}"; then
+      "${cmdlets[@]}" "${@[2,-1]}"
     else
       "$GIT_CMD" "$@"
     fi
