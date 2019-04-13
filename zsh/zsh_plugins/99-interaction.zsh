@@ -3,21 +3,6 @@
 #:depends-on:named-directories
 #:depends-on:aliases
 
-cat <<'EOP'
-             :
-    `.       ;        .'
-      `.  .-'''-.   .'
-        ;'  __   _;'
-       /   '_    _`\
-      |  _( a (  a  |
- '''''| (_)    >    |``````
-       \    \    / /
-        `.   `--'.'
-       .' `-,,,-' `.
-     .'      :      `.  hjw
-             :
-EOP
-
 if [[ -e /etc/sysconfig/zsh-prompt-$TERM ]]; then
   . /etc/sysconfig/zsh-prompt-$TERM
 elif [[ -e $HOME/.zsh-prompt-$TERM ]]; then
@@ -49,12 +34,26 @@ vcs_info_wrapper() {
   fi
 }
 
-# indicate whether we're in insert mode
-function zle-line-init zle-keymap-select {
-  RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
-  RPS2=$RPS1
-  zle reset-prompt
+zle-keymap-select () {
+  if [[  $TERM_PROGRAM == "iTerm.app" && -o interactive ]]; then
+    if [ $KEYMAP = vicmd ]; then
+      printf "\033[2 q"
+    else
+      printf "\033[6 q"
+    fi
+  fi
 }
+
+zle-line-init () {
+  if [[  $TERM_PROGRAM == "iTerm.app" && -o interactive ]]; then
+    zle -K viins
+    printf "\033[6 q"
+  fi
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
 export PYTHONSTARTUP=$HOME/Library/Python/2.7/site-packages/sitecustomize.py
 
 HOSTNAME=`hostname -f`
@@ -71,6 +70,8 @@ cmdtermtitle() {
   else
     echo -ne "\033]0; ${cmd_name} : ${USER}@$HOSTNAME\007"
   fi
+
+  printf "\033[2 q"
 }
 
 if [[ $TERM != "linux" && ${TERM%-color} != "eterm" ]]; then
