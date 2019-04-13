@@ -400,6 +400,9 @@ With a prefix ARG invalidates the cache first."
        (car (push (cons id (read-passwd prompt))
                   passwords))))))
 
+(add-to-list 'browse-url-filename-alist
+             '("/Users/\\([^/]+\\)/\\(Sites\\|public_html\\)\\(/.*\\)" . "https://localhost/~\\1\\3"))
+
 ;;;;; junk drawer ....
 
 (comment
