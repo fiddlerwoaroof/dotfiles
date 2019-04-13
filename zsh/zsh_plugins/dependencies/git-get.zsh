@@ -1,23 +1,26 @@
 GIT_3DP_DIR="${GIT_3DP_DIR:-"$HOME/git_repos/3dp"}"
-
+GITHUB_USE_SSH=${GIT_USE_SSH:-${GITHUB_USE_SSH:-yes}}
+GITLAB_USE_SSH=${GIT_USE_SSH:-${GITLAB_USE_SSH:-yes}}
 typeset -g -A FORGE_ALIASES
 
-alias_usage="alias_forge <alias> <forge>"
+function initialize-git-get() {
+  set -x
+  mkdir -p "$GIT_3DP_DIR"
+  set +x
+}
+
+local alias_usage="alias_forge <alias> <forge>"
 function alias_forge() {
   local alias=${1:?the first parameter to alias_forge should be the alias you want to set}
-  local forge=${2:?the first parameter to alias_forge should be the forge the alias points to}
+  local forge=${2:?the second parameter to alias_forge should be the forge the alias points to}
 
   if (( $# > 2 )); then
-    printf "%s" "$alias_usage"
+    echo "$alias_usage"
   else
     FORGE_ALIASES[$alias]=$forge
   fi
 }
 
-alias_forge gh github
-alias_forge gl gitlab
-
-GITHUB_USE_SSH=${GIT_USE_SSH:-${GITHUB_USE_SSH:-yes}}
 function github_url() {
   local git_spec="$package"
 
@@ -32,7 +35,6 @@ function github_url() {
   fi
 }
 
-GITLAB_USE_SSH=${GIT_USE_SSH:-${GITLAB_USE_SSH:-yes}}
 function gitlab_url() {
   local git_spec="$package"
 
@@ -63,6 +65,9 @@ function get_forge_function() {
   fi
   echo "${forge}_url"
 }
+
+alias_forge gh github
+alias_forge gl gitlab
 
 function git-get() {
   local git_user
