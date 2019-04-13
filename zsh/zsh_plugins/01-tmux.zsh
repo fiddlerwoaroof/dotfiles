@@ -1,5 +1,7 @@
 man-() {
-  (echo ".ll 18.0i"; echo ".nr LL 18.0i"; /bin/cat) | /usr/bin/tbl | /usr/bin/groff -Wall -mtty-char -Tascii -mandoc -c
+  (echo ".ll 18.0i"; echo ".nr LL 18.0i"; /bin/cat) |
+    /usr/bin/tbl |
+    /usr/bin/groff -Wall -mtty-char -Tascii -mandoc -c
 }
 
 vspf() {
@@ -22,8 +24,8 @@ pager() {
 _vman_helper() {
   inp="`mktemp -u`"
   mkfifo "$inp"
-  echo "$inp"
-  vsp man- "$inp"
+  man- > "$inp" &
+  vsp less +G -f "$inp"
 }
 
 vman() {
@@ -57,11 +59,29 @@ vless() {
   fi
 }
 
-tmux_ps() {
-  (for s in `tmux list-sessions -F '#{session_name}'` ; do
-    echo -e "\ntmux session name: $s\n--------------------"
-    for p in `tmux list-panes -s -F '#{pane_pid}' -t "$s"` ; do
-      pstree -p -a -A $p
-    done
-  done) | eval $PAGER
-}
+if [[ "${(L)$(uname -s)}" == "linux" ]]; then
+
+  tmux_ps() {
+    (for s in `tmux list-sessions -F '#{session_name}'` ; do
+       echo -e "\ntmux session name: $s\n--------------------"
+       for p in `tmux list-panes -s -F '#{pane_pid}' -t "$s"` ; do
+         pstree -p -a -A $p
+       done
+     done) | eval $PAGER
+  }
+
+else
+
+  tmux_ps () {
+    (
+      for s in `tmux list-sessions -F '#{session_name}'`; do
+        echo -e "\ntmux session name: $s\n--------------------"
+        for p in `tmux list-panes -s -F '#{pane_pid}' -t "$s"`
+        do
+          pstree -w -g 3 -p $p $p
+        done
+      done
+    ) | eval $PAGER
+  }
+
+fi
