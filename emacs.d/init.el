@@ -463,3 +463,4 @@ With a prefix ARG invalidates the cache first."
    (setq org-brain-visualize-default-choices 'all)
    (setq org-brain-title-max-length 12)))
 
+(put 'narrow-to-page 'disabled nil)
