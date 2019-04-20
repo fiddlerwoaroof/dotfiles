@@ -28,6 +28,7 @@
 (add-hook 'lisp-mode-hook 'setup-lisp-mode) 
 (add-hook 'emacs-lisp-mode-hook 'setup-lisp-mode) 
 
+(evil-define-key 'normal lisp-mode-map "gd" 'slime-edit-definition)
 
 (modify-syntax-entry ?- "w" lisp-mode-syntax-table)
 (modify-syntax-entry ?* "w" lisp-mode-syntax-table)
@@ -65,7 +66,8 @@
          slime-selector-methods
          :key #'car)
 
-(defun fwoar--slime-find-system ()
+(cl-defgeneric fwoar--find-system ())
+(cl-defmethod fwoar--find-system (&context (major-mode lisp-mode))
   (let ((systems (directory-files
                   (locate-dominating-file default-directory
                                           (lambda (n)
@@ -75,7 +77,7 @@
                    (helm-comp-read "system:" systems)
                  (car systems)))))
 
-(pushnew (list ?S "Goto System" #'fwoar--slime-find-system)
+(pushnew (list ?S "Goto System" #'fwoar--find-system)
          slime-selector-methods
          :key #'car)
 

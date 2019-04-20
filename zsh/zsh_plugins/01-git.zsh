@@ -1,4 +1,5 @@
 #:depends-on:git-get
+autoload -U regexp-replace
 GIT_DEBUG=0
 
 git-update-repos() {
@@ -91,6 +92,24 @@ git-messages() {
 for line in sys.stdin:
       line = line.strip().split(":", 2)
       print("%s\n\t%s" % (":".join(line[2:]), ":".join(line[:2])))'
+}
+
+git-gh-create() {
+  local repo_name=${1?need a repo name}
+  regexp-replace repo_name '[" ]' '-'
+  local GH_TOKEN
+  source "$HOME/.github-token"
+ jq '{full_name, clone_url, ssh_url}' <( (
+  curl -XPOST \
+       -u "fiddlerwoaroof:$GH_TOKEN" \
+       https://api.github.com/user/repos \
+      -H 'Content-Type: application/json' \
+      --data-binary @- <<-EOF
+{
+  "name": "${repo_name}"
+}
+EOF
+  ) )
 }
 
 alias git-msg=git-messages

@@ -1,7 +1,7 @@
 #!/usr/bin/osascript
 on run argv
   set currentApp to my getCurrentApp()
-  do shell script "/usr/local/bin/emacsclient -c '" & (item 1 of argv) & "' '" & (item 2 of argv) & "'"
+  do shell script "/usr/local/bin/emacsclient -c '" & (item 1 of argv) & "'"
   do shell script "open '/Volumes/" & currentApp & "'"
 end run
 

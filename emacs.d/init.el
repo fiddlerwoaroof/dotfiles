@@ -181,6 +181,26 @@ With a prefix ARG invalidates the cache first."
 (use-package cl-generic
   :ensure t)
 
+(defun intercept-print (f)
+  (print f)
+  f)
+
+(cl-defmethod fwoar--find-system (&context (major-mode clojure-mode))
+  (let ((systems (directory-files
+                  (locate-dominating-file default-directory
+                                          (lambda (n)
+                                            (or (directory-files n nil "project.clj")
+                                                (directory-files n nil "build.boot")
+                                                (directory-files n nil "deps.edn")
+                                                (directory-files n nil "shadow-cljs.edn"))))
+                  t "^\\(project.clj\\|build.boot\\|deps.edn\\|shadow-cljs.edn\\)$")))
+    (find-file (if (not (null (cdr systems)))
+                   (helm-comp-read "system:" systems)
+                 (car systems)))))
+
+(def-cider-selector-method ?S "find clojure project file"
+  (fwoar--find-system))
+
 (cl-defgeneric fwoar--pl-selector ()
   (:method ()
            (slime-selector))
