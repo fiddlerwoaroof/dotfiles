@@ -95,14 +95,21 @@ for line in sys.stdin:
 }
 
 git-gh-create() {
-  local repo_name=${1?need a repo name}
+  local organization_name=${1?need a repo name or org/repo pair}
+  local repo_name=${2:-$organization_name}
+
+  local api_url=https://api.github.com/user/repos
+  if (( $# == 2 )) {
+       api_url="https://api.github.com/orgs/$organization_name/repos"
+  }
+
   regexp-replace repo_name '[" ]' '-'
   local GH_TOKEN
   source "$HOME/.github-token"
  jq '{full_name, clone_url, ssh_url}' <( (
-  curl -XPOST \
+  curl -XPOST -v \
        -u "fiddlerwoaroof:$GH_TOKEN" \
-       https://api.github.com/user/repos \
+       "$api_url" \
       -H 'Content-Type: application/json' \
       --data-binary @- <<-EOF
 {
