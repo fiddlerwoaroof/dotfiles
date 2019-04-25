@@ -30,7 +30,7 @@
 (load-theme 'el-zenburn t)
 
 (load-package-configuration 'evil)
-
+
 (use-package multifiles
   :config
   (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
@@ -119,6 +119,8 @@
 (load-package-configuration 'slime)
 (global-company-mode 1)
 
+
+
 (defun more-than-one-project-file-p ()
   (= (length (projectile-select-files (projectile-current-project-files)))
      1))
@@ -178,6 +180,8 @@ With a prefix ARG invalidates the cache first."
 
   (define-key evil-normal-state-map "gf" 'project-aware-ffap))
 
+
+
 (use-package cl-generic
   :ensure t)
 
@@ -215,6 +219,7 @@ With a prefix ARG invalidates the cache first."
   (fwoar--pl-selector))
 (define-key evil-normal-state-map " o" 'fwoar-pl-selector)
 
+
 
 (use-package cider
   :config
@@ -260,6 +265,8 @@ With a prefix ARG invalidates the cache first."
         (setq params (cider--gather-connect-params params server)))
       params))
   )
+
+
 
 (ensure-use-packages
  ;;(ac-js2)
@@ -316,6 +323,8 @@ With a prefix ARG invalidates the cache first."
  (web-mode)
  (yaml-mode))
 
+
+
 (use-package editorconfig
   :ensure t
   :config
@@ -350,6 +359,8 @@ With a prefix ARG invalidates the cache first."
 
 
 ;;)
+
+
 
 (global-set-key (kbd "s-v") 'yank)
 
@@ -423,6 +434,11 @@ With a prefix ARG invalidates the cache first."
 (add-to-list 'browse-url-filename-alist
              '("/Users/\\([^/]+\\)/\\(Sites\\|public_html\\)\\(/.*\\)" . "https://localhost/~\\1\\3"))
 
+(progn ;; narrowing
+  (define-key global-map "\C-c]" "\C-u1\C-xnp")
+  (define-key global-map "\C-c[" "\C-u-1\C-xnp"))
+
+
 ;;;;; junk drawer ....
 
 (comment
