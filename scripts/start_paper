@@ -1,10 +1,21 @@
-#!/bin/zsh
+#!/bin/zsh -x
+
+tar_command=tar
+if command -v gtar >-; then
+  tar_command=gtar
+fi
+
+base64_cmdline=(base64 -d)
+if ! base64 -d &>-; then
+  echo -- use -D
+  base64_cmdline=(base64 -D)
+fi
 
 DEST_DIR=$1
 
 mkdir $DEST_DIR || exit 1
 
-(base64 -d | tar --xz -xf - -C $DEST_DIR --strip-components=1 --transform="s/paper_template/$DEST_DIR/g") <<EOF
+( "${base64_cmdline[@]}" | "$tar_command" --xz -xf - -C $DEST_DIR --strip-components=1 --transform="s:paper_template:${DEST_DIR##*/}:g" ) <<EOF
 
 /Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4O//O1VdADgYSmbyyKtWMBRqP43/EQJ5U9jI9Xa6OYE7qjKEXlplXN+X5PkqqfeEZHH6ptauXD80MsmCfuoGBg50pAW2pZnbVGhpDE2Lc2d5CbDoeN9bLwFnsO1PfmeSFJmOhr1De5x8X14wOVqRystEQtyhtj9PidCsDjTs
 h6PyiqebcjD5Z8+q2ou72suUOIyziyMzkg086v37Cp55wHJzFu+LwQ1WLLkA/j5ezwpoiNgpOFvZqCn82cNNv+KOkeElzkn6vgsoY+DmMFuZP0rDxArWQ8tVLDNowQc8k+oCRI3AJk7dDO0DZ/eH2JLxE5IMBnPLYeaNPuDi6f7d3Q5MnoZSBe1LoGhGWVZ5RbWEe/0v
