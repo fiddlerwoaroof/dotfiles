@@ -497,6 +497,17 @@ With a prefix ARG invalidates the cache first."
                  (memq (char-before) '(?, ?} ?{))))))))
 
 
+;;; indent ternaries with arrow function correctly---
+(defun fwoar/zenburn-css ()
+  (interactive)
+  (mapcar (lambda (desc)
+            (destructuring-bind (name . value) desc
+              (cl-format (current-buffer)
+                         "--~a: ~a;~%"
+                         (s-replace "+" "-plus-" name)
+                         value)))
+          zenburn-default-colors-alist))
+
 (progn ;; workaround until this fixed: https://github.com/emacs-evil/evil/issues/1129
   ;;                          or this: https://github.com/emacs-evil/evil/pull/1130
   (defun config/fix-evil-window-move (orig-fun &rest args)
@@ -511,6 +522,45 @@ With a prefix ARG invalidates the cache first."
 
   (dolist (func '(evil-window-move-far-left evil-window-move-far-right evil-window-move-very-top evil-window-move-very-bottom))
     (advice-add func :around #'config/fix-evil-window-move)))
+
+(defun camel-kebab (string)
+  (let ((case-fold-search nil))
+    (downcase
+     (format "%c%s"
+             (elt string 0)
+             (or (when (> (length string) 1)
+                   (s-replace-regexp "[A-Z]"
+                                     "-\\&"
+                                     string nil nil nil 1))
+                 string)))))
+
+
+
+(defun fwoar/cc-camel-kebab (start end)
+  (interactive "*r")
+  (let ((target (buffer-substring start end)))
+    (save-excursion
+      (delete-region start end)
+      (insert (camel-kebab target)))))
+
+(use-package org-projectile
+  :config
+  (progn
+    (org-projectile-per-project)
+    (setq org-projectile-per-project-filepath
+          "notes/README.org")
+    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
+    (push (org-projectile-project-todo-entry) org-capture-templates)
+    (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
+  :ensure t)
+
+(use-package org-projectile-helm
+  :after org-projectile
+  :config
+  (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
+
+(use-package deadgrep
+  :ensure t)
 
 (defun fwoar--find-package-json ()
   (expand-file-name
