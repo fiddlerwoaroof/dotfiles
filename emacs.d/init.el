@@ -249,9 +249,6 @@ With a prefix ARG invalidates the cache first."
                    (helm-comp-read "system:" systems)
                  (car systems)))))
 
-(def-cider-selector-method ?S "find clojure project file"
-  (fwoar--find-system))
-
 (cl-defgeneric fwoar--pl-selector ()
   (:method ()
            (slime-selector))
@@ -270,8 +267,12 @@ With a prefix ARG invalidates the cache first."
 
 (use-package cider
   :config
+  (require 'cider-selector)
   (define-key evil-normal-state-map " t" 'cider-test-run-ns-tests)
   (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
+
+  (def-cider-selector-method ?S "find clojure project file"
+    (fwoar--find-system))
 
   (add-hook 'cider-mode-hook
             (lambda ()
