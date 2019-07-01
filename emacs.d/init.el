@@ -335,7 +335,6 @@ With a prefix ARG invalidates the cache first."
   (define-key evil-normal-state-map " s" 'helm-occur)
   (define-key evil-normal-state-map " S" 'helm-projectile-rg)
   (define-key helm-map (kbd "C-r") 'evil-paste-from-register))
-
  (helm-ag)
  (helm-ag-r)
  (helm-rg)
@@ -428,11 +427,12 @@ With a prefix ARG invalidates the cache first."
       (insert "\n)"))
     (read (current-buffer))))
 
-(use-package circe
-  :config
-  (setq circe-server-buffer-name "{host}:{port}"
-        circe-reduce-lurker-spam t
-        circe-network-options (read-sexps-in-file "~/.circe-info")))
+(comment
+ (use-package circe
+   :config
+   (setq circe-server-buffer-name "{host}:{port}"
+         circe-reduce-lurker-spam t
+         circe-network-options (read-sexps-in-file "~/.circe-info"))))
 
 (defvar url-pattern (car (read-sexps-in-file "~/.pastebin-name")))
 (defun pastebin-buffer ()
@@ -465,10 +465,12 @@ With a prefix ARG invalidates the cache first."
 
 (progn ;; narrowing
   (define-key global-map "\C-c]" "\C-u1\C-xnp")
-  (define-key global-map "\C-c[" "\C-u-1\C-xnp"))
+  (define-key global-map "\C-c[" "\C-u-1\C-xnp\M-<"))
 
 
 ;;;;; junk drawer ....
+
+(put 'narrow-to-page 'disabled nil)
 
 (defun js--looking-at-operator-p ()
   "Return non-nil if point is on a JavaScript operator, other than a comma."
@@ -596,5 +598,3 @@ With a prefix ARG invalidates the cache first."
          org-capture-templates)
    (setq org-brain-visualize-default-choices 'all)
    (setq org-brain-title-max-length 12)))
-
-(put 'narrow-to-page 'disabled nil)
