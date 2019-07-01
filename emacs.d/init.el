@@ -36,11 +36,6 @@
   (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
   )
 
-(use-package tern
-  :config
-  (add-hook 'js-mode-hook (lambda () (tern-mode t)))
-  (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
-
 (use-package org
   :pin "org"
   :ensure t
@@ -118,6 +113,58 @@
 
 (load-package-configuration 'slime)
 (global-company-mode 1)
+
+
+
+(use-package js2-mode
+  :ensure t
+  :defer t
+  :commands js2-mode
+  :init
+  (progn
+    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
+    (setq-default js2-basic-offset 4)
+    (setq-default js-indent-level 4)
+    (add-hook 'js2-mode-hook 'flycheck-mode)
+    (customize-set-variable 'js2-mode-show-parse-errors nil)
+    (customize-set-variable 'js2-strict-missing-semi-warning nil)
+    (customize-set-variable 'js2-strict-trailing-comma-warning nil)
+    (customize-set-variable 'js2-strict-inconsistent-return-warning nil)))
+
+(use-package vue-mode
+  :config
+  (add-hook 'vue-mode
+            'prettier-js-mode)
+  (add-hook 'vue-mode
+            'flycheck-mode))
+
+(use-package prettier-js
+  :ensure t
+  :init
+  (add-hook 'js2-mode-hook 'prettier-js-mode))
+
+(use-package tide
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook 'tide-setup)
+  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
+
+(use-package rjsx-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
+
+(comment
+ (use-package tern
+   :config
+   (add-hook 'js-mode-hook (lambda () (tern-mode t)))
+   (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
+
+ (use-package company-tern
+   :ensure t
+   :config
+   (add-to-list 'company-backends 'company-tern)
+   (setq company-tooltip-align-annotations t)))
 
 
 
@@ -319,7 +366,6 @@ With a prefix ARG invalidates the cache first."
 
   (add-hook 'smartparens-enabled-hook
             'evil-smartparens-mode))
- (vue-mode)
  (web-mode)
  (yaml-mode))
 
@@ -330,24 +376,6 @@ With a prefix ARG invalidates the cache first."
   :config
   (editorconfig-mode 1))
 
-(use-package js2-mode
-  :ensure t
-  :defer t
-  :commands js2-mode
-  :init
-  (progn
-    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
-    (setq-default js2-basic-offset 4)
-    (setq-default js-indent-level 4)
-    (customize-set-variable 'js2-mode-show-parse-errors nil)
-    (customize-set-variable 'js2-strict-missing-semi-warning nil)
-    (customize-set-variable 'js2-strict-trailing-comma-warning nil)
-    (customize-set-variable 'js2-strict-inconsistent-return-warning nil)))
-
-(use-package rjsx-mode
-  :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
 
 (define-key evil-normal-state-map "ZZ" 'save-buffer)
 
@@ -440,6 +468,75 @@ With a prefix ARG invalidates the cache first."
 
 
 ;;;;; junk drawer ....
+
+(defun js--looking-at-operator-p ()
+  "Return non-nil if point is on a JavaScript operator, other than a comma."
+  (save-match-data
+    (and (looking-at js--indent-operator-re)
+         (or (not (eq (char-after) ?:))
+             (save-excursion
+               (js--backward-syntactic-ws)
+               (when (memq (char-before) '(?\) ?})) (backward-list))
+               (and (js--re-search-backward "[?:{]\\|\\_<case\\_>" nil t)
+                    (eq (char-after) ??))))
+         (not (and
+               (eq (char-after) ?/)
+               (save-excursion
+                 (eq (nth 3 (syntax-ppss)) ?/))))
+         (not (and
+               (eq (char-after) ?*)
+               ;; Generator method (possibly using computed property).
+               (looking-at (concat "\\* *\\(?:\\[\\|" js--name-re " *(\\)"))
+               (save-excursion
+                 (js--backward-syntactic-ws)
+                 ;; We might misindent some expressions that would
+                 ;; return NaN anyway.  Shouldn't be a problem.
+                 (memq (char-before) '(?, ?} ?{))))))))
+
+
+(progn ;; workaround until this fixed: https://github.com/emacs-evil/evil/issues/1129
+  ;;                          or this: https://github.com/emacs-evil/evil/pull/1130
+  (defun config/fix-evil-window-move (orig-fun &rest args)
+    "Close Treemacs while moving windows around."
+    (let* ((treemacs-window (treemacs-get-local-window))
+           (is-active (and treemacs-window (window-live-p treemacs-window))))
+      (when is-active (treemacs))
+      (apply orig-fun args)
+      (when is-active
+        (save-selected-window
+          (treemacs)))))
+
+  (dolist (func '(evil-window-move-far-left evil-window-move-far-right evil-window-move-very-top evil-window-move-very-bottom))
+    (advice-add func :around #'config/fix-evil-window-move)))
+
+(defun fwoar--find-package-json ()
+  (expand-file-name
+   (locate-dominating-file default-directory
+                           (lambda (n)
+                             (directory-files n nil "^package.json$")))))
+
+
+
+(defun find-package-json (default-directory)
+  (interactive "D")
+  (message "pakcage json: %s"(fwoar--find-package-json))
+  (find-file (concat (fwoar--find-package-json)
+                     "/package.json")))
+
+(cl-defmethod fwoar--find-system (&context (major-mode (derived-mode js-mode)))
+  (find-package-json default-directory))
+
+(use-package jest
+  :ensure t
+  :config
+  (defun jest--project-root ()
+    "Find the project root directory."
+    (let ((closest-package-json (fwoar--find-package-json))
+          (projectile-root (projectile-project-root)))
+      (message "%s <-> %s" closest-package-json projectile-root)
+      (if (s-prefix-p projectile-root closest-package-json)
+          closest-package-json
+        projectile-root))))
 
 (comment
  (use-package paredit
