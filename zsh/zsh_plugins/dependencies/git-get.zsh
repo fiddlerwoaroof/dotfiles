@@ -35,6 +35,20 @@ function github_url() {
   fi
 }
 
+function bitbucket_url() {
+  local git_spec="$package"
+
+  if [[ -n "$git_user" ]]; then
+    git_spec="$git_user/$package"
+  fi
+
+  if [[ "$bitbucket_USE_SSH" == "yes" ]]; then
+    printf "git@bitbucket.com:%s.git" "$git_spec"
+  else
+    printf "https://bitbucket.com/%s.git" "$git_spec"
+  fi
+}
+
 function gitlab_url() {
   local git_spec="$package"
 
@@ -66,6 +80,7 @@ function get_forge_function() {
   echo "${forge}_url"
 }
 
+alias_forge bb github
 alias_forge gh github
 alias_forge gl gitlab
 
