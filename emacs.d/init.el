@@ -20,12 +20,12 @@
 
 (cold-boot)
 
-(use-package color-theme :ensure t)
-;; (use-package zenburn-theme :ensure t)
+(use-package color-theme-modern :ensure t)
+(use-package zenburn-theme :ensure t)
 (add-to-list 'load-path "~/.emacs.d/themes/")
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 (require 'el-zenburn-theme)
-(color-theme-initialize)
+;;(color-theme-initialize)
 
 (load-theme 'el-zenburn t)
 
