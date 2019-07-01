@@ -9,3 +9,4 @@
 cjo/ztest-container*
 .ensime*
 .history
+.projectile
