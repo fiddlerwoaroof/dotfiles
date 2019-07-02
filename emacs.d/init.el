@@ -62,6 +62,25 @@
   (define-key global-map "\C-cc" 'org-capture)
   (define-key evil-visual-state-map " c" 'org-capture))
 
+(use-package org-projectile
+  :config
+  (progn
+    (org-projectile-per-project)
+    (setq org-projectile-per-project-filepath
+          "notes/README.org")
+    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
+    (push (org-projectile-project-todo-entry) org-capture-templates)
+    (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
+  :ensure t)
+
+(use-package org-projectile-helm
+  :after org-projectile
+  :config
+  (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
+
+(use-package deadgrep
+  :ensure t)
+
 (use-package deft
   :ensure t
   :config
@@ -115,21 +134,50 @@
 (global-company-mode 1)
 
 
-
 (use-package js2-mode
   :ensure t
   :defer t
   :commands js2-mode
-  :init
-  (progn
-    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
-    (setq-default js2-basic-offset 4)
-    (setq-default js-indent-level 4)
-    (add-hook 'js2-mode-hook 'flycheck-mode)
-    (customize-set-variable 'js2-mode-show-parse-errors nil)
-    (customize-set-variable 'js2-strict-missing-semi-warning nil)
-    (customize-set-variable 'js2-strict-trailing-comma-warning nil)
-    (customize-set-variable 'js2-strict-inconsistent-return-warning nil)))
+  :config
+  (modify-syntax-entry ?_ "w" js2-mode-syntax-table)
+  (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
+  (setq-default js2-basic-offset 4)
+  (setq-default js-indent-level 4)
+  (add-hook 'js2-mode-hook 'flycheck-mode)
+  (customize-set-variable 'js2-mode-show-parse-errors nil)
+  (customize-set-variable 'js2-strict-missing-semi-warning nil)
+  (customize-set-variable 'js2-strict-trailing-comma-warning nil)
+  (customize-set-variable 'js2-strict-inconsistent-return-warning nil))
+
+(use-package js
+  :ensure t
+  :config
+  (modify-syntax-entry ?_ "w" js-mode-syntax-table)
+
+  ;;; indent ternaries with arrow function correctly---
+  (defun js--looking-at-operator-p ()
+    "Return non-nil if point is on a JavaScript operator, other than a comma."
+    (save-match-data
+      (and (looking-at js--indent-operator-re)
+           (or (not (eq (char-after) ?:))
+               (save-excursion
+                 (js--backward-syntactic-ws)
+                 (when (memq (char-before) '(?\) ?})) (backward-list))
+                 (and (js--re-search-backward "[?:{]\\|\\_<case\\_>" nil t)
+                      (eq (char-after) ??))))
+           (not (and
+                 (eq (char-after) ?/)
+                 (save-excursion
+                   (eq (nth 3 (syntax-ppss)) ?/))))
+           (not (and
+                 (eq (char-after) ?*)
+                 ;; Generator method (possibly using computed property).
+                 (looking-at (concat "\\* *\\(?:\\[\\|" js--name-re " *(\\)"))
+                 (save-excursion
+                   (js--backward-syntactic-ws)
+                   ;; We might misindent some expressions that would
+                   ;; return NaN anyway.  Shouldn't be a problem.
+                   (memq (char-before) '(?, ?} ?{)))))))))
 
 (use-package vue-mode
   :config
@@ -165,6 +213,18 @@
    :config
    (add-to-list 'company-backends 'company-tern)
    (setq company-tooltip-align-annotations t)))
+
+(use-package jest
+  :ensure t
+  :config
+  (defun jest--project-root ()
+    "Find the project root directory."
+    (let ((closest-package-json (fwoar--find-package-json))
+          (projectile-root (projectile-project-root)))
+      (message "%s <-> %s" closest-package-json projectile-root)
+      (if (s-prefix-p projectile-root closest-package-json)
+          closest-package-json
+        projectile-root))))
 
 
 
@@ -349,7 +409,10 @@ With a prefix ARG invalidates the cache first."
  (magit
   :config
   (evil-define-key 'normal magit-file-mode-map " a" 'magit)
-  (magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote))
+  ;; TODO: figure this out with transients
+  (magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote)
+  'magit-dispatch
+  )
  (markdown-mode)
  (project-explorer)
  (rainbow-delimiters)
@@ -377,14 +440,12 @@ With a prefix ARG invalidates the cache first."
   (editorconfig-mode 1))
 
 
-(define-key evil-normal-state-map "ZZ" 'save-buffer)
+(progn ;; emacs-lisp stuff
+  (modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
+  (modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
 
-(modify-syntax-entry ?_ "w" js-mode-syntax-table)
-(modify-syntax-entry ?_ "w" js2-mode-syntax-table)
-
-(modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
-(modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
-
+  (put 'narrow-to-page 'disabled nil)
+  )
 
 ;;)
 
@@ -449,8 +510,6 @@ With a prefix ARG invalidates the cache first."
   (interactive)
   (delete-window
    (get-mru-window nil nil t)))
-(define-key evil-motion-state-map (kbd "C-w C-o") 'delete-mru-window)
-(define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
 
 (defvar passwords ())
 (defslimefun get-passwd (id prompt)
@@ -470,34 +529,7 @@ With a prefix ARG invalidates the cache first."
 
 ;;;;; junk drawer ....
 
-(put 'narrow-to-page 'disabled nil)
 
-(defun js--looking-at-operator-p ()
-  "Return non-nil if point is on a JavaScript operator, other than a comma."
-  (save-match-data
-    (and (looking-at js--indent-operator-re)
-         (or (not (eq (char-after) ?:))
-             (save-excursion
-               (js--backward-syntactic-ws)
-               (when (memq (char-before) '(?\) ?})) (backward-list))
-               (and (js--re-search-backward "[?:{]\\|\\_<case\\_>" nil t)
-                    (eq (char-after) ??))))
-         (not (and
-               (eq (char-after) ?/)
-               (save-excursion
-                 (eq (nth 3 (syntax-ppss)) ?/))))
-         (not (and
-               (eq (char-after) ?*)
-               ;; Generator method (possibly using computed property).
-               (looking-at (concat "\\* *\\(?:\\[\\|" js--name-re " *(\\)"))
-               (save-excursion
-                 (js--backward-syntactic-ws)
-                 ;; We might misindent some expressions that would
-                 ;; return NaN anyway.  Shouldn't be a problem.
-                 (memq (char-before) '(?, ?} ?{))))))))
-
-
-;;; indent ternaries with arrow function correctly---
 (defun fwoar/zenburn-css ()
   (interactive)
   (mapcar (lambda (desc)
@@ -508,22 +540,7 @@ With a prefix ARG invalidates the cache first."
                          value)))
           zenburn-default-colors-alist))
 
-(progn ;; workaround until this fixed: https://github.com/emacs-evil/evil/issues/1129
-  ;;                          or this: https://github.com/emacs-evil/evil/pull/1130
-  (defun config/fix-evil-window-move (orig-fun &rest args)
-    "Close Treemacs while moving windows around."
-    (let* ((treemacs-window (treemacs-get-local-window))
-           (is-active (and treemacs-window (window-live-p treemacs-window))))
-      (when is-active (treemacs))
-      (apply orig-fun args)
-      (when is-active
-        (save-selected-window
-          (treemacs)))))
-
-  (dolist (func '(evil-window-move-far-left evil-window-move-far-right evil-window-move-very-top evil-window-move-very-bottom))
-    (advice-add func :around #'config/fix-evil-window-move)))
-
-(defun camel-kebab (string)
+(defun fwoar/camel-kebab (string)
   (let ((case-fold-search nil))
     (downcase
      (format "%c%s"
@@ -541,26 +558,7 @@ With a prefix ARG invalidates the cache first."
   (let ((target (buffer-substring start end)))
     (save-excursion
       (delete-region start end)
-      (insert (camel-kebab target)))))
-
-(use-package org-projectile
-  :config
-  (progn
-    (org-projectile-per-project)
-    (setq org-projectile-per-project-filepath
-          "notes/README.org")
-    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-    (push (org-projectile-project-todo-entry) org-capture-templates)
-    (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
-  :ensure t)
-
-(use-package org-projectile-helm
-  :after org-projectile
-  :config
-  (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
-
-(use-package deadgrep
-  :ensure t)
+      (insert (fwoar/camel-kebab target)))))
 
 (defun fwoar--find-package-json ()
   (expand-file-name
@@ -579,17 +577,6 @@ With a prefix ARG invalidates the cache first."
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode js-mode)))
   (find-package-json default-directory))
 
-(use-package jest
-  :ensure t
-  :config
-  (defun jest--project-root ()
-    "Find the project root directory."
-    (let ((closest-package-json (fwoar--find-package-json))
-          (projectile-root (projectile-project-root)))
-      (message "%s <-> %s" closest-package-json projectile-root)
-      (if (s-prefix-p projectile-root closest-package-json)
-          closest-package-json
-        projectile-root))))
 
 (comment
  (use-package paredit
