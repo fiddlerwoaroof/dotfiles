@@ -380,6 +380,7 @@ With a prefix ARG invalidates the cache first."
  ;;(ac-js2)
  (ag)
  (aggressive-indent)
+ (cl-format)
  (css-eldoc)
  (csv-mode)
  (eldoc-eval)
