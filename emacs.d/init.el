@@ -348,7 +348,7 @@ With a prefix ARG invalidates the cache first."
               (rainbow-delimiters-mode 1)
               (evil-smartparens-mode 1)
               (smartparens-strict-mode 1)
-              (aggressive-indent-mode 1)
+              (aggressive-indent-mode 0)
               (helm-cider-mode 1)
               (cider-company-enable-fuzzy-completion)))
 
@@ -375,6 +375,10 @@ With a prefix ARG invalidates the cache first."
   )
 
 
+
+(use-package imenu
+  :config
+  (define-key evil-normal-state-map " d" 'helm-imenu-in-all-buffers))
 
 (ensure-use-packages
  ;;(ac-js2)
