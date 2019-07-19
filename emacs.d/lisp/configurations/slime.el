@@ -66,13 +66,17 @@
          slime-selector-methods
          :key #'car)
 
+(defun fwoar--get-asds ()
+  (let ((dir-of-asd (locate-dominating-file default-directory
+                                            (lambda (n)
+                                              (directory-files n nil "^[^.#][^#]*[.]asd$")))))
+    (when dir-of-asd
+      (directory-files dir-of-asd
+                       t "^[^.#][^#]*[.]asd$"))))
+
 (cl-defgeneric fwoar--find-system ())
 (cl-defmethod fwoar--find-system (&context (major-mode lisp-mode))
-  (let ((systems (directory-files
-                  (locate-dominating-file default-directory
-                                          (lambda (n)
-                                            (directory-files n nil "^[^.#][^#]*[.]asd$")))
-                  t "^[^.#][^#]*[.]asd$")))
+  (let ((systems (fwoar--get-asds)))
     (find-file (if (not (null (cdr systems)))
                    (helm-comp-read "system:" systems)
                  (car systems)))))
@@ -191,3 +195,27 @@ Examples:
       (sp-backward-up-sexp)
       (indent-sexp)))
   (sp-backward-whitespace))
+
+(defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
+  (:handler (lambda ()
+              (interactive)
+              (let ((system-files (get-asds)))
+                (slime-eval-async (cons 'cl:progn
+                                        (mapcar (lambda (it)
+                                                  `(cl:progn (asdf:load-asd ,it) ,it))
+                                                system-files))
+                  (lambda (r)
+                    (message "Loading ASDs done: %s" r))))))
+  (:one-liner "Load asd for current project"))
+
+(comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
+           (:handler (lambda ()
+                       (interactive)
+                       (let ((system-files (get-asds)))
+                         (slime-eval-async (cons 'cl:progn
+                                                 (mapcar (lambda (it)
+                                                           `(cl:progn (asdf:load-asd ,it) ,it))
+                                                         system-files))
+                           (lambda (r)
+                             (message "Loading ASDs done: %s" r))))))
+           (:one-liner "Load asd for current project")))
