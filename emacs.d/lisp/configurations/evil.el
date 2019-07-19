@@ -78,13 +78,15 @@
     ;;                          or this: https://github.com/emacs-evil/evil/pull/1130
     (defun config/fix-evil-window-move (orig-fun &rest args)
       "Close Treemacs while moving windows around."
-      (let* ((treemacs-window (treemacs-get-local-window))
-             (is-active (and treemacs-window (window-live-p treemacs-window))))
-        (when is-active (treemacs))
-        (apply orig-fun args)
-        (when is-active
-          (save-selected-window
-            (treemacs)))))
+      (if (fboundp 'treemacs-get-local-window)
+          (let* ((treemacs-window (treemacs-get-local-window))
+                 (is-active (and treemacs-window (window-live-p treemacs-window))))
+            (when is-active (treemacs))
+            (apply orig-fun args)
+            (when is-active
+              (save-selected-window
+                (treemacs))))
+        (apply orig-fun args)))
 
     (dolist (func '(evil-window-move-far-left
                     evil-window-move-far-right
