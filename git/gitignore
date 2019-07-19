@@ -10,3 +10,4 @@ cjo/ztest-container*
 .ensime*
 .history
 .projectile
+.clj-kondo
