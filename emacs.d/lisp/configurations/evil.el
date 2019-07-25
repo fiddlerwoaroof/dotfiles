@@ -115,3 +115,10 @@
 
   (use-package evil-leader
     :config (evil-leader/set-leader "ß")))
+
+(use-package centaur-tabs
+  :ensure t
+  :config
+  (define-key evil-normal-state-map "gt" 'centaur-tabs-forward-tab)
+  (define-key evil-normal-state-map "gT" 'centaur-tabs-backward-tab)
+  )

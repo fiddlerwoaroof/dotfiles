@@ -88,6 +88,7 @@ started from a shell."
 
 (defun post-init ()
             ;;;;; INDENTATION SETUP  {{{
+  (centaur-tabs-mode 1)
   (progn
     (setq-default indent-tabs-mode nil
                   tab-width 2)
