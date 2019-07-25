@@ -2,6 +2,17 @@
 
 (setq gc-cons-threshold 100000000)
 
+(let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
+  (add-to-list 'load-path my-theme-path)
+  (add-to-list 'custom-theme-load-path my-theme-path)
+  (load-theme 'fwoar-zenburn t))
+
+(progn (setq default-frame-alist
+             '((vertical-scroll-bars . nil)
+               (right-divider-width . 2)
+               (bottom-divider-width . 2)))
+       (modify-all-frames-parameters default-frame-alist))
+
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
 
