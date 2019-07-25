@@ -199,7 +199,7 @@ Examples:
 (defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
   (:handler (lambda ()
               (interactive)
-              (let ((system-files (get-asds)))
+              (let ((system-files (fwoar--get-asds)))
                 (slime-eval-async (cons 'cl:progn
                                         (mapcar (lambda (it)
                                                   `(cl:progn (asdf:load-asd ,it) ,it))
@@ -211,7 +211,7 @@ Examples:
 (comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
            (:handler (lambda ()
                        (interactive)
-                       (let ((system-files (get-asds)))
+                       (let ((system-files (fwoar--get-asds)))
                          (slime-eval-async (cons 'cl:progn
                                                  (mapcar (lambda (it)
                                                            `(cl:progn (asdf:load-asd ,it) ,it))
