@@ -26,28 +26,55 @@
 
     (progn ;; wrapping
       (define-key evil-normal-state-map ",W" 'sp-wrap-round)
+      (define-key cider-mode-map (kbd "C-, W") 'sp-wrap-round)
+      (define-key cider-mode-map (kbd "C-, C-W") 'sp-wrap-round)
+
       (define-key evil-normal-state-map ",w(" 'sp-wrap-round)
       (define-key evil-normal-state-map ",w)" 'sp-wrap-round)
+      (define-key cider-mode-map (kbd "C-, w (") 'sp-wrap-round)
+      (define-key cider-mode-map (kbd "C-, w )") 'sp-wrap-round)
 
       (define-key evil-normal-state-map ",w{" 'sp-wrap-curly)
       (define-key evil-normal-state-map ",w}" 'sp-wrap-curly)
+      (define-key cider-mode-map (kbd "C-, w {") 'sp-wrap-curly)
+      (define-key cider-mode-map (kbd "C-, w }") 'sp-wrap-curly)
 
       (define-key evil-normal-state-map ",w[" 'sp-wrap-square)
       (define-key evil-normal-state-map ",w]" 'sp-wrap-square)
+      (define-key cider-mode-map (kbd "C-, w [") 'sp-wrap-square)
+      (define-key cider-mode-map (kbd "C-, w ]") 'sp-wrap-square)
 
-      (define-key evil-normal-state-map ",w\"" 'wrap-with-doublequote))
+      (define-key evil-normal-state-map ",w\"" 'wrap-with-doublequote)
+      (define-key cider-mode-map (kbd "C-, w \"") 'sp-wrap-doublequote))
 
     (progn ;; splicing
       (define-key evil-normal-state-map ",S" 'sp-splice-sexp)
+      (define-key cider-mode-map (kbd "C-, S") 'sp-splice-sexp)
+      (define-key cider-mode-map (kbd "C-, C-S") 'sp-splice-sexp)
       (define-key evil-normal-state-map ",A" 'sp-splice-sexp-killing-backward)
+      (define-key cider-mode-map (kbd "C-, A") 'sp-splice-sexp-killing-backward)
+      (define-key cider-mode-map (kbd "C-, C-A") 'sp-splice-sexp-killing-backward)
       (define-key evil-normal-state-map ",D" 'sp-splice-sexp-killing-forward)
-      (define-key evil-normal-state-map ",F" 'sp-splice-sexp-killing-around))
+      (define-key cider-mode-map (kbd "C-, D") 'sp-splice-sexp-killing-forward)
+      (define-key cider-mode-map (kbd "C-, C-D") 'sp-splice-sexp-killing-forward)
+      (define-key evil-normal-state-map ",F" 'sp-splice-sexp-killing-around)
+      (define-key cider-mode-map (kbd "C-, F") 'sp-splice-sexp-killing-around)
+      (define-key cider-mode-map (kbd "C-, C-F") 'sp-splice-sexp-killing-around))
 
     (progn ;; barf/slurp
       (define-key evil-normal-state-map ",," 'sp-backward-barf-sexp)
+      (define-key cider-mode-map (kbd "C-, ,") 'sp-backward-barf-sexp)
+      (define-key cider-mode-map (kbd "C-, C-,") 'sp-backward-barf-sexp)
       (define-key evil-normal-state-map ",." 'sp-forward-barf-sexp)
+      (define-key cider-mode-map (kbd "C-, .") 'sp-forward-barf-sexp)
+      (define-key cider-mode-map (kbd "C-, C-.") 'sp-forward-barf-sexp)
       (define-key evil-normal-state-map ",<" 'sp-backward-slurp-sexp)
-      (define-key evil-normal-state-map ",>" 'sp-forward-slurp-sexp))
+      (define-key cider-mode-map (kbd "C-, <") 'sp-backward-slurp-sexp)
+      (define-key cider-mode-map (kbd "C-, C-<") 'sp-backward-slurp-sexp)
+      (define-key evil-normal-state-map ",>" 'sp-forward-slurp-sexp)
+      (define-key cider-mode-map (kbd "C-, >") 'sp-forward-slurp-sexp)
+      (define-key cider-mode-map (kbd "C-, C->") 'sp-forward-slurp-sexp)
+      )
 
     (progn ;; misc
       (define-key evil-normal-state-map ",~" 'sp-convolute-sexp)
