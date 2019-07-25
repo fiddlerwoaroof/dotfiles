@@ -113,7 +113,7 @@ started from a shell."
   ;; (paredit-mode)
   ;;(global-company-mode)
   ;; (setq linum-format "%5d\u2502")
-  (global-linum-mode)
+  (global-display-line-numbers-mode)
   (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
   (global-company-mode 1))
