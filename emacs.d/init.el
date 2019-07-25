@@ -1,5 +1,4 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
-
 (setq gc-cons-threshold 100000000)
 
 (let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
@@ -31,15 +30,8 @@
 
 (cold-boot)
 
-(use-package color-theme-modern :ensure t)
-(use-package zenburn-theme :ensure t)
-(add-to-list 'load-path "~/.emacs.d/themes/")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(require 'el-zenburn-theme)
-;;(color-theme-initialize)
-
-(load-theme 'el-zenburn t)
-
+;; (use-package color-theme-modern :ensure t)
+;; (use-package zenburn-theme :ensure t)
 (load-package-configuration 'evil)
 
 (use-package multifiles
@@ -77,6 +69,7 @@
   :config
   (progn
     (org-projectile-per-project)
+    (setq org-agenda-skip-unavailable-files t)
     (setq org-projectile-per-project-filepath
           "notes/README.org")
     (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
@@ -129,8 +122,7 @@
            company-keywords)
           company-oddmuse
           company-dabbrev))
-  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1)))
-  )
+  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1))))
 
 (use-package lisp-skeletons
   :config
@@ -206,6 +198,7 @@
   :ensure t
   :config
   (add-hook 'js2-mode-hook 'tide-setup)
+  (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
 
 (use-package rjsx-mode
@@ -217,13 +210,13 @@
  (use-package tern
    :config
    (add-hook 'js-mode-hook (lambda () (tern-mode t)))
-   (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
+   (add-hook 'js2-mode-hook (lambda () (tern-mode t)))))
 
- (use-package company-tern
-   :ensure t
-   :config
-   (add-to-list 'company-backends 'company-tern)
-   (setq company-tooltip-align-annotations t)))
+(use-package company-tern
+  :ensure t
+  :config
+  (add-to-list 'company-backends 'company-tern)
+  (setq company-tooltip-align-annotations t))
 
 (use-package jest
   :ensure t
@@ -323,20 +316,22 @@ With a prefix ARG invalidates the cache first."
 (cl-defgeneric fwoar--pl-selector ()
   (:method ()
            (slime-selector))
+
   (:method (&context (major-mode clojure-mode))
            (cider-selector))
   (:method (&context (projectile-project-type (eql :clojure)))
            (cider-selector))
   (:method (&context (major-mode cider-repl-mode))
            (cider-selector)))
+
 (defun fwoar-pl-selector ()
   (interactive)
   (fwoar--pl-selector))
 (define-key evil-normal-state-map " o" 'fwoar-pl-selector)
 
 
-
 (use-package cider
+  :ensure t
   :config
   (require 'cider-selector)
   (define-key evil-normal-state-map " t" 'cider-test-run-ns-tests)
@@ -347,6 +342,7 @@ With a prefix ARG invalidates the cache first."
 
   (add-hook 'cider-mode-hook
             (lambda ()
+              (flycheck-mode)
               (rainbow-delimiters-mode 1)
               (evil-smartparens-mode 1)
               (smartparens-strict-mode 1)
@@ -373,6 +369,23 @@ With a prefix ARG invalidates the cache first."
   (setq cider-save-file-on-load t
         cider-repl-history-file "~/.emacs.d/cider-history.clj")
 
+  (defun cider-eval-expression-at-point-in-repl ()
+    (interactive)
+    (let ((form (cider-defun-at-point)))
+      ;; Strip excess whitespace
+      (while (string-match "\\`\s+\\|\n+\\'" form)
+        (setq form (replace-match "" t t form)))
+      (with-current-buffer (cider-current-repl nil t)
+        (let ((fw/window (get-buffer-window)))
+          (with-selected-window fw/window
+            (end-of-buffer)
+            (insert form)
+            (cider-repl-return)
+            (end-of-buffer))))))
+
+  (define-key cider-mode-map
+    (kbd "C-c C-j") 'cider-eval-expression-at-point-in-repl)
+
   ;; https://github.com/clojure-emacs/cider/issues/2435
   (defun cider--gather-session-params (session)
     "Gather all params for a SESSION."
@@ -383,7 +396,12 @@ With a prefix ARG invalidates the cache first."
       (when-let* ((server (cider--session-server session)))
         (setq params (cider--gather-connect-params params server)))
       params))
+
   )
+
+(use-package flycheck-clj-kondo
+  :ensure t)
+
 
 
 
@@ -455,6 +473,28 @@ With a prefix ARG invalidates the cache first."
   :config
   (editorconfig-mode 1))
 
+(use-package treemacs
+  :ensure t
+  :config
+  (setq treemacs-is-never-other-window t)
+  (global-set-key (kbd "s-e") 'treemacs-select-window))
+
+(use-package treemacs-evil
+  :after treemacs evil
+  :ensure t)
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
 
 (progn ;; emacs-lisp stuff
   (modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
