@@ -409,6 +409,21 @@ With a prefix ARG invalidates the cache first."
   :config
   (define-key evil-normal-state-map " d" 'helm-imenu-in-all-buffers))
 
+(defun fwoar--paste-from-register-mru-buffer (register)
+  (interactive
+   (let ((overlay (make-overlay (point) (point)))
+         (string "\""))
+     (unwind-protect
+         (progn
+           ;; display " in the buffer while reading register
+           (put-text-property 0 1 'face 'minibuffer-prompt string)
+           (put-text-property 0 1 'cursor t string)
+           (overlay-put overlay 'after-string string)
+           (list (or evil-this-register (read-char))))
+       (delete-overlay overlay))))
+  (let ((filename (with-current-buffer helm-current-buffer 
+                    (evil-get-register register t))))
+    (insert filename)))
 
 (use-package ag :ensure t)
 
@@ -435,7 +450,9 @@ With a prefix ARG invalidates the cache first."
   (define-key evil-normal-state-map " j" 'helm-buffers-list)
   (define-key evil-normal-state-map " s" 'helm-occur)
   (define-key evil-normal-state-map " S" 'helm-projectile-rg)
-  (define-key helm-map (kbd "C-r") 'evil-paste-from-register))
+  (define-key helm-map
+    (kbd "C-r")
+    'fwoar--paste-from-register-mru-buffer)
   (define-key helm-map
     (kbd "<right>")
     'helm-execute-persistent-action)
