@@ -497,6 +497,7 @@ With a prefix ARG invalidates the cache first."
 (use-package scss-mode :ensure t)
 
 (use-package smartparens :ensure t :ensure t :config
+  (sp-pair "${" "}")
   (sp-with-modes sp--lisp-modes
     (sp-local-pair "'" nil :actions nil)
     (sp-local-pair "`" nil :actions nil))
