@@ -409,69 +409,92 @@ With a prefix ARG invalidates the cache first."
   :config
   (define-key evil-normal-state-map " d" 'helm-imenu-in-all-buffers))
 
-(ensure-use-packages
- ;;(ac-js2)
- (ag)
- (aggressive-indent)
- (cl-format)
- (css-eldoc)
- (csv-mode)
- (eldoc-eval)
- (helm
-  :config
-  (require 'helm-config)
 
+(use-package ag :ensure t)
+
+(use-package aggressive-indent :ensure t)
+
+(use-package cl-format :ensure t)
+
+(use-package css-eldoc :ensure t)
+
+(use-package csv-mode :ensure t)
+
+(use-package eldoc-eval :ensure t)
+
+(use-package helm :ensure t :config
+  (require 'helm-config)
   (helm-mode)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key
+   (kbd "M-x")
+   'helm-M-x)
+  (global-set-key
+   (kbd "C-x C-f")
+   'helm-find-files)
   (define-key evil-normal-state-map " f" 'helm-projectile)
   (define-key evil-normal-state-map " j" 'helm-buffers-list)
   (define-key evil-normal-state-map " s" 'helm-occur)
   (define-key evil-normal-state-map " S" 'helm-projectile-rg)
   (define-key helm-map (kbd "C-r") 'evil-paste-from-register))
- (helm-ag)
- (helm-ag-r)
- (helm-rg)
- (helm-cider)
- (helm-css-scss)
- (helm-ls-git)
- (helm-projectile)
- (helm-projectile)
- (highlight-parentheses
-  :config
+  (define-key helm-map
+    (kbd "<right>")
+    'helm-execute-persistent-action)
+  (define-key helm-map
+    (kbd "<left>")
+    'helm-find-files-up-one-level))
+
+(use-package helm-ag :ensure t)
+
+(use-package helm-ag-r :ensure t)
+
+(use-package helm-rg :ensure t)
+
+(use-package helm-cider :ensure t)
+
+(use-package helm-css-scss :ensure t)
+
+(use-package helm-ls-git :ensure t)
+
+(use-package helm-projectile :ensure t)
+
+(use-package helm-projectile :ensure t)
+
+(use-package highlight-parentheses :ensure t :config
   (global-highlight-parentheses-mode 1))
- (magit
-  :config
+
+(use-package magit :ensure t :config
   (evil-define-key 'normal magit-file-mode-map " a" 'magit)
-  ;; TODO: figure this out with transients
-  (magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote)
-  'magit-dispatch
-  )
- (markdown-mode)
- (project-explorer)
- (rainbow-delimiters)
- (ripgrep)
- (projectile-ripgrep)
- (scss-mode)
- (smartparens
-  :ensure t
-  :config
+  (magit-define-popup-action 'magit-dispatch-popup 106 "Browse remote" 'browse-at-remote)
+  'magit-dispatch)
+
+(use-package markdown-mode :ensure t)
+
+(use-package project-explorer :ensure t)
+
+(use-package rainbow-delimiters :ensure t)
+
+(use-package ripgrep :ensure t)
+
+(use-package projectile-ripgrep :ensure t)
+
+(use-package scss-mode :ensure t)
+
+(use-package smartparens :ensure t :ensure t :config
   (sp-with-modes sp--lisp-modes
-    ;; disable ', it's the quote character!
     (sp-local-pair "'" nil :actions nil)
     (sp-local-pair "`" nil :actions nil))
+  (add-hook 'smartparens-enabled-hook 'evil-smartparens-mode))
 
-  (add-hook 'smartparens-enabled-hook
-            'evil-smartparens-mode))
- (web-mode)
- (yaml-mode))
+(use-package web-mode :ensure t)
+
+(use-package yaml-mode :ensure t)
 
 
 
 (use-package editorconfig
   :ensure t
-  :config
-  (editorconfig-mode 1))
+  :config (editorconfig-mode 1))
+
 
 (use-package treemacs
   :ensure t
