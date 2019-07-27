@@ -513,12 +513,17 @@ With a prefix ARG invalidates the cache first."
   :ensure t
   :config (editorconfig-mode 1))
 
+(defun fwoar--activate-treemacs ()
+  (interactive)
+  (if (treemacs-is-treemacs-window-selected?)
+      (delete-window)
+    (treemacs-select-window)))
 
 (use-package treemacs
   :ensure t
   :config
   (setq treemacs-is-never-other-window t)
-  (global-set-key (kbd "s-e") 'treemacs-select-window))
+  (global-set-key (kbd "s-e") 'fwoar--activate-treemacs))
 
 (use-package treemacs-evil
   :after treemacs evil
