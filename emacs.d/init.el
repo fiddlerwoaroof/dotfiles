@@ -640,7 +640,7 @@ With a prefix ARG invalidates the cache first."
                          "--~a: ~a;~%"
                          (s-replace "+" "-plus-" name)
                          value)))
-          zenburn-default-colors-alist))
+          fwoar-zenburn-default-colors-alist))
 
 (defun fwoar/camel-kebab (string)
   (let ((case-fold-search nil))
