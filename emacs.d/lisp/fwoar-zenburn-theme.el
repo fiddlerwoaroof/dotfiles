@@ -109,9 +109,9 @@ Also bind `class' to ((class color) (min-colors 89))."
    'fwoar-zenburn
    `(highlight ((t (:inverse-video t))))
    `(font-lock-builtin-face ((t (:weight bold))))
-   `(font-lock-comment-delimiter-face ((t (:foreground ,zenburn-green))))
-   `(font-lock-comment-face ((t (:foreground ,zenburn-green))))
-   `(font-lock-constant-face ((t (:foreground ,zenburn-green+1))))
+   `(font-lock-comment-face ((t (:inherit fwoar-zenburn-1-face))))
+   `(font-lock-comment-delimiter-face ((t (:inherit font-lock-comment-face))))
+   `(font-lock-constant-face ((t (:weight bold))))
    `(font-lock-doc-face ((t (:foreground ,zenburn-yellow-2))))
    `(font-lock-function-name-face ((t (:foreground ,zenburn-blue))))
    `(font-lock-keyword-face ((t (:foreground ,zenburn-yellow))))
@@ -222,9 +222,11 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(slime-repl-inputed-output-face ((t (:foreground ,zenburn-blue))))
 
    ;; javascript
-   `(js2-function-param ((t (:foreground ,zenburn-green))))
-   `(js2-external-variable ((t (:foreground ,zenburn-orange))))
+   `(js2-function-param ((t (:inherit font-lock-variable-name-face))))
+   `(js2-function-call ((t (:inherit font-lock-function-name-face))))
+   `(js2-external-variable ((t (:inherit font-lock-variable-name-face))))
    `(js2-error ((t (:foreground ,zenburn-red+2))))
+   `(js2-object-property ((t (:inherit font-lock-variable-name-face))))
 
    ;; flycheck
    `(flycheck-error ((t (:underline (:style wave :color ,zenburn-red-2)))))
@@ -249,6 +251,16 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(magit-diff-hunk-heading ((t (:background ,zenburn-bg+1))))
    `(magit-diff-hunk-heading-highlight ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg+2))))
 
+   `(sh-quoted-exec ((t (:inherit font-lock-function-name-face))))
+   `(sh-heredoc ((t (:inherit font-lock-string-face))))
+
+   ;; org mode
+   `(org-table ((t (:foreground ,zenburn-blue+1))))
+   `(org-table ((t (:foreground ,zenburn-blue+1))))
+
+   ;; isearch
+   `(isearch ((t (:foreground ,zenburn-red-6 :background ,zenburn-magenta))))
+   `(isearch-fail ((t (:background ,zenburn-red-6))))
    ))
 
 ;;;###autoload
