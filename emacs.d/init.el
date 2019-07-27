@@ -719,7 +719,7 @@ With a prefix ARG invalidates the cache first."
    (message "Loading ansi term...")
    (evil-set-initial-state 'term-mode 'emacs))
 
- (advice-add 'ansi-term :after 'ansi-term-post)
+ (advice-add 'ansi-term :after 'ansi-term-post))
 
 (use-package org-brain :ensure t
   :init
@@ -737,3 +737,5 @@ With a prefix ARG invalidates the cache first."
         org-id-locations-file "~/.emacs.d/.org-id-locations"
         org-brain-visualize-default-choices 'all
         org-brain-title-max-length 12))
+
+(setq diary-file (expand-file-name "~/bucket/diary"))
