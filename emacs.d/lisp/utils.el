@@ -87,7 +87,25 @@ started from a shell."
                  packages)))
 
 (defun post-init ()
-            ;;;;; INDENTATION SETUP  {{{
+  ;;;;; INDENTATION SETUP  {{{
+  (defun helm-projectile-rg ()
+    "Projectile version of `helm-rg'."
+    (interactive)
+    (if (require 'helm-rg nil t)
+        (if (projectile-project-p)
+            (let ((helm-rg-prepend-file-name-line-at-top-of-matches nil)
+                  (helm-rg-include-file-on-every-match-line t))
+              (helm-rg (helm-projectile-rg--region-selection)
+                       nil
+                       (list (projectile-project-root))))
+          (error "You're not in a project"))
+      (when (yes-or-no-p "`helm-rg' is not installed. Install? ")
+        (condition-case nil
+            (progn
+              (package-install 'helm-rg)
+              (helm-projectile-rg))
+          (error "`helm-rg' is not available.  Is MELPA in your `package-archives'?")))))
+
   (centaur-tabs-mode 1)
   (progn
     (setq-default indent-tabs-mode nil
@@ -121,6 +139,7 @@ started from a shell."
 (defun cold-boot ()
   (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
   (add-hook 'after-init-hook 'post-init)
+
 
   (when (file-exists-p "/usr/local/bin/gls")
     (setq insert-directory-program "/usr/local/bin/gls"))
