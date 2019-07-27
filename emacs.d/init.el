@@ -721,19 +721,19 @@ With a prefix ARG invalidates the cache first."
 
  (advice-add 'ansi-term :after 'ansi-term-post)
 
- (use-package org-brain :ensure t
-   :init
-   (setq org-brain-path "~/org-brain/")
+(use-package org-brain :ensure t
+  :init
+  (setq org-brain-path "~/org-brain/")
 
-   :config
-   ;; For Evil users
-   (eval-after-load 'evil
-     (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+  :config
+  (eval-after-load 'evil
+    '(evil-set-initial-state 'org-brain-visualize-mode 'emacs))
 
-   (setq org-id-track-globally t)
-   (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
-   (push '("b" "Brain" plain (function org-brain-goto-end)
-           "* %i%?" :empty-lines 1)
-         org-capture-templates)
-   (setq org-brain-visualize-default-choices 'all)
-   (setq org-brain-title-max-length 12)))
+  (push '("b" "Brain" plain (function org-brain-goto-end)
+          "* %i%?" :empty-lines 1)
+        org-capture-templates)
+
+  (setq org-id-track-globally t
+        org-id-locations-file "~/.emacs.d/.org-id-locations"
+        org-brain-visualize-default-choices 'all
+        org-brain-title-max-length 12))
