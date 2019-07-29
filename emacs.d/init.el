@@ -1,6 +1,10 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
 (setq gc-cons-threshold 100000000)
 
+(setq gc-cons-threshold 100000000
+      inhibit-splash-screen t
+      inhibit-startup-message t)
+
 (let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
   (add-to-list 'load-path my-theme-path)
   (add-to-list 'custom-theme-load-path my-theme-path)
@@ -15,12 +19,7 @@
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
 
-(defvar zen-mode)
-
 (message invocation-name)
-(setq gc-cons-threshold 100000000)
-(setq inhibit-splash-screen t)
-(setq inhibit-startup-message t)
 
 (let ((default-directory  "~/.emacs.d/lisp/"))
   (make-directory default-directory t)
