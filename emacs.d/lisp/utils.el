@@ -139,7 +139,8 @@ started from a shell."
 (defun cold-boot ()
   (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
   (add-hook 'after-init-hook 'post-init)
-
+  (electric-indent-mode -1)
+  (electric-pair-mode -1)
 
   (when (file-exists-p "/usr/local/bin/gls")
     (setq insert-directory-program "/usr/local/bin/gls"))

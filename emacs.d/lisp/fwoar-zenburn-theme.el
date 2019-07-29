@@ -104,10 +104,13 @@ Also bind `class' to ((class color) (min-colors 89))."
  '(nrepl-message-colors (quote ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3"))))
 
 
+
 (fwoar/zenburn-with-color-variables
   (custom-theme-set-faces
    'fwoar-zenburn
    `(highlight ((t (:inverse-video t))))
+
+   ;; font-lock
    `(font-lock-builtin-face ((t (:weight bold))))
    `(font-lock-comment-face ((t (:inherit fwoar-zenburn-1-face))))
    `(font-lock-comment-delimiter-face ((t (:inherit font-lock-comment-face))))
@@ -151,13 +154,13 @@ Also bind `class' to ((class color) (min-colors 89))."
                           :slant normal :weight normal :height 130 :width normal
                           :foreground ,zenburn-fg :background ,zenburn-bg 
                           :inherit fwoar-zenburn-face))))
+
    ;; helm
    `(helm-source-header ((t :inherit fwoar-zenburn+1-face)))
    `(helm-M-x-key ((t (:foreground ,zenburn-orange))))
    `(helm-candidate-number ((t (:foreground ,zenburn-yellow))))
    `(helm-selection ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg-1))))
    `(helm-match ((t (:foreground ,zenburn-yellow :background ,zenburn-bg-2 :box ,zenburn-yellow-1))))
-
    `(helm-ff-denied ((t (:foreground ,zenburn-red :background ,zenburn-black))))
    `(helm-ff-directory ((t (:foreground ,zenburn-cyan))))
    `(helm-ff-dotted-directory ((t (:foreground ,zenburn-cyan :background ,zenburn-bg+1))))
@@ -205,6 +208,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(helm-selection ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg-1))))
    `(helm-separator ((t (:foreground ,zenburn-red :background unspecified))))
    `(helm-visible-mark ((t (:foreground unspecified :background unspecified))))
+
    ;;company
    `(company-echo-common ((t (:foreground ,zenburn-red-1 :background unspecified))))
    `(company-preview ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg-2))))
@@ -236,16 +240,12 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(magit-diff-removed ((t (:foreground ,zenburn-fg-1 :background ,zenburn-red-5))))
    `(magit-diff-added-highlight ((t (:foreground ,zenburn-fg+1 :background ,zenburn-green-3))))
    `(magit-diff-removed-highlight ((t (:foreground ,zenburn-fg+1 :background ,zenburn-red-3))))
-
    `(magit-section ((t (:foreground ,zenburn-yellow :background ,zenburn-bg))))
    `(magit-section-highlight ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg+1))))
-
    `(magit-diff-base ((t (:foreground unspecified :background unspecified))))
    `(magit-diff-base-highlight ((t (:foreground unspecified :background unspecified))))
-
    `(magit-diff-context ((t (:foreground ,zenburn-fg-1 :background ,zenburn-bg-2))))
    `(magit-diff-context-highlight ((t (:foreground ,zenburn-fg :background ,zenburn-bg-1))))
-
    `(magit-diff-file-heading ((t (:background ,zenburn-bg+05))))
    `(magit-diff-file-heading-highlight ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg+1))))
    `(magit-diff-hunk-heading ((t (:background ,zenburn-bg+1))))
