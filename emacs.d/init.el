@@ -1,5 +1,4 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
-(setq gc-cons-threshold 100000000)
 
 (setq gc-cons-threshold 100000000
       inhibit-splash-screen t
@@ -30,11 +29,11 @@
 (cold-boot)
 
 (load-package-configuration 'evil)
+
 
 (use-package multifiles
   :config
-  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
-  )
+  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile))
 
 (use-package org
   :pin "org"
@@ -227,7 +226,6 @@
         projectile-root))))
 
 
-
 (defun more-than-one-project-file-p ()
   (= (length (projectile-select-files (projectile-current-project-files)))
      1))
@@ -288,7 +286,6 @@ With a prefix ARG invalidates the cache first."
   (define-key evil-normal-state-map "gf" 'project-aware-ffap))
 
 
-
 (use-package cl-generic
   :ensure t)
 
@@ -400,7 +397,6 @@ With a prefix ARG invalidates the cache first."
 
 
 
-
 (use-package imenu
   :config
   (define-key evil-normal-state-map " d" 'helm-imenu-in-all-buffers))
@@ -504,7 +500,6 @@ With a prefix ARG invalidates the cache first."
 (use-package yaml-mode :ensure t)
 
 
-
 (use-package editorconfig
   :ensure t
   :config (editorconfig-mode 1))
@@ -548,7 +543,6 @@ With a prefix ARG invalidates the cache first."
 ;;)
 
 
-
 (global-set-key (kbd "s-v") 'yank)
 
 (setq custom-file "~/.emacs.d/custom.el")
@@ -625,9 +619,6 @@ With a prefix ARG invalidates the cache first."
   (define-key global-map "\C-c[" "\C-u-1\C-xnp\M-<"))
 
 
-;;;;; junk drawer ....
-
-
 (defun fwoar/zenburn-css ()
   (interactive)
   (mapcar (lambda (desc)
