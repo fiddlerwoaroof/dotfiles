@@ -8,11 +8,15 @@
   (interactive "P")
   (sp-wrap-with-pair "${"))
 
+(defun fwoar-delete-mru-window ()
+  (interactive)
+  (delete-window
+   (get-mru-window nil nil t)))
 (use-package evil
   :ensure t
   :config
 
-  (define-key evil-motion-state-map (kbd "C-w C-o") 'delete-mru-window)
+  (define-key evil-motion-state-map (kbd "C-w C-o") 'fwoar-delete-mru-window)
   (define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
 
   (define-key evil-normal-state-map "ZZ" 'save-buffer)
@@ -154,3 +158,5 @@
   (define-key evil-normal-state-map "gT" 'centaur-tabs-backward-tab)
   (define-key global-map (kbd "<header-line> <wheel-down>") 'centaur-tabs-backward-tab)
   (define-key global-map (kbd "s-{") 'centaur-tabs-backward-tab))
+ 
+

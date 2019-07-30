@@ -1,5 +1,4 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
-
 (setq gc-cons-threshold 100000000
       inhibit-splash-screen t
       inhibit-startup-message t)
@@ -15,6 +14,11 @@
                (bottom-divider-width . 2)))
        (modify-all-frames-parameters default-frame-alist))
 
+(let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
+  (add-to-list 'load-path my-theme-path)
+  (add-to-list 'custom-theme-load-path my-theme-path)
+  (load-theme 'fwoar-zenburn t))
+
 (tool-bar-mode 0)
 (scroll-bar-mode 0)
 
@@ -22,18 +26,19 @@
 
 (let ((default-directory  "~/.emacs.d/lisp/"))
   (make-directory default-directory t)
-  (normal-top-level-add-to-load-path '("."))
+  (add-to-list 'load-path (expand-file-name default-directory))
   (normal-top-level-add-subdirs-to-load-path)
   (load "utils"))
 
 (cold-boot)
-
+(load "site-lisp")
 (load-package-configuration 'evil)
 
 
-(use-package multifiles
-  :config
-  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile))
+;;(use-package multifiles
+;;  :config
+;;  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
+;;  )
 
 (use-package org
   :pin "org"
@@ -62,6 +67,7 @@
   (define-key evil-visual-state-map " c" 'org-capture))
 
 (use-package org-projectile
+  :ensure t
   :config
   (progn
     (org-projectile-per-project)
@@ -74,6 +80,7 @@
   :ensure t)
 
 (use-package org-projectile-helm
+  :ensure t
   :after org-projectile
   :config
   (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
@@ -91,8 +98,6 @@
   :config
   (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line))
 
-(use-package company-posframe
-  :ensure t)
 (use-package company
   :config
   ;; keybindings
@@ -116,7 +121,12 @@
            company-etags
            company-keywords)
           company-oddmuse
-          company-dabbrev))
+          company-dabbrev)))
+
+(use-package company-posframe
+  :ensure t
+  :after company
+  :config
   (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1))))
 
 (use-package lisp-skeletons
@@ -128,10 +138,8 @@
   (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
   (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
 
-(load-package-configuration 'slime)
-(global-company-mode 1)
-
 
+
 (use-package js2-mode
   :ensure t
   :defer t
@@ -471,10 +479,35 @@ With a prefix ARG invalidates the cache first."
 (use-package highlight-parentheses :ensure t :config
   (global-highlight-parentheses-mode 1))
 
-(use-package magit :ensure t :config
+
+
+(use-package magit :ensure t
+  :config
   (evil-define-key 'normal magit-file-mode-map " a" 'magit)
-  (magit-define-popup-action 'magit-dispatch-popup 106 "Browse remote" 'browse-at-remote)
+  ;; TODO: figure this out with transients
+  ;;(magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote)
   'magit-dispatch)
+
+
+(defvar *fwoar-git-repos*
+  (file-name-as-directory
+   (expand-file-name (car (file-expand-wildcards "~/git*_repos"))
+                     "~")))
+
+(defun fwoar-git-repo (name remote)
+  (let ((dir-name (file-name-as-directory (expand-file-name name *fwoar-git-repos*))))
+    (unless (file-exists-p dir-name)
+      (magit-run-git-with-input "clone" remote dir-name))
+    dir-name))
+
+(defvar *dotfiles-repo*
+  (fwoar-git-repo "dotfiles" "git@git.fiddlerwoaroof.com:dotfiles.git"))
+
+;; slime depends on fwoar-git-repo
+(load-package-configuration 'slime)
+(global-company-mode 1)
+
+
 
 (use-package markdown-mode :ensure t)
 
@@ -546,8 +579,9 @@ With a prefix ARG invalidates the cache first."
 (global-set-key (kbd "s-v") 'yank)
 
 (setq custom-file "~/.emacs.d/custom.el")
+(load-file custom-file)
 
-(defvar *dotfiles-repo* "~/git_repos/dotfiles/")
+
 (defun edit-init-el ()
   (interactive)
   (let ((default-directory *dotfiles-repo*))
@@ -568,24 +602,6 @@ With a prefix ARG invalidates the cache first."
                 'ibuffer)
 
 (setq org-agenda-files '("~/org/notes.org"))
-
-(load-file custom-file)
-
-(defun read-sexps-in-file (fn)
-  (with-temp-buffer
-    (save-excursion
-      (insert "(")
-      (insert-file fn)
-      (goto-char (point-max))
-      (insert "\n)"))
-    (read (current-buffer))))
-
-(comment
- (use-package circe
-   :config
-   (setq circe-server-buffer-name "{host}:{port}"
-         circe-reduce-lurker-spam t
-         circe-network-options (read-sexps-in-file "~/.circe-info"))))
 
 (defvar url-pattern (car (read-sexps-in-file "~/.pastebin-name")))
 (defun pastebin-buffer ()

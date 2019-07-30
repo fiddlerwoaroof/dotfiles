@@ -1,16 +1,25 @@
 (require 'cl)
 
+(defun read-sexps-in-file (fn)
+  (with-temp-buffer
+    (save-excursion
+      (insert "(")
+      (insert-file fn)
+      (goto-char (point-max))
+      (insert "\n)"))
+    (read (current-buffer))))
+
 (defun op--collect-args (body)
   (cl-flet ((walker (body &optional args)
-                 (if (null body)
-                     args
-                   (if (symbolp body)
-                       (when (eql ?\_ (elt (symbol-name body) 0))
-                         (cons body args))
-                     (if (listp body)
-                         (append (op--collect-args (car body))
-                                 (op--collect-args (cdr body))
-                                 ))))))
+                    (if (null body)
+                        args
+                      (if (symbolp body)
+                          (when (eql ?\_ (elt (symbol-name body) 0))
+                            (cons body args))
+                        (if (listp body)
+                            (append (op--collect-args (car body))
+                                    (op--collect-args (cdr body))
+                                    ))))))
     (sort (walker body)
           (lambda (a b)
             (< (string-to-number (subseq (symbol-name a) 1))
@@ -66,10 +75,14 @@ that used by the user's shell.
 started from a shell."
   (interactive)
   (let ((path-from-shell
-         (replace-regexp-in-string "[ \t\n]*$" ""
-                                   (shell-command-to-string
-                                    "zsh -c 'source ~/.zsh.d/dependencies/utils.zsh;source ~/.zsh.d/dependencies/path-setup.zsh;echo $PATH'")
-)))
+         (replace-regexp-in-string
+          "[ \t\n]*$" ""
+          (shell-command-to-string
+           (concat "zsh -c '"
+                   "  source ~/.zsh.d/dependencies/utils.zsh;"
+                   "  source ~/.zsh.d/dependencies/path-setup.zsh;"
+                   "  echo $PATH"
+                   "'")))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
@@ -131,7 +144,9 @@ started from a shell."
   ;; (paredit-mode)
   ;;(global-company-mode)
   ;; (setq linum-format "%5d\u2502")
-  (global-display-line-numbers-mode)
+  (if (version<= "26.0.50" emacs-version )
+      (global-display-line-numbers-mode)
+    (global-linum-mode))
   (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
   (global-company-mode 1))

@@ -1,10 +1,33 @@
 ;;;; SLIME SETUP {{{
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-(add-to-list 'load-path "~/git_repos/3dp/slime/")
+(add-to-list 'load-path (fwoar-git-repo "3dp/slime/" "git@github.com:slime/slime.git"))
 (require 'slime)
 
-(use-package slime-company
-  :ensure t)
+;; put slime-company in load-path
+;; (require 'slime-company)
+
+(defmacro define-lisp-implementations (&rest decl)
+  `(progn
+     ,@(cl-loop for (symbol . args) in decl
+                collect `(progn
+                           (defun ,symbol ()
+                             (interactive)
+                             (slime ',symbol))
+                           (cl-pushnew '(,symbol ,@args) slime-lisp-implementations
+                                       :key 'car)))))
+
+(with-eval-after-load "slime"
+  (when (or (eq system-type 'gnu/linux)
+            (eq system-type 'darwin))
+    (define-lisp-implementations
+      (abcl  ("abcl"))
+      (ccl ("ccl"))
+      (clisp ("clisp"))
+      (cmucl ("cmucl" "-quiet"))
+      (ecl   ("ecl"))
+      ;;(mkcl  ("mkcl"))
+      ;;(xcl   ("xcl"))
+      (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
 
 (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
@@ -126,43 +149,10 @@
   (slime-eval-async `(ql:quickload ',(find-use-clause (list-at-point)))))
 
 
-(message (format "s-c-c is: %s" slime-company-completion))
-
-(setq slime-contribs '(slime-fancy
-                       slime-company
-                       slime-macrostep
-                       slime-trace-dialog
-                       slime-mdot-fu
-                       slime-buffer-streams
-                       slime-indentation)
-      slime-export-save-file t)
-
-(slime-setup)
+;;(message (format "s-c-c is: %s" slime-company-completion))
 
 ;;;;; }}}
 
-(defmacro define-lisp-implementations (&rest decl)
-  `(progn
-     ,@(cl-loop for (symbol . args) in decl
-                collect `(progn
-                           (defun ,symbol ()
-                             (interactive)
-                             (slime ',symbol))
-                           (cl-pushnew '(,symbol ,@args) slime-lisp-implementations
-                                       :key 'car)))))
-
-(with-eval-after-load "slime"
-  (when (or (eq system-type 'gnu/linux)
-            (eq system-type 'darwin))
-    (define-lisp-implementations
-      (abcl  ("abcl"))
-      (ccl ("ccl"))
-      (clisp ("clisp"))
-      (cmucl ("cmucl" "-quiet"))
-      (ecl   ("ecl"))
-      ;;(mkcl  ("mkcl"))
-      ;;(xcl   ("xcl"))
-      (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
 
 
 (defun sp-absorb-forward-sexp (&optional arg)
@@ -219,3 +209,14 @@ Examples:
                            (lambda (r)
                              (message "Loading ASDs done: %s" r))))))
            (:one-liner "Load asd for current project")))
+
+(setq slime-contribs '(slime-fancy
+                       slime-company
+                       slime-macrostep
+                       slime-trace-dialog
+                       slime-mdot-fu
+                       slime-buffer-streams
+                       slime-indentation)
+      slime-export-save-file t)
+
+(slime-setup slime-contribs)
