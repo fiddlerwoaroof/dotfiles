@@ -4,20 +4,27 @@ from __future__ import print_function
 import heapq
 
 def file_iter(fil):
-    line = 0
-    while line != '':
-        line = fil.readline()
-        yield line
+    the_line = 0
+    while the_line != '':
+        the_line = fil.readline()
+        yield the_line
 
 def sorter(gen, len_):
-    buffer = []
+    the_buffer = []
 
-    for line in gen:
-        heapq.heappush(buffer, line)
-        if len(buffer) == len_:
-            yield heapq.heappop(buffer)
+    for the_line in gen:
+        # print("pushing: ", the_line, end='')
+        heapq.heappush(the_buffer, the_line)
+        if len(the_buffer) == len_:
+            yield heapq.heappop(the_buffer)
+        # print("buffer_after: ", repr(the_buffer))
+
+    while the_buffer != []:
+        yield heapq.heappop(the_buffer)
+        # print("buffer_after: ", repr(the_buffer))
+
 
 if __name__ == '__main__':
     import sys
     for line in sorter(file_iter(sys.stdin), 10):
-        print('>', line, end='')
+        print(line, end='')
