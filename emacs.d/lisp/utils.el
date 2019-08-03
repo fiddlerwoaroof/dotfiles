@@ -89,7 +89,7 @@ started from a shell."
 (defun load-package-configuration (package)
   (load (concat "~/.emacs.d/lisp/configurations/"
                 (symbol-name package)
-                ".el")))
+                "-conf.el")))
 
 (defmacro ensure-use-packages (&rest packages)
   (list* 'progn
