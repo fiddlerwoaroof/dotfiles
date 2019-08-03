@@ -31,7 +31,12 @@
   (load "utils"))
 
 (cold-boot)
-(load "site-lisp")
+
+(use-package jeison
+  :ensure t)
+
+(when (locate-library "site-lisp")
+  (load "site-lisp"))
 (load-package-configuration 'evil)
 
 
@@ -478,7 +483,6 @@ With a prefix ARG invalidates the cache first."
 
 (use-package highlight-parentheses :ensure t :config
   (global-highlight-parentheses-mode 1))
-
 
 
 (use-package magit :ensure t
@@ -487,7 +491,6 @@ With a prefix ARG invalidates the cache first."
   ;; TODO: figure this out with transients
   ;;(magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote)
   'magit-dispatch)
-
 
 (defvar *fwoar-git-repos*
   (file-name-as-directory
@@ -543,11 +546,16 @@ With a prefix ARG invalidates the cache first."
       (delete-window)
     (treemacs-select-window)))
 
+(defun no-line-numbers ()
+  (display-line-numbers-mode -1))
 (use-package treemacs
   :ensure t
   :config
   (setq treemacs-is-never-other-window t)
-  (global-set-key (kbd "s-e") 'fwoar--activate-treemacs))
+  (global-set-key (kbd "s-e") 'fwoar--activate-treemacs)
+  (global-set-key (kbd "s-1") 'fwoar--activate-treemacs)
+  (add-hook 'treemacs-mode-hook 'no-line-numbers)
+  )
 
 (use-package treemacs-evil
   :after treemacs evil
