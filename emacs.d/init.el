@@ -194,6 +194,7 @@
                    (memq (char-before) '(?, ?} ?{)))))))))
 
 (use-package vue-mode
+  :ensure t
   :config
   (add-hook 'vue-mode
             'prettier-js-mode)
@@ -594,7 +595,8 @@ With a prefix ARG invalidates the cache first."
 (global-set-key (kbd "s-v") 'yank)
 
 (setq custom-file "~/.emacs.d/custom.el")
-(load-file custom-file)
+(when (file-exists-p custom-file)
+  (load-file custom-file))
 
 
 (defun edit-init-el ()
@@ -618,7 +620,8 @@ With a prefix ARG invalidates the cache first."
 
 (setq org-agenda-files '("~/org/notes.org"))
 
-(defvar url-pattern (car (read-sexps-in-file "~/.pastebin-name")))
+(defvar url-pattern (when (file-exists-p "~/.pastebin-name")
+                      (car (read-sexps-in-file "~/.pastebin-name"))))
 (defun pastebin-buffer ()
   (interactive)
   (let* ((extension (file-name-extension (elt (split-string (buffer-name) "<") 0)))

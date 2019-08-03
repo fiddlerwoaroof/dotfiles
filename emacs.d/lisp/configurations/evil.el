@@ -67,6 +67,7 @@
   (global-evil-surround-mode))
 
 (use-package evil-leader
+  :ensure t
   :after evil
   :config (evil-leader/set-leader "ß"))
 

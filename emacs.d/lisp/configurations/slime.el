@@ -4,6 +4,8 @@
                                         "git@github.com:slime/slime.git"
                                         "https://github.com/slime/slime.git"))
 (require 'slime)
+(use-package slime-company
+  :ensure t)
 
 ;; put slime-company in load-path
 ;; (require 'slime-company)
