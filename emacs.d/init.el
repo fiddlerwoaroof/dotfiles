@@ -19,8 +19,10 @@
   (add-to-list 'custom-theme-load-path my-theme-path)
   (load-theme 'fwoar-zenburn t))
 
-(tool-bar-mode 0)
-(scroll-bar-mode 0)
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode 0))
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode 0))
 
 (message invocation-name)
 
