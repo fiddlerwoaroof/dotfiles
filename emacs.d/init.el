@@ -37,6 +37,7 @@
 (use-package jeison
   :ensure t)
 
+(defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
 (load-package-configuration 'evil)
@@ -499,14 +500,18 @@ With a prefix ARG invalidates the cache first."
    (expand-file-name (car (file-expand-wildcards "~/git*_repos"))
                      "~")))
 
-(defun fwoar-git-repo (name remote)
+(defun fwoar-git-repo (name ssh-remote http-remote)
   (let ((dir-name (file-name-as-directory (expand-file-name name *fwoar-git-repos*))))
     (unless (file-exists-p dir-name)
-      (magit-run-git-with-input "clone" remote dir-name))
+      (ecase fwoar-git-mode
+        (:ssh (magit-run-git-with-input "clone" ssh-remote dir-name))
+        (:http (magit-run-git-with-input "clone" http-remote dir-name))))
     dir-name))
 
 (defvar *dotfiles-repo*
-  (fwoar-git-repo "dotfiles" "git@git.fiddlerwoaroof.com:dotfiles.git"))
+  (fwoar-git-repo "dotfiles"
+                  "git@git.fiddlerwoaroof.com:dotfiles.git"
+                  "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)

@@ -1,6 +1,8 @@
 ;;;; SLIME SETUP {{{
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-(add-to-list 'load-path (fwoar-git-repo "3dp/slime/" "git@github.com:slime/slime.git"))
+(add-to-list 'load-path (fwoar-git-repo "3dp/slime/"
+                                        "git@github.com:slime/slime.git"
+                                        "https://github.com/slime/slime.git"))
 (require 'slime)
 
 ;; put slime-company in load-path
