@@ -110,6 +110,24 @@ Also bind `class' to ((class color) (min-colors 89))."
    'fwoar-zenburn
    `(highlight ((t (:inverse-video t))))
 
+   ;; custom
+   `(custom-button ((t (:background ,zenburn-black :foreground ,zenburn-fg))))
+   `(custom-button-mouse ((t (:background ,zenburn-black :foreground ,zenburn-fg))))
+   `(custom-button-pressed ((t (:background ,zenburn-black :foreground ,zenburn-fg))))
+   `(custom-button-pressed-unraised ((t (:inherit custom-button-unraised :foreground ,zenburn-magenta))))
+   `(custom-changed ((t (:background ,zenburn-fg+2 :foreground ,zenburn-blue-5))))
+   `(custom-comment   ((t (:background ,zenburn-bg+3))))
+   `(custom-comment-tag ((t (:foreground ,zenburn-fg))))
+   `(custom-group-tag ((t (:inherit variable-pitch :foreground ,zenburn-blue+2))))
+   `(custom-group-tag-1 ((t (:inherit variable-pitch :foreground ,zenburn-red+2))))
+   `(custom-invalid ((t (:background ,zenburn-yellow-1 :foreground ,zenburn-red-6))))
+   `(custom-modified ((t (:background ,zenburn-fg+2 :foreground ,zenburn-blue-5))))
+   `(custom-rogue ((t (:background ,zenburn-red+2 :foreground ,zenburn-black))))
+   `(custom-set ((t (:background ,zenburn-blue-5 :foreground ,zenburn-fg+2))))
+   `(custom-state ((t (:foreground ,zenburn-green+1))))
+   `(custom-themed ((t (:background ,zenburn-fg+2 :foreground ,zenburn-blue-5))))
+   `(custom-variable-tag ((t (:foreground ,zenburn-blue+2))))
+
    ;; font-lock
    `(font-lock-builtin-face ((t (:weight bold))))
    `(font-lock-comment-face ((t (:inherit fwoar-zenburn-1-face))))
@@ -123,8 +141,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(font-lock-type-face ((t (:foreground ,zenburn-red))))
    `(font-lock-variable-name-face ((t (:foreground ,zenburn-magenta))))
    `(font-lock-warning-face ((t (:foreground ,zenburn-red+2 :weight bold))))
-   `(window-divider ((t (
-                         :inherit fwoar-zenburn-1-face))))
+   `(window-divider ((t (:inherit fwoar-zenburn-1-face))))
    `(window-divider-first-pixel ((t (:inherit window-divider))))
    `(window-divider-last-pixel ((t (:inherit window-divider))))
    `(header-line ((t (:weight light :box nil :inherit fwoar-zenburn-1-face))))
@@ -146,7 +163,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(tool-bar ((t (:background unspecified :foreground unspecified :box nil :inherit fwoar-zenburn+2-face))))
    `(variable-pitch ((t (:family "Lato"))))
    `(vertical-border ((t (:foreground "slate gray"))))
-   `(rainbow-delimiters-unmatched-face ((t (:inherit rainbow-delimiters-base-face :background ,zenburn-red))))
+
    `(treemacs-root-face ((t (:background ,zenburn-bg :inherit fwoar-zenburn+1-face))))
    `(minibuffer-prompt ((t :foreground ,zenburn-fg)))
    `(cursor ((t :foreground unspecified :background unspecified :inverse-video t)))
@@ -154,6 +171,18 @@ Also bind `class' to ((class color) (min-colors 89))."
                           :slant normal :weight normal :height 130 :width normal
                           :foreground ,zenburn-fg :background ,zenburn-bg 
                           :inherit fwoar-zenburn-face))))
+
+   ;; rainbow delimiters
+   `(rainbow-delimiters-unmatched-face ((t (:inherit rainbow-delimiters-base-face :background ,zenburn-red))))
+   `(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-green))))
+   `(rainbow-delimiters-depth-2-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-blue-1))))
+   `(rainbow-delimiters-depth-3-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-fg-1))))
+   `(rainbow-delimiters-depth-4-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-green+1))))
+   `(rainbow-delimiters-depth-5-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-blue+1))))
+   `(rainbow-delimiters-depth-6-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-green+2))))
+   `(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-green+1))))
+   `(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-blue+1))))
+   `(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground ,zenburn-green+2))))
 
    ;; helm
    `(helm-source-header ((t :inherit fwoar-zenburn+1-face)))
@@ -225,6 +254,21 @@ Also bind `class' to ((class color) (min-colors 89))."
    ;;slime
    `(slime-repl-inputed-output-face ((t (:foreground ,zenburn-blue))))
 
+   ;;cider
+   ;; `(cider-debug-code-overlay-face ((t ())))
+   ;; `(cider-deprecated-face ((t ())))
+   ;; `(cider-enlightened-local-face ((t ())))
+   ;; `(cider-fringe-good-face ((t ())))
+   ;; `(cider-result-overlay-face ((t ())))
+   `(cider-test-error-face ((t (:background ,zenburn-red-5))))
+   `(cider-test-failure-face ((t (:background ,zenburn-red-6))))
+   `(cider-test-success-face ((t (:background ,zenburn-green-2))))
+   `(cider-enlightened-local-face ((t (:foreground ,zenburn-yellow-1))))
+   `(cider-fringe-good-face ((t (:foreground ,zenburn-green-5))))
+   `(cider-debug-code-overlay-face ((t (:background ,zenburn-bg+1))))
+   `(cider-deprecated-face ((t (:background ,zenburn-bg-1))))
+   `(cider-result-overlay-face ((t (:background ,zenburn-bg-1))))
+
    ;; javascript
    `(js2-function-param ((t (:inherit font-lock-variable-name-face))))
    `(js2-function-call ((t (:inherit font-lock-function-name-face))))
@@ -234,6 +278,20 @@ Also bind `class' to ((class color) (min-colors 89))."
 
    ;; flycheck
    `(flycheck-error ((t (:underline (:style wave :color ,zenburn-red-2)))))
+
+   ;; eshell-ls
+   `(eshell-ls-archive      ((t (:foreground ,zenburn-magenta))))
+   `(eshell-ls-backup       ((t (:foreground ,zenburn-orange))))
+   `(eshell-ls-clutter      ((t (:foreground ,zenburn-red-3))))
+   `(eshell-ls-directory    ((t (:foreground ,zenburn-blue))))
+   `(eshell-ls-executable   ((t (:foreground ,zenburn-green-2))))
+   `(eshell-ls-missing      ((t (:foreground ,zenburn-red-6))))
+   `(eshell-ls-product      ((t (:foreground ,zenburn-orange))))
+   `(eshell-ls-readonly     ((t (:foreground ,zenburn-red+2))))
+   `(eshell-ls-special      ((t (:foreground ,zenburn-magenta))))
+   `(eshell-ls-symlink      ((t (:foreground ,zenburn-cyan))))
+   `(eshell-ls-unreadable   ((t (:foreground ,zenburn-fg-1))))
+   `(eshell-prompt          ((t (:foreground ,zenburn-red))))
 
    ;;magit
    `(magit-diff-added ((t (:foreground ,zenburn-fg-1 :background ,zenburn-green-5))))
