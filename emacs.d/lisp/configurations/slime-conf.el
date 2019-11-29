@@ -190,28 +190,17 @@ Examples:
       (indent-sexp)))
   (sp-backward-whitespace))
 
-(setq slime-contribs '(slime-fancy
-                       slime-company
-                       slime-macrostep
-                       slime-trace-dialog
-                       slime-mdot-fu
-                       slime-buffer-streams
-                       slime-indentation)
-      slime-export-save-file t)
-
-(slime-setup slime-contribs)
-
-(defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
-  (:handler (lambda ()
-              (interactive)
-              (let ((system-files (fwoar--get-asds)))
-                (slime-eval-async (cons 'cl:progn
-                                        (mapcar (lambda (it)
-                                                  `(cl:progn (asdf:load-asd ,it) ,it))
-                                                system-files))
-                  (lambda (r)
-                    (message "Loading ASDs done: %s" r))))))
-  (:one-liner "Load asd for current project"))
+(comment (defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
+           (:handler (lambda ()
+                       (interactive)
+                       (let ((system-files (fwoar--get-asds)))
+                         (slime-eval-async (cons 'cl:progn
+                                                 (mapcar (lambda (it)
+                                                           `(cl:progn (asdf:load-asd ,it) ,it))
+                                                         system-files))
+                           (lambda (r)
+                             (message "Loading ASDs done: %s" r))))))
+           (:one-liner "Load asd for current project")))
 
 (comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
            (:handler (lambda ()
@@ -224,3 +213,14 @@ Examples:
                            (lambda (r)
                              (message "Loading ASDs done: %s" r))))))
            (:one-liner "Load asd for current project")))
+
+(setq slime-contribs '(slime-fancy
+                       slime-company
+                       slime-macrostep
+                       slime-trace-dialog
+                       slime-mdot-fu
+                       slime-buffer-streams
+                       slime-indentation)
+      slime-export-save-file t)
+
+(slime-setup slime-contribs)
