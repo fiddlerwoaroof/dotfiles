@@ -23,6 +23,30 @@
 (ql:quickload :lw-add-ons)
 
 (editor:bind-key "Insert Space And Show Arglist" "Space")
+(editor:bind-key "Indent Form" #("Control-c" "Meta-q"))
+(editor:bind-key "Insert Parentheses For Selection" #\( :mode "Lisp")
+(editor:bind-key "Indent New Line" "Return" :mode "Lisp")
+
+(editor:defcommand "Move Over ()" (p)
+                   "Move past the next close parenthesis.
+Any indentation preceeding the parenthesis is deleted."
+                   "Move past the next close parenthesis."
+                   (declare (ignore p))
+                   (let ((point (editor:current-point)))
+                     (editor:with-point ((m point))
+                       (cond ((editor::forward-up-list m)
+                              (editor:move-point point m)
+                              (editor::point-before point)
+                              (loop (editor:with-point ((back point))
+                                      (editor::back-to-indentation back)
+                                      (unless (editor:point= back point)
+                                        (return)))
+                                    (editor::delete-indentation point))
+                              (editor::point-after point))
+                             (t (editor:editor-error))))))
+
+(editor:bind-key "Move Over ()" #\) :mode "Lisp")
+
 
 (defun ed-asdf-component (system component)
   (let ((component (asdf:find-component system component)))
