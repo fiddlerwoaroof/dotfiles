@@ -1,11 +1,11 @@
 ;;;; SLIME SETUP {{{
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-(add-to-list 'load-path (fwoar-git-repo "3dp/slime/"
-                                        "git@github.com:slime/slime.git"
-                                        "https://github.com/slime/slime.git"))
-(require 'slime)
-(use-package slime-company
-  :ensure t)
+
+;; (add-to-list 'load-path (fwoar-git-repo "3dp/slime/"
+;;                                         "git@github.com:slime/slime.git"
+;;                                         "https://github.com/slime/slime.git"))
+;; (require 'slime)
+
 
 ;; put slime-company in load-path
 ;; (require 'slime-company)
@@ -20,29 +20,6 @@
                            (cl-pushnew '(,symbol ,@args) slime-lisp-implementations
                                        :key 'car)))))
 
-(with-eval-after-load "slime"
-  (when (or (eq system-type 'gnu/linux)
-            (eq system-type 'darwin))
-    (define-lisp-implementations
-      (abcl  ("abcl"))
-      (ccl ("ccl"))
-      (clisp ("clisp"))
-      (cmucl ("cmucl" "-quiet"))
-      (ecl   ("ecl"))
-      ;;(mkcl  ("mkcl"))
-      ;;(xcl   ("xcl"))
-      (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
-
-(global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
-
-(when (and (boundp 'common-lisp-hyperspec-root)
-           (string-prefix-p "/" common-lisp-hyperspec-root))
-  (setq common-lisp-hyperspec-root
-        (concat "file://" common-lisp-hyperspec-root)))
-
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "~/sbcl/bin/sbcl") 
-
 (defun setup-lisp-mode ()
   (unless (string= "*slime-scratch*" (buffer-name))
     (smartparens-strict-mode 1)
@@ -52,46 +29,9 @@
   (define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
   (rainbow-delimiters-mode))
 
-(add-hook 'lisp-mode-hook 'setup-lisp-mode) 
-(add-hook 'emacs-lisp-mode-hook 'setup-lisp-mode) 
-
-(evil-define-key 'normal lisp-mode-map "gd" 'slime-edit-definition)
-
-(modify-syntax-entry ?- "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?* "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?+ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?! "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?$ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?% "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?& "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?% "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?= "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?< "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?> "w" lisp-mode-syntax-table)
-(modify-syntax-entry 91 "(" lisp-mode-syntax-table)
-(modify-syntax-entry 93 ")" lisp-mode-syntax-table)
-;;(modify-syntax-entry ?@ "w" lisp-mode-syntax-table)
-
-(modify-syntax-entry ?^ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?_ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
-(modify-syntax-entry ?. "w" lisp-mode-syntax-table)
-
-(modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
-(modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
-(modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
-(modify-syntax-entry ?\} "){" lisp-mode-syntax-table)
-
-(setq shr-inhibit-images t
-      shr-use-fonts nil)
-
 (defun fwoar--clhs-lookup (&rest args)
   (let ((browse-url-browser-function 'eww-browse-url))
     (hyperspec-lookup (word-at-point))))
-
-(pushnew (list ?h "Check hyperspec" #'fwoar--clhs-lookup)
-         slime-selector-methods
-         :key #'car)
 
 (defun fwoar--get-asds ()
   (let ((dir-of-asd (locate-dominating-file default-directory
@@ -101,16 +41,11 @@
       (directory-files dir-of-asd
                        t "^[^.#][^#]*[.]asd$"))))
 
-(cl-defgeneric fwoar--find-system ())
 (cl-defmethod fwoar--find-system (&context (major-mode lisp-mode))
   (let ((systems (fwoar--get-asds)))
     (find-file (if (not (null (cdr systems)))
                    (helm-comp-read "system:" systems)
                  (car systems)))))
-
-(pushnew (list ?S "Goto System" #'fwoar--find-system)
-         slime-selector-methods
-         :key #'car)
 
 (defun slime-ecl ()
   (interactive)
@@ -127,6 +62,12 @@
 (defun slime-sbcl ()
   (interactive)
   (let ((inferior-lisp-program "sbcl")
+        (slime-lisp-implementations nil))
+    (slime)))
+
+(defun slime-lw ()
+  (interactive)
+  (let ((inferior-lisp-program "lw")
         (slime-lisp-implementations nil))
     (slime)))
 
@@ -190,37 +131,116 @@ Examples:
       (indent-sexp)))
   (sp-backward-whitespace))
 
-(setq slime-contribs '(slime-fancy
-                       slime-company
-                       slime-macrostep
-                       slime-trace-dialog
-                       slime-mdot-fu
-                       slime-buffer-streams
-                       slime-indentation)
-      slime-export-save-file t)
+(use-package slime
+  :ensure t
+  :load-path  (lambda ()
+                (list
+                 (fwoar-git-repo "3dp/slime/"
+                                 "git@github.com:slime/slime.git"
+                                 "https://github.com/slime/slime.git")))
+  :config
+  (with-eval-after-load "slime"
+    (when (or (eq system-type 'gnu/linux)
+              (eq system-type 'darwin))
+      (define-lisp-implementations
+        (abcl  ("abcl"))
+        (lw  ("lw"))
+        (ccl ("ccl"))
+        (clisp ("clisp"))
+        (cmucl ("cmucl" "-quiet"))
+        (ecl   ("ecl"))
+        ;;(mkcl  ("mkcl"))
+        ;;(xcl   ("xcl"))
+        (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
 
-(slime-setup slime-contribs)
+  (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
-(defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
-  (:handler (lambda ()
-              (interactive)
-              (let ((system-files (fwoar--get-asds)))
-                (slime-eval-async (cons 'cl:progn
-                                        (mapcar (lambda (it)
-                                                  `(cl:progn (asdf:load-asd ,it) ,it))
-                                                system-files))
-                  (lambda (r)
-                    (message "Loading ASDs done: %s" r))))))
-  (:one-liner "Load asd for current project"))
+  (when (and (boundp 'common-lisp-hyperspec-root)
+             (string-prefix-p "/" common-lisp-hyperspec-root))
+    (setq common-lisp-hyperspec-root
+          (concat "file://" common-lisp-hyperspec-root)))
 
-(comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
-           (:handler (lambda ()
-                       (interactive)
-                       (let ((system-files (fwoar--get-asds)))
-                         (slime-eval-async (cons 'cl:progn
-                                                 (mapcar (lambda (it)
-                                                           `(cl:progn (asdf:load-asd ,it) ,it))
-                                                         system-files))
-                           (lambda (r)
-                             (message "Loading ASDs done: %s" r))))))
-           (:one-liner "Load asd for current project")))
+  ;; Replace "sbcl" with the path to your implementation
+  (setq inferior-lisp-program "~/sbcl/bin/sbcl")
+
+  (add-hook 'lisp-mode-hook 'setup-lisp-mode)
+  (add-hook 'emacs-lisp-mode-hook 'setup-lisp-mode)
+
+  (evil-define-key 'normal lisp-mode-map "gd" 'slime-edit-definition)
+
+  (modify-syntax-entry ?- "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?* "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?+ "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?! "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?$ "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?% "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?& "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?% "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?= "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?< "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?> "w" lisp-mode-syntax-table)
+  (modify-syntax-entry 91 "(" lisp-mode-syntax-table)
+  (modify-syntax-entry 93 ")" lisp-mode-syntax-table)
+  ;;(modify-syntax-entry ?@ "w" lisp-mode-syntax-table)
+
+  (modify-syntax-entry ?^ "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?_ "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?~ "w" lisp-mode-syntax-table)
+  (modify-syntax-entry ?. "w" lisp-mode-syntax-table)
+
+  (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
+  (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
+  (modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
+  (modify-syntax-entry ?\} "){" lisp-mode-syntax-table)
+
+  (setq shr-inhibit-images t
+        shr-use-fonts nil)
+
+  (pushnew (list ?h "Check hyperspec" #'fwoar--clhs-lookup)
+           slime-selector-methods
+           :key #'car)
+
+  (pushnew (list ?S "Goto System" #'fwoar--find-system)
+           slime-selector-methods
+           :key #'car)
+
+  (setq slime-contribs '(slime-fancy
+                         slime-company
+                         slime-macrostep
+                         slime-trace-dialog
+                         slime-mdot-fu
+                         slime-buffer-streams
+                         slime-indentation
+                         slime-asdf)
+        slime-export-save-file t)
+
+  (slime-setup slime-contribs)
+
+  (defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
+    (:handler (lambda ()
+                (interactive)
+                (let ((system-files (fwoar--get-asds)))
+                  (slime-eval-async (cons 'cl:progn
+                                          (mapcar (lambda (it)
+                                                    `(cl:progn (asdf:load-asd ,it) ,it))
+                                                  system-files))
+                    (lambda (r)
+                      (message "Loading ASDs done: %s" r))))))
+    (:one-liner "Load asd for current project"))
+
+  (comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
+             (:handler (lambda ()
+                         (interactive)
+                         (let ((system-files (fwoar--get-asds)))
+                           (slime-eval-async (cons 'cl:progn
+                                                   (mapcar (lambda (it)
+                                                             `(cl:progn (asdf:load-asd ,it) ,it))
+                                                           system-files))
+                             (lambda (r)
+                               (message "Loading ASDs done: %s" r))))))
+             (:one-liner "Load asd for current project"))))
+
+(use-package slime-company
+  :ensure t
+  :after slime
+  :config (setq slime-company-completion 'fuzzy))
