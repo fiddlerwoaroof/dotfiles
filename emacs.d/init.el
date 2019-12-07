@@ -67,6 +67,20 @@
 (use-package jeison
   :ensure t)
 
+(use-package lsp-mode
+  :pin "melpa-stable"
+  :ensure t
+  :config (setq lsp-enable-snippet nil))
+
+(use-package lsp-treemacs
+  :after lsp-mode
+  :ensure t)
+
+(use-package lsp-ui
+  :pin "melpa-stable"
+  :after lsp-mode
+  :ensure t)
+
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
