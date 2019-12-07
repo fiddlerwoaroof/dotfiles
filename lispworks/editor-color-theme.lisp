@@ -10,8 +10,7 @@
 
 (defpackage #:editor-color-theme
   (:use #:cl)
-  (:export #:*current-colors*
-           #:all-color-themes
+  (:export #:all-color-themes
            #:color-theme-args
            #:color-theme
            #:define-color-theme
@@ -21,15 +20,51 @@
 
 ;;; Configuration
 
-;; Default foreground and background colors
-(defconstant +default-foreground-color+ :black)
-(defconstant +default-background-color+ :white)
+(defvar *foreground-color* nil)
 
-(defvar *current-colors* (make-hash-table))
+(defvar *background-color* nil)
+
+(defconstant +default-parenthesis-font-face-colours+ '(:red :black :darkgreen :darkorange3 :blue :purple))
 
 ;;; Implementation
 
 (defvar *all-color-themes* (make-hash-table :test 'string=))
+
+(defun all-color-themes ()
+  (loop for key being the hash-keys in *all-color-themes*
+        collect key))
+
+(defun color-theme-data (theme-name)
+  (multiple-value-bind (color-theme-data found?)
+      (gethash theme-name *all-color-themes*)
+    (if found?
+        color-theme-data
+        (error "No color theme named ~s found." theme-name))))
+
+(defun color-theme-super-theme-names (theme-name)
+  (first (color-theme-data theme-name)))
+
+(defun color-theme-args (theme-name)
+  (rest (color-theme-data theme-name)))
+
+(defvar *all-editor-panes* (make-hash-table :test 'eq
+                                            :weak-kind :key))
+
+(defun update-editor-pane (pane)
+  (setf (capi:simple-pane-foreground pane) (or *foreground-color* :color_windowtext))
+  (setf (capi:simple-pane-background pane) (or *background-color* :color_window))
+
+  (let ((recolorize-p (editor::buffer-font-lock-mode-p (capi:editor-pane-buffer pane))))
+    (when recolorize-p
+      (gp:invalidate-rectangle pane)))
+  (values))
+
+(defun update-editor-panes ()
+  (maphash #'(lambda (pane value)
+               (declare (ignore value))
+               (update-editor-pane pane))
+           *all-editor-panes*)
+  (values))
 
 (defvar *editor-face-names*
   '(:region
@@ -47,167 +82,21 @@
     :compiler-note-highlight
     :compiler-warning-highlight
     :compiler-error-highlight
-    :incremental-search-face
-    :incremental-search-other-matches-face
     ))
-
-
-
-(defclass editor-panes-theme ()
-  ((editor-panes :initform nil :accessor editor-panes)
-   (buffers-panes :initform nil :accessor buffers-panes)
-   (editor-background :initform +default-background-color+ :accessor bg) 
-   (editor-foreground :initform +default-foreground-color+ :accessor fg)
-   (buffers-background :initform +default-background-color+ :accessor buffers-bg)
-   (buffers-foreground :initform +default-foreground-color+ :accessor buffers-fg)
-   (buffers-selected-foreground :initform +default-foreground-color+ :accessor buffers-selected-fg)))
-
-(defclass listener-panes-theme ()
-  ((listener-panes :initform nil :accessor listener-panes)
-   (listener-foreground :initform +default-foreground-color+ :accessor bg)
-   (listener-background :initform +default-background-color+ :accessor fg)))
-
-
-(defclass general-panes-theme ()
-  ((output-panes :initform nil :accessor output-panes)
-   (output-foreground :initform +default-foreground-color+ :accessor output-fg)
-   (output-background :initform +default-background-color+ :accessor output-bg)))
-
-(defvar *editor-tool* (make-instance 'editor-panes-theme))
-(defvar *listener-tool* (make-instance 'listener-panes-theme))
-(defvar *all-tools* (make-instance 'general-panes-theme))
-
-(defun all-color-themes ()
-  (maphash #'(lambda (key value)
-               (declare (ignore value))
-               key)
-           *all-color-themes*))
-
-(defun color-theme-data (theme-name)
-  (multiple-value-bind (data found?)
-      (gethash theme-name *all-color-themes*)
-    (if found?
-        data
-        (error "No color theme named ~s found." theme-name))))
-
-(defun color-theme-super-theme-names (theme-name)
-  (first (color-theme-data theme-name)))
-
-(defun color-theme-args (theme-name)
-  (rest (color-theme-data theme-name)))
-
-
-(defun buffers-color-function (lp symbol state)
-  (declare (ignore lp))
-  (cond ((eq state :normal)
-         (buffers-fg *editor-tool*))
-        ((eq state :selected)
-         (buffers-selected-fg *editor-tool*))))
-        
-(defun update-pane-colors (pane foreground background)
-  (setf (capi:simple-pane-foreground pane) foreground)
-  (setf (capi:simple-pane-background pane) background)
-
-  (when (and (typep pane 'capi:editor-pane)
-             (editor::buffer-font-lock-mode-p (capi:editor-pane-buffer pane)))
-      (gp:invalidate-rectangle pane)))
-
-
-(defgeneric clear-colors (tool)
-  (:documentation "Clear colors for tool keeping other data untouched"))
-
-(defgeneric update (tool)
-  (:documentation "Update tool's colors"))
-
-
-(defmethod clear-colors ((self editor-panes-theme))
-  (with-slots (editor-background editor-foreground) self
-    (setf editor-background +default-background-color+)
-    (setf editor-foreground +default-foreground-color+)))
-
-(defmethod clear-colors ((self listener-panes-theme))
-  (with-slots (listener-background listener-foreground) self
-    (setf listener-background +default-background-color+)
-    (setf listener-foreground +default-foreground-color+)))
-
-(defmethod clear-colors ((self general-panes-theme))
-  (with-slots (output-background output-foreground) self
-    (setf output-background +default-background-color+)
-    (setf output-foreground +default-foreground-color+)))
-
-
-(defmethod update ((self editor-panes-theme))
-  (mapcar #'(lambda (pane)
-              (update-pane-colors pane (fg self) (bg self)))
-          (editor-panes self))
-  (mapcar #'(lambda (pane)
-              (update-pane-colors pane (buffers-fg self) (buffers-bg self)))
-          (buffers-panes self)))
-
-(defmethod update ((self listener-panes-theme))
-  (mapcar #'(lambda (pane)
-              (update-pane-colors pane (fg self) (bg self)))
-          (listener-panes self)))
-
-(defmethod update ((self general-panes-theme))
-  (mapcar #'(lambda (pane)
-              (update-pane-colors pane (output-fg self) (output-bg self)))
-          (output-panes self)))
-
 
 (defun set-color-theme (theme-name)
   (destructuring-bind (&rest color-theme-args
-                             &key foreground background
-                             listener-foreground
-                             listener-background
-                             output-foreground
-                             output-background
-                             buffers-foreground
-                             buffers-selected-foreground
-                             buffers-background
-                             &allow-other-keys)
+                       &key foreground background &allow-other-keys)
       (color-theme-args theme-name)
 
-    ;; new instances of tools wrappers
-    (clear-colors *editor-tool*)
-    (clear-colors *listener-tool*)
-    (clear-colors *all-tools*)
-    
-    ;; editor foreground and background
-    (when foreground
-      (setf (fg *editor-tool*) foreground))
-    (when background
-      (setf (bg *editor-tool*) background))
-    ;; listener foreground and background, uses
-    ;; the :background and :foreground if not specified
-    (setf (fg *listener-tool*)
-          (or listener-foreground
-              (fg *editor-tool*))
-          (bg *listener-tool*)
-          (or listener-background
-              (bg *editor-tool*)))
+    (setf *foreground-color* (or foreground :color_windowtext))
+    (setf *background-color* (or background :color_window))
 
-    ;; output foreground and background, uses :background and
-    ;; :foreground if not specified
-    (setf (output-fg *all-tools*)
-          (or output-foreground
-              (fg *editor-tool*))
-          (output-bg *all-tools*)
-          (or output-background
-              (bg *editor-tool*)))
+    (lw:when-let (parenthesis-colors
+                  (getf color-theme-args :parenthesis-font-face-colours
+                        +default-parenthesis-font-face-colours+))
+      (editor::set-parenthesis-colours parenthesis-colors))
 
-    ;; buffers list colors
-    (setf (buffers-fg *editor-tool*)
-          (or buffers-foreground
-              (fg *editor-tool*))
-          (buffers-selected-fg *editor-tool*)
-          (or buffers-selected-foreground
-              (buffers-fg *editor-tool*))
-          (buffers-bg *editor-tool*)
-          (or buffers-background
-              (bg *editor-tool*)))
-
-                                 
     (dolist (name *editor-face-names*)
       (let* ((color-theme-args-for-face (getf color-theme-args name))
              (face-name (intern (string name) '#:editor))
@@ -222,101 +111,39 @@
 (defun color-theme (theme-name)
   (mapc 'set-color-theme (color-theme-super-theme-names theme-name))
   (set-color-theme theme-name)
-  
-  (update *editor-tool*)
-  (update *listener-tool*)
-  (update *all-tools*)
-  
+
+  (update-editor-panes)
+
   theme-name)
 
 (defun define-color-theme (theme-name super-theme-names
                            &rest color-theme-args &key &allow-other-keys)
-  (unless super-theme-names
-    (setf super-theme-names '("default")))
   (dolist (super-theme-name super-theme-names)
     (multiple-value-bind (color-theme-data found?)
         (gethash super-theme-name *all-color-themes*)
       (declare (ignore color-theme-data))
       (unless found?
         (warn "Inherited color theme ~s not defined." super-theme-name))))
-  
+
   (setf (gethash theme-name *all-color-themes*) (list* super-theme-names color-theme-args))
-  
+
   theme-name)
 
 (defun remove-color-theme (theme-name)
   (remhash theme-name *all-color-themes*))
 
-(defun set-editor-pane-colors (pane)
-  (typecase pane
-    (capi:editor-pane
-     (progn
-       (pushnew pane (editor-panes *editor-tool*))
-       (let ((bg-color (bg *editor-tool*))
-             (fg-color (fg *editor-tool*)))
-         (setf (capi:simple-pane-foreground pane) fg-color)
-         (setf (capi:simple-pane-background pane) bg-color))))))
-
-
-(defun set-listener-pane-colors (pane)
-  (typecase pane
-    (capi:editor-pane
-     (progn
-       (pushnew pane (listener-panes *listener-tool*))
-       (let ((bg-color (bg *listener-tool*))
-             (fg-color (fg *listener-tool*)))
-         (setf (capi:simple-pane-foreground pane) fg-color)
-         (setf (capi:simple-pane-background pane) bg-color))))))
-
-
-(defun set-collector-pane-colors (pane)
-  ;;(when (typep (capi:top-level-interface pane) 'lw-tools:listener)
-  (pushnew pane (output-panes *all-tools*))
-  (let ((bg-color (output-bg *all-tools*))
-        (fg-color (output-fg *all-tools*)))
-    (setf (capi:simple-pane-foreground pane) fg-color)
-    (setf (capi:simple-pane-background pane) bg-color)))
-
-(defun set-mulitcolumn-list-panel-colors (pane)
-  (when (or (eq (capi:capi-object-name pane) 'lw-tools::buffers-list)
-            (eq (capi:capi-object-name pane) 'lispworks-tools::narrow-buffers-list))
-    (pushnew pane (buffers-panes *editor-tool*))
-    (when (eq (capi:capi-object-name pane) 'lispworks-tools::narrow-buffers-list)
-      (setf (slot-value pane 'capi::color-function) #'buffers-color-function))
-    (update-pane-colors pane (buffers-fg *editor-tool*) (buffers-bg *editor-tool*))))
-
-
-(lispworks:defadvice ((method capi:interface-display :before (lw-tools:editor))
-                      change-editor-colors
-                      :before
-                      :documentation "Change editor colors.")
-    (interface)
-  (capi:map-pane-descendant-children interface 'set-editor-pane-colors))
-
-
-;; we don't have defined capi:interface-display for lw-tools::listener,
-;; so nothing to advice. Instead we need to define our own
 (sys::without-warning-on-redefinition
-  (defmethod capi:interface-display :before ((self lw-tools::listener))
-    (capi:map-pane-descendant-children
-     self 'set-listener-pane-colors)))
+  (defmethod initialize-instance :around ((pane capi:editor-pane) &key &allow-other-keys)
+    (multiple-value-prog1
+        (call-next-method)
 
-;; capi:collector-pane does'nt have interface-display method called,
-;; so we adding the :after constuctor instead
-(sys::without-warning-on-redefinition
-  (defmethod initialize-instance :after ((self capi:collector-pane) &rest
-                                         clos::initargs &key &allow-other-keys)
-    (set-collector-pane-colors self)))
+      (setf (gethash pane *all-editor-panes*) pane)
 
-(lispworks:defadvice ((method initialize-instance :after (capi:multi-column-list-panel))
-                      change-multicolumn-colors
-                      :after
-                      :documentation "Change capi:multi-column-list-panel colors")
-    (self &rest initargs &key &allow-other-keys)
-  (declare (ignore initargs))
-  (set-mulitcolumn-list-panel-colors self))
-
-
+      (when *foreground-color*
+        (setf (capi:simple-pane-foreground pane) *foreground-color*))
+      (when *background-color*
+        (setf (capi:simple-pane-background pane) *background-color*))))
+  )
 
 ;; This makes it "work" after the podium is launched
 (defun is-editor-pane-p (obj)
@@ -324,7 +151,7 @@
        (not (eq obj (hcl:class-prototype (class-of obj))))))
 
 (defun cache-existing-pane (pane)
-  (pushnew pane (editor-panes *editor-tool*)))
+  (setf (gethash pane *all-editor-panes*) pane))
 
 (defun cache-if-pane (obj)
   (when (is-editor-pane-p obj)
@@ -353,9 +180,7 @@
   :font-lock-builtin-face '(:foreground :orchid)
   :compiler-note-highlight '(:foreground :magenta)
   :compiler-warning-highlight '(:foreground :orange3)
-  :compiler-error-highlight '(:foreground :red)
-  :incremental-search-face '(:background :tweak_background)
-  :incremental-search-other-matches-face '(:underline-p t))
+  :compiler-error-highlight '(:foreground :red))
 
 (define-color-theme "plain" ()
   :foreground nil :background nil
@@ -374,13 +199,10 @@
   :font-lock-builtin-face '()
   :compiler-note-highlight '()
   :compiler-warning-highlight '()
-  :compiler-error-highlight '()
-  :incremental-search-face '(:background :tweak_background)
-  :incremental-search-other-matches-face '(:underline-p t))
-
+  :compiler-error-highlight '())
 
 (define-color-theme "emacs" ()
-  ;; :foreground nil :background nil
+  :foreground nil :background nil
   :region '(:foreground :color_highlighttext
             :background :color_highlight)
   :show-point-face '(:background :green)
@@ -396,10 +218,7 @@
   :font-lock-builtin-face '(:foreground :orchid)
   :compiler-note-highlight '(:foreground :magenta)
   :compiler-warning-highlight '(:foreground :orange3)
-  :compiler-error-highlight '(:foreground :red)
-  :incremental-search-face '(:background :tweak_background)
-  :incremental-search-other-matches-face '(:underline-p t))
-
+  :compiler-error-highlight '(:foreground :red))
 
 (define-color-theme "torte" ()
   :foreground (color:make-rgb 0.8s0 0.8s0 0.8s0)
@@ -419,9 +238,7 @@
   :font-lock-builtin-face `(:foreground ,(color:make-rgb 1.0s0 1.0s0 0.0s0))
   :compiler-note-highlight '(:foreground :magenta)
   :compiler-warning-highlight '(:foreground :orange)
-  :compiler-error-highlight '(:foreground :red)
-  :incremental-search-face '(:background :tweak_background)
-  :incremental-search-other-matches-face '(:underline-p t))
+  :compiler-error-highlight '(:foreground :red))
 
 
 (defun make-rgb (red green blue &optional alpha)
