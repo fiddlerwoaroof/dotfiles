@@ -263,11 +263,12 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(cider-test-error-face ((t (:background ,zenburn-red-5))))
    `(cider-test-failure-face ((t (:background ,zenburn-red-6))))
    `(cider-test-success-face ((t (:background ,zenburn-green-2))))
-   `(cider-enlightened-local-face ((t (:foreground ,zenburn-yellow-1))))
+   `(cider-enlightened-face ((t (:inherit cider-result-overlay-face :foreground ,zenburn-yellow-1))))
+   `(cider-enlightened-local-face ((t (:inherit cider-result-overlay-face :foreground ,zenburn-yellow-1))))
    `(cider-fringe-good-face ((t (:foreground ,zenburn-green-5))))
    `(cider-debug-code-overlay-face ((t (:background ,zenburn-bg+1))))
    `(cider-deprecated-face ((t (:background ,zenburn-bg-1))))
-   `(cider-result-overlay-face ((t (:background ,zenburn-bg-1))))
+   `(cider-result-overlay-face ((t (:box (:line-width -1 :color ,zenburn-fg-2) :background ,zenburn-bg-1))))
 
    ;; javascript
    `(js2-function-param ((t (:inherit font-lock-variable-name-face))))

@@ -29,7 +29,6 @@
   `(lambda ,(op--collect-args body)
      ,@body))
 
-
 (defun blank-line-p ()
   (= (current-indentation)
      (- (line-end-position) (line-beginning-position))))
@@ -48,11 +47,13 @@
 (defun create-system-files ()
   (interactive)
   (save-excursion
+    (mark-defun)
     (mapcar (lambda (it) (save-buffer (find-file (format "%s.lisp" (cadr it)))))
             (getf (cddar (read-from-string
                           (buffer-substring (point)
                                             (mark))))
-                  :components))))
+                  :components)))
+  (pop-mark))
 
 (defmacro comment (&rest _))
 
@@ -99,25 +100,27 @@ started from a shell."
                       ,@(cdr pck)))
                  packages)))
 
+(defun helm-projectile-rg ()
+  "Projectile version of `helm-rg'."
+  (interactive)
+  (if (require 'helm-rg nil t)
+      (if (projectile-project-p)
+          (let ((helm-rg-prepend-file-name-line-at-top-of-matches nil)
+                (helm-rg-include-file-on-every-match-line t))
+            (helm-rg (helm-projectile-rg--region-selection)
+                     nil
+                     (list (projectile-project-root))))
+        (error "You're not in a project"))
+    (when (yes-or-no-p "`helm-rg' is not installed. Install? ")
+      (condition-case nil
+          (progn
+            (package-install 'helm-rg)
+            (helm-projectile-rg))
+        (error "`helm-rg' is not available.  Is MELPA in your `package-archives'?")))))
+
 (defun post-init ()
   ;;;;; INDENTATION SETUP  {{{
-  (defun helm-projectile-rg ()
-    "Projectile version of `helm-rg'."
-    (interactive)
-    (if (require 'helm-rg nil t)
-        (if (projectile-project-p)
-            (let ((helm-rg-prepend-file-name-line-at-top-of-matches nil)
-                  (helm-rg-include-file-on-every-match-line t))
-              (helm-rg (helm-projectile-rg--region-selection)
-                       nil
-                       (list (projectile-project-root))))
-          (error "You're not in a project"))
-      (when (yes-or-no-p "`helm-rg' is not installed. Install? ")
-        (condition-case nil
-            (progn
-              (package-install 'helm-rg)
-              (helm-projectile-rg))
-          (error "`helm-rg' is not available.  Is MELPA in your `package-archives'?")))))
+
 
   (centaur-tabs-mode 1)
   (progn
@@ -139,6 +142,7 @@ started from a shell."
                        "notes")))
     (unless (server-running-p)
       (server-start)))
+
   (projectile-mode)
   (evil-mode)
   ;; (paredit-mode)
@@ -182,7 +186,7 @@ started from a shell."
     (package-install 'use-package))
 
   (setq browse-url-browser-function
-        'eww-browse-url)
+        'browse-url-default-browser)
 
   (require 'use-package))
 

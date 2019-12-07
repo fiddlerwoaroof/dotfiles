@@ -90,11 +90,15 @@ REVERSE - Jump to previous position in skeleton"
   "(defvar " str @ _ ")"  \n
   '(evil-insert 1))
 
+(defvar fwoar::*package-prefix* "fwoar"
+  "A prefix applied to lisp packages")
+
 (define-skeleton skel-defpackage
   "Insert a defpackage template"
   (skeleton-read "Package Name: "
                  (if v1
-                     (concat "fwoar."
+                     (format "%s.%s"
+                             fwoar::*package-prefix*
                              (file-name-sans-extension
                               (file-name-nondirectory
                                (buffer-file-name))))))

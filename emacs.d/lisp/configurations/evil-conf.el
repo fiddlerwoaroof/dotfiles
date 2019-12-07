@@ -31,12 +31,17 @@
 
   (progn ;; navigation
     (define-key evil-normal-state-map " f" 'helm-projectile)
+    (define-key evil-normal-state-map " ;" 'helm-semantic-or-imenu)
     (define-key evil-normal-state-map " j" 'helm-buffers-list)
     (define-key evil-normal-state-map " u" 'undo-tree-visualize))
 
   (progn ;; completion
-    (define-key evil-normal-state-map (kbd "TAB") 'company-indent-or-complete-common)
-    (define-key evil-insert-state-map (kbd "TAB") 'company-indent-or-complete-common))
+    (evil-define-key 'normal company-mode-map (kbd "TAB") 'company-indent-or-complete-common)
+    (evil-define-key 'insert company-mode-map (kbd "TAB") 'company-indent-or-complete-common))
+
+  (progn ;; error jumping
+    (define-key evil-motion-state-map "]e" 'flycheck-next-error)
+    (define-key evil-motion-state-map "[e" 'flycheck-previous-error))
 
   (progn ;; workaround until this fixed: https://github.com/emacs-evil/evil/issues/1129
     ;;                          or this: https://github.com/emacs-evil/evil/pull/1130
@@ -169,5 +174,10 @@
   (define-key evil-normal-state-map "gT" 'centaur-tabs-backward-tab)
   (define-key global-map (kbd "<header-line> <wheel-down>") 'centaur-tabs-backward-tab)
   (define-key global-map (kbd "s-{") 'centaur-tabs-backward-tab))
- 
 
+
+(defun setup-special-mode ()
+  (company-mode -1))
+(define-key evil-motion-state-map (kbd "TAB") nil)
+(add-hook 'special-mode-hook
+          'setup-special-mode)
