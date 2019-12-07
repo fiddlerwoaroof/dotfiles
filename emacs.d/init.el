@@ -67,6 +67,9 @@
 (use-package jeison
   :ensure t)
 
+(use-package scala-mode
+  :ensure t)
+
 (use-package lsp-mode
   :pin "melpa-stable"
   :ensure t
@@ -642,3 +645,23 @@ With a prefix ARG invalidates the cache first."
         org-brain-title-max-length 12))
 
 (setq diary-file (expand-file-name "~/bucket/diary"))
+
+(cl-defmacro fwoar/binding (setter target &body bindings)
+  (declare (indent 2))
+  (let ((target-sym (gensym)))
+    `(let ((,target-sym ,target))
+       ,(cons 'progn
+              (mapcar (lambda (binding)
+                        `(,setter ,target-sym ',(car binding) ,@(cdr binding)))
+                      bindings)))))
+
+(defun make-info-window ()
+  (setq mode-line-format nil)
+  (centaur-tabs-local-mode 1)
+  (set-window-dedicated-p (selected-window) t)
+  (when-let (w (window-in-direction 'above))
+    (set-window-parameter w 'no-delete-other-windows t))
+  (fwoar/binding set-window-parameter (selected-window)
+    (no-other-window t)
+    (no-delete-other-windows t))
+  ())
