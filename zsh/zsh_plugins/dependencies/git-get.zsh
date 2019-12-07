@@ -80,6 +80,15 @@ function get_forge_function() {
   echo "${forge}_url"
 }
 
+function get_forge_root() {
+  local forge="$1"
+  if command -v "${forge}_root" &>>-; then
+    "${forge}_root"
+  else
+    echo "$GIT_3DP_DIR"/
+  fi
+}
+
 alias_forge bb github
 alias_forge gh github
 alias_forge gl gitlab
@@ -100,7 +109,7 @@ function git-get() {
     package=$2
     shift
   else
-    echo 'usage: <forge> <user> <package> or <forge> <package>'
+    echo 'usage: <forge> <user> <package>'
     return 2
   fi
 
@@ -108,10 +117,12 @@ function git-get() {
 
   shift
 
-  cd "$GIT_3DP_DIR"
+  local target="$(get_forge_root "$forge")"
+  cd "$target"
 
   local forge_url_function="${$(get_forge_function "$forge"):?forge not recognized}"
   git-forge-clone "$forge_url_function"
   
   cd "$(basename "$package")"
 }
+

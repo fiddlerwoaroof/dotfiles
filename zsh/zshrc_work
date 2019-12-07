@@ -1,5 +1,5 @@
 # -*- mode: sh; sh-shell: zsh;-*-
-#zmodload zsh/zprof
+# zmodload zsh/zprof
 
 if [[ "$TERM" == "dumb" ]]; then
     unsetopt zle
@@ -8,7 +8,7 @@ if [[ "$TERM" == "dumb" ]]; then
     unfunction precmd
     unfunction preexec
     PS1='$ '
-else 
+else
   PLUGIN_DIR="${PLUGIN_DIR:-$HOME/.zsh.d}"
 
   local script_depends loaded_depends
@@ -21,6 +21,9 @@ else
   build_depends() {
     local -a depends
     depends=(${(@f)$(get_depends "$1")})
+    if [[ -z $depends ]]; then
+      script_depends[$1]=-
+    fi
     for depend in $depends; do
       script_depends[$1]+="$depend:"
     done
@@ -28,7 +31,7 @@ else
 
   load_depends() {
     for depend in ${(s<:>)script_depends[$1]}; do
-      if [[ -z $loaded_depends[$depend] ]]; then
+      if [[ -z $loaded_depends[$depend] && "$depend" != "-" ]]; then
           loaded_depends[$depend]=1
           local fn="$PLUGIN_DIR/dependencies/$depend.zsh"
           if [[ -f $fn ]]; then
@@ -45,13 +48,18 @@ else
     done
   }
 
-  init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) ) 
+  init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) )
 
   PATH="<<<:$PATH:>>>"
   for x in $init_scripts; do
-    build_depends "$x"
-    load_depends "$x"
+    if [[ -f ~/zshrc.depends ]]; then
+      source ~/zshrc.depends
+      load_depends "$x"
+    else
+      build_depends "$x"
+      load_depends "$x"
+      echo "script_depends=(${(kv)script_depends})" >| ~/zshrc.depends
+    fi
     source "$x"
   done
 fi
-

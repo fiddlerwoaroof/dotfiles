@@ -16,7 +16,6 @@
 
 # The following lines were added by compinstall
 
-
 # zstyle ':completion:*' completer _expand _complete #_match _prefix
 zstyle ':completion:*' completer _list _oldlist _expand _complete _match _prefix #_correct _prefix
 zstyle ':completion:*' keep-prefix true
@@ -41,8 +40,17 @@ zstyle :compinstall filename '/Users/elangley/.zsh.d/99-completion.zsh'
 
 source $HOME/.zsh.d/nix-zsh-completions/nix.plugin.zsh
 fpath=($HOME/.zsh.d/completion $fpath $HOME/.zsh.d/nix-zsh-completions)
-autoload -U compinit && compinit
 
-compinit
+autoload -Uz compinit
+
+if [[ -n $HOME/.zcompdump(#qN.mh+24) ]]; then
+
+  echo running compinit
+  compinit
+  touch $HOME/.zcompdump
+else
+  compinit -C
+fi;
+
 
 # # End of lines added by compinstall

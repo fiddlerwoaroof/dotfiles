@@ -8,7 +8,7 @@
 
 # echo "begin zshrc"
 
-interactive_echo "shell session started for $USER on $TTY at `date`" | tee /dev/stderr | logger
+interactive_echo "shell session started for $USER on $TTY at `date`" | logger
 
 source $HOME/.localzshrc.sh
 
@@ -150,3 +150,4 @@ export CPATH=$CPATH:$HOME/include
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib
 export VIMCLOJURE_SERVER_JAR="$HOME/lib/vimclojure/server-2.3.6.jar"
 export CLON_THEME=el
+

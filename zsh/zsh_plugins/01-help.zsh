@@ -6,3 +6,4 @@ if [[ -d "$HOME/.zsh_help" ]]; then
 fi
 alias run-help >/dev/null && unalias run-help
 bindkey -v '^_' run-help
+

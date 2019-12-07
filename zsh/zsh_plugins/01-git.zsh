@@ -2,6 +2,11 @@
 autoload -U regexp-replace
 GIT_DEBUG=0
 
+
+git-bump() {
+  git commit -m "${SITE_PREFIX:-}(bump)" --allow-empty
+}
+
 git-update-repos() {
   find . -name .git | (
     while read -r repo; do
