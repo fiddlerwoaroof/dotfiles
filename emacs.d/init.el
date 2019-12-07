@@ -6,18 +6,14 @@
 (let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
   (add-to-list 'load-path my-theme-path)
   (add-to-list 'custom-theme-load-path my-theme-path)
-  (load-theme 'fwoar-zenburn t))
+  (when (display-graphic-p)
+    (load-theme 'fwoar-zenburn t)))
 
 (progn (setq default-frame-alist
              '((vertical-scroll-bars . nil)
                (right-divider-width . 2)
                (bottom-divider-width . 2)))
        (modify-all-frames-parameters default-frame-alist))
-
-(let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
-  (add-to-list 'load-path my-theme-path)
-  (add-to-list 'custom-theme-load-path my-theme-path)
-  (load-theme 'fwoar-zenburn t))
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode 0))
@@ -33,6 +29,40 @@
   (load "utils"))
 
 (cold-boot)
+
+(use-package company
+  :config
+  ;; keybindings
+  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
+         (define-key company-active-map (kbd "M-.") 'company-show-location)
+         (define-key company-active-map (kbd "\C-d") 'company-show-doc-buffer)
+         (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
+         (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
+         (define-key company-active-map (kbd "[") (kbd "RET [")))
+
+  (setq company-backends
+        '((company-clang
+           company-bbdb
+           company-nxml
+           company-css
+           company-xcode
+           company-cmake
+           company-capf
+           company-slime)
+          company-files
+          (company-dabbrev-code
+           company-gtags
+           company-etags
+           company-keywords)
+          company-oddmuse
+          company-dabbrev)))
+
+(use-package company-posframe
+  :ensure t
+  :after company
+  :config
+  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1))))
+
 
 (use-package jeison
   :ensure t)
@@ -76,6 +106,7 @@
 
 (use-package org-projectile
   :ensure t
+  :after company
   :config
   (progn
     (org-projectile-per-project)
@@ -105,37 +136,6 @@
   :ensure t
   :config
   (define-key evil-insert-state-map (kbd "C-c ,") 'emmet-expand-line))
-
-(use-package company
-  :config
-  ;; keybindings
-  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
-         (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
-         (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
-         (define-key company-active-map (kbd "[") (kbd "RET [")))
-
-  (setq company-backends
-        '(company-clang
-          company-bbdb
-          company-nxml
-          company-css
-          company-xcode
-          company-cmake
-          company-capf
-          company-slime
-          company-files
-          (company-dabbrev-code
-           company-gtags
-           company-etags
-           company-keywords)
-          company-oddmuse
-          company-dabbrev)))
-
-(use-package company-posframe
-  :ensure t
-  :after company
-  :config
-  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1))))
 
 (use-package lisp-skeletons
   :config
@@ -204,7 +204,8 @@
 (use-package prettier-js
   :ensure t
   :init
-  (add-hook 'js2-mode-hook 'prettier-js-mode))
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'css-mode 'prettier-js-mode))
 
 (use-package tide
   :ensure t
@@ -222,13 +223,13 @@
  (use-package tern
    :config
    (add-hook 'js-mode-hook (lambda () (tern-mode t)))
-   (add-hook 'js2-mode-hook (lambda () (tern-mode t)))))
+   (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
 
-(use-package company-tern
-  :ensure t
-  :config
-  (add-to-list 'company-backends 'company-tern)
-  (setq company-tooltip-align-annotations t))
+ (use-package company-tern
+   :ensure t
+   :config
+   (add-to-list 'company-backends 'company-tern)
+   (setq company-tooltip-align-annotations t)))
 
 (use-package jest
   :ensure t
@@ -467,7 +468,7 @@ With a prefix ARG invalidates the cache first."
       (delete-window)
     (treemacs-select-window)))
 
-(defun no-line-numbers ()
+(defun fwoar--no-line-numbers ()
   (display-line-numbers-mode -1))
 (use-package treemacs
   :ensure t
@@ -475,7 +476,7 @@ With a prefix ARG invalidates the cache first."
   (setq treemacs-is-never-other-window t)
   (global-set-key (kbd "s-e") 'fwoar--activate-treemacs)
   (global-set-key (kbd "s-1") 'fwoar--activate-treemacs)
-  (add-hook 'treemacs-mode-hook 'no-line-numbers)
+  (add-hook 'treemacs-mode-hook 'fwoar--no-line-numbers)
   )
 
 (use-package treemacs-evil
