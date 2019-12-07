@@ -8,7 +8,6 @@
 
 (cl:in-package #:cl-user)
 
-
 (defpackage #:editor-color-theme
   (:use #:cl)
   (:export #:*current-colors*
@@ -16,11 +15,9 @@
            #:color-theme-args
            #:color-theme
            #:define-color-theme
-           #:remove-color-theme
-           ))
+           #:remove-color-theme))
 
 (in-package #:editor-color-theme)
-
 
 ;;; Configuration
 
@@ -216,10 +213,10 @@
              (face-name (intern (string name) '#:editor))
              (face (editor:make-face face-name :if-exists t)))
         (apply 'editor:make-face face-name :if-exists :overwrite
-               :documentation (or (getf color-theme-args-for-face :documentation)
-                                  (slot-value face 'documentation))
-               color-theme-args-for-face))))
-  
+                                           :documentation (or (getf color-theme-args-for-face :documentation)
+                                                              (slot-value face 'documentation))
+                                           color-theme-args-for-face))))
+
   theme-name)
 
 (defun color-theme (theme-name)
@@ -340,8 +337,7 @@
 ;;; Initial color themes
 
 (define-color-theme "default" ()
-  :foreground nil
-  :background nil
+  :foreground nil :background nil
   :region '(:foreground :color_highlighttext
             :background :color_highlight)
   :show-point-face '(:background :green)
@@ -456,9 +452,9 @@
       for name = (first list)
       for rgb = (second list)
       do
-      (color:define-color-alias
-       name
-       (apply #'make-rgb rgb)))
+         (color:define-color-alias
+             name
+             (apply #'make-rgb rgb)))
 
 (define-color-theme "solarized-light" ()
   :foreground :solarized-base00
@@ -496,7 +492,7 @@
   :background :solarized-base03
   :region '(:foreground :solarized-base01
             :background :solarized-base03
-            :inverse-p t)  
+            :inverse-p t)
   :highlight '(:background :solarized-base02)
   :font-lock-function-name-face '(:foreground :solarized-blue)
   :font-lock-comment-face '(:foreground :solarized-base01 :italic-p t)
@@ -521,6 +517,7 @@
                                    :solarized-orange
                                    :solarized-blue
                                    :solarized-magenta))
+
 
 ;;; Show presence when loaded
 (pushnew :editor-color-theme *features*)
