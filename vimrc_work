@@ -67,6 +67,7 @@ endif
 "}}}3
 "End dein Scripts }}}1
 
+let g:syntastic_always_populate_loc_list = 1
 let g:airline_theme="murmur"
 let maplocalleader=','
 

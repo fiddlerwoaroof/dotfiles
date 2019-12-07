@@ -11,3 +11,7 @@ cjo/ztest-container*
 .history
 .projectile
 .clj-kondo
+.cpcache
+*.fasl
+.factorypath
+.shadow-cljs

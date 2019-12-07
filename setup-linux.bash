@@ -11,6 +11,16 @@ git clone https://git.fiddlerwoaroof.com/git/dotfiles.git "$HOME/git_repos/dotfi
 mkdir .emacs.d
 ln -s "$HOME/git_repos/dotfiles/emacs.d/init.el" "$HOME/.emacs.d/init.el"
 mkdir "$HOME/.emacs.d/"{lisp,themes}
+
+if [[ -z "$git_mode" ]]; then
+  select git_mode in http ssh; do
+    echo "(setq fwoar-git-mode :$git_mode)" > "$HOME/.emacs.d/lisp/site-lisp.el"
+    break;
+  done
+else
+    echo "(setq fwoar-git-mode :$git_mode)" > "$HOME/.emacs.d/lisp/site-lisp.el"
+fi
+
 ln -s "$HOME/git_repos/dotfiles/emacs.d/lisp/"*.el "$HOME/.emacs.d/lisp"
 rm "$HOME/git_repos/dotfiles/emacs.d/lisp/el-zenburn-theme.el"
 ln -s "$HOME/git_repos/dotfiles/emacs.d/lisp/fwoar-zenburn-theme.el" "$HOME/.emacs.d/themes"
