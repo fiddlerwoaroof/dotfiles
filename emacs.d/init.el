@@ -135,6 +135,9 @@
     (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
   :ensure t)
 
+(use-package helm-org
+  :ensure t)
+
 (use-package org-projectile-helm
   :ensure t
   :after org-projectile
