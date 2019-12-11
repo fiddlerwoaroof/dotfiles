@@ -1,4 +1,5 @@
 # -*- mode: sh; sh-shell: zsh;-*-
+# set -x
 # zmodload zsh/zprof
 
 if [[ "$TERM" == "dumb" ]]; then
@@ -51,15 +52,19 @@ else
   init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) )
 
   PATH="<<<:$PATH:>>>"
+  if [[ -f ~/zshrc.depends ]]; then
+    source ~/zshrc.depends
+  fi
+
   for x in $init_scripts; do
-    if [[ -f ~/zshrc.depends ]]; then
-      source ~/zshrc.depends
-      load_depends "$x"
-    else
+    if ! [[ -f ~/zshrc.depends ]]; then
       build_depends "$x"
-      load_depends "$x"
-      echo "script_depends=(${(kv)script_depends})" >| ~/zshrc.depends
     fi
+    load_depends "$x"
     source "$x"
   done
+
+  if ! [[ -f ~/zshrc.depends ]]; then
+    echo "script_depends=(${(kv)script_depends})" >| ~/zshrc.depends
+  fi
 fi
