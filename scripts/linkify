@@ -1,0 +1,63 @@
+#!/usr/bin/env zsh
+
+set -e -u -o pipefail
+
+zmodload -F zsh/stat b:zstat
+abspath() {
+  if [ -L "$1" ]; then
+    local link
+    zstat -A link +link -- "$1" || return
+    case $link in
+      (/*) ;;
+      (*)
+        case $1:h in
+          (*/) link=$1:h$link;;
+          (*) link=$1:h/$link;;
+        esac;;
+    esac
+    printf '%s\n' $link:h:A/$link:t
+  else
+    printf '%s\n' $1:A
+  fi
+}
+
+linkdir=$(abspath "${1?need a link directory}")/
+srcdir=$(abspath "${2?need a source directory}")/
+shift
+shift
+
+echo deduplicating "$srcdir" to "$linkdir"
+
+get_target_directory() {
+  first_level=${1[1,2]}
+  second_level=${1[1,5]}
+  echo "$first_level"/"$second_level"
+}
+
+get_target_path() {
+  dir="$(get_target_directory "$1")"
+  mkdir -p "$linkdir"/"$dir"
+  echo "$linkdir"/"$dir"/"$1"
+}
+
+file_to_hashed_dir() {
+  hash="$(sha256sum "$1" | awk '{print $1}')"
+  get_target_path "$hash"
+}
+
+linkify_tree() {
+  cd "$1"
+  find . -type f | {
+    while read -r fn; do
+      if ! [[ -L "$fn" ]]; then
+        target="$(file_to_hashed_dir "$fn")"
+        cp "$fn" "$target"
+        rm "$fn"
+        ln -sv "$target" "$fn"
+      fi
+      echo
+    done
+  }
+}
+
+linkify_tree "$srcdir"
