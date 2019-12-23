@@ -1,31 +1,24 @@
-#!/usr/bin/env python
-import argparse
+#!/usr/bin/env sbcl --script
 
-parser = argparse.ArgumentParser()
-parser.add_argument('files_to_ignore', nargs='*')
-args = parser.parse_args()
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (require :uiop))
 
-try:
-  lines = []
+(defpackage :fwoar.git-ignore
+  (:use :cl))
 
-  if args.files_to_ignore != []:
-    lines.extend(args.files_to_ignore)
+(defparameter *args*
+  (uiop:command-line-arguments))
 
-  else:
-    lines = []
-    try:
-      getline = lambda: raw_input('? ').strip()
-      line = getline()
-      while line != '.':
-        lines.append(line)
-        line = getline()
-    except EOFError:
-      pass
-
-
-  with open('.gitignore', 'a') as f:
-    for line in lines:
-      print 'ignoring %s' % line
-      print >> f, line
-except KeyboardInterrupt:
-  pass
+(with-open-file (s ".gitignore" :direction :output :if-exists :append)
+  (if *args*
+      (format s "~{~a~%~}" *args*)
+      (loop for line = (string-trim '(#\space #\tab #\newline)
+                                    (progn (format *query-io* "ignore? ")
+                                           (finish-output *query-io*)
+                                           (read-line *query-io* nil)))
+            while (and line
+                       (not (string= line ""))
+                       (not (string= line ".")))
+            do
+              (princ line s)
+              (terpri s))))
