@@ -88,9 +88,9 @@
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode cider-repl-mode)))
   (find-clojure-project-file))
 
-(defmethod fwoar--pl-selector (&context (major-mode clojure-mode))
+(cl-defmethod fwoar--pl-selector (&context (major-mode clojure-mode))
   (cider-selector))
-(defmethod fwoar--pl-selector (&context (projectile-project-type (eql :clojure)))
+(cl-defmethod fwoar--pl-selector (&context (projectile-project-type (eql :clojure)))
   (cider-selector))
-(defmethod fwoar--pl-selector (&context (major-mode cider-repl-mode))
+(cl-defmethod fwoar--pl-selector (&context (major-mode cider-repl-mode))
   (cider-selector))
