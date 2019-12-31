@@ -7,9 +7,9 @@ if &compatible
 endif
 
 " Required:
-set runtimepath+=$HOME/.vim/repos/github.com/Shougo/dein.vim
-
 let vim_config_directory=$HOME.'/.vim'
+let &runtimepath.=&runtimepath.','.vim_config_directory.'/repos/github.com/Shougo/dein.vim'
+
 " Required:
 if dein#load_state(vim_config_directory)
   call dein#begin(vim_config_directory)
@@ -17,7 +17,6 @@ if dein#load_state(vim_config_directory)
   " Let dein manage dein
   " Required:
   call dein#add(vim_config_directory.'/repos/github.com/Shougo/dein.vim')
-
 "}}}3
 " plugins {{{2
   call dein#add('LnL7/vim-nix')
