@@ -228,6 +228,13 @@ Examples:
                       (message "Loading ASDs done: %s" r))))))
     (:one-liner "Load asd for current project"))
 
+
+  (defadvice slime-eval-last-expression-in-repl
+      (around fwoar/seleir/activate-old-window activate)
+    (let ((fwoar/old-window (selected-window)))
+      (unwind-protect (progn ad-do-it)
+        (select-window fwoar/old-window))))
+
   (comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
              (:handler (lambda ()
                          (interactive)
