@@ -1,5 +1,5 @@
 (defun fwoar/cider-hook-base ()
-  (flycheck-mode)
+  (flycheck-mode 1)
   (rainbow-delimiters-mode 1)
   (evil-smartparens-mode 1)
   (smartparens-strict-mode 1)
@@ -57,7 +57,7 @@
   :after cider
   :ensure t
   :config
-  (evil-define-key 'normal clojure-mode-map (kbd "SPC r") 'hydra-cljr-toplevel-form-menu/body))
+  (evil-define-key 'normal clojure-mode-map (kbd "SPC r") 'hydra-cljr-help-menu/body))
 
 
 (use-package helm-cider
@@ -84,7 +84,8 @@
 
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode clojure-mode)))
   (find-clojure-project-file))
-
+(cl-defmethod fwoar--find-system (&context (projectile-project-type (eql clojure-mode)))
+  (find-clojure-project-file))
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode cider-repl-mode)))
   (find-clojure-project-file))
 
