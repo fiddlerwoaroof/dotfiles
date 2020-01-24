@@ -144,6 +144,9 @@
   :config
   (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
 
+(use-package delight
+  :ensure t)
+
 (use-package deadgrep
   :ensure t)
 

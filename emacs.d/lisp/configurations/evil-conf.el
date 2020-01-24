@@ -79,6 +79,7 @@
 
 (use-package evil-smartparens
   :ensure t
+  :delight
   :after evil smartparens
   :config
   (evil-smartparens-mode 1)
