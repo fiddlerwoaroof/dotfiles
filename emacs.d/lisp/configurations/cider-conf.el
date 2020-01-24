@@ -24,10 +24,10 @@
     (with-current-buffer (cider-current-repl nil t)
       (let ((fw/window (get-buffer-window)))
         (with-selected-window fw/window
-          (end-of-buffer)
+          (goto-char (point-max))
           (insert form)
           (cider-repl-return)
-          (end-of-buffer))))))
+          (goto-char (point-max)))))))
 
 (use-package cider
   :ensure t
