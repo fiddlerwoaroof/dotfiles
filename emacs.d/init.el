@@ -30,6 +30,8 @@
 
 (cold-boot)
 
+(use-package flycheck
+  :ensure t)
 (use-package company
   :config
   ;; keybindings
