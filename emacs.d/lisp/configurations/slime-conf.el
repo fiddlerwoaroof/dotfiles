@@ -139,19 +139,18 @@ Examples:
                                  "git@github.com:slime/slime.git"
                                  "https://github.com/slime/slime.git")))
   :config
-  (with-eval-after-load "slime"
-    (when (or (eq system-type 'gnu/linux)
-              (eq system-type 'darwin))
-      (define-lisp-implementations
-        (abcl  ("abcl"))
-        (lw  ("lw"))
-        (ccl ("ccl"))
-        (clisp ("clisp"))
-        (cmucl ("cmucl" "-quiet"))
-        (ecl   ("ecl"))
-        ;;(mkcl  ("mkcl"))
-        ;;(xcl   ("xcl"))
-        (sbcl  ("sbcl" "--dynamic-space-size" "8192")))))
+  (when (or (eq system-type 'gnu/linux)
+            (eq system-type 'darwin))
+    (define-lisp-implementations
+      (abcl  ("abcl"))
+      (lw  ("lw"))
+      (ccl ("ccl"))
+      (clisp ("clisp"))
+      (cmucl ("cmucl" "-quiet"))
+      (ecl   ("ecl"))
+      ;;(mkcl  ("mkcl"))
+      ;;(xcl   ("xcl"))
+      (sbcl  ("sbcl" "--dynamic-space-size" "8192"))))
 
   (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
