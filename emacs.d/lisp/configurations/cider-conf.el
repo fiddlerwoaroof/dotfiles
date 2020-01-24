@@ -1,8 +1,11 @@
-(defun fwoar/cider-hook-base ()
+(defun fwoar/clojure-hook ()
+  (message "clojure-hook")
   (flycheck-mode 1)
   (rainbow-delimiters-mode 1)
   (evil-smartparens-mode 1)
-  (smartparens-strict-mode 1)
+  (smartparens-strict-mode 1))
+
+(defun fwoar/cider-hook-base ()
   (helm-cider-mode 1)
   (cider-company-enable-fuzzy-completion))
 (defun fwoar/cider-hook ()
@@ -36,6 +39,7 @@
   (def-cider-selector-method ?S "find clojure project file"
     (fwoar--find-system))
 
+  (add-hook 'clojure-mode-hook 'fwoar/clojure-hook)
   (add-hook 'cider-mode-hook 'fwoar/cider-hook)
   (add-hook 'cider-repl-mode-hook 'fwoar/cider-repl-hook)
 

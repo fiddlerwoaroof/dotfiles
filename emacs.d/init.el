@@ -340,7 +340,6 @@ With a prefix ARG invalidates the cache first."
   (fwoar--pl-selector))
 (define-key evil-normal-state-map " o" 'fwoar-pl-selector)
 
-(load-package-configuration 'cider)
 
 (use-package imenu
   :config
@@ -449,6 +448,7 @@ With a prefix ARG invalidates the cache first."
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
 ;; slime depends on fwoar-git-repo
+(load-package-configuration 'cider)
 (load-package-configuration 'slime)
 (global-company-mode 1)
 
