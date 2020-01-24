@@ -318,7 +318,7 @@ With a prefix ARG invalidates the cache first."
 
   (projectile-register-project-type
    'lisp '("*.asd"))
-  
+
   (projectile-register-project-type
    'npm '("package.json")
    :compile "npm install"
@@ -387,12 +387,8 @@ With a prefix ARG invalidates the cache first."
 (use-package helm :ensure t :config
   (require 'helm-config)
   (helm-mode)
-  (global-set-key
-   (kbd "M-x")
-   'helm-M-x)
-  (global-set-key
-   (kbd "C-x C-f")
-   'helm-find-files)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key evil-normal-state-map " f" 'helm-projectile)
   (define-key evil-normal-state-map " j" 'helm-buffers-list)
   (define-key evil-normal-state-map " s" 'helm-occur)
