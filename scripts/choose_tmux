@@ -1,5 +1,5 @@
-#!/usr/bin/env zsh
-tmux ls
+#!/usr/bin/env zsh 
+tmux start
 
 attach_tmux () {
   TMUX_SESSION="$1"
@@ -11,12 +11,19 @@ new_tmux () {
   exec tmux new-session -s "$TMUX_SESSION"
 }
 
+tmux_sessions() {
+  echo
+  tmux ls
+}
+
+complete_sessions() {
+  tmux_sessions | fzf --bind alt-enter:print-query -n 1 -d: | cut -d: -f1
+}
+
 if [[ x"$1" == x ]]; then
+  TMUX_SESSION="$(complete_sessions)"
 
-  echo -n "Which session? "
-  read TMUX_SESSION
-
-  if [[ "$TMUX_SESSION"x != ""x ]]; then
+  if [[ -n "$TMUX_SESSION" ]]; then
     attach_tmux "$TMUX_SESSION" && exit 0
   fi
 
