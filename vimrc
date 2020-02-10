@@ -1,3 +1,4 @@
+let g:slimv_python_version=3
 let counter = 0
 let g:airline_theme="murmur"
 let g:easytags_async=1
