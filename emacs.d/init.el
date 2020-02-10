@@ -144,7 +144,6 @@
 (use-package magit
   :ensure t
   :config
-  (evil-define-key 'normal magit-file-mode-map " a" 'magit)
   ;; TODO: figure this out with transients
   ;;(magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote)
   'magit-dispatch
@@ -178,6 +177,7 @@
                   "git@git.fiddlerwoaroof.com:dotfiles.git"
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
+
 (defun load-package-configuration (package)
   (let* ((local-configs "~/.emacs.d/lisp/configurations/")
          (git-configs (concat *dotfiles-repo*
@@ -187,6 +187,33 @@
     (load conf-file)))
 
 (load-package-configuration 'evil)
+
+(use-package projectile
+  :ensure t
+  :config
+  (define-key evil-normal-state-map " h" 'helm-projectile-find-file-dwim)
+  (setq
+   ;;       projectile-enable-caching t
+   projectile-generic-command "rg --files -0"
+   )
+
+  (projectile-register-project-type
+   'clojure '("project.clj")
+   :compile "lein uberjar"
+   :test-dir "src/test/")
+
+  (projectile-register-project-type
+   'lisp '("*.asd"))
+
+  (projectile-register-project-type
+   'npm '("package.json")
+   :compile "npm install"
+   :test "npm test"
+   :run "npm start"
+   :test-suffix ".spec")
+
+  (define-key evil-normal-state-map "gf" 'project-aware-ffap))
+
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
 (load-package-configuration 'cider)
@@ -405,32 +432,6 @@ With a prefix ARG invalidates the cache first."
              'helm-projectile-find-file-dwim
            'find-file-at-point)
          args))
-
-(use-package projectile
-  :ensure t
-  :config
-  (define-key evil-normal-state-map " h" 'helm-projectile-find-file-dwim)
-  (setq
-   ;;       projectile-enable-caching t
-   projectile-generic-command "rg --files -0"
-   )
-
-  (projectile-register-project-type
-   'clojure '("project.clj")
-   :compile "lein uberjar"
-   :test-dir "src/test/")
-
-  (projectile-register-project-type
-   'lisp '("*.asd"))
-
-  (projectile-register-project-type
-   'npm '("package.json")
-   :compile "npm install"
-   :test "npm test"
-   :run "npm start"
-   :test-suffix ".spec")
-
-  (define-key evil-normal-state-map "gf" 'project-aware-ffap))
 
 
 (use-package cl-generic
