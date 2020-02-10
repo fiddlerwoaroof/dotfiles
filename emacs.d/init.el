@@ -71,16 +71,19 @@
   :ensure t)
 
 (use-package lsp-mode
-  :pin "melpa-stable"
   :ensure t
   :config (setq lsp-enable-snippet nil))
 
-(use-package lsp-treemacs
-  :after lsp-mode
-  :ensure t)
+(defun fwoar/lsp-ui-hook ()
+  (lsp-ui-sideline-mode -1))
 
 (use-package lsp-ui
-  :pin "melpa-stable"
+  :after lsp-mode
+  :ensure t
+  :config
+  (add-hook 'lsp-ui-mode-hook 'fwoar/lsp-ui-hook))
+
+(use-package lsp-treemacs
   :after lsp-mode
   :ensure t)
 
@@ -415,12 +418,60 @@ With a prefix ARG invalidates the cache first."
   (global-highlight-parentheses-mode 1))
 
 
-(use-package magit :ensure t
+(fwoar/zenburn-with-color-variables
+  (defface magit-keyword-feature
+    `((t :foreground ,zenburn-green :inherit magit-keyword))
+    "Face for parts of commit messages inside brackets."
+    :group 'magit-faces)
+  (defface magit-keyword-chore
+    `((t :foreground ,zenburn-blue :inherit magit-keyword))
+    "Face for parts of commit messages inside brackets."
+    :group 'magit-faces)
+  (defface magit-keyword-misc
+    `((t :foreground ,zenburn-fg+1 :inherit magit-keyword))
+    "Face for parts of commit messages inside brackets."
+    :group 'magit-faces)
+  (defface magit-keyword-bug
+    `((t :foreground ,zenburn-red :inherit magit-keyword))
+    "Face for parts of commit messages inside brackets."
+    :group 'magit-faces))
+
+(defun fwoar/propertize-magit-log (_rev msg)
+  (let ((boundary 0))
+    (while (string-match "\\(?:feat\\(?:ure\\)?(\\([^)]+?\\))\\)\\|\\(?:feat\\(ure\\)?\\>\\)" msg boundary)
+      (setq boundary (match-end 0))
+      (magit--put-face (match-beginning 0) boundary
+                       'magit-keyword-feature msg)))
+  (let ((boundary 0))
+    (while (string-match "\\(?:chore(\\([^)]+?\\))\\)\\|\\(?:chore\\>\\)" msg boundary)
+      (setq boundary (match-end 0))
+      (magit--put-face (match-beginning 0) boundary
+                       'magit-keyword-chore msg)))
+  (let ((boundary 0))
+    (while (string-match "\\(?:bug(\\([^)]+?\\))\\)\\|\\(?:bug\\>\\)"  msg boundary)
+      (setq boundary (match-end 0))
+      (magit--put-face (match-beginning 0) boundary
+                       'magit-keyword-bug msg)))
+  (let ((boundary 0))
+    (while (string-match "^\\([^:[:space:]]+\\):"  msg boundary)
+      (setq boundary (match-end 0))
+      (let ((group (match-string 1 msg)))
+        (unless (or (s-starts-with? "feat" group)
+                    (s-starts-with? "chore" group)
+                    (s-starts-with? "bug" group))
+          (magit--put-face (match-beginning 0) (1- boundary)
+                           'magit-keyword-misc msg))))))
+
+(use-package magit
+  :ensure t
   :config
   (evil-define-key 'normal magit-file-mode-map " a" 'magit)
   ;; TODO: figure this out with transients
   ;;(magit-define-popup-action 'magit-dispatch-popup ?j "Browse remote" 'browse-at-remote)
-  'magit-dispatch)
+  'magit-dispatch
+
+  (advice-add 'magit-log-propertize-keywords :after
+              'fwoar/propertize-magit-log))
 
 (use-package browse-at-remote
   :after magit
