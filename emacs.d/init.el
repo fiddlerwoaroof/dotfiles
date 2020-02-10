@@ -92,7 +92,18 @@
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
+(defun load-package-configuration (package)
+  (let* ((local-configs "~/.emacs.d/lisp/configurations/")
+         (git-configs (concat *dotfiles-repo*
+                              "emacs.d/lisp/configurations/"))
+         (conf-file (concat (symbol-name package) "-conf.el"))
+         (load-path (list* local-configs git-configs load-path)))
+    (load conf-file)))
+
 (load-package-configuration 'evil)
+;; slime depends on fwoar-git-repo
+(load-package-configuration 'slime)
+(load-package-configuration 'cider)
 
 
 ;;(use-package multifiles
@@ -504,9 +515,6 @@ With a prefix ARG invalidates the cache first."
                   "git@git.fiddlerwoaroof.com:dotfiles.git"
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
-;; slime depends on fwoar-git-repo
-(load-package-configuration 'cider)
-(load-package-configuration 'slime)
 (global-company-mode 1)
 
 

@@ -87,11 +87,6 @@ started from a shell."
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
-(defun load-package-configuration (package)
-  (load (concat "~/.emacs.d/lisp/configurations/"
-                (symbol-name package)
-                "-conf.el")))
-
 (defmacro ensure-use-packages (&rest packages)
   (list* 'progn
          (mapcar (lambda (pck)
