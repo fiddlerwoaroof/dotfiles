@@ -430,7 +430,7 @@ With a prefix ARG invalidates the cache first."
     "Face for parts of commit messages inside brackets."
     :group 'magit-faces)
   (defface magit-keyword-misc
-    `((t :foreground ,zenburn-fg+1 :inherit magit-keyword))
+    `((t :foreground ,zenburn-fg-1 :inherit magit-keyword))
     "Face for parts of commit messages inside brackets."
     :group 'magit-faces)
   (defface magit-keyword-bug
@@ -440,25 +440,28 @@ With a prefix ARG invalidates the cache first."
 
 (defun fwoar/propertize-magit-log (_rev msg)
   (let ((boundary 0))
-    (while (string-match "\\(?:feat\\(?:ure\\)?(\\([^)]+?\\))\\)\\|\\(?:feat\\(ure\\)?\\>\\)" msg boundary)
+    (while (string-match "^\\(\\(?:feat\\(?:ure\\)?(\\([^)]+?\\))\\)\\|\\(?:feat\\(ure\\)?\\>\\)\\)" msg boundary)
       (setq boundary (match-end 0))
       (magit--put-face (match-beginning 0) boundary
                        'magit-keyword-feature msg)))
   (let ((boundary 0))
-    (while (string-match "\\(?:chore(\\([^)]+?\\))\\)\\|\\(?:chore\\>\\)" msg boundary)
+    (while (string-match "^\\(\\(?:chore(\\([^)]+?\\))\\)\\|\\(?:chore\\>\\)\\)" msg boundary)
       (setq boundary (match-end 0))
       (magit--put-face (match-beginning 0) boundary
                        'magit-keyword-chore msg)))
   (let ((boundary 0))
-    (while (string-match "\\(?:bug(\\([^)]+?\\))\\)\\|\\(?:bug\\>\\)"  msg boundary)
+    (while (string-match "^\\(\\(?:bug(\\([^)]+?\\))\\)\\|\\(?:bug\\>\\)\\)"  msg boundary)
       (setq boundary (match-end 0))
       (magit--put-face (match-beginning 0) boundary
                        'magit-keyword-bug msg)))
   (let ((boundary 0))
-    (while (string-match "^\\([^:[:space:]]+\\):"  msg boundary)
+    (while (string-match "^\\([^:\n\t]+\\):"  msg boundary)
       (setq boundary (match-end 0))
       (let ((group (match-string 1 msg)))
-        (unless (or (s-starts-with? "feat" group)
+        (unless (or (> (length group) 20)
+                    (s-starts-with? "feat" group)
+                    (s-starts-with? "Merge" group)
+                    (s-starts-with? "merge" group)
                     (s-starts-with? "chore" group)
                     (s-starts-with? "bug" group))
           (magit--put-face (match-beginning 0) (1- boundary)
