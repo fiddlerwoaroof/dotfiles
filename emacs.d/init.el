@@ -30,6 +30,8 @@
 
 (cold-boot)
 
+(use-package flycheck
+  :ensure t)
 (use-package company
   :config
   ;; keybindings
@@ -146,6 +148,9 @@
   :after org-projectile
   :config
   (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
+
+(use-package delight
+  :ensure t)
 
 (use-package deadgrep
   :ensure t)
@@ -316,7 +321,7 @@ With a prefix ARG invalidates the cache first."
 
   (projectile-register-project-type
    'lisp '("*.asd"))
-  
+
   (projectile-register-project-type
    'npm '("package.json")
    :compile "npm install"
@@ -343,27 +348,32 @@ With a prefix ARG invalidates the cache first."
   (fwoar--pl-selector))
 (define-key evil-normal-state-map " o" 'fwoar-pl-selector)
 
-(load-package-configuration 'cider)
 
 (use-package imenu
   :config
   (define-key evil-normal-state-map " d" 'helm-imenu-in-all-buffers))
 
-(defun fwoar--paste-from-register-mru-buffer (register)
-  (interactive
-   (let ((overlay (make-overlay (point) (point)))
-         (string "\""))
-     (unwind-protect
-         (progn
-           ;; display " in the buffer while reading register
-           (put-text-property 0 1 'face 'minibuffer-prompt string)
-           (put-text-property 0 1 'cursor t string)
-           (overlay-put overlay 'after-string string)
-           (list (or evil-this-register (read-char))))
-       (delete-overlay overlay))))
-  (let ((filename (with-current-buffer helm-current-buffer 
-                    (evil-get-register register t))))
-    (insert filename)))
+(defun fwoar--read-register-name ()
+  (let ((overlay (make-overlay (point) (point)))
+        (string "\""))
+    (unwind-protect
+        (progn
+          ;; display " in the buffer while reading register
+          (put-text-property 0 1 'face 'minibuffer-prompt string)
+          (put-text-property 0 1 'cursor t string)
+          (overlay-put overlay 'after-string string)
+          (list (or evil-this-register (read-char))))
+      (delete-overlay overlay))))
+
+(defun fwoar--paste-register-from-helm-current-buffer (register)
+  (interactive (fwoar--read-register-name))
+  (let ((filename (with-current-buffer helm-current-buffer
+                    (if (equal register
+                               (elt (kbd "C-w") 0))
+                        (word-at-point)
+                      (evil-get-register register t)))))
+    (when filename
+      (insert filename))))
 
 (use-package ag :ensure t)
 
@@ -380,22 +390,14 @@ With a prefix ARG invalidates the cache first."
 (use-package helm :ensure t :config
   (require 'helm-config)
   (helm-mode)
-  (global-set-key
-   (kbd "M-x")
-   'helm-M-x)
-  (global-set-key
-   (kbd "C-x C-f")
-   'helm-find-files)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key evil-normal-state-map " f" 'helm-projectile)
   (define-key evil-normal-state-map " j" 'helm-buffers-list)
   (define-key evil-normal-state-map " s" 'helm-occur)
   (define-key evil-normal-state-map " S" 'helm-projectile-rg)
-  (define-key helm-map
-    (kbd "C-r")
-    'fwoar--paste-from-register-mru-buffer)
-  (define-key helm-map
-    (kbd "<right>")
-    'helm-execute-persistent-action)
+  (define-key helm-map (kbd "C-r") 'fwoar--paste-register-from-helm-current-buffer)
+  (define-key helm-map (kbd "<right>") 'helm-execute-persistent-action)
   (define-key helm-map
     (kbd "<left>")
     'helm-find-files-up-one-level))
@@ -500,6 +502,7 @@ With a prefix ARG invalidates the cache first."
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
 ;; slime depends on fwoar-git-repo
+(load-package-configuration 'cider)
 (load-package-configuration 'slime)
 (global-company-mode 1)
 

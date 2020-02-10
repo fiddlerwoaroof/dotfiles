@@ -19,9 +19,11 @@
     ("zenburn-fg-2"     . "#656555")
     ("zenburn-black"    . "#000000")
     ("zenburn-bg-2"     . "#000000")
-    ("zenburn-bg-1"     . "#2B2B2B")
+    ;;("zenburn-bg-1"     . "#2B2B2B")
+    ("zenburn-bg-1"     . "#111112")
     ("zenburn-bg-05"    . "#383838")
-    ("zenburn-bg"       . "#3F3F3F")
+    ;;("zenburn-bg"       . "#3F3F3F")
+    ("zenburn-bg"       . "#2A2B2E")
     ("zenburn-bg+05"    . "#494949")
     ("zenburn-bg+1"     . "#4F4F4F")
     ("zenburn-bg+2"     . "#5F5F5F")
@@ -156,7 +158,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(mode-line-highlight ((t nil)))
    `(mode-line ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg
                                 :inherit fwoar-zenburn-1-face))))
-   `(mode-line-inactive ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg-1 
+   `(mode-line-inactive ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg-1
                                          :inherit fwoar-zenburn-1-face))))
    `(mode-line-buffer-id ((t (:foreground ,zenburn-blue-2))))
    `(region ((t (:foreground unspecified :background unspecified :inverse-video t))))
@@ -169,7 +171,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(cursor ((t :foreground unspecified :background unspecified :inverse-video t)))
    `(default ((t (:family "Source Code Pro" :foundry "nil"
                           :slant normal :weight normal :height 130 :width normal
-                          :foreground ,zenburn-fg :background ,zenburn-bg 
+                          :foreground ,zenburn-fg :background ,zenburn-bg
                           :inherit fwoar-zenburn-face))))
 
    ;; rainbow delimiters

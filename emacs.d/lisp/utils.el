@@ -160,6 +160,7 @@ started from a shell."
   (add-hook 'after-init-hook 'post-init)
   (electric-indent-mode -1)
   (electric-pair-mode -1)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   (when (file-exists-p "/usr/local/bin/gls")
     (setq insert-directory-program "/usr/local/bin/gls"))
@@ -189,4 +190,3 @@ started from a shell."
         'browse-url-default-browser)
 
   (require 'use-package))
-

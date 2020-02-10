@@ -1,8 +1,11 @@
-(defun fwoar/cider-hook-base ()
-  (flycheck-mode)
+(defun fwoar/clojure-hook ()
+  (message "clojure-hook")
+  (flycheck-mode 1)
   (rainbow-delimiters-mode 1)
   (evil-smartparens-mode 1)
-  (smartparens-strict-mode 1)
+  (smartparens-strict-mode 1))
+
+(defun fwoar/cider-hook-base ()
   (helm-cider-mode 1)
   (cider-company-enable-fuzzy-completion))
 (defun fwoar/cider-hook ()
@@ -21,10 +24,10 @@
     (with-current-buffer (cider-current-repl nil t)
       (let ((fw/window (get-buffer-window)))
         (with-selected-window fw/window
-          (end-of-buffer)
+          (goto-char (point-max))
           (insert form)
           (cider-repl-return)
-          (end-of-buffer))))))
+          (goto-char (point-max)))))))
 
 (use-package cider
   :ensure t
@@ -36,6 +39,7 @@
   (def-cider-selector-method ?S "find clojure project file"
     (fwoar--find-system))
 
+  (add-hook 'clojure-mode-hook 'fwoar/clojure-hook)
   (add-hook 'cider-mode-hook 'fwoar/cider-hook)
   (add-hook 'cider-repl-mode-hook 'fwoar/cider-repl-hook)
 
@@ -57,7 +61,7 @@
   :after cider
   :ensure t
   :config
-  (evil-define-key 'normal clojure-mode-map (kbd "SPC r") 'hydra-cljr-toplevel-form-menu/body))
+  (evil-define-key 'normal clojure-mode-map (kbd "SPC r") 'hydra-cljr-help-menu/body))
 
 
 (use-package helm-cider
@@ -84,7 +88,8 @@
 
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode clojure-mode)))
   (find-clojure-project-file))
-
+(cl-defmethod fwoar--find-system (&context (projectile-project-type (eql clojure-mode)))
+  (find-clojure-project-file))
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode cider-repl-mode)))
   (find-clojure-project-file))
 

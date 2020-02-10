@@ -16,6 +16,7 @@
   :ensure t
   :config
 
+  (define-key evil-motion-state-map (kbd "TAB") nil)
   (define-key evil-motion-state-map (kbd "C-w C-o") 'fwoar-delete-mru-window)
   (define-key evil-motion-state-map (kbd "C-w C-w") 'evil-window-mru)
 
@@ -78,6 +79,7 @@
 
 (use-package evil-smartparens
   :ensure t
+  :delight
   :after evil smartparens
   :config
   (evil-smartparens-mode 1)
@@ -178,6 +180,6 @@
 
 (defun setup-special-mode ()
   (company-mode -1))
-(define-key evil-motion-state-map (kbd "TAB") nil)
+
 (add-hook 'special-mode-hook
           'setup-special-mode)
