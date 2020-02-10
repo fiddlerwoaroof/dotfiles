@@ -8948,6 +8948,7 @@
 		<string>3.3.1</string>
 		<string>3.3.3</string>
 		<string>3.3.5</string>
+		<string>3.3.7</string>
 		<string>3.2.9</string>
 		<string>3.3.2</string>
 		<string>3.3.0</string>
@@ -8964,7 +8965,7 @@
 	<key>NoSyncFrame_SessionsPreferences</key>
 	<dict>
 		<key>screenFrame</key>
-		<string>{{0, 0}, {1920, 1200}}</string>
+		<string>{{0, 0}, {2560, 1440}}</string>
 		<key>topLeft</key>
 		<string>{269, 595}</string>
 	</dict>
@@ -8986,7 +8987,7 @@
 	<key>NoSyncLastTipTime</key>
 	<real>589912922.75413203</real>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>24</integer>
+	<integer>32</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -9856,16 +9857,16 @@
 	</array>
 	<key>NoSyncSearchHistory2</key>
 	<array>
-		<string>Eval</string>
-		<string>python</string>
-		<string>mycloud</string>
-		<string>04f8e9335a1f16d90ba2d253d175869e5234859d</string>
-		<string>reflog ex</string>
-		<string>config</string>
-		<string>commit</string>
-		<string>pack</string>
-		<string>optimus</string>
-		<string>0x36c451839bb1995q</string>
+		<string>bern</string>
+		<string>edwar</string>
+		<string>offer_name</string>
+		<string>cur_off</string>
+		<string>setCoupon</string>
+		<string>cmucl</string>
+		<string>parameters</string>
+		<string>method_de</string>
+		<string>basic</string>
+		<string>class</string>
 	</array>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>514146749.36215597</real>
@@ -10014,11 +10015,11 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2019-11-28T10:07:02Z</date>
+	<date>2020-02-10T10:14:51Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>SUUpdateRelaunchingMarker</key>
-	<false/>
+	<true/>
 	<key>Selection Respects Soft Boundaries</key>
 	<true/>
 	<key>ShowBookmarkName</key>
@@ -10036,7 +10037,7 @@
 	<key>StretchTabsToFillBar</key>
 	<true/>
 	<key>SuppressRestartAnnouncement</key>
-	<false/>
+	<true/>
 	<key>TabStyle</key>
 	<integer>3</integer>
 	<key>TabStyleWithAutomaticOption</key>
@@ -10076,7 +10077,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.3.6</string>
+	<string>3.3.7</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>6</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
