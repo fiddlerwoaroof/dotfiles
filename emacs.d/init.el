@@ -6,8 +6,7 @@
 (let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
   (add-to-list 'load-path my-theme-path)
   (add-to-list 'custom-theme-load-path my-theme-path)
-  (when (display-graphic-p)
-    (load-theme 'fwoar-zenburn t)))
+  (load-theme 'fwoar-zenburn t))
 
 (progn (setq default-frame-alist
              '((vertical-scroll-bars . nil)
