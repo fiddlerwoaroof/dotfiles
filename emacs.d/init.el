@@ -193,6 +193,8 @@
 (load-package-configuration 'cider)
 (evil-define-key 'normal magit-file-mode-map " a" 'magit)
 
+(global-company-mode 1)
+
 
 
 ;;(use-package multifiles
@@ -518,7 +520,6 @@ With a prefix ARG invalidates the cache first."
 
 (use-package highlight-parentheses :ensure t :config
   (global-highlight-parentheses-mode 1))
-(global-company-mode 1)
 
 
 
