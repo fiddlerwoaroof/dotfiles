@@ -737,3 +737,10 @@ With a prefix ARG invalidates the cache first."
     (no-other-window t)
     (no-delete-other-windows t))
   ())
+
+(use-package prolog)
+(use-package ediprolog
+  :after prolog
+  :ensure t
+  :config
+  (define-key prolog-mode-map (kbd "C-j") 'ediprolog-dwim))

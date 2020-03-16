@@ -113,38 +113,36 @@ started from a shell."
             (helm-projectile-rg))
         (error "`helm-rg' is not available.  Is MELPA in your `package-archives'?")))))
 
-(defun post-init ()
-  ;;;;; INDENTATION SETUP  {{{
+(defun setup-indentation ()
+  (setq-default indent-tabs-mode nil
+                tab-width 2)
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'sh-basic-offset 'tab-width)
+  (defvaralias 'js2-basic-offset 'tab-width)
+  (defvaralias 'sgml-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width)
+  nil)
 
-
-  (centaur-tabs-mode 1)
-  (progn
-    (setq-default indent-tabs-mode nil
-                  tab-width 2)
-    (defvaralias 'c-basic-offset 'tab-width)
-    (defvaralias 'sh-basic-offset 'tab-width)
-    (defvaralias 'js2-basic-offset 'tab-width)
-    (defvaralias 'sgml-basic-offset 'tab-width)
-    (defvaralias 'cperl-indent-level 'tab-width))
-            ;;;;; }}}
-
-  ;; (require 'projectile)
-  ;; (require 'evil-numbers)
+(defun start-server ()
   (unless (fboundp 'server-running-p)
     (require 'server))
   (let ((server-name (if fwoar.is-ordinary
                          server-name
                        "notes")))
     (unless (server-running-p)
-      (server-start)))
+      (server-start))))
 
-  (projectile-mode)
-  (evil-mode)
-  ;; (paredit-mode)
-  ;;(global-company-mode)
-  ;; (setq linum-format "%5d\u2502")
-  (if (version<= "26.0.50" emacs-version )
+(defun post-init ()
+  (centaur-tabs-mode 1)
+  (projectile-mode 1)
+  (evil-mode 1)
+
+  (setup-indentation)
+  (start-server)
+
+  (if (version<= "26.0.50" emacs-version)
       (global-display-line-numbers-mode)
+    (setq linum-format "%5d\u2502")
     (global-linum-mode))
   (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
@@ -154,7 +152,8 @@ started from a shell."
   (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
   (add-hook 'after-init-hook 'post-init)
   (electric-indent-mode -1)
-  (electric-pair-mode -1)
+  (comment
+   (electric-pair-mode -1))
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
   (when (file-exists-p "/usr/local/bin/gls")
