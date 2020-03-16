@@ -562,7 +562,8 @@ With a prefix ARG invalidates the cache first."
 (use-package treemacs
   :ensure t
   :config
-  (setq treemacs-is-never-other-window t)
+  (setq treemacs-is-never-other-window t
+        treemacs-no-png-images t)
   (global-set-key (kbd "s-e") 'fwoar--activate-treemacs)
   (global-set-key (kbd "s-1") 'fwoar--activate-treemacs)
   (add-hook 'treemacs-mode-hook 'fwoar--no-line-numbers)
