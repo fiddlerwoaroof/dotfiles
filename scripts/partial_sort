@@ -6,16 +6,20 @@ import heapq
 def file_iter(fil):
     the_line = 0
     while the_line != '':
-        the_line = fil.readline()
-        yield the_line
+        next_line = fil.readline().strip()
+        if next_line != '':
+            # yield int(next_line)
+            yield next_line
+        the_line = next_line
 
 def sorter(gen, len_):
     the_buffer = []
 
     for the_line in gen:
-        # print("pushing: ", the_line, end='')
+        # print("pushing: ", the_line)
         heapq.heappush(the_buffer, the_line)
         if len(the_buffer) == len_:
+            # print("buffer_before: ", repr(the_buffer))
             yield heapq.heappop(the_buffer)
         # print("buffer_after: ", repr(the_buffer))
 
@@ -26,5 +30,5 @@ def sorter(gen, len_):
 
 if __name__ == '__main__':
     import sys
-    for line in sorter(file_iter(sys.stdin), 10):
-        print(line, end='')
+    for line in sorter(file_iter(sys.stdin), int(sys.argv[1])):
+        print(line)
