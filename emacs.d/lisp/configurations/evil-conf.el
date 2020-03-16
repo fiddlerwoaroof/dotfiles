@@ -40,31 +40,14 @@
     (evil-define-key 'normal company-mode-map (kbd "TAB") 'company-indent-or-complete-common)
     (evil-define-key 'insert company-mode-map (kbd "TAB") 'company-indent-or-complete-common))
 
+  (evil-define-key 'normal magit-file-mode-map " a" 'magit)
+
   (progn ;; error jumping
     (define-key evil-motion-state-map "]e" 'flycheck-next-error)
     (define-key evil-motion-state-map "[e" 'flycheck-previous-error))
 
-  (progn ;; workaround until this fixed: https://github.com/emacs-evil/evil/issues/1129
-    ;;                          or this: https://github.com/emacs-evil/evil/pull/1130
-    (defun config/fix-evil-window-move (orig-fun &rest args)
-      "Close Treemacs while moving windows around."
-      (if (fboundp 'treemacs-get-local-window)
-          (let* ((treemacs-window (treemacs-get-local-window))
-                 (is-active (and treemacs-window (window-live-p treemacs-window))))
-            (when is-active (treemacs))
-            (apply orig-fun args)
-            (when is-active
-              (save-selected-window
-                (treemacs))))
-        (apply orig-fun args)))
-
-    (dolist (func '(evil-window-move-far-left
-                    evil-window-move-far-right
-                    evil-window-move-very-top
-                    evil-window-move-very-bottom))
-      (advice-add func
-                  :around #'config/fix-evil-window-move)))
-  )
+  ;; make evil keybindings apply right away when I open a new buffer
+  (add-hook 'window-configuration-change-hook 'evil-normalize-keymaps))
 
 (use-package evil-surround
   :ensure t

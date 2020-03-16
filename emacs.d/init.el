@@ -217,7 +217,6 @@
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
 (load-package-configuration 'cider)
-(evil-define-key 'normal magit-file-mode-map " a" 'magit)
 
 (global-company-mode 1)
 

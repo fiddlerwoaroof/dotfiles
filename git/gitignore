@@ -15,3 +15,4 @@ cjo/ztest-container*
 *.fasl
 .factorypath
 .shadow-cljs
+.DS_Store
