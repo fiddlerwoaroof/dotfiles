@@ -10,7 +10,8 @@
 
 (load-init-file "editor-color-theme")
 
-(editor-color-theme:color-theme "solarized-dark")
+(editor-color-theme:color-theme "zenburn")
+(editor-color-theme:zenburn-paren-colors)
 
 (setf (editor:variable-value "Input Format Default")
       :default)

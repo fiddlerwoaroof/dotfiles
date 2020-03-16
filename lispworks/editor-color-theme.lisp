@@ -14,7 +14,8 @@
            #:color-theme-args
            #:color-theme
            #:define-color-theme
-           #:remove-color-theme))
+           #:remove-color-theme
+           #:zenburn-paren-colors))
 
 (in-package #:editor-color-theme)
 
@@ -335,6 +336,114 @@
                                    :solarized-blue
                                    :solarized-magenta))
 
+
+(defun hex->color (hex)
+  (declare (optimize (speed 3) (safety 1) (debug 1)))
+  (check-type hex (string 7))
+  (flet ((extract-digits (string start end)
+           (check-type string (simple-string 7))
+           (parse-integer string
+                          :start start
+                          :end end
+                          :radix 16)))
+    (let* ((hex (coerce hex 'simple-string))
+           (r (extract-digits hex 1 3))
+           (g (extract-digits hex 3 5))
+           (b (extract-digits hex 5 7)))
+      (color:make-rgb (/ r 255.0)
+                      (/ g 255.0)
+                      (/ b 255.0)))))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter +zenburn-colors+
+    `((zenburn-fg+2 ,(hex->color "#FFFFEF"))
+      (zenburn-fg+1 ,(hex->color "#F5F5D6"))
+      (zenburn-fg ,(hex->color "#DCDCCC"))
+      (zenburn-fg-1 ,(hex->color "#A6A689"))
+      (zenburn-fg-2 ,(hex->color "#656555"))
+      (zenburn-black ,(hex->color "#000000"))
+      (zenburn-bg-2 ,(hex->color "#000000"))
+      (zenburn-bg-1 ,(hex->color "#111112"))
+      (zenburn-bg-05 ,(hex->color "#383838"))
+      (zenburn-bg ,(hex->color "#2A2B2E"))
+      (zenburn-bg+05 ,(hex->color "#494949"))
+      (zenburn-bg+1 ,(hex->color "#4F4F4F"))
+      (zenburn-bg+2 ,(hex->color "#5F5F5F"))
+      (zenburn-bg+3 ,(hex->color "#6F6F6F"))
+      (zenburn-red+2 ,(hex->color "#ECB3B3"))
+      (zenburn-red+1 ,(hex->color "#DCA3A3"))
+      (zenburn-red ,(hex->color "#CC9393"))
+      (zenburn-red-1 ,(hex->color "#BC8383"))
+      (zenburn-red-2 ,(hex->color "#AC7373"))
+      (zenburn-red-3 ,(hex->color "#9C6363"))
+      (zenburn-red-4 ,(hex->color "#8C5353"))
+      (zenburn-red-5 ,(hex->color "#7C4343"))
+      (zenburn-red-6 ,(hex->color "#6C3333"))
+      (zenburn-orange ,(hex->color "#DFAF8F"))
+      (zenburn-yellow ,(hex->color "#F0DFAF"))
+      (zenburn-yellow-1 ,(hex->color "#E0CF9F"))
+      (zenburn-yellow-2 ,(hex->color "#D0BF8F"))
+      (zenburn-green-5 ,(hex->color "#2F4F2F"))
+      (zenburn-green-4 ,(hex->color "#3F5F3F"))
+      (zenburn-green-3 ,(hex->color "#4F6F4F"))
+      (zenburn-green-2 ,(hex->color "#5F7F5F"))
+      (zenburn-green-1 ,(hex->color "#6F8F6F"))
+      (zenburn-green ,(hex->color "#7F9F7F"))
+      (zenburn-green+1 ,(hex->color "#8FB28F"))
+      (zenburn-green+2 ,(hex->color "#9FC59F"))
+      (zenburn-green+3 ,(hex->color "#AFD8AF"))
+      (zenburn-green+4 ,(hex->color "#BFEBBF"))
+      (zenburn-cyan ,(hex->color "#93E0E3"))
+      (zenburn-blue+3 ,(hex->color "#BDE0F3"))
+      (zenburn-blue+2 ,(hex->color "#ACE0E3"))
+      (zenburn-blue+1 ,(hex->color "#94BFF3"))
+      (zenburn-blue ,(hex->color "#8CD0D3"))
+      (zenburn-blue-1 ,(hex->color "#7CB8BB"))
+      (zenburn-blue-2 ,(hex->color "#6CA0A3"))
+      (zenburn-blue-3 ,(hex->color "#5C888B"))
+      (zenburn-blue-4 ,(hex->color "#4C7073"))
+      (zenburn-blue-5 ,(hex->color "#366060"))
+      (zenburn-magenta ,(hex->color "#DC8CC3")))))
+
+(defmacro with-zenburn-colors (&body body)
+  `(let ,+zenburn-colors+
+     (declare (ignorable ,@(mapcar 'car +zenburn-colors+)))
+     ,@body))
+
+(with-zenburn-colors
+  (define-color-theme "zenburn" ()
+    :foreground zenburn-fg
+    :background zenburn-bg
+    :region `(:foreground ,zenburn-fg+1
+              :background ,zenburn-bg+1)
+    :show-point-face `(:background ,zenburn-bg+2)
+    :interactive-input-face `(:foreground ,zenburn-red)
+    :highlight '(:bold-p t)
+    :non-focus-complete-face `(:background :tweak_background)
+    :font-lock-function-name-face `(:foreground ,zenburn-blue)
+    :font-lock-comment-face `(:foreground ,zenburn-fg-1)
+    :font-lock-type-face `(:foreground ,zenburn-green)
+    :font-lock-variable-name-face `(:foreground ,zenburn-yellow)
+    :font-lock-string-face `(:foreground ,zenburn-orange)
+    :font-lock-keyword-face `(:foreground ,zenburn-cyan)
+    :font-lock-builtin-face `(:foreground ,zenburn-blue+1)
+    :compiler-note-highlight `(:foreground ,zenburn-fg+1)
+    :compiler-warning-highlight `(:foreground ,zenburn-orange)
+    :compiler-error-highlight `(:foreground ,zenburn-red+1)))
+
+(defun zenburn-paren-colors ()
+  (with-zenburn-colors
+    (capi:set-editor-parenthesis-colors
+     (list zenburn-red
+           zenburn-green
+           zenburn-blue-1
+           zenburn-green+1
+           zenburn-blue+1
+           zenburn-green+2
+           zenburn-orange
+           zenburn-cyan
+           zenburn-magenta
+           zenburn-yellow))))
 
 ;;; Show presence when loaded
 (pushnew :editor-color-theme *features*)
