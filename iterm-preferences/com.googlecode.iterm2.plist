@@ -6,6 +6,8 @@
 	<true/>
 	<key>AppleAntiAliasingThreshold</key>
 	<integer>1</integer>
+	<key>ApplePressAndHoldEnabled</key>
+	<false/>
 	<key>AppleScrollAnimationEnabled</key>
 	<integer>0</integer>
 	<key>AppleSmoothFixedFontsSizeThreshold</key>
@@ -8944,14 +8946,15 @@
 	<key>NoSyncAllAppVersions</key>
 	<array>
 		<string>3.3.6</string>
-		<string>3.3.4</string>
+		<string>3.3.0</string>
+		<string>3.3.8</string>
 		<string>3.3.1</string>
 		<string>3.3.3</string>
 		<string>3.3.5</string>
 		<string>3.3.7</string>
 		<string>3.2.9</string>
 		<string>3.3.2</string>
-		<string>3.3.0</string>
+		<string>3.3.4</string>
 	</array>
 	<key>NoSyncBFPRecents</key>
 	<array>
@@ -8987,7 +8990,7 @@
 	<key>NoSyncLastTipTime</key>
 	<real>589912922.75413203</real>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>32</integer>
+	<integer>33</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
@@ -9842,32 +9845,6 @@
 	</dict>
 	<key>NoSyncSaveDocumentAsPathSet_saveDocumentAs:</key>
 	<true/>
-	<key>NoSyncSearchHistory</key>
-	<array>
-		<string>date-time</string>
-		<string>compil</string>
-		<string>legit:clone</string>
-		<string>while</string>
-		<string>sqlplus</string>
-		<string>name</string>
-		<string>tnsn</string>
-		<string>fedex</string>
-		<string>test</string>
-		<string>entrypo</string>
-	</array>
-	<key>NoSyncSearchHistory2</key>
-	<array>
-		<string>bern</string>
-		<string>edwar</string>
-		<string>offer_name</string>
-		<string>cur_off</string>
-		<string>setCoupon</string>
-		<string>cmucl</string>
-		<string>parameters</string>
-		<string>method_de</string>
-		<string>basic</string>
-		<string>class</string>
-	</array>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>514146749.36215597</real>
 	<key>NoSyncTipsToNotShow</key>
@@ -10015,9 +9992,11 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2020-02-10T10:14:51Z</date>
+	<date>2020-02-13T19:19:56Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
+	<key>SUUpdateGroupIdentifier</key>
+	<integer>1212515205</integer>
 	<key>SUUpdateRelaunchingMarker</key>
 	<true/>
 	<key>Selection Respects Soft Boundaries</key>
@@ -10077,7 +10056,7 @@
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>iTerm Version</key>
-	<string>3.3.7</string>
+	<string>3.3.8</string>
 	<key>kCPKSelectionViewPreferredModeKey</key>
 	<integer>6</integer>
 	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
