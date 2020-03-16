@@ -9,6 +9,14 @@
       (insert "\n)"))
     (read (current-buffer))))
 
+(defun read-strings-in-file (fn)
+  (with-temp-buffer
+    (insert-file fn)
+    (mark-whole-buffer)
+    (flush-lines "^[[:space:]]*$")
+    (goto-char (point-min))
+    (remove "" (s-lines (buffer-string)))))
+
 (defun op--collect-args (body)
   (cl-flet ((walker (body &optional args)
                     (if (null body)

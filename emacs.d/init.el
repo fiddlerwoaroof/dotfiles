@@ -227,6 +227,31 @@
 ;;  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
 ;;  )
 
+(defun safe-files ()
+  (let ((fn (expand-file-name "~/.safe-files")))
+    (when (file-exists-p fn)
+      (read-strings-in-file fn))))
+
+(defun fwoar/mark-safe (fn)
+  (interactive (list buffer-file-name))
+  (with-temp-buffer
+    (insert "\n")
+    (insert fn)
+    (append-to-file (point-min) (point-max)
+                    (expand-file-name "~/.safe-files"))))
+
+(defvar-local safe-file-p nil)
+(setf (get 'safe-file-p 'risky-local-variable) t)
+
+(defun fwoar/confirm-babel-evaluate (lang body)
+  (message "Buffer file name: %s" buffer-file-name)
+  (let ((result (or safe-file-p
+                    (member buffer-file-name (safe-files)))))
+    (setq-local safe-file-p result)
+    (not safe-file-p)))
+
+(setq org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
+
 (use-package org
   :pin "org"
   :ensure t
@@ -248,7 +273,8 @@
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((lisp . t)))
+   '((lisp . t)
+     (haskell . t)))
 
   (define-key global-map "\C-cc" 'org-capture)
   (define-key evil-visual-state-map " c" 'org-capture))
