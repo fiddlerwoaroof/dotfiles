@@ -33,7 +33,7 @@
   :ensure t
   :config
   (require 'cider-selector)
-  (define-key evil-normal-state-map " t" 'cider-test-run-ns-tests)
+  (evil-define-key 'normal clojure-mode-map " t" 'cider-test-run-ns-tests)
   (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
 
   (def-cider-selector-method ?S "find clojure project file"

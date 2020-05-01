@@ -188,7 +188,7 @@ started from a shell."
     (package-refresh-contents)
     (package-install 'use-package))
 
-  (setq browse-url-browser-function
-        'browse-url-default-browser)
+  (setq browse-url-browser-function 'browse-url-default-browser
+        history-delete-duplicates t)
 
   (require 'use-package))

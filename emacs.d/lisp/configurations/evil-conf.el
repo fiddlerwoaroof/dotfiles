@@ -150,7 +150,7 @@
   :after evil
   :config
   (setq centaur-tabs-adjust-buffer-order t
-        centaur-tabs-adjust-buffer-order 'left)
+        centaur-tabs-adjust-buffer-order 'right)
   (centaur-tabs-enable-buffer-reordering)
 
   (define-key evil-normal-state-map "gt" 'centaur-tabs-forward-tab)

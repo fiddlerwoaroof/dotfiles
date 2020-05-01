@@ -85,7 +85,7 @@
   (add-hook 'lsp-ui-mode-hook 'fwoar/lsp-ui-hook))
 
 (use-package lsp-treemacs
-  :after lsp-mode
+  :after lsp-mode treemacs
   :ensure t)
 
 (defvar fwoar-git-mode :ssh)
@@ -547,8 +547,6 @@ With a prefix ARG invalidates the cache first."
 (use-package helm-css-scss :ensure t)
 
 (use-package helm-ls-git :ensure t)
-
-(use-package helm-projectile :ensure t)
 
 (use-package helm-projectile :ensure t)
 
