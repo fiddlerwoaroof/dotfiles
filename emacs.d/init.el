@@ -8,6 +8,10 @@
   (add-to-list 'custom-theme-load-path my-theme-path)
   (load-theme 'fwoar-zenburn t))
 
+(progn
+  (define-key key-translation-map (kbd "M-8") (kbd "•"))
+  (define-key key-translation-map (kbd "M-9") (kbd "λ")))
+
 (progn (setq default-frame-alist
              '((vertical-scroll-bars . nil)
                (right-divider-width . 2)
