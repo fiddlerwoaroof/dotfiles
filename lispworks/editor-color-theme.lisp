@@ -337,22 +337,23 @@
                                    :solarized-magenta))
 
 
-(defun hex->color (hex)
-  (declare (optimize (speed 3) (safety 1) (debug 1)))
-  (check-type hex (string 7))
-  (flet ((extract-digits (string start end)
-           (check-type string (simple-string 7))
-           (parse-integer string
-                          :start start
-                          :end end
-                          :radix 16)))
-    (let* ((hex (coerce hex 'simple-string))
-           (r (extract-digits hex 1 3))
-           (g (extract-digits hex 3 5))
-           (b (extract-digits hex 5 7)))
-      (color:make-rgb (/ r 255.0)
-                      (/ g 255.0)
-                      (/ b 255.0)))))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun hex->color (hex)
+    (declare (optimize (speed 3) (safety 1) (debug 1)))
+    (check-type hex (string 7))
+    (flet ((extract-digits (string start end)
+             (check-type string (simple-string 7))
+             (parse-integer string
+                            :start start
+                            :end end
+                            :radix 16)))
+      (let* ((hex (coerce hex 'simple-string))
+             (r (extract-digits hex 1 3))
+             (g (extract-digits hex 3 5))
+             (b (extract-digits hex 5 7)))
+        (color:make-rgb (/ r 255.0)
+                        (/ g 255.0)
+                        (/ b 255.0))))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter +zenburn-colors+
