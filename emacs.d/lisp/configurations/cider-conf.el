@@ -51,6 +51,7 @@
 
   (define-key cider-repl-mode-map (kbd "C-c M-o") 'cider-repl-clear-buffer)
   (define-key cider-repl-mode-map (kbd "C-c C-o") 'cider-repl-clear-output)
+  (define-key cider-mode-map (kbd "C-c ~") 'cider-repl-set-ns)
   (setq cider-save-file-on-load t
         cider-repl-history-file "~/.emacs.d/cider-history.clj")
 
