@@ -780,6 +780,18 @@ With a prefix ARG invalidates the cache first."
   :config
   (define-key prolog-mode-map (kbd "C-j") 'ediprolog-dwim))
 
+(use-package maven-test-mode
+  :ensure t
+  :after general evil
+  :hook java-mode
+  :config
+  (evil-define-key 'normal maven-test-mode-map
+    " t" 'maven-test-all
+    " T" 'maven-test-toggle-between-test-and-class-other-window))
+(use-package lsp-java
+  :ensure t
+  :hook (java-mode . lsp))
+
 (use-package lsp-haskell
   :ensure t
   :config
