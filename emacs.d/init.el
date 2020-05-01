@@ -742,14 +742,14 @@ With a prefix ARG invalidates the cache first."
   (eval-after-load 'evil
     '(evil-set-initial-state 'org-brain-visualize-mode 'emacs))
 
-  (push '("b" "Brain" plain (function org-brain-goto-end)
+  (push '("B" "Brain" plain (function org-brain-goto-end)
           "* %i%?" :empty-lines 1)
         org-capture-templates)
 
   (setq org-id-track-globally t
         org-id-locations-file "~/.emacs.d/.org-id-locations"
         org-brain-visualize-default-choices 'all
-        org-brain-title-max-length 12))
+        org-brain-title-max-length 0))
 
 (setq diary-file (expand-file-name "~/bucket/diary"))
 
