@@ -186,6 +186,15 @@
          (load-path (list* local-configs git-configs load-path)))
     (load conf-file)))
 
+(defun fwoar/load-local-packages ()
+  (interactive)
+  (mapc 'package-install-file
+        (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
+                         t ".*[.]el")))
+
+(unless (package-installed-p 'fwoar-functional-utils)
+  (fwoar/load-local-packages))
+
 (load-package-configuration 'evil)
 
 (use-package projectile
