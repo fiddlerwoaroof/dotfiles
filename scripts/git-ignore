@@ -9,7 +9,8 @@
 (defparameter *args*
   (uiop:command-line-arguments))
 
-(with-open-file (s ".gitignore" :direction :output :if-exists :append)
+(with-open-file (s ".gitignore" :direction :io :if-exists :append)
+  (fresh-line s)
   (if *args*
       (format s "~{~a~%~}" *args*)
       (loop for line = (string-trim '(#\space #\tab #\newline)
