@@ -2,6 +2,8 @@
 autoload -U regexp-replace
 GIT_DEBUG=0
 
+GIT_CMD="`which -p git 2>/dev/null`"
+GTI_CMD="`which -p gti 2>/dev/null`"
 
 git-bump() {
   git commit -m "${SITE_PREFIX:-}(bump)" --allow-empty
@@ -130,8 +132,33 @@ alias git-hub="git-get github"
 alias git-lab="git-get gitlab"
 alias gh="git-hub"
 
-GIT_CMD="`which -p git 2>/dev/null`"
-GTI_CMD="`which -p gti 2>/dev/null`"
+git-remote() {
+  [[ "$GIT_DEBUG" == 1 ]] && set -x
+  base_cmd=("$GIT_CMD" remote)
+  opts=()
+  args=()
+  for x in "$@"; do 
+    if [[ "${x[1]}" == "-" ]]; then
+      opts=("${opts[@]}" "$x")
+    else
+      args=("${args[@]}" "$x")
+    fi
+  done
+  if (( $#args >= 2 )) {
+       a=${args[1]};
+       b=${args[2]};
+       shift 2 args;
+       args=("$a" "${args[@]}")
+       if (( $#opts > 0 )); then 
+         "${base_cmd[@]}" "$b" "${opts[@]}" "${args[@]}"
+       else 
+         "${base_cmd[@]}" "$b" "${args[@]}"
+       fi
+     } else {
+       "${base_cmd[@]}" "$@"
+     }
+  [[ "$GIT_DEBUG" == 1 ]] && set +x
+}
 
 if [[ ! -z "$GIT_CMD" ]]; then
   # git wrapper that mimics the functionality of git for commandlets but also
@@ -141,7 +168,7 @@ if [[ ! -z "$GIT_CMD" ]]; then
     local cmdlets
 
     possible_cmd="${${$(expand-alias "git-$1")#'}%'}"
-    printf "%s" "$possible_cmd" | read -A cmdlets 
+    printf "%s" "$possible_cmd" | read -A cmdlets
 
     if [[ "$GIT_DEBUG" != "0" ]]; then
       echo "git: looking for: \"$possible_cmd\" command: \"${cmdlets[1]}\""
