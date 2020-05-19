@@ -2,6 +2,7 @@
 #:depends-on:key-bindings
 #:depends-on:named-directories
 #:depends-on:aliases
+#:depends-on:autoloads
 
 if [[ -e /etc/sysconfig/zsh-prompt-$TERM ]]; then
   . /etc/sysconfig/zsh-prompt-$TERM
