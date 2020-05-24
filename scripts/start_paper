@@ -6,7 +6,7 @@ if command -v gtar >-; then
 fi
 
 base64_cmdline=(base64 -d)
-if ! base64 -d &>-; then
+if ! base64 -d </dev/null &>/dev/null; then
   echo -- use -D
   base64_cmdline=(base64 -D)
 fi
