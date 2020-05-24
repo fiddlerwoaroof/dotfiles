@@ -1,8 +1,18 @@
-#!/bin/zsh
+#!/bin/zsh -x
+
+tar_command=tar
+if command -v gtar >/dev/null; then
+  tar_command=gtar
+fi
+
+base64_cmdline=(base64 -d)
+if ! base64 -d </dev/null &>/dev/null; then
+  echo -- use -D
+  base64_cmdline=(base64 -D)
+fi
 
 DEST_DIR=$1
 
 mkdir $DEST_DIR || exit 1
 
-(base64 -d | tar --xz -xf - -C $DEST_DIR --strip-components=1 --transform="s/paper_template/$DEST_DIR/g") <<EOF
-
+( "${base64_cmdline[@]}" | "$tar_command" --xz -xf - -C $DEST_DIR --strip-components=1 --transform="s:paper_template:${DEST_DIR##*/}:g" ) <<EOF
