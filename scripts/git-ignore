@@ -9,7 +9,7 @@
 (defparameter *args*
   (uiop:command-line-arguments))
 
-(with-open-file (s ".gitignore" :direction :io :if-exists :append)
+(with-open-file (s ".gitignore" :direction :output :if-exists :append :if-does-not-exist :create)
   (fresh-line s)
   (if *args*
       (format s "~{~a~%~}" *args*)
