@@ -35,6 +35,7 @@
   (require 'cider-selector)
   (evil-define-key 'normal clojure-mode-map " t" 'cider-test-run-ns-tests)
   (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
+  (evil-define-key 'normal clojure-mode-map (kbd "SPC") 'evil-send-leader)
 
   (def-cider-selector-method ?S "find clojure project file"
     (fwoar--find-system))

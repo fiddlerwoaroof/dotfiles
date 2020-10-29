@@ -131,14 +131,32 @@ Examples:
       (indent-sexp)))
   (sp-backward-whitespace))
 
+(comment
+)
+
+(use-package slime-company
+  :ensure t
+  :after slime
+  :config (setq slime-company-completion 'fuzzy))
+
+(defvar passwords ())
 (use-package slime
   :ensure t
-  :load-path  (lambda ()
-                (list
-                 (fwoar-git-repo "3dp/slime/"
-                                 "git@github.com:slime/slime.git"
-                                 "https://github.com/slime/slime.git")))
+  :after smartparens
+  :load-path (lambda ()
+               (list
+                (fwoar-git-repo "3dp/slime/"
+                                "git@github.com:slime/slime.git"
+                                "https://github.com/slime/slime.git")))
   :config
+
+  (defslimefun get-passwd (id prompt)
+    (let ((val (assoc id passwords)))
+      (cdr
+       (if val val
+         (car (push (cons id (read-passwd prompt))
+                    passwords))))))
+  (message "%s" load-path)
   (when (or (eq system-type 'gnu/linux)
             (eq system-type 'darwin))
     (define-lisp-implementations
@@ -203,7 +221,8 @@ Examples:
            slime-selector-methods
            :key #'car)
 
-  (setq slime-contribs '(slime-fancy
+  (setq slime-contribs '(slime-media
+                         slime-fancy
                          slime-company
                          slime-macrostep
                          slime-trace-dialog
@@ -245,8 +264,3 @@ Examples:
                              (lambda (r)
                                (message "Loading ASDs done: %s" r))))))
              (:one-liner "Load asd for current project"))))
-
-(use-package slime-company
-  :ensure t
-  :after slime
-  :config (setq slime-company-completion 'fuzzy))

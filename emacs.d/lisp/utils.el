@@ -1,4 +1,27 @@
+;;; utils -- Summary
+;;; Commentary:
+
 (require 'cl)
+
+;;; Code:
+
+(defun fwoar/doc-for-resource-type (resource-type)
+  (cl-format nil
+             "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/~{~a~^-~}"
+             (list* "aws" "resource"
+                    (cdr (s-split "::" (s-downcase resource-type))))))
+(defun fwoar/document-cf (min max)
+  "Jump to AWS Cloudformation docs for a resource type.
+
+MIN: the point in the buffer where the resource type starts
+MAX: the point in the buffer where the resource type ends
+
+This uses (interactive \"r\") to automagically populate the arguments
+from the selected region."
+  (interactive "r")
+  (browse-url
+   (fwoar/doc-for-resource-type
+    (buffer-substring min max))))
 
 (defun read-sexps-in-file (fn)
   (with-temp-buffer
@@ -121,14 +144,19 @@ started from a shell."
             (helm-projectile-rg))
         (error "`helm-rg' is not available.  Is MELPA in your `package-archives'?")))))
 
+(defmacro fwoar/defvaralias! (var val-var)
+  `(progn
+     (setq ,var ,val-var)
+     (defvaralias ',var ',val-var)))
+
 (defun setup-indentation ()
   (setq-default indent-tabs-mode nil
                 tab-width 2)
-  (defvaralias 'c-basic-offset 'tab-width)
-  (defvaralias 'sh-basic-offset 'tab-width)
-  (defvaralias 'js2-basic-offset 'tab-width)
-  (defvaralias 'sgml-basic-offset 'tab-width)
-  (defvaralias 'cperl-indent-level 'tab-width)
+  (fwoar/defvaralias! c-basic-offset tab-width)
+  (fwoar/defvaralias! sh-basic-offset tab-width)
+  (fwoar/defvaralias! js2-basic-offset tab-width)
+  (fwoar/defvaralias! sgml-basic-offset tab-width)
+  (fwoar/defvaralias! cperl-indent-level tab-width)
   nil)
 
 (defun start-server ()
@@ -152,11 +180,13 @@ started from a shell."
       (global-display-line-numbers-mode)
     (setq linum-format "%5d\u2502")
     (global-linum-mode))
-  (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
   (global-company-mode 1))
 
+(defvar fwoar.is-ordinary)
+
 (defun cold-boot ()
+  ""
   (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
   (add-hook 'after-init-hook 'post-init)
   (electric-indent-mode -1)
@@ -164,8 +194,9 @@ started from a shell."
    (electric-pair-mode -1))
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-  (when (file-exists-p "/usr/local/bin/gls")
-    (setq insert-directory-program "/usr/local/bin/gls"))
+  (comment
+   (when-let ((ls-executable (executable-find "gls")))
+     (setq insert-directory-program ls-executable)))
 
   (setq default-directory "~/emacs-home/")
   (make-directory default-directory t)
@@ -183,7 +214,7 @@ started from a shell."
                                      ("melpa" . 2)
                                      ("org" . 3)))
 
-  (package-initialize)
+  (package-initialize 'no-activate)
   (when (not (package-installed-p 'use-package))
     (package-refresh-contents)
     (package-install 'use-package))
