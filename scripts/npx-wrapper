@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+if [[ -n "$DEBUG_NPX_WRAPPER" ]]; then
+  set -x
+fi
+
+path=("${(@)path:#$HOME/bin}")
+package="$(basename "$0")"
+
+exec npx -q "${package//://}" "$@"
