@@ -22,7 +22,7 @@
                        (not (string= line ".")))
             do
                (princ line s)
-               (terpri s))))
+               (terpri s)))))
 
 (uiop:run-program "git add .gitignore"
                   :force-shell t
