@@ -81,6 +81,7 @@
 (use-package scala-mode
   :ensure t)
 
+
 (use-package lsp-mode
   :ensure t
   :config (setq lsp-enable-snippet nil))

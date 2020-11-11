@@ -12,6 +12,7 @@
   (interactive)
   (delete-window
    (get-mru-window nil nil t)))
+
 (use-package evil
   :ensure t
   :config
@@ -41,7 +42,7 @@
     (evil-define-key 'normal company-mode-map (kbd "TAB") 'company-indent-or-complete-common)
     (evil-define-key 'insert company-mode-map (kbd "TAB") 'company-indent-or-complete-common))
 
-  (evil-define-key 'normal magit-file-mode-map (kbd "<leader>a") 'magit)
+  (evil-define-key 'normal 'global (kbd "<leader>a") 'magit)
 
   (progn ;; error jumping
     (evil-define-key 'motion 'global (kbd "]e") 'flycheck-next-error)
