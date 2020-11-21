@@ -1,7 +1,9 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
-(setq gc-cons-threshold 100000000
-      inhibit-splash-screen t
-      inhibit-startup-message t)
+(setq read-process-output-max (* 1024 1024))
+(setq
+ ;;gc-cons-threshold 100000000
+ inhibit-splash-screen t
+ inhibit-startup-message t)
 
 (let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
   (add-to-list 'load-path my-theme-path)
@@ -31,8 +33,11 @@
   (normal-top-level-add-subdirs-to-load-path)
   (load "utils"))
 
+(set-exec-path-from-shell-PATH)
 (cold-boot)
 
+(use-package general
+  :ensure t)
 (use-package flycheck
   :ensure t)
 (use-package company
@@ -50,10 +55,11 @@
            company-bbdb
            company-nxml
            company-css
-           company-xcode
+           ;;company-xcode
            company-cmake
            company-capf
-           company-slime)
+           ;;company-slime
+           )
           company-files
           (company-dabbrev-code
            company-gtags
@@ -158,8 +164,13 @@
 (use-package browse-at-remote
   :after magit
   :ensure t
-  :config (push (cons "gitlab.cj.com" "gitlab")
-                browse-at-remote-remote-type-domains))
+  :config
+  (push (cons "gitlab.cj.com" "gitlab")
+        browse-at-remote-remote-type-domains)
+  (push (cons "gitlab.cj.dev" "gitlab")
+        browse-at-remote-remote-type-domains)
+  (push (cons "git.cnvrmedia.net" "stash")
+        browse-at-remote-remote-type-domains))
 
 (eval-and-compile
   (defvar *fwoar-git-repos*
@@ -181,13 +192,28 @@
                   "git@git.fiddlerwoaroof.com:dotfiles.git"
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
+(defun fwoar/setup-load-path ()
+  (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
+                                   load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/lisp/configurations/")
+                                   new-load-path
+                                   :test 'equal)))
+    (setq load-path new-load-path)))
 
-(defun load-package-configuration (package)
-  (let* ((local-configs "~/.emacs.d/lisp/configurations/")
+(fwoar/setup-load-path)
+(defun fwoar/package-configuration (package)
+  (fwoar/setup-load-path)
+  (let* ((local-configs)
          (git-configs (concat *dotfiles-repo*
                               "emacs.d/lisp/configurations/"))
          (conf-file (concat (symbol-name package) "-conf.el"))
          (load-path (list* local-configs git-configs load-path)))
+    conf-file))
+
+(defun load-package-configuration (package)
+  (let ((conf-file (fwoar/package-configuration package)))
     (load conf-file)))
 
 (defun fwoar/load-local-packages ()
@@ -200,11 +226,11 @@
   (fwoar/load-local-packages))
 
 (load-package-configuration 'evil)
+(load-package-configuration 'helm)
 
 (use-package projectile
   :ensure t
   :config
-  (define-key evil-normal-state-map " h" 'helm-projectile-find-file-dwim)
   (setq
    ;;       projectile-enable-caching t
    projectile-generic-command "rg --files -0"
@@ -237,7 +263,7 @@
 
 ;;(use-package multifiles
 ;;  :config
-;;  (define-key evil-visual-state-map " m" 'mf/mirror-region-in-multifile)
+;; (evil-define-key 'visual 'global (kbd "<leader>m") 'mf/mirror-region-in-multifile)
 ;;  )
 
 (defun safe-files ()
@@ -290,7 +316,7 @@
      (haskell . t)))
 
   (define-key global-map "\C-cc" 'org-capture)
-  (define-key evil-visual-state-map " c" 'org-capture))
+  (evil-define-key 'visual 'global (kbd "<leader>c") 'org-capture))
 
 (use-package org-projectile
   :ensure t
@@ -306,15 +332,6 @@
     (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
   :ensure t)
 
-(use-package helm-org
-  :ensure t)
-
-(use-package org-projectile-helm
-  :ensure t
-  :after org-projectile
-  :config
-  (define-key projectile-mode-map (kbd "C-c n p") 'org-projectile-helm-template-or-project))
-
 (use-package delight
   :ensure t)
 
@@ -324,7 +341,7 @@
 (use-package deft
   :ensure t
   :config
-  (define-key evil-normal-state-map " v" 'deft))
+  (evil-define-key 'normal 'global (kbd "<leader>v") 'deft))
 
 (use-package emmet-mode
   :ensure t
@@ -337,8 +354,8 @@
 
   (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
   (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
-  (define-key evil-normal-state-map " g" 'helm-generate-lisp-skeleton)
-  (define-key evil-visual-state-map " g" 'helm-generate-lisp-skeleton))
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'helm-generate-lisp-skeleton)
+  (evil-define-key 'visual 'global (kbd "<leader>g") 'helm-generate-lisp-skeleton))
 
 
 
@@ -486,12 +503,12 @@ With a prefix ARG invalidates the cache first."
 (defun fwoar-pl-selector ()
   (interactive)
   (fwoar--pl-selector))
-(define-key evil-normal-state-map " o" 'fwoar-pl-selector)
+(evil-define-key 'normal 'global (kbd "<leader>o") 'fwoar-pl-selector)
 
 
 (use-package imenu
   :config
-  (define-key evil-normal-state-map " d" 'helm-imenu-in-all-buffers))
+  (evil-define-key 'normal 'global (kbd "<leader>d") 'helm-imenu-in-all-buffers))
 
 (defun fwoar--read-register-name ()
   (let ((overlay (make-overlay (point) (point)))
@@ -527,41 +544,12 @@ With a prefix ARG invalidates the cache first."
 
 (use-package eldoc-eval :ensure t)
 
-(use-package helm :ensure t :config
-  (require 'helm-config)
-  (helm-mode)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (define-key evil-normal-state-map " f" 'helm-projectile)
-  (define-key evil-normal-state-map " j" 'helm-buffers-list)
-  (define-key evil-normal-state-map " s" 'helm-occur)
-  (define-key evil-normal-state-map " S" 'helm-projectile-rg)
-  (define-key helm-map (kbd "C-r") 'fwoar--paste-register-from-helm-current-buffer)
-  (define-key helm-map (kbd "<right>") 'helm-execute-persistent-action)
-  (define-key helm-map
-    (kbd "<left>")
-    'helm-find-files-up-one-level))
-
-(use-package helm-ag :ensure t)
-
-(use-package helm-ag-r :ensure t)
-
-(use-package helm-rg :ensure t)
-
-(use-package helm-css-scss :ensure t)
-
-(use-package helm-ls-git :ensure t)
-
-(use-package helm-projectile :ensure t)
-
 (use-package highlight-parentheses :ensure t :config
   (global-highlight-parentheses-mode 1))
 
 
 
 (use-package markdown-mode :ensure t)
-
-(use-package project-explorer :ensure t)
 
 (use-package rainbow-delimiters :ensure t)
 
@@ -644,7 +632,7 @@ With a prefix ARG invalidates the cache first."
   (let ((default-directory *dotfiles-repo*))
     (helm-projectile-find-file)))
 
-(setq gc-cons-threshold (* 100 1024))
+;;(setq gc-cons-threshold (* 100 1024))
 
 (unless fwoar.is-ordinary
   (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
@@ -676,14 +664,6 @@ With a prefix ARG invalidates the cache first."
   (interactive)
   (delete-window
    (get-mru-window nil nil t)))
-
-(defvar passwords ())
-(defslimefun get-passwd (id prompt)
-  (let ((val (assoc id passwords)))
-    (cdr
-     (if val val
-       (car (push (cons id (read-passwd prompt))
-                  passwords))))))
 
 (add-to-list 'browse-url-filename-alist
              '("/Users/\\([^/]+\\)/\\(Sites\\|public_html\\)\\(/.*\\)" . "https://localhost/~\\1\\3"))
@@ -788,8 +768,8 @@ With a prefix ARG invalidates the cache first."
   :hook java-mode
   :config
   (evil-define-key 'normal maven-test-mode-map
-    " t" 'maven-test-all
-    " T" 'maven-test-toggle-between-test-and-class-other-window))
+    (kbd "<leader>t") 'maven-test-all
+    (kbd "<leader>T") 'maven-test-toggle-between-test-and-class-other-window))
 (use-package lsp-java
   :ensure t
   :hook (java-mode . lsp))
@@ -802,6 +782,7 @@ With a prefix ARG invalidates the cache first."
   ;; Comment/uncomment this line to see interactions between lsp client/server.
   ;;(setq lsp-log-io t)
   )
+
 (progn
   (require 'ansi-color)
   (defun colorize-compilation-buffer ()
@@ -809,3 +790,4 @@ With a prefix ARG invalidates the cache first."
     (ansi-color-apply-on-region compilation-filter-start (point))
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+(put 'list-timers 'disabled nil)
