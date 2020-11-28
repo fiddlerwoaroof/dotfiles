@@ -49,11 +49,24 @@ linkify_tree() {
   cd "$1"
   find . -type f | {
     while read -r fn; do
+      target="$(file_to_hashed_dir "$fn")"
       if ! [[ -L "$fn" ]]; then
-        target="$(file_to_hashed_dir "$fn")"
-        cp "$fn" "$target"
-        rm "$fn"
-        ln -sv "$target" "$fn"
+        if ! [[ -f "$target" ]]; then
+          if [[ -e "$target" ]]; then
+            echo $target is not a normal file
+            ls -l "$target"
+            exit 1
+          fi
+          mv "$fn" "$target"
+        else
+          mv "$fn" "$fn".old
+        fi
+        ln -v "$target" "$fn"
+        if [[ -f "$fn".old ]]; then
+          rm "$fn".old
+        fi
+      else
+        touch $target
       fi
       echo
     done
