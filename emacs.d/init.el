@@ -425,11 +425,19 @@
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (add-hook 'css-mode 'prettier-js-mode))
 
+(use-package typescript-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist
+               '("\\.tsx$" . typescript-mode)))
+
 (use-package tide
   :ensure t
   :config
   (add-hook 'js2-mode-hook 'tide-setup)
+  (add-hook 'typescript-mode-hook 'tide-setup)
   (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
+  (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
 (use-package direnv
   :ensure t
