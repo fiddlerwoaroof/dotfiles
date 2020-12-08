@@ -200,10 +200,16 @@
          (new-load-path (cl-adjoin (concat *dotfiles-repo*
                                            "emacs.d/lisp/configurations/")
                                    new-load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/packages/")
+                                   new-load-path
                                    :test 'equal)))
     (setq load-path new-load-path)))
 
 (fwoar/setup-load-path)
+
+
 (defun fwoar/package-configuration (package)
   (fwoar/setup-load-path)
   (let* ((local-configs)
