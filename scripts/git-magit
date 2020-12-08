@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+emacsclient -n -e "
+(let ((default-directory \"$PWD\"))
+  (magit)
+  (delete-other-windows)
+  (select-frame-set-input-focus (selected-frame)))
+"
