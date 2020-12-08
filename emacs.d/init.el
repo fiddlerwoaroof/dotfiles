@@ -431,6 +431,11 @@
   (add-hook 'js2-mode-hook 'tide-setup)
   (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
+(use-package direnv
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook 'direnv-mode)
+  (add-hook 'typescript-mode-hook 'direnv-mode))
 
 (use-package rjsx-mode
   :ensure t
