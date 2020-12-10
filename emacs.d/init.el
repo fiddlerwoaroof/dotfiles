@@ -777,7 +777,7 @@ With a prefix ARG invalidates the cache first."
 
 (defun make-info-window ()
   (setq mode-line-format nil)
-  (centaur-tabs-local-mode 1)
+  ;;(centaur-tabs-local-mode 1)
   (set-window-dedicated-p (selected-window) t)
   (when-let (w (window-in-direction 'above))
     (set-window-parameter w 'no-delete-other-windows t))
