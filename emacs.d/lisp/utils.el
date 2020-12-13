@@ -169,7 +169,7 @@ started from a shell."
       (server-start))))
 
 (defun post-init ()
-  (centaur-tabs-mode 1)
+  ;;(centaur-tabs-mode 1)
   (projectile-mode 1)
   (evil-mode 1)
 

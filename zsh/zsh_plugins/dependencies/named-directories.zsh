@@ -1,7 +1,6 @@
 savedir() {
-    cmd="hash -d \"$1\"=\"$PWD/${(j</>)*}\""
+    cmd="hash -d \"$1\"=\"$PWD\""
     eval $cmd
-    truncfile 50 $HOME/.gtaliases
     echo $cmd >> $HOME/.gtaliases
 }
 source "$HOME/.gtaliases"

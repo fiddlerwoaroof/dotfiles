@@ -1,7 +1,7 @@
 # Requires pandoc
 
 2man() {
-  input="$2"
+  local input="$2"
   if [[ "$input" == "" ]]; then
     input="-"
   fi
@@ -11,6 +11,9 @@
 alias html2man='2man html'
 alias md2man='2man markdown'
 alias latex2man='2man latex'
+vmd() {
+  md2man $1 | man- | less
+}
 
 _pandoc_view() {
   2man $1 $2 | man-

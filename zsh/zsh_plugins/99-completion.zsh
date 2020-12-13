@@ -39,7 +39,7 @@ zstyle :compinstall filename '/Users/elangley/.zsh.d/99-completion.zsh'
 
 
 source $HOME/.zsh.d/nix-zsh-completions/nix.plugin.zsh
-fpath=($HOME/.zsh.d/completion $fpath $HOME/.zsh.d/nix-zsh-completions)
+fpath=($HOME/.zsh.d/completion $fpath $HOME/.zsh.d/zsh-completions/src $HOME/.zsh.d/nix-zsh-completions)
 
 autoload -Uz compinit
 

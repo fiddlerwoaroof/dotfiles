@@ -81,6 +81,7 @@
 (use-package scala-mode
   :ensure t)
 
+
 (use-package lsp-mode
   :ensure t
   :config (setq lsp-enable-snippet nil))
@@ -199,10 +200,16 @@
          (new-load-path (cl-adjoin (concat *dotfiles-repo*
                                            "emacs.d/lisp/configurations/")
                                    new-load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/packages/")
+                                   new-load-path
                                    :test 'equal)))
     (setq load-path new-load-path)))
 
 (fwoar/setup-load-path)
+
+
 (defun fwoar/package-configuration (package)
   (fwoar/setup-load-path)
   (let* ((local-configs)
@@ -418,12 +425,25 @@
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (add-hook 'css-mode 'prettier-js-mode))
 
+(use-package typescript-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist
+               '("\\.tsx$" . typescript-mode)))
+
 (use-package tide
   :ensure t
   :config
   (add-hook 'js2-mode-hook 'tide-setup)
+  (add-hook 'typescript-mode-hook 'tide-setup)
   (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
+  (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
+(use-package direnv
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook 'direnv-mode)
+  (add-hook 'typescript-mode-hook 'direnv-mode))
 
 (use-package rjsx-mode
   :ensure t
@@ -625,7 +645,6 @@ With a prefix ARG invalidates the cache first."
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file)
   (load-file custom-file))
-
 
 (defun edit-init-el ()
   (interactive)

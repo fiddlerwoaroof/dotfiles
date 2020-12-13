@@ -117,9 +117,9 @@
   (:method ((map list) key)
            (typecase (car map)
              (cons (cdr (cl-assoc key map :test 'equal)))
-             (t (loop for (a-key . value) on map by #'cddr
-                      when (equal key a-key) do
-                      (return (car value)))))))
+             (t (cl-loop for (a-key . value) on map by #'cddr
+                         when (equal key a-key) do
+                         (return (car value)))))))
 
 (fwoar/def-ns-fun key (key)
   (lambda (map)
@@ -153,4 +153,5 @@
                      (apply f args))
                    r))))
 
+(provide 'fwoar-functional-utils)
 ;;; fwoar-functional-utils.el ends here

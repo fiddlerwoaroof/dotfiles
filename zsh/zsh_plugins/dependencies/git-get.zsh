@@ -82,8 +82,10 @@ function get_forge_function() {
 
 function get_forge_root() {
   local forge="$1"
-  if command -v "${forge}_root" &>>-; then
-    "${forge}_root"
+  # echo "$@" >&2
+  shift
+  if command -v "${forge}_root" &>>/dev/null; then
+    "${forge}_root" "$@"
   else
     echo "$GIT_3DP_DIR"/
   fi
@@ -93,17 +95,31 @@ alias_forge bb github
 alias_forge gh github
 alias_forge gl gitlab
 
+github_root() {
+  local proj_dir="$HOME"/git_repos/github/"$1"/
+  if ! [[ -d "$proj_dir" ]]; then
+    mkdir -p "$proj_dir"
+  fi
+
+  echo "$proj_dir"
+}
+
 function git-get() {
   local git_user
   local package
-  
+
   forge=${1?Need a forge spec}
 
-  shift 
+  shift
 
   if [[ $# == 1 ]]; then
-    git_user=
-    package=$1
+    if [[ "$1" == */* ]]; then
+      git_user="${1%%/*}"
+      package="${1#*/}"
+    else
+      git_user=
+      package=$1
+    fi
   elif (( $# == 2 )); then
     git_user=$1
     package=$2
@@ -117,12 +133,12 @@ function git-get() {
 
   shift
 
-  local target="$(get_forge_root "$forge")"
+  # echo "git user? $git_user package? $package" >&2
+  local target="$(get_forge_root "$forge" "$git_user")"
   cd "$target"
 
   local forge_url_function="${$(get_forge_function "$forge"):?forge not recognized}"
   git-forge-clone "$forge_url_function"
-  
+
   cd "$(basename "$package")"
 }
-

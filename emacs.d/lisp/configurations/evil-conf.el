@@ -12,6 +12,7 @@
   (interactive)
   (delete-window
    (get-mru-window nil nil t)))
+
 (use-package evil
   :ensure t
   :config
@@ -41,7 +42,7 @@
     (evil-define-key 'normal company-mode-map (kbd "TAB") 'company-indent-or-complete-common)
     (evil-define-key 'insert company-mode-map (kbd "TAB") 'company-indent-or-complete-common))
 
-  (evil-define-key 'normal magit-file-mode-map (kbd "<leader>a") 'magit)
+  (evil-define-key 'normal 'global (kbd "<leader>a") 'magit)
 
   (progn ;; error jumping
     (evil-define-key 'motion 'global (kbd "]e") 'flycheck-next-error)
@@ -141,20 +142,21 @@
     (evil-define-key 'normal 'global (kbd "<leader>nr") 'narrow-to-region)
     (evil-define-key 'normal 'global (kbd "<leader>nw") 'widen)))
 
-(use-package centaur-tabs
-  :ensure t
-  :after evil
-  :config
-  (setq centaur-tabs-adjust-buffer-order t
-        centaur-tabs-adjust-buffer-order 'right)
-  (centaur-tabs-enable-buffer-reordering)
+(comment
+ (use-package centaur-tabs
+   :ensure t
+   :after evil
+   :config
+   (setq centaur-tabs-adjust-buffer-order t
+         centaur-tabs-adjust-buffer-order 'right)
+   (centaur-tabs-enable-buffer-reordering)
 
-  (evil-define-key 'normal 'global (kbd "gt") 'centaur-tabs-forward-tab)
-  (define-key global-map (kbd "<header-line> <wheel-up>") 'centaur-tabs-forward-tab)
-  (define-key global-map (kbd "s-}") 'centaur-tabs-forward-tab)
-  (evil-define-key 'normal 'global (kbd "gT") 'centaur-tabs-backward-tab)
-  (define-key global-map (kbd "<header-line> <wheel-down>") 'centaur-tabs-backward-tab)
-  (define-key global-map (kbd "s-{") 'centaur-tabs-backward-tab))
+   (evil-define-key 'normal 'global (kbd "gt") 'centaur-tabs-forward-tab)
+   (define-key global-map (kbd "<header-line> <wheel-up>") 'centaur-tabs-forward-tab)
+   (define-key global-map (kbd "s-}") 'centaur-tabs-forward-tab)
+   (evil-define-key 'normal 'global (kbd "gT") 'centaur-tabs-backward-tab)
+   (define-key global-map (kbd "<header-line> <wheel-down>") 'centaur-tabs-backward-tab)
+   (define-key global-map (kbd "s-{") 'centaur-tabs-backward-tab)))
 
 
 (defun setup-special-mode ()
