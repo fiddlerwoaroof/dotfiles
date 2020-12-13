@@ -63,7 +63,7 @@
   :after cider
   :ensure t
   :config
-  (evil-define-key 'normal clojure-mode-map (kbd "SPC r") 'hydra-cljr-help-menu/body))
+  (evil-define-key 'normal clojure-mode-map (kbd "<leader> r") 'hydra-cljr-help-menu/body))
 
 
 (use-package helm-cider
