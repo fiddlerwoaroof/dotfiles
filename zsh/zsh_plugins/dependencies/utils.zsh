@@ -6,19 +6,19 @@ interactive_echo() {
 
 add_exe_path() {
   if [[ -d $1 ]]; then
-    export PATH="$PATH:$1"
+    path+=("$@")
   fi
 }
 
 push_exe_path() {
   if [[ -d $1 ]]; then
-    export PATH="$PATH:$1"
+    path+=("$@")
   fi
 }
 
 prepend_exe_path() {
   if [[ -d $1 ]]; then
-    export PATH="$1:$PATH"
+    path[1]=("$@" "$path[1]")
   fi
 }
 
