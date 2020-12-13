@@ -735,22 +735,23 @@ With a prefix ARG invalidates the cache first."
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode js-mode)))
   (find-package-json default-directory))
 
-(use-package org-brain :ensure t
-  :init
-  (setq org-brain-path "~/org-brain/")
+(comment
+ (use-package org-brain :ensure t
+   :init
+   (setq org-brain-path "~/org-brain/")
 
-  :config
-  (eval-after-load 'evil
-    '(evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+   :config
+   (eval-after-load 'evil
+     '(evil-set-initial-state 'org-brain-visualize-mode 'emacs))
 
-  (push '("B" "Brain" plain (function org-brain-goto-end)
-          "* %i%?" :empty-lines 1)
-        org-capture-templates)
+   (push '("B" "Brain" plain (function org-brain-goto-end)
+           "* %i%?" :empty-lines 1)
+         org-capture-templates)
 
-  (setq org-id-track-globally t
-        org-id-locations-file "~/.emacs.d/.org-id-locations"
-        org-brain-visualize-default-choices 'all
-        org-brain-title-max-length 0))
+   (setq org-id-track-globally t
+         org-id-locations-file "~/.emacs.d/.org-id-locations"
+         org-brain-visualize-default-choices 'all
+         org-brain-title-max-length 0)))
 
 (setq diary-file (expand-file-name "~/bucket/diary"))
 
