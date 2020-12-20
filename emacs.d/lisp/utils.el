@@ -23,6 +23,15 @@ from the selected region."
    (fwoar/doc-for-resource-type
     (buffer-substring min max))))
 
+(defun read-sexps-in-buffer (buffer)
+  (with-temp-buffer
+    (save-excursion
+      (insert "(")
+      (insert-buffer buffer)
+      (goto-char (point-max))
+      (insert "\n)"))
+    (read (current-buffer))))
+
 (defun read-sexps-in-file (fn)
   (with-temp-buffer
     (save-excursion
@@ -101,10 +110,10 @@ from the selected region."
 
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match
-that used by the user's shell.
+  that used by the user's shell.
 
   This is particularly useful under Mac OSX, where GUI apps are not
-started from a shell."
+  started from a shell."
   (interactive)
   (let ((path-from-shell
          (replace-regexp-in-string
@@ -180,6 +189,7 @@ started from a shell."
       (global-display-line-numbers-mode)
     (setq linum-format "%5d\u2502")
     (global-linum-mode))
+  (set-exec-path-from-shell-PATH)
   ;; NOTE: this must be here...
   (global-company-mode 1))
 
