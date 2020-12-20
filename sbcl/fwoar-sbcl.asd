@@ -6,4 +6,5 @@
                :fwoar-lisputils
                :linedit
                :osicat
-               :serapeum))
+               :serapeum)
+  :components ((:file "utils")))
