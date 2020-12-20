@@ -2,6 +2,7 @@
 (setq read-process-output-max (* 1024 1024))
 (setq
  ;;gc-cons-threshold 100000000
+ load-prefer-newer t
  inhibit-splash-screen t
  inhibit-startup-message t)
 
