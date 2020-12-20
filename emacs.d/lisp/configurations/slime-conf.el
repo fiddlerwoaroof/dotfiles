@@ -1,9 +1,14 @@
 ;;;; SLIME SETUP {{{
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 
-;; (add-to-list 'load-path (fwoar-git-repo "3dp/slime/"
-;;                                         "git@github.com:slime/slime.git"
-;;                                         "https://github.com/slime/slime.git"))
+(add-to-list 'load-path
+             (fwoar-git-repo "3dp/slime/"
+                             "git@github.com:slime/slime.git"
+                             "https://github.com/slime/slime.git"))
+(add-to-list 'load-path
+             (fwoar-git-repo "3dp/slime-company/"
+                             "git@github.com:anwyn/slime-company.git"
+                             "https://github.com/anwyn/slime-company.git"))
 ;; (require 'slime)
 
 
@@ -135,19 +140,16 @@ Examples:
 )
 
 (use-package slime-company
-  :ensure t
-  :after slime
-  :config (setq slime-company-completion 'fuzzy))
+  :ensure nil
+  :no-require t
+  :config
+  (setq slime-company-completion 'fuzzy)
+  )
 
 (defvar passwords ())
 (use-package slime
-  :ensure t
+  :ensure nil
   :after smartparens
-  :load-path (lambda ()
-               (list
-                (fwoar-git-repo "3dp/slime/"
-                                "git@github.com:slime/slime.git"
-                                "https://github.com/slime/slime.git")))
   :config
 
   (defslimefun get-passwd (id prompt)

@@ -73,7 +73,9 @@
   :ensure t
   :after company
   :config
-  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1))))
+  (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1)))
+  (setq company-posframe-quickhelp-delay nil))
+
 
 
 (use-package jeison
