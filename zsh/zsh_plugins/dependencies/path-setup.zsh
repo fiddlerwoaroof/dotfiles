@@ -25,6 +25,7 @@ prepend_exe_path "$HOME/.local/bin"
 prepend_exe_path "$JAVA_HOME"/bin
 prepend_exe_path "$HOME/.nix-profile/bin"
 prepend_exe_path "$HOME/bin"
+prepend_exe_path /opt/homebrew/bin
 
 prepend_exe_path /sbin
 prepend_exe_path /usr/sbin
