@@ -136,8 +136,6 @@ Examples:
       (indent-sexp)))
   (sp-backward-whitespace))
 
-(comment
-)
 
 (use-package slime-company
   :ensure nil
@@ -147,6 +145,7 @@ Examples:
   )
 
 (defvar passwords ())
+
 (use-package slime
   :ensure nil
   :after smartparens

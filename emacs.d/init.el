@@ -51,23 +51,23 @@
          (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
          (define-key company-active-map (kbd "[") (kbd "RET [")))
 
-  (setq company-backends
-        '((company-clang
-           company-bbdb
-           company-nxml
-           company-css
-           ;;company-xcode
-           company-cmake
-           company-capf
-           ;;company-slime
-           )
-          company-files
-          (company-dabbrev-code
-           company-gtags
-           company-etags
-           company-keywords)
-          company-oddmuse
-          company-dabbrev)))
+  (setq company-backends '((company-clang
+                            company-bbdb
+                            company-nxml
+                            company-css
+                            ;;company-xcode
+                            company-cmake
+                            company-capf
+                            ;;company-slime
+                            )
+                           company-files
+                           (company-dabbrev-code
+                            company-gtags
+                            company-etags
+                            company-keywords)
+                           company-oddmuse
+                           company-dabbrev)
+        ))
 
 (use-package company-posframe
   :ensure t
@@ -756,7 +756,7 @@ With a prefix ARG invalidates the cache first."
          org-brain-visualize-default-choices 'all
          org-brain-title-max-length 0)))
 
-(setq diary-file (expand-file-name "~/bucket/diary"))
+(setq diary-file (expand-file-name "~/diary"))
 
 (cl-defmacro fwoar/binding (setter target &body bindings)
   (declare (indent 2))
