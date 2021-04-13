@@ -4,6 +4,7 @@
                :alexandria
                :cffi
                :fwoar-lisputils
+               :legit
                :linedit
                :osicat
                :serapeum)

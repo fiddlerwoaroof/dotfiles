@@ -57,6 +57,7 @@
    (when (interactive-stream-p *terminal-io*)
      (trace sb-unix:unix-isatty)
      (when (= 1 (sb-unix:unix-isatty 0))
+       #-(and darwin arm64)
        (destructuring-bind (height width) (get-term-size)
          (defparameter fwoar-user::*term-size* (list height width))
          (setf sb-ext:*posix-argv* (remove "--no-linedit" sb-ext:*posix-argv* :test 'equal)
@@ -69,7 +70,7 @@
 
 #+aclrepl
 (progn
-
+  #-(and darwin arm64)
   (destructuring-bind (height width) (get-term-size)
     (declare (ignore height))
     (setf *print-right-margin* width))
