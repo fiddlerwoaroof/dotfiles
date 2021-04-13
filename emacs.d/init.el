@@ -37,6 +37,12 @@
 (set-exec-path-from-shell-PATH)
 (cold-boot)
 
+(use-package keyfreq
+  :ensure t
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+
 (use-package general
   :ensure t)
 (use-package flycheck
