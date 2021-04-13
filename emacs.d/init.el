@@ -821,4 +821,12 @@ With a prefix ARG invalidates the cache first."
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
 (put 'list-timers 'disabled nil)
 
+(defun fwoar/center-defun ()
+  (interactive)
+  (cl-destructuring-bind (a . b) (bounds-of-thing-at-point 'defun)
+    (save-excursion
+      (let ((s (progn (goto-char a) (line-number-at-pos)))
+            (e (progn (goto-char b) (line-number-at-pos))))
+        (evil-scroll-line-to-center (+ s -1 (ceiling (- e s) 2)))))))
+
 (run-with-idle-timer 5 t 'garbage-collect)
