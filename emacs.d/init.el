@@ -820,3 +820,5 @@ With a prefix ARG invalidates the cache first."
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
 (put 'list-timers 'disabled nil)
+
+(run-with-idle-timer 5 t 'garbage-collect)
