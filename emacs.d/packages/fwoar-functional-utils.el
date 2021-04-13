@@ -111,6 +111,10 @@
   (lambda (it)
     (elt it num)))
 
+(fwoar/def-ns-fun hash-lookup (ht)
+  (lambda (key)
+    (gethash key ht)))
+
 (cl-defgeneric fwoar/extract-key (map key)
   (:method ((map hash-table) key)
            (gethash key map))
@@ -152,6 +156,8 @@
            (mapcar (lambda (f)
                      (apply f args))
                    r))))
+
+(defalias 'fwoar/• '-compose)
 
 (provide 'fwoar-functional-utils)
 ;;; fwoar-functional-utils.el ends here
