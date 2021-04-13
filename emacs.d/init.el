@@ -380,10 +380,13 @@
   :defer t
   :commands js2-mode
   :config
+  (define-key js-mode-map (kbd "M-.") nil)
+  (define-key js2-mode-map (kbd "M-.") nil)
   (modify-syntax-entry ?_ "w" js2-mode-syntax-table)
   (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
   (setq-default js2-basic-offset 4)
   (setq-default js-indent-level 4)
+  (add-hook 'js2-mode-hook 'lsp)
   (add-hook 'js2-mode-hook 'flycheck-mode)
   (customize-set-variable 'js2-mode-show-parse-errors nil)
   (customize-set-variable 'js2-strict-missing-semi-warning nil)
@@ -440,23 +443,17 @@
   (add-to-list 'auto-mode-alist
                '("\\.tsx$" . typescript-mode)))
 
-(use-package tide
-  :ensure t
-  :config
-  (add-hook 'js2-mode-hook 'tide-setup)
-  (add-hook 'typescript-mode-hook 'tide-setup)
-  (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
-  (add-hook 'typescript-mode-hook 'tide-hl-identifier-mode)
-  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
 (use-package direnv
   :ensure t
   :config
+  (direnv-mode 1)
   (add-hook 'js2-mode-hook 'direnv-mode)
   (add-hook 'typescript-mode-hook 'direnv-mode))
 
 (use-package rjsx-mode
   :ensure t
   :config
+  (define-key rjsx-mode-map (kbd "M-.") nil)
   (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
 
 (comment
@@ -828,5 +825,10 @@ With a prefix ARG invalidates the cache first."
       (let ((s (progn (goto-char a) (line-number-at-pos)))
             (e (progn (goto-char b) (line-number-at-pos))))
         (evil-scroll-line-to-center (+ s -1 (ceiling (- e s) 2)))))))
+
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode 1))
 
 (run-with-idle-timer 5 t 'garbage-collect)
