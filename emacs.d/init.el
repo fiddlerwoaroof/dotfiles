@@ -72,8 +72,7 @@
                             company-etags
                             company-keywords)
                            company-oddmuse
-                           company-dabbrev)
-        ))
+                           company-dabbrev)))
 
 (use-package company-posframe
   :ensure t
@@ -307,6 +306,11 @@
 
 (setq org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
 
+(use-package http
+  :ensure t)
+(use-package ob-http
+  :after http
+  :ensure t)
 (use-package org
   :pin "org"
   :ensure t
@@ -328,7 +332,8 @@
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((lisp . t)
+   '((http . t)
+     (lisp . t)
      (haskell . t)))
 
   (define-key global-map "\C-cc" 'org-capture)
