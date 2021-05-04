@@ -380,73 +380,7 @@
 
 
 
-(use-package js2-mode
-  :ensure t
-  :defer t
-  :commands js2-mode
-  :config
-  (define-key js-mode-map (kbd "M-.") nil)
-  (define-key js2-mode-map (kbd "M-.") nil)
-  (modify-syntax-entry ?_ "w" js2-mode-syntax-table)
-  (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
-  (setq-default js2-basic-offset 4)
-  (setq-default js-indent-level 4)
-  (add-hook 'js2-mode-hook 'lsp)
-  (add-hook 'js2-mode-hook 'flycheck-mode)
-  (customize-set-variable 'js2-mode-show-parse-errors nil)
-  (customize-set-variable 'js2-strict-missing-semi-warning nil)
-  (customize-set-variable 'js2-strict-trailing-comma-warning nil)
-  (customize-set-variable 'js2-strict-inconsistent-return-warning nil))
-
-(use-package js
-  :ensure t
-  :config
-  (modify-syntax-entry ?_ "w" js-mode-syntax-table)
-
-  ;;; indent ternaries with arrow function correctly---
-  (defun js--looking-at-operator-p ()
-    "Return non-nil if point is on a JavaScript operator, other than a comma."
-    (save-match-data
-      (and (looking-at js--indent-operator-re)
-           (or (not (eq (char-after) ?:))
-               (save-excursion
-                 (js--backward-syntactic-ws)
-                 (when (memq (char-before) '(?\) ?})) (backward-list))
-                 (and (js--re-search-backward "[?:{]\\|\\_<case\\_>" nil t)
-                      (eq (char-after) ??))))
-           (not (and
-                 (eq (char-after) ?/)
-                 (save-excursion
-                   (eq (nth 3 (syntax-ppss)) ?/))))
-           (not (and
-                 (eq (char-after) ?*)
-                 ;; Generator method (possibly using computed property).
-                 (looking-at (concat "\\* *\\(?:\\[\\|" js--name-re " *(\\)"))
-                 (save-excursion
-                   (js--backward-syntactic-ws)
-                   ;; We might misindent some expressions that would
-                   ;; return NaN anyway.  Shouldn't be a problem.
-                   (memq (char-before) '(?, ?} ?{)))))))))
-
-(use-package vue-mode
-  :ensure t
-  :config
-  (add-hook 'vue-mode
-            'prettier-js-mode)
-  (add-hook 'vue-mode
-            'flycheck-mode))
-
-(use-package prettier-js
-  :ensure t
-  :init
-  (add-hook 'js2-mode-hook 'prettier-js-mode)
-  (add-hook 'css-mode 'prettier-js-mode))
-
-(use-package typescript-mode
-  :ensure t
-  :config
-  (add-to-list 'auto-mode-alist
-               '("\\.tsx$" . typescript-mode)))
+(load-package-configuration 'javascript)
 
 (use-package direnv
   :ensure t
@@ -454,37 +388,6 @@
   (direnv-mode 1)
   (add-hook 'js2-mode-hook 'direnv-mode)
   (add-hook 'typescript-mode-hook 'direnv-mode))
-
-(use-package rjsx-mode
-  :ensure t
-  :config
-  (define-key rjsx-mode-map (kbd "M-.") nil)
-  (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
-
-(comment
- (use-package tern
-   :config
-   (add-hook 'js-mode-hook (lambda () (tern-mode t)))
-   (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
-
- (use-package company-tern
-   :ensure t
-   :config
-   (add-to-list 'company-backends 'company-tern)
-   (setq company-tooltip-align-annotations t)))
-
-(use-package jest
-  :ensure t
-  :config
-  (defun jest--project-root ()
-    "Find the project root directory."
-    (let ((closest-package-json (fwoar--find-package-json))
-          (projectile-root (projectile-project-root)))
-      (message "%s <-> %s" closest-package-json projectile-root)
-      (if (s-prefix-p projectile-root closest-package-json)
-          closest-package-json
-        projectile-root))))
-
 
 (defun more-than-one-project-file-p ()
   (= (length (projectile-select-files (projectile-current-project-files)))
