@@ -93,6 +93,16 @@
         (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
                          t ".*[.]el")))
 
+
+(use-package keyfreq
+  :ensure t
+  :diminish
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+
+(use-package auto-package-update
+  :ensure t)
 (use-package general
   :ensure t)
 (use-package flycheck
@@ -258,10 +268,10 @@
 
 
 
-;;(use-package multifiles
-;;  :config
-;; (evil-define-key 'visual 'global (kbd "<leader>m") 'mf/mirror-region-in-multifile)
-;;  )
+(comment
+ (use-package multifiles
+   :config
+   (evil-define-key 'visual 'global (kbd "<leader>m") 'mf/mirror-region-in-multifile)))
 
 (defun safe-files ()
   (let ((fn (expand-file-name "~/.safe-files")))
@@ -289,10 +299,16 @@
 (setq org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
 
 (use-package http
-  :ensure t)
+  )
+(use-package graphql
+  )
+(use-package ob-graphql
+  )
 (use-package ob-http
-  :after http
-  :ensure t)
+  )
+(use-package ob-restclient
+  )
+
 (use-package org
   :pin "org"
   :ensure t
@@ -361,6 +377,8 @@
   (evil-define-key 'visual 'global (kbd "<leader>g") 'helm-generate-lisp-skeleton))
 
 
+(use-package htmlize
+  :ensure t)
 
 (load-package-configuration 'javascript)
 
@@ -454,6 +472,8 @@ With a prefix ARG invalidates the cache first."
 
 (use-package cl-format :ensure t)
 
+(use-package eldoc :delight)
+
 (use-package css-eldoc :ensure t)
 
 (use-package csv-mode :ensure t)
@@ -488,6 +508,12 @@ With a prefix ARG invalidates the cache first."
 (use-package web-mode :ensure t)
 
 (use-package yaml-mode :ensure t)
+
+(use-package yasnippet
+  :ensure t
+  :hook (prog-mode . yas-minor-mode)
+  :config (yas-reload-all)
+  )
 
 
 (use-package editorconfig
@@ -528,6 +554,10 @@ With a prefix ARG invalidates the cache first."
 
 (use-package treemacs-magit
   :after treemacs magit
+  :ensure t)
+
+(use-package lsp-treemacs
+  :after treemacs lsp
   :ensure t)
 
 (progn ;; emacs-lisp stuff
