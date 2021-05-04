@@ -98,6 +98,8 @@
 (use-package flycheck
   :ensure t)
 (use-package company
+  :ensure t
+  :delight
   :config
   ;; keybindings
   (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
@@ -126,6 +128,7 @@
 
 (use-package company-posframe
   :ensure t
+  :delight
   :after company
   :config
   (add-hook 'company-mode-hook (lambda () (company-posframe-mode 1)))
@@ -457,7 +460,10 @@ With a prefix ARG invalidates the cache first."
 
 (use-package eldoc-eval :ensure t)
 
-(use-package highlight-parentheses :ensure t :config
+(use-package highlight-parentheses
+  :ensure t
+  :delight
+  :config
   (global-highlight-parentheses-mode 1))
 
 
@@ -486,6 +492,7 @@ With a prefix ARG invalidates the cache first."
 
 (use-package editorconfig
   :ensure t
+  :delight (editorconfig-mode " ec")
   :config (editorconfig-mode 1))
 
 (defun fwoar--activate-treemacs ()
