@@ -90,22 +90,7 @@
   :ensure t)
 
 
-(use-package lsp-mode
-  :ensure t
-  :config (setq lsp-enable-snippet nil))
-
-(defun fwoar/lsp-ui-hook ()
-  (lsp-ui-sideline-mode -1))
-
-(use-package lsp-ui
-  :after lsp-mode
-  :ensure t
-  :config
-  (add-hook 'lsp-ui-mode-hook 'fwoar/lsp-ui-hook))
-
-(use-package lsp-treemacs
-  :after lsp-mode treemacs
-  :ensure t)
+(load-package-configuration 'lsp)
 
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
@@ -704,18 +689,6 @@ With a prefix ARG invalidates the cache first."
   (evil-define-key 'normal maven-test-mode-map
     (kbd "<leader>t") 'maven-test-all
     (kbd "<leader>T") 'maven-test-toggle-between-test-and-class-other-window))
-(use-package lsp-java
-  :ensure t
-  :hook (java-mode . lsp))
-
-(use-package lsp-haskell
-  :ensure t
-  :config
-  (setq lsp-haskell-process-path-hie "ghcide")
-  (setq lsp-haskell-process-args-hie '())
-  ;; Comment/uncomment this line to see interactions between lsp client/server.
-  ;;(setq lsp-log-io t)
-  )
 
 (progn
   (require 'ansi-color)
