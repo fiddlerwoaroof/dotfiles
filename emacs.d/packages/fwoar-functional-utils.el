@@ -136,11 +136,11 @@
 
 (fwoar/def-ns-fun include (pred)
   (lambda (seq)
-    (cl-remove-if-not pred seq)))
+    (cl-remove-if pred seq)))
 
 (fwoar/def-ns-fun exclude (pred)
   (lambda (seq)
-    (cl-remove-if pred seq)))
+    (cl-remove-if-not pred seq)))
 
 (fwoar/def-ns-fun pick (selector)
   (lambda (seq)

@@ -108,6 +108,25 @@ Also bind `class' to ((class color) (min-colors 89))."
 
 
 (fwoar/zenburn-with-color-variables
+  (customize-set-variable 'vc-annotate-color-map
+                          `((20  . ,zenburn-red)
+                            (40  . ,zenburn-red-1)
+                            (60  . ,zenburn-red-2)
+                            (80  . ,zenburn-orange)
+                            (100 . ,zenburn-yellow)
+                            (120 . ,zenburn-yellow-1)
+                            (140 . ,zenburn-yellow-2)
+                            (160 . ,zenburn-green+2)
+                            (180 . ,zenburn-green+1)
+                            (200 . ,zenburn-green)
+                            (220 . ,zenburn-cyan)
+                            (240 . ,zenburn-blue+3)
+                            (260 . ,zenburn-blue+2)
+                            (280 . ,zenburn-blue+1)
+                            (300 . ,zenburn-blue)
+                            (320 . ,zenburn-blue-1)
+                            (340 . ,zenburn-blue-2)
+                            (360 . ,zenburn-blue-3)))
   (custom-theme-set-faces
    'fwoar-zenburn
    `(highlight ((t (:inverse-video t))))
@@ -157,7 +176,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(line-number-current-line ((t (:foreground ,zenburn-blue+1 :inherit fwoar-zenburn-1-face))))
    `(mode-line-highlight ((t nil)))
    `(mode-line ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg
-                                :inherit fwoar-zenburn-1-face))))
+                                :inherit (fwoar-zenburn-1-face variable-pitch)))))
    `(mode-line-inactive ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg-1
                                          :inherit fwoar-zenburn-1-face))))
    `(mode-line-buffer-id ((t (:foreground ,zenburn-blue-2))))
@@ -278,6 +297,14 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(js2-external-variable ((t (:inherit font-lock-variable-name-face))))
    `(js2-error ((t (:foreground ,zenburn-red+2))))
    `(js2-object-property ((t (:inherit font-lock-variable-name-face))))
+   `(js2-instance-member ((t (:foreground ,zenburn-red-3))))
+   `(js2-jsdoc-html-tag-delimiter ((t (:foreground ,zenburn-green-2))))
+   `(js2-jsdoc-html-tag-name ((t (:foreground ,zenburn-yellow-1))))
+   `(js2-jsdoc-tag ((t (:foreground ,zenburn-blue-3))))
+   `(js2-jsdoc-type ((t (:foreground ,zenburn-blue-3))))
+   `(js2-jsdoc-value ((t (:foreground ,zenburn-orange))))
+   `(js2-private-function-call ((t (:foreground ,zenburn-orange))))
+   `(js2-private-member ((t (:foreground ,zenburn-orange))))
 
    ;; flycheck
    `(flycheck-error ((t (:underline (:style wave :color ,zenburn-red-2)))))
@@ -311,6 +338,49 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(magit-diff-file-heading-highlight ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg+1))))
    `(magit-diff-hunk-heading ((t (:background ,zenburn-bg+1))))
    `(magit-diff-hunk-heading-highlight ((t (:foreground ,zenburn-blue+1 :background ,zenburn-bg+2))))
+   `(magit-bisect-bad ((t (:foreground ,zenburn-red-5))))
+   `(magit-bisect-good ((t (:foreground ,zenburn-green-4))))
+   `(magit-bisect-skip ((t (:foreground ,zenburn-red-3))))
+   `(magit-blame-highlight ((t (:foreground ,zenburn-fg+2 :background ,zenburn-bg-05))))
+   `(magit-branch-local ((t (:foreground ,zenburn-blue+3))))
+   `(magit-branch-remote ((t (:foreground ,zenburn-green+4))))
+   `(magit-cherry-equivalent ((t (:foreground ,zenburn-magenta))))
+   `(magit-cherry-unmatched ((t (:foreground ,zenburn-cyan))))
+   ;; | magit-diff-file-heading-selection           | magit-diff-file-heading-highlight | LightSalmon3      | zenburn-red-1    |     5.20 |                 |                  |          |
+   ;; | magit-diff-hunk-heading-selection           | magit-diff-hunk-heading-highlight | LightSalmon3      | zenburn-red-1    |     5.20 |                 |                  |          |
+   ;; | magit-diff-lines-heading                    | magit-diff-hunk-heading-highlight | grey80            | zenburn-fg       |     3.01 | salmon4         | zenburn-red-5    |     1.82 |
+   `(magit-diffstat-added ((t (:foreground ,zenburn-green-3))))
+   `(magit-diffstat-removed ((t (:foreground ,zenburn-red-4))))
+   `(magit-dimmed ((t (:foreground ,zenburn-bg+3))))
+   `(magit-hash ((t (:foreground ,zenburn-bg+2))))
+   `(magit-log-author ((t (:foreground ,zenburn-red-2))))
+   `(magit-log-date ((t (:foreground ,zenburn-fg))))
+   `(magit-log-graph ((t (:foreground ,zenburn-fg))))
+   ;; | magit-process-ng                            | magit-section-heading             | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+   ;; | magit-process-ok                            | magit-section-heading             | green             | zenburn-green-2  |   170.26 |                 |                  |          |
+   `(magit-reflog-amend ((t (:foreground ,zenburn-magenta))))
+   `(magit-reflog-checkout ((t (:foreground ,zenburn-blue-5))))
+   `(magit-reflog-cherry-pick ((t (:foreground ,zenburn-green-2))))
+   `(magit-reflog-commit ((t (:foreground ,zenburn-green-2))))
+   `(magit-reflog-merge ((t (:foreground ,zenburn-green-2))))
+   `(magit-reflog-other ((t (:foreground ,zenburn-cyan))))
+   `(magit-reflog-rebase ((t (:foreground ,zenburn-magenta))))
+   `(magit-reflog-remote ((t (:foreground ,zenburn-cyan))))
+   `(magit-reflog-reset ((t (:foreground ,zenburn-red-6))))
+   `(magit-refname ((t (:foreground ,zenburn-fg))))
+   `(magit-section-heading ((t (:foreground ,zenburn-yellow-1))))
+   `(magit-section-heading-selection ((t (:foreground ,zenburn-red-1))))
+   `(magit-sequence-drop ((t (:foreground ,zenburn-red-2))))
+   `(magit-sequence-head ((t (:foreground ,zenburn-blue+3))))
+   `(magit-sequence-part ((t (:foreground ,zenburn-yellow-1))))
+   `(magit-sequence-stop ((t (:foreground ,zenburn-green+4))))
+   `(magit-signature-bad ((t (:foreground ,zenburn-red-6))))
+   `(magit-signature-error ((t (:foreground ,zenburn-blue+2))))
+   `(magit-signature-expired ((t (:foreground ,zenburn-orange))))
+   `(magit-signature-good ((t (:foreground ,zenburn-green-2))))
+   `(magit-signature-revoked ((t (:foreground ,zenburn-red-3))))
+   `(magit-signature-untrusted ((t (:foreground ,zenburn-blue-1))))
+   `(magit-tag ((t (:foreground ,zenburn-yellow-1))))
 
    `(sh-quoted-exec ((t (:inherit font-lock-function-name-face))))
    `(sh-heredoc ((t (:inherit font-lock-string-face))))
@@ -322,7 +392,29 @@ Also bind `class' to ((class color) (min-colors 89))."
    ;; isearch
    `(isearch ((t (:foreground ,zenburn-red-6 :background ,zenburn-magenta))))
    `(isearch-fail ((t (:background ,zenburn-red-6))))
+
+   `(web-mode-block-attr-name-face ((t (:foreground ,zenburn-green+1))))
+   `(web-mode-block-attr-value-face ((t (:foreground ,zenburn-blue-2))))
+   `(web-mode-block-face ((t (:background ,zenburn-black))))
+   `(web-mode-current-column-highlight-face ((t (:background ,zenburn-bg-05))))
+   `(web-mode-doctype-face ((t (:foreground ,zenburn-green+3))))
+   `(web-mode-error-face ((t (:background ,zenburn-red-6))))
+   `(web-mode-html-attr-name-face ((t (:foreground ,zenburn-fg+1))))
+   `(web-mode-html-tag-bracket-face ((t (:foreground ,zenburn-fg))))
+   `(web-mode-html-tag-face ((t (:foreground ,zenburn-green))))
+   `(web-mode-inlay-face ((t (:background ,zenburn-black))))
+   `(web-mode-json-context-face ((t (:foreground ,zenburn-magenta))))
+   `(web-mode-json-key-face ((t (:foreground ,zenburn-magenta))))
+   `(web-mode-jsx-depth-1-face ((t (:background ,zenburn-blue-1))))
+   `(web-mode-jsx-depth-2-face ((t (:background ,zenburn-blue-2))))
+   `(web-mode-jsx-depth-3-face ((t (:background ,zenburn-blue-3))))
+   `(web-mode-jsx-depth-4-face ((t (:background ,zenburn-blue-4))))
+   `(web-mode-jsx-depth-5-face ((t (:background ,zenburn-blue-5))))
+   `(web-mode-param-name-face ((t (:foreground ,zenburn-fg))))
+   `(web-mode-symbol-face ((t (:foreground ,zenburn-orange))))
+   `(web-mode-whitespace-face ((t (:background ,zenburn-red-5))))
    ))
+
 
 ;;;###autoload
 (when load-file-name

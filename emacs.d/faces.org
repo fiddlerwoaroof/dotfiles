@@ -1,0 +1,399 @@
+* Unfinished faces!
+
+#+CALL: get-face-grid()
+#+RESULTS:
+| FACE                                        | PARENT                            | FOREGROUND        | NEAREST FG       | DISTANCE | BACKGROUND      | NEAREST BG       | DISTANCE |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| compilation-mode-line-exit                  | compilation-info                  | ForestGreen       | zenburn-green-4  |    18.68 |                 |                  |          |
+| compilation-mode-line-fail                  | compilation-error                 | Red1              | zenburn-red-6    |   115.32 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| completions-common-part                     |                                   | lightblue         | zenburn-blue+2   |     0.53 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| cua-global-mark                             |                                   | black             | zenburn-black    |     0.00 | yellow1         | zenburn-yellow-1 |    98.78 |
+| cua-rectangle                               | region                            | white             | zenburn-fg+2     |     0.78 | maroon          | zenburn-red-4    |    13.70 |
+| cua-rectangle-noselect                      | region                            | white             | zenburn-fg+2     |     0.78 | dimgray         | zenburn-bg+3     |     0.67 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| custom-variable-obsolete                    |                                   | light blue        | zenburn-blue+2   |     0.53 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| diary                                       |                                   | yellow1           | zenburn-yellow-1 |    98.78 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| diff-added                                  | diff-changed                      |                   |                  |          | #335533         | zenburn-green-5  |     0.34 |
+| diff-file-header                            |                                   |                   |                  |          | grey60          | zenburn-fg-1     |     2.91 |
+| diff-header                                 |                                   |                   |                  |          | grey45          | zenburn-bg+3     |     0.22 |
+| diff-indicator-added                        | diff-added                        | #22aa22           | zenburn-green-3  |    37.37 |                 |                  |          |
+| diff-indicator-changed                      | diff-changed                      | #aaaa22           | zenburn-fg-1     |    38.78 |                 |                  |          |
+| diff-indicator-removed                      | diff-removed                      | #aa2222           | zenburn-red-6    |    18.10 |                 |                  |          |
+| diff-refine-added                           | diff-refine-changed               |                   |                  |          | #22aa22         | zenburn-green-3  |    37.37 |
+| diff-refine-changed                         |                                   |                   |                  |          | #aaaa22         | zenburn-fg-1     |    38.78 |
+| diff-refine-removed                         | diff-refine-changed               |                   |                  |          | #aa2222         | zenburn-red-6    |    18.10 |
+| diff-removed                                | diff-changed                      |                   |                  |          | #553333         | zenburn-red-6    |     2.09 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| edebug-disabled-breakpoint                  |                                   |                   |                  |          | #335533         | zenburn-green-5  |     0.34 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| ediff-current-diff-A                        |                                   |                   |                  |          | #553333         | zenburn-red-6    |     2.09 |
+| ediff-current-diff-Ancestor                 |                                   |                   |                  |          | #004151         | zenburn-bg-05    |    13.70 |
+| ediff-current-diff-B                        |                                   |                   |                  |          | #335533         | zenburn-green-5  |     0.34 |
+| ediff-current-diff-C                        |                                   |                   |                  |          | #888833         | zenburn-green-2  |    14.65 |
+| ediff-even-diff-A                           |                                   |                   |                  |          | light grey      | zenburn-fg       |     1.20 |
+| ediff-even-diff-Ancestor                    |                                   |                   |                  |          | Grey            | zenburn-green+3  |     6.16 |
+| ediff-even-diff-B                           |                                   |                   |                  |          | Grey            | zenburn-green+3  |     6.16 |
+| ediff-even-diff-C                           |                                   |                   |                  |          | light grey      | zenburn-fg       |     1.20 |
+| ediff-fine-diff-A                           |                                   |                   |                  |          | #aa2222         | zenburn-red-6    |    18.10 |
+| ediff-fine-diff-Ancestor                    |                                   |                   |                  |          | #009591         | zenburn-blue-3   |    29.95 |
+| ediff-fine-diff-B                           |                                   |                   |                  |          | #22aa22         | zenburn-green-3  |    37.37 |
+| ediff-fine-diff-C                           |                                   |                   |                  |          | #aaaa22         | zenburn-fg-1     |    38.78 |
+| ediff-odd-diff-A                            |                                   |                   |                  |          | Grey            | zenburn-green+3  |     6.16 |
+| ediff-odd-diff-Ancestor                     |                                   |                   |                  |          | gray40          | zenburn-bg+2     |     0.67 |
+| ediff-odd-diff-B                            |                                   |                   |                  |          | light grey      | zenburn-fg       |     1.20 |
+| ediff-odd-diff-C                            |                                   |                   |                  |          | Grey            | zenburn-green+3  |     6.16 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| epa-field-body                              |                                   | turquoise         | zenburn-blue     |    23.32 |                 |                  |          |
+| epa-field-name                              |                                   | PaleTurquoise     | zenburn-blue+2   |     1.66 |                 |                  |          |
+| epa-mark                                    |                                   | orange            | zenburn-orange   |    70.58 |                 |                  |          |
+| epa-string                                  |                                   | lightyellow       | zenburn-fg+2     |     0.78 |                 |                  |          |
+| epa-validity-high                           |                                   | PaleTurquoise     | zenburn-blue+2   |     1.66 |                 |                  |          |
+| epa-validity-medium                         |                                   | PaleTurquoise     | zenburn-blue+2   |     1.66 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| error                                       |                                   | Pink              | zenburn-red+2    |     4.45 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| escape-glyph                                |                                   | cyan              | zenburn-cyan     |    85.48 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| evil-ex-info                                |                                   | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+| evil-ex-substitute-replacement              |                                   | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| eww-form-checkbox                           |                                   | black             | zenburn-black    |     0.00 | lightgrey       | zenburn-fg       |     1.20 |
+| eww-form-select                             |                                   | black             | zenburn-black    |     0.00 | lightgrey       | zenburn-fg       |     1.20 |
+| eww-form-submit                             |                                   | black             | zenburn-black    |     0.00 | #808080         | zenburn-green-1  |     3.76 |
+| eww-form-text                               |                                   | white             | zenburn-fg+2     |     0.78 | #505050         | zenburn-bg+1     |     0.01 |
+| eww-form-textarea                           |                                   | black             | zenburn-black    |     0.00 | #C0C0C0         | zenburn-green+3  |     6.02 |
+| eww-invalid-certificate                     |                                   | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+| eww-valid-certificate                       |                                   | ForestGreen       | zenburn-green-4  |    18.68 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| gnus-group-mail-1-empty                     |                                   | #e1ffe1           | zenburn-fg+1     |     2.96 |                 |                  |          |
+| gnus-group-mail-2-empty                     |                                   | DarkSeaGreen1     | zenburn-green+4  |     2.47 |                 |                  |          |
+| gnus-group-mail-3-empty                     |                                   | aquamarine1       | zenburn-cyan     |     8.53 |                 |                  |          |
+| gnus-group-mail-low-empty                   |                                   | aquamarine2       | zenburn-cyan     |     8.06 |                 |                  |          |
+| gnus-group-news-1-empty                     |                                   | PaleTurquoise     | zenburn-blue+2   |     1.66 |                 |                  |          |
+| gnus-group-news-2-empty                     |                                   | turquoise         | zenburn-blue     |    23.32 |                 |                  |          |
+| gnus-group-news-low-empty                   |                                   | DarkTurquoise     | zenburn-blue-1   |    58.44 |                 |                  |          |
+| gnus-splash                                 |                                   | #cccccc           | zenburn-fg       |     3.01 |                 |                  |          |
+| gnus-summary-cancelled                      |                                   | yellow            | zenburn-yellow-1 |    98.78 | black           | zenburn-black    |     0.00 |
+| gnus-summary-normal-ancient                 |                                   | SkyBlue           | zenburn-blue     |     2.35 |                 |                  |          |
+| gnus-summary-normal-read                    |                                   | PaleGreen         | zenburn-green+3  |    11.87 |                 |                  |          |
+| gnus-summary-normal-ticked                  |                                   | pink              | zenburn-red+2    |     4.45 |                 |                  |          |
+| gnus-summary-normal-undownloaded            |                                   | LightGray         | zenburn-fg       |     1.20 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| haskell-debug-muted-face                    |                                   | #999              | zenburn-green    |     3.76 |                 |                  |          |
+| haskell-debug-newline-face                  |                                   |                   |                  |          | #f0f0f0         | zenburn-fg+1     |     2.49 |
+| haskell-debug-trace-number-face             |                                   |                   |                  |          | #f5f5f5         | zenburn-fg+2     |     1.40 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| helm-buffer-archive                         |                                   | Gold              | zenburn-yellow-2 |    79.43 |                 |                  |          |
+| helm-buffer-directory                       |                                   | DarkRed           | zenburn-red-6    |    30.52 | LightGray       | zenburn-fg       |     1.20 |
+| helm-buffer-not-saved                       |                                   | Indianred2        | zenburn-red-1    |    21.04 |                 |                  |          |
+| helm-buffer-process                         |                                   | Sienna3           | zenburn-red-3    |    16.53 |                 |                  |          |
+| helm-buffer-saved-out                       |                                   | red               | zenburn-red-6    |   115.32 | black           | zenburn-black    |     0.00 |
+| helm-buffer-size                            |                                   | RosyBrown         | zenburn-red-1    |     1.37 |                 |                  |          |
+| helm-css-scss-selector-depth-face-1         |                                   | #ffff00           | zenburn-yellow-1 |    98.78 |                 |                  |          |
+| helm-css-scss-selector-depth-face-2         |                                   | #ffdd00           | zenburn-yellow-2 |    81.41 |                 |                  |          |
+| helm-css-scss-selector-depth-face-3         |                                   | #ffbb00           | zenburn-orange   |    70.72 |                 |                  |          |
+| helm-css-scss-selector-depth-face-4         |                                   | #ff9900           | zenburn-orange   |    73.07 |                 |                  |          |
+| helm-css-scss-selector-depth-face-5         |                                   | #ff7700           | zenburn-red-2    |    74.26 |                 |                  |          |
+| helm-css-scss-selector-depth-face-6         |                                   | #ff5500           | zenburn-red-3    |    76.75 |                 |                  |          |
+| helm-css-scss-target-line-face              |                                   | #333333           | zenburn-bg-05    |     0.49 | #e3e300         | zenburn-yellow-2 |    77.33 |
+| helm-delete-async-message                   |                                   | yellow            | zenburn-yellow-1 |    98.78 |                 |                  |          |
+| helm-etags-file                             |                                   | Lightgoldenrod4   | zenburn-green-2  |     8.83 |                 |                  |          |
+| helm-ff-backup-file                         |                                   | DimGray           | zenburn-bg+3     |     0.67 |                 |                  |          |
+| helm-ff-file-extension                      |                                   | magenta           | zenburn-magenta  |   138.17 |                 |                  |          |
+| helm-grep-file                              |                                   | BlueViolet        | zenburn-red-3    |    80.85 |                 |                  |          |
+| helm-grep-finish                            |                                   | Green             | zenburn-green-2  |   170.26 |                 |                  |          |
+| helm-grep-lineno                            |                                   | Darkorange1       | zenburn-red-2    |    75.04 |                 |                  |          |
+| helm-grep-match                             |                                   | gold1             | zenburn-yellow-2 |    79.43 |                 |                  |          |
+| helm-history-remote                         |                                   | Indianred1        | zenburn-red-1    |    25.96 |                 |                  |          |
+| helm-lisp-show-completion                   |                                   |                   |                  |          | DarkSlateGray   | zenburn-bg+05    |     2.85 |
+| helm-locate-finish                          |                                   | Green             | zenburn-green-2  |   170.26 |                 |                  |          |
+| helm-ls-git-conflict-face                   |                                   | MediumVioletRed   | zenburn-red-4    |    47.27 |                 |                  |          |
+| helm-ls-git-deleted-and-staged-face         |                                   | DimGray           | zenburn-bg+3     |     0.67 |                 |                  |          |
+| helm-ls-git-deleted-not-staged-face         |                                   | Darkgoldenrod3    | zenburn-red-2    |    48.87 |                 |                  |          |
+| helm-ls-git-modified-and-staged-face        |                                   | Goldenrod         | zenburn-orange   |    41.72 |                 |                  |          |
+| helm-ls-git-renamed-modified-face           |                                   | Goldenrod         | zenburn-orange   |    41.72 |                 |                  |          |
+| helm-moccur-buffer                          |                                   | DarkTurquoise     | zenburn-blue-1   |    58.44 |                 |                  |          |
+| helm-rg-base-rg-cmd-face                    |                                   | gray              | zenburn-green+3  |     6.16 |                 |                  |          |
+| helm-rg-colon-separator-ripgrep-output-face |                                   | white             | zenburn-fg+2     |     0.78 |                 |                  |          |
+| helm-rg-file-match-face                     |                                   | #0ff              | zenburn-cyan     |    78.64 |                 |                  |          |
+| helm-rg-inactive-arg-face                   |                                   | gray              | zenburn-green+3  |     6.16 |                 |                  |          |
+| helm-rg-match-text-face                     |                                   | white             | zenburn-fg+2     |     0.78 | purple          | zenburn-magenta  |    95.05 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| holiday                                     |                                   |                   |                  |          | chocolate4      | zenburn-red-6    |     9.79 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| homoglyph                                   |                                   | cyan              | zenburn-cyan     |    85.48 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| hydra-face-amaranth                         |                                   | #E52B50           | zenburn-red-4    |    43.22 |                 |                  |          |
+| hydra-face-blue                             |                                   | #8ac6f2           | zenburn-blue+1   |     0.78 |                 |                  |          |
+| hydra-face-pink                             |                                   | #FF6EB4           | zenburn-magenta  |    12.15 |                 |                  |          |
+| hydra-face-red                              |                                   | #FF0000           | zenburn-red-6    |   115.32 |                 |                  |          |
+| hydra-face-teal                             |                                   | #367588           | zenburn-blue-4   |     3.82 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| ibuffer-locked-buffer                       |                                   | RosyBrown         | zenburn-red-1    |     1.37 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| ido-indicator                               |                                   | yellow1           | zenburn-yellow-1 |    98.78 | red1            | zenburn-red-6    |   115.32 |
+| ido-only-match                              |                                   | ForestGreen       | zenburn-green-4  |    18.68 |                 |                  |          |
+| ido-subdir                                  |                                   | red1              | zenburn-red-6    |   115.32 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| info-menu-star                              |                                   | red1              | zenburn-red-6    |   115.32 |                 |                  |          |
+| info-node                                   |                                   | white             | zenburn-fg+2     |     0.78 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| lazy-highlight                              |                                   |                   |                  |          | paleturquoise4  | zenburn-blue-3   |     0.42 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| line-number-major-tick                      |                                   |                   |                  |          | grey75          | zenburn-green+3  |     6.08 |
+| line-number-minor-tick                      |                                   |                   |                  |          | grey55          | zenburn-green    |     3.73 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| link                                        |                                   | cyan1             | zenburn-cyan     |    85.48 |                 |                  |          |
+| link-visited                                | link                              | violet            | zenburn-magenta  |     8.10 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| lsp-ui-doc-background                       |                                   |                   |                  |          | #272A36         | zenburn-bg       |     0.35 |
+| lsp-ui-doc-header                           |                                   | black             | zenburn-black    |     0.00 | deep sky blue   | zenburn-blue-1   |    73.19 |
+| lsp-ui-peek-filename                        |                                   | dark orange       | zenburn-red-1    |    76.73 |                 |                  |          |
+| lsp-ui-peek-header                          |                                   | black             | zenburn-black    |     0.00 | white           | zenburn-fg+2     |     0.78 |
+| lsp-ui-peek-highlight                       |                                   | black             | zenburn-black    |     0.00 | white           | zenburn-fg+2     |     0.78 |
+| lsp-ui-peek-line-number                     |                                   | grey25            | zenburn-bg-05    |     0.88 |                 |                  |          |
+| lsp-ui-peek-list                            |                                   |                   |                  |          | #181818         | zenburn-bg-1     |     0.61 |
+| lsp-ui-peek-peek                            |                                   |                   |                  |          | #031A25         | zenburn-bg-1     |     2.82 |
+| lsp-ui-peek-selection                       |                                   | black             | zenburn-black    |     0.00 | white           | zenburn-fg+2     |     0.78 |
+| lsp-ui-sideline-code-action                 |                                   | yellow            | zenburn-yellow-1 |    98.78 |                 |                  |          |
+| lsp-ui-sideline-current-symbol              |                                   | white             | zenburn-fg+2     |     0.78 |                 |                  |          |
+| lsp-ui-sideline-symbol                      |                                   | grey              | zenburn-green+3  |     6.16 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| lv-separator                                |                                   |                   |                  |          | grey30          | zenburn-bg+1     |     0.12 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| macrostep-expansion-highlight-face          |                                   |                   |                  |          | #222222         | zenburn-bg       |     1.61 |
+| macrostep-gensym-1                          |                                   | #8080c0           | zenburn-blue-2   |    11.40 |                 |                  |          |
+| macrostep-gensym-2                          |                                   | #8fbc8f           | zenburn-green+1  |     0.61 |                 |                  |          |
+| macrostep-gensym-3                          |                                   | #daa520           | zenburn-orange   |    41.72 |                 |                  |          |
+| macrostep-gensym-4                          |                                   | #cd5c5c           | zenburn-red-2    |    10.05 |                 |                  |          |
+| macrostep-gensym-5                          |                                   | #da70d6           | zenburn-magenta  |     6.35 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| magit-diff-file-heading-selection           | magit-diff-file-heading-highlight | LightSalmon3      | zenburn-red-1    |     5.20 |                 |                  |          |
+| magit-diff-hunk-heading-selection           | magit-diff-hunk-heading-highlight | LightSalmon3      | zenburn-red-1    |     5.20 |                 |                  |          |
+| magit-diff-lines-heading                    | magit-diff-hunk-heading-highlight | grey80            | zenburn-fg       |     3.01 | salmon4         | zenburn-red-5    |     1.82 |
+| magit-process-ng                            | magit-section-heading             | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+| magit-process-ok                            | magit-section-heading             | green             | zenburn-green-2  |   170.26 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| match                                       |                                   |                   |                  |          | RoyalBlue3      | zenburn-blue-3   |    33.02 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| message-cited-text-1                        |                                   | LightPink1        | zenburn-red+2    |     1.96 |                 |                  |          |
+| message-cited-text-2                        |                                   | forest green      | zenburn-green-4  |    18.68 |                 |                  |          |
+| message-cited-text-3                        |                                   | goldenrod3        | zenburn-red-2    |    40.39 |                 |                  |          |
+| message-cited-text-4                        |                                   | chocolate3        | zenburn-red-3    |    27.58 |                 |                  |          |
+| message-header-cc                           |                                   | chartreuse1       | zenburn-green+1  |   115.41 |                 |                  |          |
+| message-header-name                         |                                   | green             | zenburn-green-2  |   170.26 |                 |                  |          |
+| message-header-newsgroups                   |                                   | yellow            | zenburn-yellow-1 |    98.78 |                 |                  |          |
+| message-header-other                        |                                   | VioletRed1        | zenburn-magenta  |    50.24 |                 |                  |          |
+| message-header-subject                      |                                   | OliveDrab1        | zenburn-yellow-2 |    48.95 |                 |                  |          |
+| message-header-to                           |                                   | DarkOliveGreen1   | zenburn-yellow-1 |    23.96 |                 |                  |          |
+| message-header-xheader                      |                                   | DeepSkyBlue1      | zenburn-blue-1   |    73.19 |                 |                  |          |
+| message-mml                                 |                                   | MediumSpringGreen | zenburn-blue-1   |    84.90 |                 |                  |          |
+| message-separator                           |                                   | LightSkyBlue1     | zenburn-blue+3   |     1.34 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| mm-command-output                           |                                   | ForestGreen       | zenburn-green-4  |    18.68 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| mmm-cleanup-submode-face                    |                                   |                   |                  |          | peru            | zenburn-red-2    |    16.20 |
+| mmm-code-submode-face                       |                                   |                   |                  |          | DimGray         | zenburn-bg+3     |     0.67 |
+| mmm-comment-submode-face                    |                                   |                   |                  |          | SteelBlue       | zenburn-blue-3   |     9.04 |
+| mmm-declaration-submode-face                |                                   |                   |                  |          | DarkTurquoise   | zenburn-blue-1   |    58.44 |
+| mmm-default-submode-face                    |                                   |                   |                  |          | gray20          | zenburn-bg-05    |     0.49 |
+| mmm-init-submode-face                       |                                   |                   |                  |          | MediumOrchid    | zenburn-magenta  |    25.22 |
+| mmm-output-submode-face                     |                                   |                   |                  |          | MediumVioletRed | zenburn-red-4    |    47.27 |
+| mmm-special-submode-face                    |                                   |                   |                  |          | ForestGreen     | zenburn-green-4  |    18.68 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| nobreak-hyphen                              |                                   | cyan              | zenburn-cyan     |    85.48 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| nxml-glyph                                  |                                   | black             | zenburn-black    |     0.00 | light grey      | zenburn-fg       |     1.20 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| org-agenda-dimmed-todo-face                 |                                   | grey50            | zenburn-bg+3     |     3.51 |                 |                  |          |
+| org-agenda-done                             |                                   | PaleGreen         | zenburn-green+3  |    11.87 |                 |                  |          |
+| org-agenda-restriction-lock                 |                                   |                   |                  |          | #1C1C1C         | zenburn-bg-1     |     1.57 |
+| org-agenda-structure                        |                                   | LightSkyBlue      | zenburn-blue+1   |     2.32 |                 |                  |          |
+| org-clock-overlay                           |                                   | white             | zenburn-fg+2     |     0.78 | SkyBlue4        | zenburn-blue-4   |     2.41 |
+| org-column                                  |                                   |                   |                  |          | grey30          | zenburn-bg+1     |     0.12 |
+| org-column-title                            |                                   |                   |                  |          | grey30          | zenburn-bg+1     |     0.12 |
+| org-date                                    |                                   | Cyan              | zenburn-cyan     |    85.48 |                 |                  |          |
+| org-date-selected                           |                                   | Pink              | zenburn-red+2    |     4.45 |                 |                  |          |
+| org-document-info                           |                                   | pale turquoise    | zenburn-blue+2   |     1.66 |                 |                  |          |
+| org-document-title                          |                                   | pale turquoise    | zenburn-blue+2   |     1.66 |                 |                  |          |
+| org-done                                    |                                   | PaleGreen         | zenburn-green+3  |    11.87 |                 |                  |          |
+| org-drawer                                  |                                   | LightSkyBlue      | zenburn-blue+1   |     2.32 |                 |                  |          |
+| org-ellipsis                                |                                   | LightGoldenrod    | zenburn-yellow-1 |     4.94 |                 |                  |          |
+| org-footnote                                |                                   | Cyan              | zenburn-cyan     |    85.48 |                 |                  |          |
+| org-formula                                 |                                   | chocolate1        | zenburn-red-1    |    49.73 |                 |                  |          |
+| org-headline-done                           |                                   | LightSalmon       | zenburn-orange   |     7.67 |                 |                  |          |
+| org-headline-todo                           |                                   | Pink2             | zenburn-red+2    |     0.83 |                 |                  |          |
+| org-latex-and-related                       |                                   | burlywood         | zenburn-orange   |     0.77 |                 |                  |          |
+| org-mode-line-clock-overrun                 | mode-line                         |                   |                  |          | red             | zenburn-red-6    |   115.32 |
+| org-scheduled                               |                                   | PaleGreen         | zenburn-green+3  |    11.87 |                 |                  |          |
+| org-scheduled-previously                    |                                   | chocolate1        | zenburn-red-1    |    49.73 |                 |                  |          |
+| org-scheduled-today                         |                                   | PaleGreen         | zenburn-green+3  |    11.87 |                 |                  |          |
+| org-sexp-date                               |                                   | Cyan              | zenburn-cyan     |    85.48 |                 |                  |          |
+| org-table-header                            | org-table                         | Black             | zenburn-black    |     0.00 | LightGray       | zenburn-fg       |     1.20 |
+| org-time-grid                               |                                   | LightGoldenrod    | zenburn-yellow-1 |     4.94 |                 |                  |          |
+| org-todo                                    |                                   | Pink              | zenburn-red+2    |     4.45 |                 |                  |          |
+| org-upcoming-deadline                       |                                   | chocolate1        | zenburn-red-1    |    49.73 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| pulse-highlight-face                        |                                   |                   |                  |          | #AAAA33         | zenburn-fg-1     |    27.19 |
+| pulse-highlight-start-face                  |                                   |                   |                  |          | #AAAA33         | zenburn-fg-1     |    27.19 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| rainbow-delimiters-base-error-face          | rainbow-delimiters-base-face      | #88090B           | zenburn-red-6    |    20.71 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| secondary-selection                         |                                   |                   |                  |          | SkyBlue4        | zenburn-blue-4   |     2.41 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| shadow                                      |                                   | grey70            | zenburn-green+2  |     5.25 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| show-paren-match                            |                                   |                   |                  |          | steelblue3      | zenburn-blue-2   |    11.36 |
+| show-paren-mismatch                         |                                   | white             | zenburn-fg+2     |     0.78 | purple          | zenburn-magenta  |    95.05 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| shr-selected-link                           | shr-link                          |                   |                  |          | red             | zenburn-red-6    |   115.32 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| sldb-restartable-frame-line-face            |                                   | lime green        | zenburn-green-1  |    52.76 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| smerge-base                                 |                                   |                   |                  |          | #888833         | zenburn-green-2  |    14.65 |
+| smerge-lower                                |                                   |                   |                  |          | #335533         | zenburn-green-5  |     0.34 |
+| smerge-markers                              |                                   |                   |                  |          | grey30          | zenburn-bg+1     |     0.12 |
+| smerge-refined-added                        | smerge-refined-change             |                   |                  |          | #22aa22         | zenburn-green-3  |    37.37 |
+| smerge-refined-removed                      | smerge-refined-change             |                   |                  |          | #aa2222         | zenburn-red-6    |    18.10 |
+| smerge-upper                                |                                   |                   |                  |          | #553333         | zenburn-red-6    |     2.09 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| sp-wrap-overlay-closing-pair                | sp-wrap-overlay-face              | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+| sp-wrap-overlay-opening-pair                | sp-wrap-overlay-face              | green             | zenburn-green-2  |   170.26 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| success                                     |                                   | Green1            | zenburn-green-2  |   170.26 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| tab-bar                                     | variable-pitch                    | black             | zenburn-black    |     0.00 | grey85          | zenburn-fg       |     0.72 |
+| tab-bar-tab-inactive                        | tab-bar-tab                       |                   |                  |          | grey75          | zenburn-green+3  |     6.08 |
+| tab-line                                    | variable-pitch                    | black             | zenburn-black    |     0.00 | grey85          | zenburn-fg       |     0.72 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| tooltip                                     | variable-pitch                    | black             | zenburn-black    |     0.00 | lightyellow     | zenburn-fg+2     |     0.78 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| trailing-whitespace                         |                                   |                   |                  |          | red1            | zenburn-red-6    |   115.32 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| transient-amaranth                          | transient-key                     | #E52B50           | zenburn-red-4    |    43.22 |                 |                  |          |
+| transient-blue                              | transient-key                     | blue              | zenburn-blue-5   |   178.65 |                 |                  |          |
+| transient-disabled-suffix                   |                                   | black             | zenburn-black    |     0.00 | red             | zenburn-red-6    |   115.32 |
+| transient-enabled-suffix                    |                                   | black             | zenburn-black    |     0.00 | green           | zenburn-green-2  |   170.26 |
+| transient-pink                              | transient-key                     | #FF6EB4           | zenburn-magenta  |    12.15 |                 |                  |          |
+| transient-red                               | transient-key                     | red               | zenburn-red-6    |   115.32 |                 |                  |          |
+| transient-separator                         |                                   |                   |                  |          | grey30          | zenburn-bg+1     |     0.12 |
+| transient-teal                              | transient-key                     | #367588           | zenburn-blue-4   |     3.82 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| treemacs-on-failure-pulse-face              |                                   | #111111           | zenburn-bg-1     |     0.02 | #ab3737         | zenburn-red-5    |    10.34 |
+| treemacs-on-success-pulse-face              |                                   | #111111           | zenburn-bg-1     |     0.02 | #669966         | zenburn-green-1  |     1.37 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| tty-menu-disabled-face                      |                                   | lightgray         | zenburn-fg       |     1.20 | blue            | zenburn-blue-5   |   178.65 |
+| tty-menu-enabled-face                       |                                   | yellow            | zenburn-yellow-1 |    98.78 | blue            | zenburn-blue-5   |   178.65 |
+| tty-menu-selected-face                      |                                   |                   |                  |          | red             | zenburn-red-6    |   115.32 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| typescript-jsdoc-tag                        |                                   | SlateGray         | zenburn-blue-3   |     2.06 |                 |                  |          |
+| typescript-jsdoc-type                       |                                   | SteelBlue         | zenburn-blue-3   |     9.04 |                 |                  |          |
+| typescript-jsdoc-value                      |                                   | gold4             | zenburn-red-4    |    33.44 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| verilog-font-lock-ams-face                  |                                   | orange1           | zenburn-orange   |    70.58 |                 |                  |          |
+| verilog-font-lock-grouping-keywords-face    |                                   | orange1           | zenburn-orange   |    70.58 |                 |                  |          |
+| verilog-font-lock-p1800-face                |                                   | orange1           | zenburn-orange   |    70.58 |                 |                  |          |
+| verilog-font-lock-translate-off-face        |                                   |                   |                  |          | gray10          | zenburn-bg-1     |     1.03 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| vertical-border                             |                                   | slate gray        | zenburn-blue-3   |     2.06 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| warning                                     |                                   | DarkOrange        | zenburn-red-1    |    76.73 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| which-func                                  |                                   | Blue1             | zenburn-blue-5   |   178.65 |                 |                  |          |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| widget-button-pressed                       |                                   | red1              | zenburn-red-6    |   115.32 |                 |                  |          |
+| widget-documentation                        |                                   | lime green        | zenburn-green-1  |    52.76 |                 |                  |          |
+| widget-field                                |                                   |                   |                  |          | dim gray        | zenburn-bg+3     |     0.67 |
+| widget-single-line-field                    |                                   |                   |                  |          | dim gray        | zenburn-bg+3     |     0.67 |
+|---------------------------------------------+-----------------------------------+-------------------+------------------+----------+-----------------+------------------+----------|
+| yaml-tab-face                               |                                   | red               | zenburn-red-6    |   115.32 | red             | zenburn-red-6    |   115.32 |
+
+#+NAME: get-face-grid
+#+BEGIN_SRC emacs-lisp
+  (defun fwoar/tmp/zenburn-nearest-color (target)
+    (rassoc (caar (cl-sort (fwoar/zenburn-with-color-variables
+                             (mapcar (lambda (_)
+                                       (cons _
+                                             (color-distance target
+                                                             _)))
+                                     (mapcar (-compose 'symbol-value 'intern 'car)
+                                             fwoar-zenburn-default-colors-alist)))
+                           '<
+                           :key 'cdr))
+            fwoar-zenburn-default-colors-alist))
+
+  (defun fwoar/tmp/get-prefix (v)
+    (car
+     (s-split-up-to "-"
+                    (symbol-name v)
+                    1)))
+
+  (defun fwoar/tmp/break-by-prefix (tab)
+    (nreverse
+     (reduce (lambda (accum next)
+               (let ((accum-key (caar accum))
+                     (next-key (car next)))
+                 (if (equal (fwoar/tmp/get-prefix accum-key)
+                            (fwoar/tmp/get-prefix next-key))
+                     (cons next accum)
+                   (list* next 'hline accum))))
+             (cdr tab)
+             :initial-value (list (car tab)))))
+
+  (list* '(FACE PARENT FOREGROUND NEAREST\ FG DISTANCE BACKGROUND NEAREST\ BG DISTANCE)
+         'hline
+         (fwoar/tmp/break-by-prefix
+          (cl-sort (mapcan (lambda (f)
+                             (let ((r (face-attribute f :inherit nil nil)))
+                               (if (or (and (eq (face-attribute f :foreground) 'unspecified)
+                                            (eq (face-attribute f :background) 'unspecified))
+                                       (or (when (rassoc (face-attribute f :foreground)
+                                                         fwoar-zenburn-default-colors-alist)
+                                             (or (face-attribute f :background)
+                                                 (rassoc (face-attribute f :background)
+                                                         fwoar-zenburn-default-colors-alist)))
+                                           (when (rassoc (face-attribute f :background)
+                                                         fwoar-zenburn-default-colors-alist)
+                                             (or (face-attribute f :foreground)
+                                                 (rassoc (face-attribute f :foreground)
+                                                         fwoar-zenburn-default-colors-alist)))))
+                                   ()
+                                 (list (list f
+                                             (if (eq 'unspecified r) "" r)
+                                             (if (eq 'unspecified (face-attribute f :foreground))
+                                                 ""
+                                               (face-attribute f :foreground))
+
+                                             (if (eq 'unspecified (face-attribute f :foreground))
+                                                 ""
+                                               (car (fwoar/tmp/zenburn-nearest-color (face-attribute f :foreground))))
+                                             (if (eq 'unspecified (face-attribute f :foreground))
+                                                 ""
+                                               (format "%6.2f"
+                                                       (* (/ (color-distance (face-attribute f :foreground)
+                                                                             (cdr (fwoar/tmp/zenburn-nearest-color
+                                                                                   (face-attribute f :foreground))))
+                                                             65536.0)
+                                                          100)))
+                                             (if (eq 'unspecified (face-attribute f :background))
+                                                 ""
+                                               (face-attribute f :background))
+                                             (if (eq 'unspecified (face-attribute f :background))
+                                                 ""
+                                               (car (fwoar/tmp/zenburn-nearest-color (face-attribute f :background))))
+                                             (if (eq 'unspecified (face-attribute f :background))
+                                                 ""
+                                               (format "%6.2f"
+                                                       (* (/ (color-distance (face-attribute f :background)
+                                                                             (cdr (fwoar/tmp/zenburn-nearest-color
+                                                                                   (face-attribute f :background))))
+                                                             65536.0)
+                                                          100))))))))
+                           (face-list))
+                   'string<
+                   :key 'car)))
+#+END_SRC
