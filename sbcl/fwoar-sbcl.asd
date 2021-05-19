@@ -3,9 +3,12 @@
                (:require :sb-introspect)
                :alexandria
                :cffi
+               :data-lens
                :fwoar-lisputils
                :legit
                :linedit
                :osicat
-               :serapeum)
+               :printv
+               :serapeum
+               :trivial-ssh)
   :components ((:file "utils")))
