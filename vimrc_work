@@ -20,7 +20,7 @@ if dein#load_state(vim_config_directory)
 "}}}3
 " plugins {{{2
   call dein#add('LnL7/vim-nix')
-  call dein#add('Shougo/vimproc', {'build': 'make'})
+  call dein#add('Shougo/vimproc.vim', {'build' : 'make'})
   call dein#add('Shougo/unite-outline')
   call dein#add('Shougo/unite.vim')
   call dein#add('Shougo/vimfiler.vim')
