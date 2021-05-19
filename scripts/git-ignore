@@ -5,24 +5,39 @@
 
 (defpackage :fwoar.git-ignore
   (:use :cl))
+(in-package :fwoar.git-ignore)
 
 (defparameter *args*
   (uiop:command-line-arguments))
 
-(with-open-file (s ".gitignore" :direction :output :if-exists :append :if-does-not-exist :create)
+(defun trim-spaces (string)
+  (string-trim '(#\space #\tab #\newline) string))
+
+(defun get-to-ignore ()
+  (format *query-io* "ignore? ")
+  (finish-output *query-io*)
+  (read-line *query-io* nil))
+
+(defun not-terminator (line)
+  (and line
+       (not (string= line ""))
+       (not (string= line "."))))
+
+(defmacro loop-until-done ((line) &body body)
+  `(loop for ,line = (trim-spaces (get-to-ignore))
+         while (not-terminator ,line)
+         do ,@body))
+
+(with-open-file (s ".gitignore"
+                   :direction :output
+                   :if-exists :append
+                   :if-does-not-exist :create)
   (fresh-line s)
   (if *args*
       (format s "~{~a~%~}" *args*)
-      (loop for line = (string-trim '(#\space #\tab #\newline)
-                                    (progn (format *query-io* "ignore? ")
-                                           (finish-output *query-io*)
-                                           (read-line *query-io* nil)))
-            while (and line
-                       (not (string= line ""))
-                       (not (string= line ".")))
-            do
-               (princ line s)
-               (terpri s))))
+      (loop-until-done (line)
+        (princ line s)
+        (terpri s))))
 
 (uiop:run-program "git add .gitignore"
                   :force-shell t
