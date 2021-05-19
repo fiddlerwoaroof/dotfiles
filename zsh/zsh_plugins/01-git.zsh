@@ -10,6 +10,29 @@ if ! [[ -d "$HOME/git*_repos" ]]; then
   mkdir -p "$HOME"/git_repos
 fi
 
+git-pwdurl () {
+  set -x
+  local -a parts
+  parts=(${(s:/:)PWD})
+  repo_root=${parts[(I)git_repos]}
+  site_idx=$((repo_root + 1))
+  repo_idx=$((repo_root + 2))
+  repo=${(j:/:)parts[$repo_idx,-1]}
+  site=${parts[$site_idx]}
+  case "$1" in
+    git) echo "git://$site:$repo.git"
+         ;;
+    ssh) echo git@$site:$repo.git
+         ;;
+    *) echo https://$site/$repo.git
+       ;;
+  esac
+}
+
+git-cpwd () {
+  git clone "$(git-pwdurl "$1")" .
+}
+
 git-bump() {
   git commit -m "${SITE_PREFIX:-}(bump)" --allow-empty
 }
@@ -113,22 +136,22 @@ git-gh-create() {
   local api_url=https://api.github.com/user/repos
   if (( $# == 2 )) {
        api_url="https://api.github.com/orgs/$organization_name/repos"
-  }
+     }
 
-  regexp-replace repo_name '[" ]' '-'
-  local GH_TOKEN
-  source "$HOME/.github-token"
- jq '{full_name, clone_url, ssh_url}' <( (
-  curl -XPOST -v \
-       -u "fiddlerwoaroof:$GH_TOKEN" \
-       "$api_url" \
-      -H 'Content-Type: application/json' \
-      --data-binary @- <<-EOF
+     regexp-replace repo_name '[" ]' '-'
+     local GH_TOKEN
+     source "$HOME/.github-token"
+     jq '{full_name, clone_url, ssh_url}' <( (
+                                             curl -XPOST -v \
+                                                  -u "fiddlerwoaroof:$GH_TOKEN" \
+                                                  "$api_url" \
+                                                  -H 'Content-Type: application/json' \
+                                                  --data-binary @- <<-EOF
 {
   "name": "${repo_name}"
 }
 EOF
-  ) )
+                                           ) )
 }
 
 alias git-msg=git-messages
@@ -162,7 +185,7 @@ git-remote() {
      } else {
        "${base_cmd[@]}" "$@"
      }
-  [[ "$GIT_DEBUG" == 1 ]] && set +x
+     [[ "$GIT_DEBUG" == 1 ]] && set +x
 }
 
 if [[ ! -z "$GIT_CMD" ]]; then
