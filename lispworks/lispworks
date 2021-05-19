@@ -27,7 +27,7 @@
 (editor:bind-key "Indent Form" #("Control-c" "Meta-q"))
 (editor:bind-key "Insert Parentheses For Selection" #\( :mode "Lisp")
 (editor:bind-key "Indent New Line" "Return" :mode "Lisp")
-
+(editor:bind-key "Compile and Load Buffer File" #("Control-c" "Control-k"))
 (editor:defcommand "Move Over ()" (p)
                    "Move past the next close parenthesis.
 Any indentation preceeding the parenthesis is deleted."
