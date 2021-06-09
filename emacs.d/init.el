@@ -1,4 +1,7 @@
 ;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
+(require 'cl-generic)
+(cl-defgeneric (setf seq-elt) (store sequence n))
+
 (setq read-process-output-max (* 1024 1024))
 (setq
  ;;gc-cons-threshold 100000000
