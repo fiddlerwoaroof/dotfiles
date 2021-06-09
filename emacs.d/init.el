@@ -224,13 +224,7 @@
 (use-package browse-at-remote
   :after magit
   :ensure t
-  :config
-  (push (cons "gitlab.cj.com" "gitlab")
-        browse-at-remote-remote-type-domains)
-  (push (cons "gitlab.cj.dev" "gitlab")
-        browse-at-remote-remote-type-domains)
-  (push (cons "git.cnvrmedia.net" "stash")
-        browse-at-remote-remote-type-domains))
+  :config)
 
 (unless (package-installed-p 'fwoar-functional-utils)
   (fwoar/load-local-packages))
