@@ -739,3 +739,5 @@ With a prefix ARG invalidates the cache first."
   (which-key-mode 1)
   (which-key-posframe-mode 1))
 
+(use-package nix-mode
+  :ensure t)
