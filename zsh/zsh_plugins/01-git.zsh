@@ -33,6 +33,10 @@ git-cpwd () {
   git clone "$(git-pwdurl "$1")" .
 }
 
+git-fp() {
+  $(pbpaste | grep git\ push)
+}
+
 git-bump() {
   git commit -m "${SITE_PREFIX:-}(bump)" --allow-empty
 }
