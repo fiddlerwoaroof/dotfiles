@@ -483,7 +483,14 @@ With a prefix ARG invalidates the cache first."
 
 
 
-(use-package markdown-mode :ensure t)
+(defun fwoar/markdown-mode-hook ()
+  (setf left-margin-width 10
+        right-margin-width 10))
+(use-package markdown-mode
+  :ensure t
+  :config
+  (add-hook 'markdown-mode-hook 'variable-pitch-mode)
+  (add-hook 'markdown-mode-hook 'fwoar/markdown-mode-hook))
 
 (use-package rainbow-delimiters :ensure t)
 
