@@ -21,7 +21,10 @@
 (progn (setq default-frame-alist
              '((vertical-scroll-bars . nil)
                (right-divider-width . 2)
-               (bottom-divider-width . 2)))
+               (bottom-divider-width . 2)
+               (inhibit-double-buffering . t)
+               (ns-appearance . dark)
+               (ns-transparent-titlebar . t)))
        (modify-all-frames-parameters default-frame-alist))
 
 (when (fboundp 'tool-bar-mode)
