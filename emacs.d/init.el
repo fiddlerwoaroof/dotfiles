@@ -299,15 +299,15 @@
 (setq org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
 
 (use-package http
-  )
+  :ensure t)
 (use-package graphql
-  )
+  :ensure t)
 (use-package ob-graphql
-  )
+  :ensure t)
 (use-package ob-http
-  )
+  :ensure t)
 (use-package ob-restclient
-  )
+  :ensure t)
 
 (use-package org
   :pin "org"
@@ -318,6 +318,7 @@
         org-refile-use-outline-path 'file
         org-outline-path-complete-in-steps nil
         org-log-done 'time
+        org-log-into-drawer t
         org-capture-templates '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
                                  "* TODO %?\n  %i\n  %a")
                                 ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
@@ -325,12 +326,18 @@
                                 ("s" "Snippet" entry (file "~/org/snippets.org")
                                  "* %?\n#+BEGIN_SRC\n%i\n#+END_SRC")
                                 ("b" "Bookmarks" entry (file+olp+datetree "~/org/bookmarks.org")
-                                 "* %? %^g\n%c\n"))
+                                 "* %? %^g\n%c\n")
+                                ("a" "Agenda" entry
+                                 (file "~/org/agenda.org")
+                                 "* %? %^G\n  SCHEDULED: %T"))
         org-refile-targets '((nil . (:maxlevel . 2))))
 
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((http . t)
+   '((restclient . t)
+     (graphql . t)
+     (http . t)
+     (emacs-lisp . t)
      (lisp . t)
      (haskell . t)))
 
