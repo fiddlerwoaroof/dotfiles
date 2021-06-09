@@ -197,6 +197,7 @@ from the selected region."
 
 (defun cold-boot ()
   ""
+  (run-with-idle-timer 5 t 'garbage-collect)
   (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
   (add-hook 'after-init-hook 'post-init)
   (electric-indent-mode -1)
