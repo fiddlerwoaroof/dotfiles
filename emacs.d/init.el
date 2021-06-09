@@ -366,6 +366,7 @@
 
 (use-package deft
   :ensure t
+  :after evil
   :config
   (evil-define-key 'normal 'global (kbd "<leader>v") 'deft))
 

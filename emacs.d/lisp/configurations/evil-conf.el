@@ -13,8 +13,16 @@
   (delete-window
    (get-mru-window nil nil t)))
 
+(use-package undo-fu
+  :ensure t)
+
 (use-package evil
   :ensure t
+  :after undo-fu
+  :init
+  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+  (setq evil-want-keybinding nil)
+  (setq evil-undo-system 'undo-fu)
   :config
 
   (evil-define-key 'motion 'global  (kbd "TAB") nil)
@@ -36,7 +44,8 @@
     (evil-define-key 'normal 'global (kbd "<leader>f") 'helm-projectile)
     (evil-define-key 'normal 'global (kbd "<leader>;") 'helm-semantic-or-imenu)
     (evil-define-key 'normal 'global (kbd "<leader>j") 'helm-buffers-list)
-    (evil-define-key 'normal 'global (kbd "<leader>u") 'undo-tree-visualize))
+    (comment
+     (evil-define-key 'normal 'global (kbd "<leader>u") 'undo-tree-visualize)))
 
   (progn ;; completion
     (evil-define-key 'normal company-mode-map (kbd "TAB") 'company-indent-or-complete-common)
@@ -97,35 +106,35 @@
     (define-key global-map (kbd "C-, ]") 'sp-wrap-square)
 
     (evil-define-key 'normal 'global (kbd ",w\"") 'wrap-with-doublequote)
-    (define-key cider-mode-map (kbd "C-, w \"") 'sp-wrap-doublequote))
+    (comment (define-key cider-mode-map (kbd "C-, w \"") 'sp-wrap-doublequote)))
 
   (progn ;; splicing
     (evil-define-key 'normal 'global (kbd ",S") 'sp-splice-sexp)
-    (define-key cider-mode-map (kbd "C-, S") 'sp-splice-sexp)
-    (define-key cider-mode-map (kbd "C-, C-S") 'sp-splice-sexp)
+    (comment (define-key cider-mode-map (kbd "C-, S") 'sp-splice-sexp)
+             (define-key cider-mode-map (kbd "C-, C-S") 'sp-splice-sexp))
     (evil-define-key 'normal 'global (kbd ",A") 'sp-splice-sexp-killing-backward)
-    (define-key cider-mode-map (kbd "C-, A") 'sp-splice-sexp-killing-backward)
-    (define-key cider-mode-map (kbd "C-, C-A") 'sp-splice-sexp-killing-backward)
+    (comment (define-key cider-mode-map (kbd "C-, A") 'sp-splice-sexp-killing-backward)
+             (define-key cider-mode-map (kbd "C-, C-A") 'sp-splice-sexp-killing-backward))
     (evil-define-key 'normal 'global (kbd ",D") 'sp-splice-sexp-killing-forward)
-    (define-key cider-mode-map (kbd "C-, D") 'sp-splice-sexp-killing-forward)
-    (define-key cider-mode-map (kbd "C-, C-D") 'sp-splice-sexp-killing-forward)
+    (comment (define-key cider-mode-map (kbd "C-, D") 'sp-splice-sexp-killing-forward)
+             (define-key cider-mode-map (kbd "C-, C-D") 'sp-splice-sexp-killing-forward))
     (evil-define-key 'normal 'global (kbd ",F") 'sp-splice-sexp-killing-around)
-    (define-key cider-mode-map (kbd "C-, F") 'sp-splice-sexp-killing-around)
-    (define-key cider-mode-map (kbd "C-, C-F") 'sp-splice-sexp-killing-around))
+    (comment (define-key cider-mode-map (kbd "C-, F") 'sp-splice-sexp-killing-around)
+             (define-key cider-mode-map (kbd "C-, C-F") 'sp-splice-sexp-killing-around)))
 
   (progn ;; barf/slurp
     (evil-define-key 'normal 'global (kbd ",,") 'sp-backward-barf-sexp)
-    (define-key cider-mode-map (kbd "C-, ,") 'sp-backward-barf-sexp)
-    (define-key cider-mode-map (kbd "C-, C-,") 'sp-backward-barf-sexp)
+    (comment (define-key cider-mode-map (kbd "C-, ,") 'sp-backward-barf-sexp)
+             (define-key cider-mode-map (kbd "C-, C-,") 'sp-backward-barf-sexp))
     (evil-define-key 'normal 'global (kbd ",.") 'sp-forward-barf-sexp)
-    (define-key cider-mode-map (kbd "C-, .") 'sp-forward-barf-sexp)
-    (define-key cider-mode-map (kbd "C-, C-.") 'sp-forward-barf-sexp)
+    (comment (define-key cider-mode-map (kbd "C-, .") 'sp-forward-barf-sexp)
+             (define-key cider-mode-map (kbd "C-, C-.") 'sp-forward-barf-sexp))
     (evil-define-key 'normal 'global (kbd ",<") 'sp-backward-slurp-sexp)
-    (define-key cider-mode-map (kbd "C-, <") 'sp-backward-slurp-sexp)
-    (define-key cider-mode-map (kbd "C-, C-<") 'sp-backward-slurp-sexp)
+    (comment (define-key cider-mode-map (kbd "C-, <") 'sp-backward-slurp-sexp)
+             (define-key cider-mode-map (kbd "C-, C-<") 'sp-backward-slurp-sexp))
     (evil-define-key 'normal 'global (kbd ",>") 'sp-forward-slurp-sexp)
-    (define-key cider-mode-map (kbd "C-, >") 'sp-forward-slurp-sexp)
-    (define-key cider-mode-map (kbd "C-, C->") 'sp-forward-slurp-sexp))
+    (comment (define-key cider-mode-map (kbd "C-, >") 'sp-forward-slurp-sexp)
+             (define-key cider-mode-map (kbd "C-, C->") 'sp-forward-slurp-sexp)))
 
   (progn ;; misc
     (evil-define-key 'normal 'global (kbd ",~") 'sp-convolute-sexp)
@@ -141,6 +150,14 @@
     (evil-define-key 'normal 'global (kbd "<leader>nn") 'narrow-to-defun)
     (evil-define-key 'normal 'global (kbd "<leader>nr") 'narrow-to-region)
     (evil-define-key 'normal 'global (kbd "<leader>nw") 'widen)))
+
+(use-package evil-collection
+  :ensure t
+  :after evil
+  :config
+  (evil-collection-require 'xref)
+  (with-eval-after-load 'xref
+    (evil-collection-xref-setup)))
 
 (comment
  (use-package centaur-tabs
