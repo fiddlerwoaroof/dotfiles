@@ -453,18 +453,6 @@ With a prefix ARG invalidates the cache first."
           (list (or evil-this-register (read-char))))
       (delete-overlay overlay))))
 
-(defun fwoar--paste-register-from-helm-current-buffer (register)
-  (interactive (fwoar--read-register-name))
-  (let ((filename (with-current-buffer helm-current-buffer
-                    (if (equal register
-                               (elt (kbd "C-w") 0))
-                        (word-at-point)
-                      (evil-get-register register t)))))
-    (when filename
-      (insert filename))))
-
-(use-package ag :ensure t)
-
 (use-package aggressive-indent :ensure t)
 
 (use-package cl-format :ensure t)
@@ -526,6 +514,7 @@ With a prefix ARG invalidates the cache first."
 
 (defun fwoar--no-line-numbers ()
   (display-line-numbers-mode -1))
+
 (use-package treemacs
   :ensure t
   :config
@@ -622,7 +611,7 @@ With a prefix ARG invalidates the cache first."
 (defun fwoar/zenburn-css ()
   (interactive)
   (mapcar (lambda (desc)
-            (destructuring-bind (name . value) desc
+            (cl-destructuring-bind (name . value) desc
               (cl-format (current-buffer)
                          "--~a: ~a;~%"
                          (s-replace "+" "-plus-" name)
