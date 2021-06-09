@@ -4,7 +4,7 @@
 
 (setq read-process-output-max (* 1024 1024))
 (setq
- ;;gc-cons-threshold 100000000
+ gc-cons-threshold 100000000
  load-prefer-newer t
  inhibit-splash-screen t
  inhibit-startup-message t)
@@ -268,6 +268,16 @@
 
 
 
+(defun fwoar/c-a-p ()
+  (interactive)
+  (save-excursion
+    (cl-destructuring-bind (start . _end) (bounds-of-thing-at-point 'defun)
+      (goto-char start)
+      (sp-wrap-with-pair "(")
+      (insert "comment\n")
+      (sp-indent-defun ))))
+
+
 (comment
  (use-package multifiles
    :config
@@ -599,7 +609,7 @@ With a prefix ARG invalidates the cache first."
 (global-set-key (kbd "C-x C-b")
                 'ibuffer)
 
-(setq org-agenda-files '("~/org/notes.org"))
+(setq org-agenda-files '("~/org/notes.org" "~/org/agenda.org"))
 
 (defvar url-pattern (when (file-exists-p "~/.pastebin-name")
                       (car (read-sexps-in-file "~/.pastebin-name"))))
