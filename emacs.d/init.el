@@ -733,9 +733,6 @@ With a prefix ARG invalidates the cache first."
             (e (progn (goto-char b) (line-number-at-pos))))
         (evil-scroll-line-to-center (+ s -1 (ceiling (- e s) 2)))))))
 
-(use-package yasnippet
   :ensure t
   :config
-  (yas-global-mode 1))
 
-(run-with-idle-timer 5 t 'garbage-collect)
