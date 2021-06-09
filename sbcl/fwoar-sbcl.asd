@@ -9,6 +9,7 @@
                :linedit
                :osicat
                :printv
+               :puri
                :serapeum
                :trivial-ssh)
   :components ((:file "utils")))

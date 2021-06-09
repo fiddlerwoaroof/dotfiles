@@ -5,7 +5,8 @@
 #.(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
                                          (user-homedir-pathname))))
     (when (probe-file quicklisp-init)
-      (load quicklisp-init))
+      (load quicklisp-init)
+      )
     nil)
 
 #.(progn
@@ -17,11 +18,11 @@
     (push (format nil
                   "-I~a"
                   (namestring
-                    (merge-pathnames (make-pathname
-                                       :directory '(:relative
-                                                     ".nix-profile"
-                                                     "include"))
-                                     (user-homedir-pathname))))
+                   (merge-pathnames (make-pathname
+                                     :directory '(:relative
+                                                  ".nix-profile"
+                                                  "include"))
+                                    (user-homedir-pathname))))
           cffi-toolchain:*cc-flags*)
     nil)
 
@@ -38,42 +39,42 @@
     (ql:quickload :fwoar-sbcl)
     nil)
 
-#.(uiop:define-package :fwoar-user
-      (:export :*term-size*)
-    #.(append '(:mix :cl)
-              (mapcar #'package-name (package-use-list :cl-user))
-              '(:alexandria :serapeum :fw.lu)))
+    #.(uiop:define-package :fwoar-user
+          (:export :*term-size*)
+        #.(append '(:mix :cl)
+                  (mapcar #'package-name (package-use-list :cl-user))
+                  '(:alexandria :serapeum :fw.lu)))
 
-(in-package :fwoar-user)
+    (in-package :fwoar-user)
 
-(in-package :cl-user)
+    (in-package :cl-user)
 
-(set-dispatch-macro-character #\# #\!
-                              (lambda (stream c n)
-                                (declare (ignore c n))
-                                (read-line stream)
-                                `(eval-when (:compile-toplevel :load-toplevel :execute)
-                                   (pushnew :noscript *features*))))
+    (set-dispatch-macro-character #\# #\!
+                                  (lambda (stream c n)
+                                    (declare (ignore c n))
+                                    (read-line stream)
+                                    `(eval-when (:compile-toplevel :load-toplevel :execute)
+                                       (pushnew :noscript *features*))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (cffi:defcstruct winsize
-    (ws_row :unsigned-short)
-    (ws_col :unsigned-short)
-    (ws_xpixel :unsigned-short)
-    (ws_ypixel :unsigned-short))
+    (eval-when (:compile-toplevel :load-toplevel :execute)
+      (cffi:defcstruct winsize
+          (ws_row :unsigned-short)
+        (ws_col :unsigned-short)
+        (ws_xpixel :unsigned-short)
+        (ws_ypixel :unsigned-short))
 
-  (defun get-term-size ()
-    (flet ((ioctl-gwinsz (fd)
-             (cffi:with-foreign-object (ptr '(:pointer (:struct winsize)))
-               (let* ((res (osicat-posix:ioctl fd osicat-posix:tiocgwinsz ptr)))
-                 (if (= res 0)
-                     (cffi:with-foreign-slots ((ws_row ws_col) ptr (:struct winsize))
-                       (list ws_row ws_col))
-                     (format t "~&error~%"))))))
-      (loop for x from 0 to 2
-            for res = (handler-case (ioctl-gwinsz x)
-                        (osicat-posix:enotty (c) c))
-            finally (return res)))))
+      (defun get-term-size ()
+        (flet ((ioctl-gwinsz (fd)
+                 (cffi:with-foreign-object (ptr '(:pointer (:struct winsize)))
+                   (let* ((res (osicat-posix:ioctl fd osicat-posix:tiocgwinsz ptr)))
+                     (if (= res 0)
+                         (cffi:with-foreign-slots ((ws_row ws_col) ptr (:struct winsize))
+                           (list ws_row ws_col))
+                         (format t "~&error~%"))))))
+          (loop for x from 0 to 2
+                for res = (handler-case (ioctl-gwinsz x)
+                            (osicat-posix:enotty (c) c))
+                finally (return res)))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (member "--linedit" sb-ext:*posix-argv* :test 'equal)
@@ -116,14 +117,14 @@
   (setq cl:*features* (delete :aclrepl cl:*features*)))
 
 (sb-ext:set-sbcl-source-location
- (merge-pathnames (make-pathname :directory '(:relative "sbcl-source" "sbcl")
+ (merge-pathnames (make-pathname :directory '(:relative "sbcl-source")
                                  :defaults #1=(user-homedir-pathname))
                   #1#))
 
 (defun asdf-cwd ()
   (push (truename #p".") asdf:*central-registry*))
 
-#+ (or)
+#+(or)
 (defun start-swank ()
   (load #P"~/.vim/bundle/slimv/slime/start-swank.lisp"))
 

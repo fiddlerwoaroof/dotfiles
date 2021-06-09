@@ -90,3 +90,61 @@
                                                :name :wild
                                                :type "asd")
                                 target))))
+
+(defun lp (git-url)
+  (let* ((uri (if (and (not (net.uri:uri-p git-url))
+                       (find #\@ git-url))
+                  (puri:parse-uri git-url)
+                  git-url))
+         (target (merge-pathnames (make-pathname :directory
+                                                 (list :relative
+                                                       "local-projects"
+                                                       (etypecase uri
+                                                         (puri:uri (car (last (puri:uri-parsed-path uri))))
+                                                         (string (subseq uri
+                                                                         (or (1+
+                                                                              (position #\/ (string-right-trim "/" uri)
+                                                                                        :from-end t))
+                                                                             0))))))
+                                  ql:*quicklisp-home*)))
+    (legit:clone (etypecase git-url
+                   (puri:uri (puri:render-uri git-url nil))
+                   (string git-url))
+                 (namestring target))))
+
+
+(uiop:with-upgradability ()
+  (defclass fw-define-op (asdf:define-op)
+    ((%systems-before :initarg :systems-before :reader systems-before)
+     (%new-systems :initarg :new-systems :accessor new-systems)))
+  (defmethod asdf:operate :before ((o fw-define-op) (c asdf:system) &key)
+    (setf (slot-value o '%systems-before) (asdf:registered-systems)))
+  (defmethod asdf:operate :after ((o fw-define-op) (c asdf:system) &key)
+    (setf (new-systems o) (set-difference (asdf:registered-systems)
+                                          (slot-value o '%systems-before)
+                                          :test 'equal)))
+  (defun load-asd (pathname &key name)
+    "Load system definitions from PATHNAME.
+NAME if supplied is the name of a system expected to be defined in that file.
+
+Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
+    (asdf/session:with-asdf-session ()
+      ;; TODO: use OPERATE, so we consult the cache and only load once per session.
+      (flet ((do-it (o c) (asdf:operate o c)))
+        (let ((primary-name (asdf:primary-system-name (or name (pathname-name pathname))))
+              (operation (asdf:make-operation 'fw-define-op)))
+          (uiop:if-let (system (asdf:registered-system primary-name))
+            (progn
+              ;; We already determine this to be obsolete ---
+              ;; or should we move some tests from find-system to check for up-to-date-ness here?
+              (setf (asdf/action:component-operation-time operation system) t
+                    (asdf/system:definition-dependency-list system) nil
+                    (asdf/system:definition-dependency-set system)
+                    (uiop:list-to-hash-set nil))
+              (do-it operation system))
+            (let ((system (make-instance 'asdf/system:undefined-system
+                                         :name primary-name :source-file pathname)))
+              (asdf/system-registry:register-system system)
+              (unwind-protect (do-it operation system)
+                (when (typep system 'asdf/system:undefined-system)
+                  (asdf:clear-system system))))))))))
