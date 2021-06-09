@@ -129,6 +129,13 @@ Also bind `class' to ((class color) (min-colors 89))."
                             (360 . ,zenburn-blue-3)))
   (custom-theme-set-faces
    'fwoar-zenburn
+
+   `(default ((t (:family "Source Code Pro" :foundry "nil"
+                          :slant normal :weight normal :height 130 :width normal
+                          :foreground ,zenburn-fg :background ,zenburn-bg
+                          :inherit fwoar-zenburn-face))))
+   `(variable-pitch ((t (:family "Lato"))))
+
    `(highlight ((t (:inverse-video t))))
 
    ;; custom
@@ -182,16 +189,11 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(mode-line-buffer-id ((t (:foreground ,zenburn-blue-2))))
    `(region ((t (:foreground unspecified :background unspecified :inverse-video t))))
    `(tool-bar ((t (:background unspecified :foreground unspecified :box nil :inherit fwoar-zenburn+2-face))))
-   `(variable-pitch ((t (:family "Lato"))))
    `(vertical-border ((t (:foreground "slate gray"))))
 
    `(treemacs-root-face ((t (:background ,zenburn-bg :inherit fwoar-zenburn+1-face))))
    `(minibuffer-prompt ((t :foreground ,zenburn-fg)))
    `(cursor ((t :foreground unspecified :background unspecified :inverse-video t)))
-   `(default ((t (:family "Source Code Pro" :foundry "nil"
-                          :slant normal :weight normal :height 130 :width normal
-                          :foreground ,zenburn-fg :background ,zenburn-bg
-                          :inherit fwoar-zenburn-face))))
 
    ;; rainbow delimiters
    `(rainbow-delimiters-unmatched-face ((t (:inherit rainbow-delimiters-base-face :background ,zenburn-red))))
