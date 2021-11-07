@@ -96,6 +96,8 @@
 (use-package nix-mode
   :ensure t)
 
+(use-package htmlize
+  :ensure t)
 
 (use-package keyfreq
   :ensure t
