@@ -140,6 +140,13 @@
 
 (fwoar/setup-load-path)
 
+(use-package fwoar-pastebin :ensure nil
+  :custom
+  (fwoar-pastebin-tramp-url (when (file-exists-p "~/.pastebin-name")
+                              (car (read-sexps-in-file "~/.pastebin-name"))))
+  (fwoar-pastebin-web-url-pattern (when (file-exists-p "~/.pastebin-name")
+                                    (cadr (read-sexps-in-file "~/.pastebin-name")))))
+
 (defun fwoar/package-configuration (package)
   (fwoar/setup-load-path)
   (let* ((local-configs)
@@ -524,15 +531,6 @@
 
 (defvar url-pattern (when (file-exists-p "~/.pastebin-name")
                       (car (read-sexps-in-file "~/.pastebin-name"))))
-(defun pastebin-buffer ()
-  (interactive)
-  (let* ((extension (file-name-extension (elt (split-string (buffer-name) "<") 0)))
-         (htmlized-buffer (htmlize-buffer)))
-    (with-current-buffer htmlized-buffer
-      (let ((result-name-hash (sha1 (current-buffer))))
-        (write-file (format url-pattern result-name-hash extension))
-        (message "Wrote file to: %s.%s.html" result-name-hash extension)
-        (browse-url (format "https://fwoar.co/pastebin/%s.%s.html" result-name-hash extension))))))
 
 (defun delete-mru-window ()
   (interactive)
