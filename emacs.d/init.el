@@ -38,61 +38,6 @@
 (set-exec-path-from-shell-PATH)
 (cold-boot)
 
-(eval-and-compile
-  (defvar *fwoar-git-repos*
-    (file-name-as-directory
-     (expand-file-name (car (file-expand-wildcards "~/git*_repos"))
-                       "~"))))
-
-(eval-and-compile
-  (defun fwoar-git-repo (name ssh-remote http-remote)
-    (let ((dir-name (file-name-as-directory (expand-file-name name *fwoar-git-repos*))))
-      (unless (file-exists-p dir-name)
-        (ecase fwoar-git-mode
-          (:ssh (magit-run-git-with-input "clone" ssh-remote dir-name))
-          (:http (magit-run-git-with-input "clone" http-remote dir-name))))
-      dir-name)))
-
-(defvar *dotfiles-repo*
-  (fwoar-git-repo "dotfiles"
-                  "git@git.fiddlerwoaroof.com:dotfiles.git"
-                  "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
-
-(defun fwoar/setup-load-path ()
-  (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
-                                   load-path
-                                   :test 'equal))
-         (new-load-path (cl-adjoin (concat *dotfiles-repo*
-                                           "emacs.d/lisp/configurations/")
-                                   new-load-path
-                                   :test 'equal))
-         (new-load-path (cl-adjoin (concat *dotfiles-repo*
-                                           "emacs.d/packages/")
-                                   new-load-path
-                                   :test 'equal)))
-    (setq load-path new-load-path)))
-
-(fwoar/setup-load-path)
-
-
-(defun fwoar/package-configuration (package)
-  (fwoar/setup-load-path)
-  (let* ((local-configs)
-         (git-configs (concat *dotfiles-repo*
-                              "emacs.d/lisp/configurations/"))
-         (conf-file (concat (symbol-name package) "-conf.el"))
-         (load-path (list* local-configs git-configs load-path)))
-    conf-file))
-
-(defun load-package-configuration (package)
-  (let ((conf-file (fwoar/package-configuration package)))
-    (load conf-file)))
-
-(defun fwoar/load-local-packages ()
-  (interactive)
-  (mapc 'package-install-file
-        (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
-                         t ".*[.]el")))
 (use-package nix-mode
   :ensure t)
 
@@ -159,7 +104,63 @@
 
 
 (load-package-configuration 'lsp)
+(eval-and-compile
+  (defvar *fwoar-git-repos*
+    (file-name-as-directory
+     (expand-file-name (car (file-expand-wildcards "~/git*_repos"))
+                       "~"))))
 
+(eval-and-compile
+  (defun fwoar-git-repo (name ssh-remote http-remote)
+    (let ((dir-name (file-name-as-directory (expand-file-name name *fwoar-git-repos*))))
+      (unless (file-exists-p dir-name)
+        (ecase fwoar-git-mode
+          (:ssh (magit-run-git-with-input "clone" ssh-remote dir-name))
+          (:http (magit-run-git-with-input "clone" http-remote dir-name))))
+      dir-name)))
+
+(defvar *dotfiles-repo*
+  (fwoar-git-repo "dotfiles"
+                  "git@git.fiddlerwoaroof.com:dotfiles.git"
+                  "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
+
+(defun fwoar/setup-load-path ()
+  (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
+                                   load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/lisp/configurations/")
+                                   new-load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/packages/")
+                                   new-load-path
+                                   :test 'equal)))
+    (setq load-path new-load-path)))
+
+(fwoar/setup-load-path)
+
+(defun fwoar/package-configuration (package)
+  (fwoar/setup-load-path)
+  (let* ((local-configs)
+         (git-configs (concat *dotfiles-repo*
+                              "emacs.d/lisp/configurations/"))
+         (conf-file (concat (symbol-name package) "-conf.el"))
+         (load-path (list* local-configs git-configs load-path)))
+    conf-file))
+
+(defun load-package-configuration (package)
+  (let ((conf-file (fwoar/package-configuration package)))
+    (load conf-file)))
+
+(defun fwoar/load-local-packages ()
+  (interactive)
+  (mapc 'package-install-file
+        (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
+                         t ".*[.]el")))
+
+(unless (package-installed-p 'fwoar-functional-utils)
+  (fwoar/load-local-packages))
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
@@ -227,9 +228,6 @@
   :after magit
   :ensure t
   :config)
-
-(unless (package-installed-p 'fwoar-functional-utils)
-  (fwoar/load-local-packages))
 
 (load-package-configuration 'evil)
 (load-package-configuration 'helm)
