@@ -234,31 +234,7 @@
 
 (load-package-configuration 'evil)
 (load-package-configuration 'helm)
-
-(use-package projectile
-  :ensure t
-  :config
-  (setq
-   ;;       projectile-enable-caching t
-   projectile-generic-command "rg --files -0"
-   )
-
-  (projectile-register-project-type
-   'clojure '("project.clj")
-   :compile "lein uberjar"
-   :test-dir "src/test/")
-
-  (projectile-register-project-type
-   'lisp '("*.asd"))
-
-  (projectile-register-project-type
-   'npm '("package.json")
-   :compile "npm install"
-   :test "npm test"
-   :run "npm start"
-   :test-suffix ".spec")
-
-  (define-key evil-normal-state-map "gf" 'project-aware-ffap))
+(load-package-configuration 'projectile)
 
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
@@ -354,20 +330,6 @@
   (define-key global-map "\C-cc" 'org-capture)
   (evil-define-key 'visual 'global (kbd "<leader>c") 'org-capture))
 
-(use-package org-projectile
-  :ensure t
-  :after company
-  :config
-  (progn
-    (org-projectile-per-project)
-    (setq org-agenda-skip-unavailable-files t)
-    (setq org-projectile-per-project-filepath
-          "notes/README.org")
-    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-    (push (org-projectile-project-todo-entry) org-capture-templates)
-    (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
-  :ensure t)
-
 (use-package delight
   :ensure t)
 
@@ -406,39 +368,6 @@
   (direnv-mode 1)
   (add-hook 'js2-mode-hook 'direnv-mode)
   (add-hook 'typescript-mode-hook 'direnv-mode))
-
-(defun more-than-one-project-file-p ()
-  (= (length (projectile-select-files (projectile-current-project-files)))
-     1))
-
-(defun global-find-known-file ())
-
-(defun helm-find-known-file (&optional arg)
-  "Use projectile with Helm for finding files in project
-
-With a prefix ARG invalidates the cache first."
-  (interactive "P")
-  (let ((projectile-enable-caching t))
-    (if (projectile-project-p)
-        (projectile-maybe-invalidate-cache arg)
-      (unless t
-        (error "You're not in a project"))))
-  (let ((helm-ff-transformer-show-only-basename nil)
-        (helm-boring-file-regexp-list nil))
-    (helm :sources 'helm-source-projectile-files-in-all-projects-list
-          :buffer (concat "*helm projectile: "
-                          (projectile-project-name)
-                          "*")
-          :truncate-lines helm-projectile-truncate-lines
-          :prompt (projectile-prepend-project-name "Find file in projects: "))))
-
-(defun project-aware-ffap (&rest args)
-  (interactive "F")
-  (apply (if (and (projectile-project-p)
-                  (more-than-one-project-file-p))
-             'helm-projectile-find-file-dwim
-           'find-file-at-point)
-         args))
 
 
 (use-package cl-generic
@@ -507,8 +436,6 @@ With a prefix ARG invalidates the cache first."
 
 (use-package ripgrep :ensure t)
 
-(use-package projectile-ripgrep :ensure t)
-
 (use-package scss-mode :ensure t)
 
 (use-package smartparens :ensure t :ensure t :config
@@ -557,10 +484,6 @@ With a prefix ARG invalidates the cache first."
   :after treemacs evil
   :ensure t)
 
-(use-package treemacs-projectile
-  :after treemacs projectile
-  :ensure t)
-
 (use-package treemacs-icons-dired
   :after treemacs dired
   :ensure t
@@ -568,10 +491,6 @@ With a prefix ARG invalidates the cache first."
 
 (use-package treemacs-magit
   :after treemacs magit
-  :ensure t)
-
-(use-package lsp-treemacs
-  :after treemacs lsp
   :ensure t)
 
 (progn ;; emacs-lisp stuff
@@ -589,11 +508,6 @@ With a prefix ARG invalidates the cache first."
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file)
   (load-file custom-file))
-
-(defun edit-init-el ()
-  (interactive)
-  (let ((default-directory *dotfiles-repo*))
-    (helm-projectile-find-file)))
 
 ;;(setq gc-cons-threshold (* 100 1024))
 
