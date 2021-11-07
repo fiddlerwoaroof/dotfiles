@@ -21,8 +21,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (load "~/quicklisp/setup.lisp"))
 
-(ql:quickload :lw-add-ons)
-
 (editor:bind-key "Insert Space And Show Arglist" "Space")
 (editor:bind-key "Indent Form" #("Control-c" "Meta-q"))
 (editor:bind-key "Insert Parentheses For Selection" #\( :mode "Lisp")
@@ -63,3 +61,6 @@ Any indentation preceeding the parenthesis is deleted."
                   'system:locale-file-encoding
                   system:*file-encoding-detection-algorithm*))
 (set-default-character-element-type 'simple-char)
+
+(ql:quickload :lw-add-ons)
+
