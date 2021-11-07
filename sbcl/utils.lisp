@@ -1,11 +1,18 @@
 (in-package :cl-user)
 
+(defun --parse-path (it)
+  (let ((parts (fwoar.string-utils:split #\/ it)))
+    (values (elt parts (1- (length parts)))
+            (coerce (subseq parts 0 (1- (length parts)))
+                    'list))))
+
 (defun load-project-asds (name)
-  (mapcar 'asdf:load-asd
-          (directory (make-pathname :host "PROJECTS"
-                                    :directory (list :absolute (string-upcase name))
-                                    :name :wild
-                                    :type "ASD"))))
+  (multiple-value-bind (proj-name proj-sub) (--parse-path name)
+    (mapcar 'asdf:load-asd
+            (directory (make-pathname :host "PROJECTS"
+                                      :directory (list :absolute (string-upcase proj-name))
+                                      :name :wild
+                                      :type "ASD")))))
 
 #+(or)
 (mapcar 'asdf:load-asd
