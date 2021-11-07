@@ -98,12 +98,9 @@
   (interactive)
   (slime-eval-async `(ql:quickload ',(find-use-clause (list-at-point)))))
 
-
 ;;(message (format "s-c-c is: %s" slime-company-completion))
 
 ;;;;; }}}
-
-
 
 (defun sp-absorb-forward-sexp (&optional arg)
   "Absorb previous expression.
@@ -152,25 +149,25 @@ Examples:
   :config
 
   (defslimefun get-passwd (id prompt)
-    (let ((val (assoc id passwords)))
-      (cdr
-       (if val val
-         (car (push (cons id (read-passwd prompt))
-                    passwords))))))
+               (let ((val (assoc id passwords)))
+                 (cdr
+                  (if val val
+                    (car (push (cons id (read-passwd prompt))
+                               passwords))))))
   (message "%s" load-path)
   (when (or (eq system-type 'gnu/linux)
             (eq system-type 'darwin))
     (define-lisp-implementations
-      (abcl  ("abcl"))
-      (lw  ("lw"))
-      (ccl ("ccl"))
-      (clisp ("clisp"))
-      (cmucl ("cmucl" "-quiet"))
-      (ecl   ("ecl"))
-      ;;(mkcl  ("mkcl"))
-      ;;(xcl   ("xcl"))
-      (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
-      (sbcl-m1  ("~/sbcl-m1/bin/sbcl" "--dynamic-space-size" "8192"))))
+     (abcl  ("abcl"))
+     (lw  ("lw"))
+     (ccl ("ccl"))
+     (clisp ("clisp"))
+     (cmucl ("cmucl" "-quiet"))
+     (ecl   ("ecl"))
+     ;;(mkcl  ("mkcl"))
+     ;;(xcl   ("xcl"))
+     (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
+     ))
 
   (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
@@ -237,16 +234,16 @@ Examples:
   (slime-setup slime-contribs)
 
   (defslime-repl-shortcut fwoar--slime-repl-load-asd ("load-asd")
-    (:handler (lambda ()
-                (interactive)
-                (let ((system-files (fwoar--get-asds)))
-                  (slime-eval-async (cons 'cl:progn
-                                          (mapcar (lambda (it)
-                                                    `(cl:progn (asdf:load-asd ,it) ,it))
-                                                  system-files))
-                    (lambda (r)
-                      (message "Loading ASDs done: %s" r))))))
-    (:one-liner "Load asd for current project"))
+                          (:handler (lambda ()
+                                      (interactive)
+                                      (let ((system-files (fwoar--get-asds)))
+                                        (slime-eval-async (cons 'cl:progn
+                                                                (mapcar (lambda (it)
+                                                                          `(cl:progn (asdf:load-asd ,it) ,it))
+                                                                        system-files))
+                                          (lambda (r)
+                                            (message "Loading ASDs done: %s" r))))))
+                          (:one-liner "Load asd for current project"))
 
 
   (defadvice slime-eval-last-expression-in-repl
@@ -256,13 +253,13 @@ Examples:
         (select-window fwoar/old-window))))
 
   (comment (defslime-repl-shortcut fwoar--slime-repl-quickload ("quickload")
-             (:handler (lambda ()
-                         (interactive)
-                         (let ((system-files (fwoar--get-asds)))
-                           (slime-eval-async (cons 'cl:progn
-                                                   (mapcar (lambda (it)
-                                                             `(cl:progn (asdf:load-asd ,it) ,it))
-                                                           system-files))
-                             (lambda (r)
-                               (message "Loading ASDs done: %s" r))))))
-             (:one-liner "Load asd for current project"))))
+                                   (:handler (lambda ()
+                                               (interactive)
+                                               (let ((system-files (fwoar--get-asds)))
+                                                 (slime-eval-async (cons 'cl:progn
+                                                                         (mapcar (lambda (it)
+                                                                                   `(cl:progn (asdf:load-asd ,it) ,it))
+                                                                                 system-files))
+                                                   (lambda (r)
+                                                     (message "Loading ASDs done: %s" r))))))
+                                   (:one-liner "Load asd for current project"))))
