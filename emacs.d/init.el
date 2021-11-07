@@ -93,6 +93,8 @@
   (mapc 'package-install-file
         (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
                          t ".*[.]el")))
+(use-package nix-mode
+  :ensure t)
 
 
 (use-package keyfreq
