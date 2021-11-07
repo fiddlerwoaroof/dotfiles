@@ -27,11 +27,6 @@
                (ns-transparent-titlebar . t)))
        (modify-all-frames-parameters default-frame-alist))
 
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode 0))
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode 0))
-
 (message invocation-name)
 
 (let ((default-directory  "~/.emacs.d/lisp/"))
