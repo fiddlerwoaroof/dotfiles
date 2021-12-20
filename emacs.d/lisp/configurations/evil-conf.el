@@ -38,7 +38,7 @@
   (evil-define-key 'insert 'global  (kbd "TAB") 'company-indent-or-complete-common)
   (evil-mode)
 
-  (evil-set-leader '(normal) (kbd "<SPC>"))
+  (evil-set-leader '(normal visual) (kbd "<SPC>"))
 
   (progn ;; navigation
     (evil-define-key 'normal 'global (kbd "<leader>f") 'helm-projectile)
