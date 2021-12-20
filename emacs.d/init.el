@@ -241,10 +241,22 @@
               'fwoar/propertize-magit-log))
 
 (use-package browse-at-remote
-  :after magit
   :ensure t
-  :config)
+  :custom
+  (browse-at-remote-prefer-symbolic nil)
 
+  :config
+  (cl-pushnew '("git.fiddlerwoaroof.com$" . "gitlist")
+              browse-at-remote-remote-type-regexps
+              :test 'equal)
+
+  (defun browse-at-remote--format-region-url-as-gitlist
+      (repo-url ref relname start-line end-line)
+    (unless (s-ends-with-p ".git" repo-url)
+      (setf repo-url (format "%s.git" repo-url)))
+    ;; gitlist doesn't support end-line
+    (format "%s/blob/%s/%s#L%s" repo-url ref relname start-line))
+  )
 (load-package-configuration 'evil)
 (load-package-configuration 'helm)
 (load-package-configuration 'projectile)
