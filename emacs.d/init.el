@@ -321,7 +321,7 @@
   :ensure t)
 
 (use-package org
-  :pin "org"
+  :pin "gnu"
   :ensure t
   :config
   (setq org-directory "~/org"

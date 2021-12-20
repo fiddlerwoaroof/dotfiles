@@ -198,13 +198,13 @@ from the selected region."
   (require 'package)
 
   (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                           ("org" . "http://orgmode.org/elpa/")
+                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                            ("melpa" . "https://melpa.org/packages/")
                            ("melpa-stable" . "http://stable.melpa.org/packages/"))
         package-archive-priorities '(("melpa-stable" . 1)
                                      ("gnu" . 0)
                                      ("melpa" . 2)
-                                     ("org" . 3)))
+                                     ("nongnu" . 3)))
 
   (package-initialize 'no-activate)
   (when (not (package-installed-p 'use-package))
