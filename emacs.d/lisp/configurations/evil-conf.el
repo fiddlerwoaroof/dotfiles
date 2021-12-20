@@ -151,13 +151,20 @@
     (evil-define-key 'normal 'global (kbd "<leader>nr") 'narrow-to-region)
     (evil-define-key 'normal 'global (kbd "<leader>nw") 'widen)))
 
+(defun fwoar/setup-evil-collection-for-mode (mode)
+  (evil-collection-require mode)
+  (with-eval-after-load mode
+    (funcall (intern (format "evil-collection-%s-setup" 'org)))))
 (use-package evil-collection
   :ensure t
   :after evil
   :config
-  (evil-collection-require 'xref)
-  (with-eval-after-load 'xref
-    (evil-collection-xref-setup)))
+  (fwoar/setup-evil-collection-for-mode 'deadgrep)
+  ;; Bad idea, messes with bindings too much :)
+  ;; (fwoar/setup-evil-collection-for-mode 'magit)
+  (fwoar/setup-evil-collection-for-mode 'org)
+  (fwoar/setup-evil-collection-for-mode 'xref)
+  )
 
 (comment
  (use-package centaur-tabs
