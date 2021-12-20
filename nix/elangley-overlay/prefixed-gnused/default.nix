@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}, stdenv ? pkgs.stdenv , fetchurl ? pkgs.fetchurl , perl ? pkgs.perl }:
+{ pkgs ? import <nixpkgs> {}, lib ? pkgs.lib, stdenv ? pkgs.stdenv , fetchurl ? pkgs.fetchurl , perl ? pkgs.perl }:
 
 stdenv.mkDerivation rec {
   pname = "gnused-prefixed";
@@ -32,9 +32,9 @@ stdenv.mkDerivation rec {
       with a `g` program prefix, for use on macOS.
     '';
 
-    license = stdenv.lib.licenses.gpl3Plus;
+    license = lib.licenses.gpl3Plus;
 
-    platforms = stdenv.lib.platforms.unix;
+    platforms = lib.platforms.unix;
     maintainers = [ ];
   };
 }
