@@ -5,6 +5,7 @@
 ;; Author: Edward Langley <fwoar@elangley.org>
 ;; Keywords: lisp
 ;; Version: 0.0.1
+;; Package-Requires: (htmlize)
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
