@@ -16,6 +16,33 @@
 (use-package undo-fu
   :ensure t)
 
+
+(defun fwoar::get-candidates ()
+  (funcall (-compose (fwoar/exclude
+                      (fwoar/matches-regex "/\\(.*[#]\\)"))
+                     'project-files
+                     'project-current)))
+
+(defun fwoar::browse-project ()
+  (interactive)
+  (if (package-installed-p 'projectile)
+      (helm-projectile)
+    (fwoar::helm-find-file-in-project)))
+
+(defvar fwoar::*helm-project-files-source*
+  `((name . "Project Files")
+    (candidates . (lambda ()
+                    (let* ((fwoar::project (project-current))
+                           (fwoar::root (project-root fwoar::project)))
+                      (mapcar (lambda (it)
+                                (cons (f-relative it fwoar::root)
+                                      it))
+                              (project-files fwoar::project)))))
+    (action . helm-find-files-actions)))
+(defun fwoar::helm-find-file-in-project ()
+  (interactive)
+  (helm '(fwoar::*helm-project-files-source*)))
+
 (use-package evil
   :ensure t
   :after undo-fu
@@ -41,7 +68,7 @@
   (evil-set-leader '(normal visual) (kbd "<SPC>"))
 
   (progn ;; navigation
-    (evil-define-key 'normal 'global (kbd "<leader>f") 'helm-projectile)
+    (evil-define-key 'normal 'global (kbd "<leader>f") 'fwoar::browse-project)
     (evil-define-key 'normal 'global (kbd "<leader>;") 'helm-semantic-or-imenu)
     (evil-define-key 'normal 'global (kbd "<leader>j") 'helm-buffers-list)
     (comment
