@@ -28,6 +28,29 @@
 
 (defvar-local fwoar/json-nav--data nil)
 (defvar-local fwoar/json-nav--path nil)
+(defvar-local fwoar/json-nav--prev-buffer nil)
+(defvar-local fwoar/json-nav--start-buffer nil)
+(require 'fwoar-functional-utils)
+
+(defun fwoar/browse-json-response (url)
+  (interactive "Murl? ")
+  (let ((json (url-retrieve-synchronously url)))
+    (comment
+     (buffer (generate-new-buffer
+              (format "*API result: %s*" url))))
+    (with-current-buffer json
+      (when-let* ((buffer-name (buffer-name))
+                  ((s-prefix-p " " buffer-name)))
+        (setf (buffer-name) (subseq buffer-name 1)))
+      (json-mode)
+      (goto-char (point-min))
+      (kill-paragraph 1)
+      (kill-line)
+      (json-pretty-print-buffer)
+      (comment
+       (insert (with-current-buffer json
+                 (buffer-string)))))
+    (switch-to-buffer json)))
 
 (defun fwoar/json--ensure-data ()
   (unless fwoar/json-nav--data
@@ -88,13 +111,15 @@
                                       (fwoar/json-nav--get-keys))))
   (fwoar/json--ensure-data)
   (let* ((path (cons s fwoar/json-nav--path))
-         (data fwoar/json-nav--data))
+         (data fwoar/json-nav--data)
+         (last-buffer (buffer-name)))
     (with-current-buffer (switch-to-buffer-other-window
                           (format "*test-buffer: %s*"
                                   (s-join "/" (reverse path))))
       (json-mode)
       (setq-local fwoar/json-nav--data data
-                  fwoar/json-nav--path path)
+                  fwoar/json-nav--path path
+                  fwoar/json-nav--prev-buffer last-buffer)
       (setf (buffer-string)
             (json-serialize (fwoar/json-nav--get-path fwoar/json-nav--data
                                                       (reverse path))
@@ -105,11 +130,14 @@
 
 (defun fwoar/return ()
   (interactive)
-  (fwoar/json--ensure-data)
-  (let ((prev-buffer (format "*test-buffer: %s*"
-                             (s-join "/" (reverse (cdr fwoar/json-nav--path))))))
-    (kill-buffer)
-    (switch-to-buffer-other-window prev-buffer))
+  (when fwoar/json-nav--prev-buffer
+    (let ((old-buffer (current-buffer))
+          (prev-buffer fwoar/json-nav--prev-buffer))
+      (switch-to-buffer-other-window fwoar/json-nav--prev-buffer)
+      (unless fwoar/json-nav--prev-buffer
+        (with-current-buffer prev-buffer
+          (delete-other-windows)))
+      (kill-buffer old-buffer)))
   (point-min))
 
 (provide 'fwoar-json-navigator)
