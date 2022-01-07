@@ -103,7 +103,7 @@
   :ensure t)
 
 
-(load-package-configuration 'lsp)
+
 (eval-and-compile
   (defvar *fwoar-git-repos*
     (file-name-as-directory
@@ -171,6 +171,8 @@
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
+
+(load-package-configuration 'lsp)
 
 
 
