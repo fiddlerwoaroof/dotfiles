@@ -180,8 +180,10 @@
 
 (defun fwoar/setup-evil-collection-for-mode (mode)
   (evil-collection-require mode)
-  (with-eval-after-load mode
-    (funcall (intern (format "evil-collection-%s-setup" 'org)))))
+  (lexical-let ((mode mode))
+    (with-eval-after-load mode
+      (funcall (intern (format "evil-collection-%s-setup" mode))))))
+
 (use-package evil-collection
   :ensure t
   :after evil
