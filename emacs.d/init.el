@@ -257,6 +257,9 @@
     ;; gitlist doesn't support end-line
     (format "%s/blob/%s/%s#L%s" repo-url ref relname start-line))
   )
+
+
+(use-package aggressive-indent :ensure t)
 (load-package-configuration 'evil)
 (load-package-configuration 'helm)
 (load-package-configuration 'projectile)
@@ -284,6 +287,17 @@
    :config
    (evil-define-key 'visual 'global (kbd "<leader>m") 'mf/mirror-region-in-multifile)))
 
+(use-package http
+  :ensure t)
+(use-package graphql
+  :ensure t)
+(use-package ob-graphql
+  :ensure t)
+(use-package ob-http
+  :ensure t)
+(use-package ob-restclient
+  :ensure t)
+
 (defun safe-files ()
   (let ((fn (expand-file-name "~/.safe-files")))
     (when (file-exists-p fn)
@@ -308,17 +322,6 @@
     (not safe-file-p)))
 
 (setq org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
-
-(use-package http
-  :ensure t)
-(use-package graphql
-  :ensure t)
-(use-package ob-graphql
-  :ensure t)
-(use-package ob-http
-  :ensure t)
-(use-package ob-restclient
-  :ensure t)
 
 (use-package org
   :pin "gnu"
@@ -428,7 +431,6 @@
           (list (or evil-this-register (read-char))))
       (delete-overlay overlay))))
 
-(use-package aggressive-indent :ensure t)
 
 (use-package cl-format :ensure t)
 
