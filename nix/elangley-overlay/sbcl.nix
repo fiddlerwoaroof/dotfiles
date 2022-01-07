@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, writeText, sbclBootstrap
+{ stdenv, fetchurl, writeText, sbclBootstrap, lib
 , sbclBootstrapHost ? "${sbclBootstrap}/bin/sbcl --disable-debugger --no-userinit --no-sysinit"
 , threadSupport ? (stdenv.isi686 || stdenv.isx86_64 || "aarch64-linux" == stdenv.hostPlatform.system)
 , disableImmobileSpace ? false
@@ -73,17 +73,17 @@ stdenv.mkDerivation rec {
         export HOME=$PWD/test-home
       '';
 
-      enableFeatures = with stdenv.lib;
+      enableFeatures = with lib;
       optional threadSupport "sb-thread" ++
       optional stdenv.isAarch32 "arm";
 
-      disableFeatures = with stdenv.lib;
+      disableFeatures = with lib;
       optional (!threadSupport) "sb-thread" ++
       optionals disableImmobileSpace [ "immobile-space" "immobile-code" "compact-instance-header" ];
 
       buildPhase = ''
         sh make.sh --prefix=$out --xc-host="${sbclBootstrapHost}" ${
-          stdenv.lib.concatStringsSep " "
+          lib.concatStringsSep " "
           (builtins.map (x: "--with-${x}") enableFeatures ++
                      builtins.map (x: "--without-${x}") disableFeatures)
                    }
@@ -93,7 +93,7 @@ stdenv.mkDerivation rec {
       installPhase = ''
         INSTALL_ROOT=$out sh install.sh
       ''
-      + stdenv.lib.optionalString (!purgeNixReferences) ''
+      + lib.optionalString (!purgeNixReferences) ''
         cp -r src $out/lib/sbcl
         cp -r contrib $out/lib/sbcl
         cat >$out/lib/sbcl/sbclrc <<EOF
@@ -103,7 +103,7 @@ stdenv.mkDerivation rec {
 EOF
       '';
 
-      setupHook = stdenv.lib.optional purgeNixReferences (writeText "setupHook.sh" ''
+      setupHook = lib.optional purgeNixReferences (writeText "setupHook.sh" ''
         addEnvHooks "$targetOffset" _setSbclHome
         _setSbclHome() {
         export SBCL_HOME='@out@/lib/sbcl/'
