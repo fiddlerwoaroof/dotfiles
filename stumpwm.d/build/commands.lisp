@@ -38,7 +38,11 @@
                  (mpd-remote.song::album current-song)
                  (mpd-remote.song::title current-song)))))
 
-  (defparameter *browser-command* "/usr/bin/google-chrome-beta")
+  (defparameter *browser-command*
+    (namestring
+     (merge-pathnames (make-pathname :directory '(:relative "bin")
+                                     :name "firefox")
+                      (user-homedir-pathname))))
 
   (defun cat (&rest strings)
     (uiop:escape-sh-command strings))
@@ -46,17 +50,17 @@
   (defgeneric get-search-url (provider &rest strings)
     (:method-combination append :most-specific-last)
     (:method :around (provider &rest r)
-     (declare (ignore r))
-     (apply #'concatenate 'string (call-next-method)))
+      (declare (ignore r))
+      (apply #'concatenate 'string (call-next-method)))
 
     (:method append (provider &rest r)
-     (declare (ignore r))
-     (list "https://duckduckgo.com/?q="))
+      (declare (ignore r))
+      (list "https://duckduckgo.com/?q="))
     (:method append ((provider (eql nil)) &rest strings)
-     (list* (car strings) (loop for string in (cdr strings) nconcing (list "+" string))))
+      (list* (car strings) (loop for string in (cdr strings) nconcing (list "+" string))))
 
     (:method append ((provider (eql :google)) &rest strings)
-     (list* "%21google" (loop for string in strings nconcing (list "+" string)))))
+      (list* "%21google" (loop for string in strings nconcing (list "+" string)))))
 
   (defmacro add-provider (name ddg-shortcut)
     `(defmethod get-search-url append ((provider (eql ,name)) &rest strings)
@@ -82,36 +86,25 @@
     (push (get-x-selection) (ubiquitous:value :clip))
     (ubiquitous:offload))
 
-  (defcommand google (provider search-string) ((:string "Search Provider? ") (:string "Search Google for: "))
-    "Search google for a given string"
-    (check-type search-string (or null string))
-    (when search-string)
-    (run-shell-command (cat *browser-command* " "
-                            (get-search-url :google (substitute #\+ #\space search-string)))))
-
-
   (defcommand do-search (provider search-string) ((:string "Provider: ") (:string "Search for: "))
     "Run a search against a specified provider"
     (check-type provider (or null string))
     (check-type search-string (or null string))
     (when (and provider search-string)
       (let ((provider (intern (string-upcase provider) :keyword)))
-        (run-shell-command (cat *browser-command* " "
-                                (get-search-url provider (substitute #\+ #\space search-string)))))))
+        (run-shell-command (cat *browser-command* (get-search-url provider (substitute #\+ #\space search-string)))))))
 
   (defcommand google (search-string) ((:string "Search Google for: "))
     "Search google for a given string"
     (check-type search-string (or null string))
     (when search-string
-      (run-shell-command (cat *browser-command* " "
-                              (get-search-url :google (substitute #\+ #\space search-string))))))
+      (run-shell-command (cat *browser-command* (get-search-url :google (substitute #\+ #\space search-string))))))
 
   (defcommand duckduckgo (search-string) ((:string "Search DDG for: "))
     "Search duckduckgo gor a given string"
     (check-type search-string (or null string))
     (when search-string
-      (run-shell-command (cat *browser-command* " "
-                              (get-search-url nil (substitute #\+ #\space search-string))))))
+      (run-shell-command (cat *browser-command* (get-search-url nil (substitute #\+ #\space search-string))))))
 
   (defcommand search-for-selection (provider) ((:string "Search Provider?"))
     "Search for the x selection with provider"
@@ -121,8 +114,9 @@
     "get moi a jira ticket"
     (unless (alpha-char-p (elt number 0))
       (setf number (format nil "ATOMOS-~a" number)))
-    (run-shell-command #1=(cat *browser-command*
-                               (format nil "https://atomampd.atlassian.net/browse/~a" number))))
+    (run-shell-command #1=(format nil "'~a'"
+                                  (cat *browser-command*
+                                       (format nil "https://atomampd.atlassian.net/browse/~a" number)))))
 
   (defcommand run-yeganesh () ()
     "Run Command given by yeganesh"
