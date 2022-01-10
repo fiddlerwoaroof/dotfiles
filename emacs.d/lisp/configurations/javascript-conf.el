@@ -55,6 +55,8 @@
   (prettier-js-mode 1)
   (tree-sitter-mode 1)
   (tree-sitter-hl-mode 1)
+  (set-syntax-table rjsx-mode-syntax-table)
+  (setq-default typescript-indent-level 2)
   (comment
    (tide-setup)
    (tide-hl-identifier-mode 1))
