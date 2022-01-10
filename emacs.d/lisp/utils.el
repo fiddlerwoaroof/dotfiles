@@ -216,14 +216,15 @@ from the selected region."
 
   (require 'package)
 
-  (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                           ("org" . "http://orgmode.org/elpa/")
-                           ("melpa" . "https://melpa.org/packages/")
-                           ("melpa-stable" . "http://stable.melpa.org/packages/"))
+  (setq package-archives
+        '(("gnu" . "http://elpa.gnu.org/packages/")
+          ("melpa" . "https://melpa.org/packages/")
+          ("melpa-stable" . "http://stable.melpa.org/packages/")
+          ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
         package-archive-priorities '(("melpa-stable" . 1)
                                      ("gnu" . 0)
                                      ("melpa" . 2)
-                                     ("org" . 3)))
+                                     ("nongnu" . 3)))
 
   (package-initialize 'no-activate)
   (when (not (package-installed-p 'use-package))
