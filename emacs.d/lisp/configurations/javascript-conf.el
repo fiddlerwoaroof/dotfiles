@@ -161,3 +161,9 @@
 
 (defvar *tos-hook*
   (add-hook 'after-save-hook 'fwoar/test-on-save))
+
+(cl-macrolet ((def-js-like-find-system (mode)
+		            `(cl-defmethod fwoar/find-system (&context (major-mode ,mode))
+		               (find-package-json default-directory))))
+  (def-js-like-find-system js-mode)
+  (def-js-like-find-system typescript-mode))

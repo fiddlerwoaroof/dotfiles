@@ -46,7 +46,7 @@
       (directory-files dir-of-asd
                        t "^[^.#][^#]*[.]asd$"))))
 
-(cl-defmethod fwoar--find-system (&context (major-mode lisp-mode))
+(cl-defmethod fwoar/find-system (&context (major-mode lisp-mode))
   (let ((systems (fwoar--get-asds)))
     (find-file (if (not (null (cdr systems)))
                    (helm-comp-read "system:" systems)
@@ -219,7 +219,7 @@ Examples:
            slime-selector-methods
            :key #'car)
 
-  (pushnew (list ?S "Goto System" #'fwoar--find-system)
+  (pushnew (list ?S "Goto System" #'fwoar/find-system)
            slime-selector-methods
            :key #'car)
 
