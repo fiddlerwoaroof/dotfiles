@@ -129,6 +129,12 @@
   (lambda (map)
     (fwoar/extract-key map key)))
 
+(fwoar/def-ns-fun keys (key &rest keys)
+  (lambda (map)
+    (loop for key in (cons key keys)
+          for value = (fwoar/extract-key map key)
+          finally (return value))))
+
 (comment
  (fwoar/def-ns-fun regex-match (regex)
    (lambda (data)
@@ -136,11 +142,11 @@
 
 (fwoar/def-ns-fun include (pred)
   (lambda (seq)
-    (cl-remove-if pred seq)))
+    (cl-remove-if-not pred seq)))
 
 (fwoar/def-ns-fun exclude (pred)
   (lambda (seq)
-    (cl-remove-if-not pred seq)))
+    (cl-remove-if pred seq)))
 
 (fwoar/def-ns-fun pick (selector)
   (lambda (seq)
