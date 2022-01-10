@@ -17,3 +17,5 @@ pom.xml.asc
 .#*
 *.*fasl*
 .DS_Store
+*.sw[a-z]
+core

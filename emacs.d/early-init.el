@@ -1,6 +1,12 @@
 (require 'cl-generic)
 (cl-defgeneric (setf seq-elt) (store sequence n))
 
+(setq package-user-dir
+      (locate-user-emacs-file
+        (concat
+          (file-name-as-directory "elpa")
+          emacs-version)))
+
 (setq default-frame-alist
       '(
         (top . 701)
@@ -14,3 +20,9 @@
         (ns-appearance . dark)
         (ns-transparent-titlebar . t)
         ))
+
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode 0))
+
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode 0))

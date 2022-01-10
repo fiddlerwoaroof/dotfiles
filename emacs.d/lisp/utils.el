@@ -135,24 +135,6 @@ from the selected region."
                       ,@(cdr pck)))
                  packages)))
 
-(defun helm-projectile-rg ()
-  "Projectile version of `helm-rg'."
-  (interactive)
-  (if (require 'helm-rg nil t)
-      (if (projectile-project-p)
-          (let ((helm-rg-prepend-file-name-line-at-top-of-matches nil)
-                (helm-rg-include-file-on-every-match-line t))
-            (helm-rg (helm-projectile-rg--region-selection)
-                     nil
-                     (list (projectile-project-root))))
-        (error "You're not in a project"))
-    (when (yes-or-no-p "`helm-rg' is not installed. Install? ")
-      (condition-case nil
-          (progn
-            (package-install 'helm-rg)
-            (helm-projectile-rg))
-        (error "`helm-rg' is not available.  Is MELPA in your `package-archives'?")))))
-
 (defmacro fwoar/defvaralias! (var val-var)
   `(progn
      (setq ,var ,val-var)
@@ -179,7 +161,6 @@ from the selected region."
 
 (defun post-init ()
   ;;(centaur-tabs-mode 1)
-  (projectile-mode 1)
   (evil-mode 1)
 
   (setup-indentation)

@@ -116,10 +116,10 @@
                                                             f :function)))))
   (setq cl:*features* (delete :aclrepl cl:*features*)))
 
-(sb-ext:set-sbcl-source-location
- (merge-pathnames (make-pathname :directory '(:relative "sbcl-source")
-                                 :defaults #1=(user-homedir-pathname))
-                  #1#))
+;; (sb-ext:set-sbcl-source-location
+;;   (merge-pathnames (make-pathname :directory '(:relative "sbcl-source")
+;;                                   :defaults #1=(user-homedir-pathname))
+;;                    #1#))
 
 (defun asdf-cwd ()
   (push (truename #p".") asdf:*central-registry*))

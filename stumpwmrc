@@ -5,7 +5,7 @@
   (defvar *selection-search-map* nil "selection search map")
   (defvar *search-map* nil "search map"))
 
-;;#+devtime
+#+devtime
 (progn
   (setf *window-format* "%s%m%n: %15t")
   (setf *window-format-by-class* "%m%n %c %s%92t"))
@@ -13,11 +13,13 @@
 ;;#-devtime
 #+(or)
 (eval-when (:load-toplevel :compile-toplevel :execute)
+ (require :sb-posix)
   (load-module "stumptray"))
 
 (eval-when (:load-toplevel :compile-toplevel :execute)
   #-devtime
   (progn 
+    (sb-posix:setenv "PATH" (format nil "/snap/bin:~a" (sb-posix:getenv "PATH")) 1)
     (set-prefix-key (kbd "s-space"))
     (mode-line)
     #+(or)

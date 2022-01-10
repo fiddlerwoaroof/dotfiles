@@ -115,6 +115,39 @@
   (lambda (key)
     (gethash key ht)))
 
+(cl-defgeneric fwoar/eq (a b)
+  (:method (a b)
+           (eql a b))
+  (:method ((a string) (b string))
+           (equal a b)))
+
+(fwoar/def-ns-fun == (v)
+  (lambda (it)
+    (fwoar/eq v it)))
+
+(fwoar/def-ns-fun applicable-when (cond fn)
+  (lambda (data)
+    (when (funcall cond data)
+      (funcall fn data))))
+
+
+(fwoar/def-ns-fun matches-regex (regex &optional start)
+  (lexical-let ((regex regex))
+    (lambda (data)
+      (if start
+          (string-match-p regex data start)
+        (string-match-p regex data)))))
+
+
+(cl-defmacro fwoar/and (&rest fns)
+  (let ((dat (gensym "dat")))
+    `(lambda (,dat)
+       (and ,@(mapcar (lambda (fn)
+                        `(funcall ,fn ,dat))
+                      fns)))))
+
+;; TODO: think about whether the plist behavior here makes sense
+;;       should we require plists to have symbol keys?
 (cl-defgeneric fwoar/extract-key (map key)
   (:method ((map hash-table) key)
            (gethash key map))
@@ -123,7 +156,9 @@
              (cons (cdr (cl-assoc key map :test 'equal)))
              (t (cl-loop for (a-key . value) on map by #'cddr
                          when (equal key a-key) do
-                         (return (car value)))))))
+                         (return (car value))))))
+  (:method ((map vector) (key number))
+           (elt map key)))
 
 (fwoar/def-ns-fun key (key)
   (lambda (map)
@@ -131,9 +166,9 @@
 
 (fwoar/def-ns-fun keys (key &rest keys)
   (lambda (map)
-    (loop for key in (cons key keys)
-          for value = (fwoar/extract-key map key)
-          finally (return value))))
+    (cl-loop for key in (cons key keys)
+             for cur = (fwoar/extract-key map key) then (fwoar/extract-key cur key)
+             finally (return cur))))
 
 (comment
  (fwoar/def-ns-fun regex-match (regex)

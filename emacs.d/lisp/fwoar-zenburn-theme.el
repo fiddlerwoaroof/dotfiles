@@ -181,12 +181,15 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(fringe ((t (:inherit fwoar-zenburn-face))))
    `(line-number ((t (:foreground unspecified :background unspecified :inherit fwoar-zenburn-face))))
    `(line-number-current-line ((t (:foreground ,zenburn-blue+1 :inherit fwoar-zenburn-1-face))))
+
+   ;; mode line
    `(mode-line-highlight ((t nil)))
    `(mode-line ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg
-                                :inherit (fwoar-zenburn-1-face variable-pitch)))))
+                                :weight semibold :inherit (fwoar-zenburn-1-face variable-pitch)))))
    `(mode-line-inactive ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg-1
                                          :inherit fwoar-zenburn-1-face))))
    `(mode-line-buffer-id ((t (:foreground ,zenburn-blue-2))))
+
    `(region ((t (:foreground unspecified :background unspecified :inverse-video t))))
    `(tool-bar ((t (:background unspecified :foreground unspecified :box nil :inherit fwoar-zenburn+2-face))))
    `(vertical-border ((t (:foreground "slate gray"))))

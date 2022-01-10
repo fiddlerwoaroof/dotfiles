@@ -1,11 +1,61 @@
 (in-package :cl-user)
 
+(define-condition repl-error (error)
+  ())
+(define-condition no-such-directory (repl-error)
+  ((%attempted-directory :reader attempted-directory :initarg :ad))
+  (:report (lambda (condition stream)
+             (format stream "No such directory: ~a" (attempted-directory condition)))))
+
+(defun read-evaluated-form (&optional (prompt-control nil promptp)
+                            &rest prompt-args)
+  (apply #'format *query-io*
+         (if promptp prompt-control "~&Enter a form to be evaluated: ")
+         prompt-args)
+  (finish-output *query-io*)
+  (list (eval (read *query-io*))))
+
+(defun cd (new)
+  (flet ((%cd (new-directory)
+           (if (probe-file new-directory)
+               (return-from cd
+                 (setf *default-pathname-defaults* (truename new-directory)))
+               (cerror "Try again" 'no-such-directory :ad new-directory))))
+    (fw.lu:retry-once (is-retry)
+      (let ((new-directory (make-pathname :directory (append (pathname-directory *default-pathname-defaults*)
+                                                             (list new))
+                                          :defaults *default-pathname-defaults*)))
+        (restart-case (%cd new-directory)
+          (use-value (value)
+            :test (lambda (_) _ is-retry)
+            :report (lambda (stream)
+                      (format stream "Use specified value."))
+            :interactive read-evaluated-form
+            (setf new value)))))))
+
+(defun ls (&optional pattern)
+  (if pattern
+      (directory pattern)
+      (directory "*.*")))
+
+(defun rm (file)
+  (unless (listp file)
+    (setf file (list file)))
+  (mapcar #'delete-file file))
+
+(defun --parse-path (it)
+  (let ((parts (fwoar.string-utils:split #\/ it)))
+    (values (elt parts (1- (length parts)))
+            (coerce (subseq parts 0 (1- (length parts)))
+                    'list))))
+
 (defun load-project-asds (name)
-  (mapcar 'asdf:load-asd
-          (directory (make-pathname :host "PROJECTS"
-                                    :directory (list :absolute (string-upcase name))
-                                    :name :wild
-                                    :type "ASD"))))
+  (multiple-value-bind (proj-name proj-sub) (--parse-path name)
+    (mapcar 'asdf:load-asd
+            (directory (make-pathname :host "PROJECTS"
+                                      :directory (list :absolute (string-upcase proj-name))
+                                      :name :wild
+                                      :type "ASD")))))
 
 #+(or)
 (mapcar 'asdf:load-asd

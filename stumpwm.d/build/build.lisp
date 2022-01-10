@@ -4,6 +4,31 @@
   (load "~/quicklisp/setup.lisp"))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+ (defun library-translation (input dd)
+   (declare (ignore dd))
+   (merge-pathnames
+     (make-pathname :directory
+                    (list* :relative
+                           "lisp-dylibs"
+                           (cdr
+                             (pathname-directory
+                               (parse-namestring
+                                 input))))
+                    :defaults input)
+     (user-homedir-pathname)))
+
+ (defun is-library ()
+   (make-pathname :directory (list :absolute :wild-inferiors)
+                  :name :wild
+                  :type "so"
+                  :version :wild))
+
+ (asdf:initialize-output-translations
+   `(:output-translations
+      :inherit-configuration
+      (,(is-library) (:function library-translation)))))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (ql:quickload :xembed)
   (ql:quickload :stumpwm)
   (ql:quickload :serapeum)

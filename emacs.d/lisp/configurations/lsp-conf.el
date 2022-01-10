@@ -13,6 +13,10 @@
   :config
   (add-hook 'lsp-ui-mode-hook 'fwoar/lsp-ui-hook))
 
+(use-package lsp-treemacs
+  :after treemacs lsp
+  :ensure t)
+
 (comment
  (use-package lsp-treemacs
    :after lsp-mode treemacs

@@ -27,11 +27,6 @@
                (ns-transparent-titlebar . t)))
        (modify-all-frames-parameters default-frame-alist))
 
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode 0))
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode 0))
-
 (message invocation-name)
 
 (let ((default-directory  "~/.emacs.d/lisp/"))
@@ -43,62 +38,11 @@
 (set-exec-path-from-shell-PATH)
 (cold-boot)
 
-(eval-and-compile
-  (defvar *fwoar-git-repos*
-    (file-name-as-directory
-     (expand-file-name (car (file-expand-wildcards "~/git*_repos"))
-                       "~"))))
+(use-package nix-mode
+  :ensure t)
 
-(eval-and-compile
-  (defun fwoar-git-repo (name ssh-remote http-remote)
-    (let ((dir-name (file-name-as-directory (expand-file-name name *fwoar-git-repos*))))
-      (unless (file-exists-p dir-name)
-        (ecase fwoar-git-mode
-          (:ssh (magit-run-git-with-input "clone" ssh-remote dir-name))
-          (:http (magit-run-git-with-input "clone" http-remote dir-name))))
-      dir-name)))
-
-(defvar *dotfiles-repo*
-  (fwoar-git-repo "dotfiles"
-                  "git@git.fiddlerwoaroof.com:dotfiles.git"
-                  "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
-
-(defun fwoar/setup-load-path ()
-  (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
-                                   load-path
-                                   :test 'equal))
-         (new-load-path (cl-adjoin (concat *dotfiles-repo*
-                                           "emacs.d/lisp/configurations/")
-                                   new-load-path
-                                   :test 'equal))
-         (new-load-path (cl-adjoin (concat *dotfiles-repo*
-                                           "emacs.d/packages/")
-                                   new-load-path
-                                   :test 'equal)))
-    (setq load-path new-load-path)))
-
-(fwoar/setup-load-path)
-
-
-(defun fwoar/package-configuration (package)
-  (fwoar/setup-load-path)
-  (let* ((local-configs)
-         (git-configs (concat *dotfiles-repo*
-                              "emacs.d/lisp/configurations/"))
-         (conf-file (concat (symbol-name package) "-conf.el"))
-         (load-path (list* local-configs git-configs load-path)))
-    conf-file))
-
-(defun load-package-configuration (package)
-  (let ((conf-file (fwoar/package-configuration package)))
-    (load conf-file)))
-
-(defun fwoar/load-local-packages ()
-  (interactive)
-  (mapc 'package-install-file
-        (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
-                         t ".*[.]el")))
-
+(use-package htmlize
+  :ensure t)
 
 (use-package keyfreq
   :ensure t
@@ -159,11 +103,76 @@
   :ensure t)
 
 
-(load-package-configuration 'lsp)
 
+(eval-and-compile
+  (defvar *fwoar-git-repos*
+    (file-name-as-directory
+     (expand-file-name (car (file-expand-wildcards "~/git*_repos"))
+                       "~"))))
+
+(eval-and-compile
+  (defun fwoar-git-repo (name ssh-remote http-remote)
+    (let ((dir-name (file-name-as-directory (expand-file-name name *fwoar-git-repos*))))
+      (unless (file-exists-p dir-name)
+        (ecase fwoar-git-mode
+          (:ssh (magit-run-git-with-input "clone" ssh-remote dir-name))
+          (:http (magit-run-git-with-input "clone" http-remote dir-name))))
+      dir-name)))
+
+(defvar *dotfiles-repo*
+  (fwoar-git-repo "dotfiles"
+                  "git@git.fiddlerwoaroof.com:dotfiles.git"
+                  "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
+
+(defun fwoar/setup-load-path ()
+  (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
+                                   load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/lisp/configurations/")
+                                   new-load-path
+                                   :test 'equal))
+         (new-load-path (cl-adjoin (concat *dotfiles-repo*
+                                           "emacs.d/packages/")
+                                   new-load-path
+                                   :test 'equal)))
+    (setq load-path new-load-path)))
+
+(fwoar/setup-load-path)
+
+(use-package fwoar-pastebin :ensure nil
+  :custom
+  (fwoar-pastebin-tramp-url (when (file-exists-p "~/.pastebin-name")
+                              (car (read-sexps-in-file "~/.pastebin-name"))))
+  (fwoar-pastebin-web-url-pattern (when (file-exists-p "~/.pastebin-name")
+                                    (cadr (read-sexps-in-file "~/.pastebin-name")))))
+
+(defun fwoar/package-configuration (package)
+  (fwoar/setup-load-path)
+  (let* ((local-configs)
+         (git-configs (concat *dotfiles-repo*
+                              "emacs.d/lisp/configurations/"))
+         (conf-file (concat (symbol-name package) "-conf.el"))
+         (load-path (list* local-configs git-configs load-path)))
+    conf-file))
+
+(defun load-package-configuration (package)
+  (let ((conf-file (fwoar/package-configuration package)))
+    (load conf-file)))
+
+(defun fwoar/load-local-packages ()
+  (interactive)
+  (mapc 'package-install-file
+        (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
+                         t ".*[.]el")))
+
+(unless (package-installed-p 'fwoar-functional-utils)
+  (fwoar/load-local-packages))
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
+
+(load-package-configuration 'lsp)
 
 
 
@@ -176,6 +185,14 @@
     `((t :foreground ,zenburn-blue :inherit magit-keyword))
     "Face for parts of commit messages inside brackets."
     :group 'magit-faces)
+  (defface magit-keyword-test
+    `((t :foreground ,zenburn-blue-1 :inherit magit-keyword))
+    "Face for parts of commit messages inside brackets."
+    :group 'magit-faces)
+  (defface magit-keyword-refactor
+    `((t :foreground ,zenburn-green+1 :inherit magit-keyword))
+    "Face for parts of commit messages inside brackets."
+    :group 'magit-faces)
   (defface magit-keyword-misc
     `((t :foreground ,zenburn-fg-1 :inherit magit-keyword))
     "Face for parts of commit messages inside brackets."
@@ -185,22 +202,23 @@
     "Face for parts of commit messages inside brackets."
     :group 'magit-faces))
 
+(defvar fwoar::*magit-log-regexp-faces*
+  '((magit-keyword-feature
+     "^\\(\\(?:feat\\(?:ure\\)?(\\([^)]+?\\))\\)\\|\\(?:feat\\(ure\\)?\\>\\)\\)")
+    (magit-keyword-chore "^\\(\\(?:chore(\\([^)]+?\\))\\)\\|\\(?:chore\\>\\)\\)")
+    (magit-keyword-test "^\\(\\(?:test(\\([^)]+?\\))\\)\\|\\(?:test\\>\\)\\)")
+    (magit-keyword-refactor "^\\(\\(?:refactor(\\([^)]+?\\))\\)\\|\\(?:refactor\\>\\)\\)")
+    (magit-keyword-bug "^\\(\\(?:bug(\\([^)]+?\\))\\)\\|\\(?:bug\\>\\)\\)")
+    (magit-keyword-test "^\\(\\(?:test(\\([^)]+?\\))\\)\\|\\(?:test\\>\\)\\)")
+    ))
+
 (defun fwoar/propertize-magit-log (_rev msg)
-  (let ((boundary 0))
-    (while (string-match "^\\(\\(?:feat\\(?:ure\\)?(\\([^)]+?\\))\\)\\|\\(?:feat\\(ure\\)?\\>\\)\\)" msg boundary)
-      (setq boundary (match-end 0))
-      (magit--put-face (match-beginning 0) boundary
-                       'magit-keyword-feature msg)))
-  (let ((boundary 0))
-    (while (string-match "^\\(\\(?:chore(\\([^)]+?\\))\\)\\|\\(?:chore\\>\\)\\)" msg boundary)
-      (setq boundary (match-end 0))
-      (magit--put-face (match-beginning 0) boundary
-                       'magit-keyword-chore msg)))
-  (let ((boundary 0))
-    (while (string-match "^\\(\\(?:bug(\\([^)]+?\\))\\)\\|\\(?:bug\\>\\)\\)"  msg boundary)
-      (setq boundary (match-end 0))
-      (magit--put-face (match-beginning 0) boundary
-                       'magit-keyword-bug msg)))
+  (cl-loop for (face regexp) in fwoar::*magit-log-regexp-faces*
+           do (let ((boundary 0))
+                (while (string-match regexp msg boundary)
+                  (setq boundary (match-end 0))
+                  (magit--put-face (match-beginning 0) boundary face msg))))
+
   (let ((boundary 0))
     (while (string-match "^\\([^:\n\t]+\\):"  msg boundary)
       (setq boundary (match-end 0))
@@ -225,40 +243,28 @@
               'fwoar/propertize-magit-log))
 
 (use-package browse-at-remote
-  :after magit
   :ensure t
-  :config)
+  :custom
+  (browse-at-remote-prefer-symbolic nil)
 
-(unless (package-installed-p 'fwoar-functional-utils)
-  (fwoar/load-local-packages))
+  :config
+  (cl-pushnew '("git.fiddlerwoaroof.com$" . "gitlist")
+              browse-at-remote-remote-type-regexps
+              :test 'equal)
 
+  (defun browse-at-remote--format-region-url-as-gitlist
+      (repo-url ref relname start-line end-line)
+    (unless (s-ends-with-p ".git" repo-url)
+      (setf repo-url (format "%s.git" repo-url)))
+    ;; gitlist doesn't support end-line
+    (format "%s/blob/%s/%s#L%s" repo-url ref relname start-line))
+  )
+
+
+(use-package aggressive-indent :ensure t)
 (load-package-configuration 'evil)
 (load-package-configuration 'helm)
-
-(use-package projectile
-  :ensure t
-  :config
-  (setq
-   ;;       projectile-enable-caching t
-   projectile-generic-command "rg --files -0"
-   )
-
-  (projectile-register-project-type
-   'clojure '("project.clj")
-   :compile "lein uberjar"
-   :test-dir "src/test/")
-
-  (projectile-register-project-type
-   'lisp '("*.asd"))
-
-  (projectile-register-project-type
-   'npm '("package.json")
-   :compile "npm install"
-   :test "npm test"
-   :run "npm start"
-   :test-suffix ".spec")
-
-  (define-key evil-normal-state-map "gf" 'project-aware-ffap))
+(load-package-configuration 'projectile)
 
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
@@ -282,6 +288,17 @@
  (use-package multifiles
    :config
    (evil-define-key 'visual 'global (kbd "<leader>m") 'mf/mirror-region-in-multifile)))
+
+(use-package http
+  :ensure t)
+(use-package graphql
+  :ensure t)
+(use-package ob-graphql
+  :ensure t)
+(use-package ob-http
+  :ensure t)
+(use-package ob-restclient
+  :ensure t)
 
 (defun safe-files ()
   (let ((fn (expand-file-name "~/.safe-files")))
@@ -308,19 +325,8 @@
 
 (setq org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
 
-(use-package http
-  :ensure t)
-(use-package graphql
-  :ensure t)
-(use-package ob-graphql
-  :ensure t)
-(use-package ob-http
-  :ensure t)
-(use-package ob-restclient
-  :ensure t)
-
 (use-package org
-  :pin "org"
+  :pin "gnu"
   :ensure t
   :config
   (setq org-directory "~/org"
@@ -353,20 +359,6 @@
 
   (define-key global-map "\C-cc" 'org-capture)
   (evil-define-key 'visual 'global (kbd "<leader>c") 'org-capture))
-
-(use-package org-projectile
-  :ensure t
-  :after company
-  :config
-  (progn
-    (org-projectile-per-project)
-    (setq org-agenda-skip-unavailable-files t)
-    (setq org-projectile-per-project-filepath
-          "notes/README.org")
-    (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files)))
-    (push (org-projectile-project-todo-entry) org-capture-templates)
-    (define-key projectile-mode-map (kbd "C-c c") 'org-capture))
-  :ensure t)
 
 (use-package delight
   :ensure t)
@@ -406,39 +398,6 @@
   (direnv-mode 1)
   (add-hook 'js2-mode-hook 'direnv-mode)
   (add-hook 'typescript-mode-hook 'direnv-mode))
-
-(defun more-than-one-project-file-p ()
-  (= (length (projectile-select-files (projectile-current-project-files)))
-     1))
-
-(defun global-find-known-file ())
-
-(defun helm-find-known-file (&optional arg)
-  "Use projectile with Helm for finding files in project
-
-With a prefix ARG invalidates the cache first."
-  (interactive "P")
-  (let ((projectile-enable-caching t))
-    (if (projectile-project-p)
-        (projectile-maybe-invalidate-cache arg)
-      (unless t
-        (error "You're not in a project"))))
-  (let ((helm-ff-transformer-show-only-basename nil)
-        (helm-boring-file-regexp-list nil))
-    (helm :sources 'helm-source-projectile-files-in-all-projects-list
-          :buffer (concat "*helm projectile: "
-                          (projectile-project-name)
-                          "*")
-          :truncate-lines helm-projectile-truncate-lines
-          :prompt (projectile-prepend-project-name "Find file in projects: "))))
-
-(defun project-aware-ffap (&rest args)
-  (interactive "F")
-  (apply (if (and (projectile-project-p)
-                  (more-than-one-project-file-p))
-             'helm-projectile-find-file-dwim
-           'find-file-at-point)
-         args))
 
 
 (use-package cl-generic
@@ -474,7 +433,6 @@ With a prefix ARG invalidates the cache first."
           (list (or evil-this-register (read-char))))
       (delete-overlay overlay))))
 
-(use-package aggressive-indent :ensure t)
 
 (use-package cl-format :ensure t)
 
@@ -506,8 +464,6 @@ With a prefix ARG invalidates the cache first."
 (use-package rainbow-delimiters :ensure t)
 
 (use-package ripgrep :ensure t)
-
-(use-package projectile-ripgrep :ensure t)
 
 (use-package scss-mode :ensure t)
 
@@ -557,10 +513,6 @@ With a prefix ARG invalidates the cache first."
   :after treemacs evil
   :ensure t)
 
-(use-package treemacs-projectile
-  :after treemacs projectile
-  :ensure t)
-
 (use-package treemacs-icons-dired
   :after treemacs dired
   :ensure t
@@ -568,10 +520,6 @@ With a prefix ARG invalidates the cache first."
 
 (use-package treemacs-magit
   :after treemacs magit
-  :ensure t)
-
-(use-package lsp-treemacs
-  :after treemacs lsp
   :ensure t)
 
 (progn ;; emacs-lisp stuff
@@ -589,11 +537,6 @@ With a prefix ARG invalidates the cache first."
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file)
   (load-file custom-file))
-
-(defun edit-init-el ()
-  (interactive)
-  (let ((default-directory *dotfiles-repo*))
-    (helm-projectile-find-file)))
 
 ;;(setq gc-cons-threshold (* 100 1024))
 
@@ -613,15 +556,6 @@ With a prefix ARG invalidates the cache first."
 
 (defvar url-pattern (when (file-exists-p "~/.pastebin-name")
                       (car (read-sexps-in-file "~/.pastebin-name"))))
-(defun pastebin-buffer ()
-  (interactive)
-  (let* ((extension (file-name-extension (elt (split-string (buffer-name) "<") 0)))
-         (htmlized-buffer (htmlize-buffer)))
-    (with-current-buffer htmlized-buffer
-      (let ((result-name-hash (sha1 (current-buffer))))
-        (write-file (format url-pattern result-name-hash extension))
-        (message "Wrote file to: %s.%s.html" result-name-hash extension)
-        (browse-url (format "https://fwoar.co/pastebin/%s.%s.html" result-name-hash extension))))))
 
 (defun delete-mru-window ()
   (interactive)

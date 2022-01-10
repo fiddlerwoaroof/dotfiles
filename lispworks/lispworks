@@ -1,10 +1,11 @@
 (in-package :cl-user)
 
 (defun load-init-file (filename &optional (conf-dir ".lispworks.d"))
-  (load (merge-pathnames
-         (make-pathname :directory `(:relative ,conf-dir)
-                        :name filename)
-         (user-homedir-pathname))))
+ (let ((fn (merge-pathnames (make-pathname :directory `(:relative ,conf-dir)
+                                           :name filename)
+                            (user-homedir-pathname))))
+   (when (probe-file fn)
+     (load fn)))
 
 (change-directory (user-homedir-pathname))
 
@@ -20,8 +21,6 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (load "~/quicklisp/setup.lisp"))
-
-(ql:quickload :lw-add-ons)
 
 (editor:bind-key "Insert Space And Show Arglist" "Space")
 (editor:bind-key "Indent Form" #("Control-c" "Meta-q"))
@@ -63,3 +62,6 @@ Any indentation preceeding the parenthesis is deleted."
                   'system:locale-file-encoding
                   system:*file-encoding-detection-algorithm*))
 (set-default-character-element-type 'simple-char)
+
+(ql:quickload :lw-add-ons)
+
