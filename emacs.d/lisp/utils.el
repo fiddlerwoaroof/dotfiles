@@ -225,7 +225,7 @@ from the selected region."
                                      ("melpa" . 2)
                                      ("nongnu" . 3)))
 
-  (package-initialize 'no-activate)
+  ;; (package-initialize 'no-activate)
   (when (not (package-installed-p 'use-package))
     (package-refresh-contents)
     (package-install 'use-package))
