@@ -205,9 +205,8 @@ from the selected region."
    (electric-pair-mode -1))
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-  (comment
-   (when-let ((ls-executable (executable-find "gls")))
-     (setq insert-directory-program ls-executable)))
+  (when-let ((ls-executable (executable-find "gls")))
+    (setq insert-directory-program ls-executable))
 
   (setq default-directory "~/emacs-home/")
   (make-directory default-directory t)
