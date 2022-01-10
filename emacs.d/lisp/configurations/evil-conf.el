@@ -2,7 +2,6 @@
   (interactive "P")
   (sp-wrap-with-pair "\""))
 
-
 (defun wrap-in-dollar-brace
     (&optional arg)
   (interactive "P")
@@ -16,12 +15,12 @@
 (use-package undo-fu
   :ensure t)
 
+(setq evil-want-keybinding nil)
 (use-package evil
   :ensure t
   :after undo-fu
   :init
   (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-  (setq evil-want-keybinding nil)
   (setq evil-undo-system 'undo-fu)
   :config
 
@@ -156,8 +155,11 @@
   :after evil
   :config
   (evil-collection-require 'xref)
+  (evil-collection-require 'eshell)
   (with-eval-after-load 'xref
-    (evil-collection-xref-setup)))
+    (evil-collection-xref-setup))
+  (with-eval-after-load 'eshell
+    (evil-collection-eshell-setup)))
 
 (comment
  (use-package centaur-tabs
