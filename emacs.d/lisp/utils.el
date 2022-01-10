@@ -235,3 +235,8 @@ from the selected region."
         history-delete-duplicates t)
 
   (require 'use-package))
+
+(defun raise-iterm ()
+  (interactive)
+  (shell-command "open -a iTerm.app"))
+(define-key global-map (kbd "C-M-s-l") 'raise-iterm)
