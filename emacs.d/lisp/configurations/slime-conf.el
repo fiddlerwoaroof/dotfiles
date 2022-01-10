@@ -169,8 +169,7 @@ Examples:
       (ecl   ("ecl"))
       ;;(mkcl  ("mkcl"))
       ;;(xcl   ("xcl"))
-      (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
-      (sbcl-m1  ("~/sbcl-m1/bin/sbcl" "--dynamic-space-size" "8192"))))
+      (sbcl  ("sbcl" "--dynamic-space-size" "8192"))))
 
   (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
