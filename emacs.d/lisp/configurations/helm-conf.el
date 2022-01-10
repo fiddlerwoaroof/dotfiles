@@ -11,7 +11,8 @@
 
 (use-package helm :ensure t
   :custom
-  (helm-boring-buffer-regexp-list '("\\` " "\\`\\*helm" "\\`\\*Echo Area" "\\`\\*Minibuf" "\\`\\Pfuture"))
+  (helm-boring-buffer-regexp-list
+   '("\\` " "\\`\\*helm" "\\`\\*Echo Area" "\\`\\*Minibuf" "\\`\\Pfuture"))
   :delight
 
   :config
