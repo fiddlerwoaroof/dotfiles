@@ -165,7 +165,7 @@
   (interactive)
   (mapc 'package-install-file
         (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
-                         t ".*[.]el")))
+                         t ".*[.]el$")))
 
 (unless (package-installed-p 'fwoar-functional-utils)
   (fwoar/load-local-packages))
