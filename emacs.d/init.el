@@ -138,6 +138,10 @@
   (fwoar-pastebin-web-url-pattern (when (file-exists-p "~/.pastebin-name")
                                     (cadr (read-sexps-in-file "~/.pastebin-name")))))
 
+(use-package fwoar-json-navigator
+  :init (require 'fwoar-json-navigator)
+  :ensure nil)
+
 (defun fwoar/package-configuration (package)
   (fwoar/setup-load-path)
   (let* ((local-configs)
@@ -265,7 +269,7 @@
 
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
-(comment (load-package-configuration 'cider))
+;; (load-package-configuration 'cider)
 
 (global-company-mode 1)
 
