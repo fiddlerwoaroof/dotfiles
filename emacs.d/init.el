@@ -18,15 +18,6 @@
   (define-key key-translation-map (kbd "M-8") (kbd "•"))
   (define-key key-translation-map (kbd "M-9") (kbd "λ")))
 
-(progn (setq default-frame-alist
-             '((vertical-scroll-bars . nil)
-               (right-divider-width . 2)
-               (bottom-divider-width . 2)
-               (inhibit-double-buffering . t)
-               (ns-appearance . dark)
-               (ns-transparent-titlebar . t)))
-       (modify-all-frames-parameters default-frame-alist))
-
 (message invocation-name)
 
 (let ((default-directory  "~/.emacs.d/lisp/"))
@@ -159,6 +150,12 @@
 (defun load-package-configuration (package)
   (let ((conf-file (fwoar/package-configuration package)))
     (load conf-file)))
+
+(defmacro define-obsolete-function-alias ( obsolete-name current-name &optional when docstring)
+  (declare (doc-string 4) (indent defun))
+  `(progn
+     (defalias ,obsolete-name ,current-name ,docstring)
+     (make-obsolete ,obsolete-name ,current-name ,(or when "unspecified"))))
 
 (defun fwoar/load-local-packages ()
   (interactive)
