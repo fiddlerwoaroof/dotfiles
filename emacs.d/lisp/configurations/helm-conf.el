@@ -30,6 +30,14 @@
 (use-package helm-org :after helm :ensure t)
 (use-package helm-rg :after helm :ensure t)
 
+(use-package fwoar-helm-project
+  :init
+  (require 'fwoar-helm-project)
+  (fwoar::initialize-fwoar-helm-project)
+  :no-require t
+  :ensure nil
+  )
+
 (comment
  (use-package helm-ag :after helm :ensure t)
 

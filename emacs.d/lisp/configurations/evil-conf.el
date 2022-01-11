@@ -17,59 +17,6 @@
 
 (setq evil-want-keybinding nil)
 
-(defun fwoar::get-candidates ()
-  (funcall (-compose (fwoar/exclude
-                      (fwoar/matches-regex "/\\(.*[#]\\)"))
-                     'project-files
-                     'project-current)))
-
-(defun fwoar::browse-project ()
-  (interactive)
-  (if (package-installed-p 'projectile)
-      (helm-projectile)
-    (fwoar::helm-find-file-in-project)))
-
-(defvar fwoar::*helm-project-files-source*
-  `((name . "Project Files")
-    (candidates . (lambda ()
-                    (let* ((fwoar::project (project-current))
-                           (fwoar::root (project-root fwoar::project)))
-                      (mapcar (lambda (it)
-                                (cons (f-relative it fwoar::root)
-                                      it))
-                              (project-files fwoar::project)))))
-    (action . helm-find-files-actions)))
-
-(defvar fwoar::*helm-project-buffers-source*
-  `((name . "Project Buffers")
-    (candidates . (lambda ()
-                    (let* ((fwoar::project (project-current)))
-                      (funcall (-compose (fwoar/over (lambda (it)
-                                                       (cons (buffer-name it)
-                                                             it)))
-                                         (lambda (it)
-                                           (cl-sort it 'string-lessp
-                                                    :key 'buffer-name))
-                                         (fwoar/exclude
-                                          (fwoar/on (fwoar/matches-regex "^ ")
-                                                    'buffer-name))
-                                         'project-buffers)
-                               fwoar::project))))
-    (action . switch-to-buffer)))
-
-(defvar fwoar::*helm-project-known-projects*
-  `((name . "Projects")
-    (candidates . project-known-project-roots)
-    (action . (lambda (it)
-                (let ((default-directory it))
-                  (fwoar::helm-find-file-in-project))))))
-
-(defun fwoar::helm-find-file-in-project ()
-  (interactive)
-  (helm '(fwoar::*helm-project-files-source*
-          fwoar::*helm-project-buffers-source*
-          fwoar::*helm-project-known-projects*)))
-
 (use-package evil
   :ensure t
   :after undo-fu
