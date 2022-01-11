@@ -39,9 +39,36 @@
                                       it))
                               (project-files fwoar::project)))))
     (action . helm-find-files-actions)))
+
+(defvar fwoar::*helm-project-buffers-source*
+  `((name . "Project Buffers")
+    (candidates . (lambda ()
+                    (let* ((fwoar::project (project-current)))
+                      (funcall (-compose (fwoar/over (lambda (it)
+                                                       (cons (buffer-name it)
+                                                             it)))
+                                         (lambda (it)
+                                           (cl-sort it 'string-lessp
+                                                    :key 'buffer-name))
+                                         (fwoar/exclude
+                                          (fwoar/on (fwoar/matches-regex "^ ")
+                                                    'buffer-name))
+                                         'project-buffers)
+                               fwoar::project))))
+    (action . switch-to-buffer)))
+
+(defvar fwoar::*helm-project-known-projects*
+  `((name . "Projects")
+    (candidates . project-known-project-roots)
+    (action . (lambda (it)
+                (let ((default-directory it))
+                  (fwoar::helm-find-file-in-project))))))
+
 (defun fwoar::helm-find-file-in-project ()
   (interactive)
-  (helm '(fwoar::*helm-project-files-source*)))
+  (helm '(fwoar::*helm-project-files-source*
+          fwoar::*helm-project-buffers-source*
+          fwoar::*helm-project-known-projects*)))
 
 (use-package evil
   :ensure t
