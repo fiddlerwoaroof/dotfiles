@@ -1,12 +1,6 @@
 (require 'cl-generic)
 (cl-defgeneric (setf seq-elt) (store sequence n))
 
-(setq package-user-dir
-      (locate-user-emacs-file
-        (concat
-          (file-name-as-directory "elpa")
-          emacs-version)))
-
 (modify-all-frames-parameters
  '(
    (top . 701)
@@ -20,6 +14,12 @@
    (ns-appearance . dark)
    (ns-transparent-titlebar . t)
    ))
+
+(setq package-user-dir
+      (locate-user-emacs-file
+       (concat
+        (file-name-as-directory "elpa")
+        emacs-version)))
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode 0))

@@ -167,6 +167,8 @@
         (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
                          t ".*[.]el$")))
 
+(use-package json-mode
+  :ensure t)
 (unless (package-installed-p 'fwoar-functional-utils)
   (fwoar/load-local-packages))
 (defvar fwoar-git-mode :ssh)
