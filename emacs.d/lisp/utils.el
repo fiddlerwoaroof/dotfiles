@@ -170,11 +170,37 @@ from the selected region."
       (global-display-line-numbers-mode)
     (setq linum-format "%5d\u2502")
     (global-linum-mode))
-  (set-exec-path-from-shell-PATH)
+  (fwoar/source "~/.zshrc")
   ;; NOTE: this must be here...
   (global-company-mode 1))
 
 (defvar fwoar.is-ordinary)
+
+(defun fwoar/source (filename)
+  "Update environment variables from a shell source file."
+  (interactive "fSource file: ")
+
+  (message "Sourcing environment from `%s'..." filename)
+  (with-temp-buffer
+    (shell-command (format "diff -u <(true; export) <(source %s; export)" filename) '(4))
+
+    (let ((envvar-re "\\([^=[:space:]]+\\)=\\(.*\\)$"))
+      ;; Remove environment variables
+      (while (search-forward-regexp (concat "^-" envvar-re) nil t)
+        (let ((var (match-string 1)))
+          (message "%s" (prin1-to-string `(setenv ,var nil)))
+          (setenv var nil)
+          ))
+
+      ;; Update environment variables
+      (goto-char (point-min))
+      (while (search-forward-regexp (concat "^+" envvar-re) nil t)
+        (let ((var (match-string 1))
+              (value (string-trim (match-string 2) "'" "'")))
+          (message "%s" (prin1-to-string `(setenv ,var ,value)))
+          (setenv var value)
+          ))))
+  (message "Sourcing environment from `%s'... done." filename))
 
 (defun cold-boot ()
   ""
@@ -203,8 +229,8 @@ from the selected region."
           ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
         package-archive-priorities '(("melpa-stable" . 1)
                                      ("gnu" . 0)
-                                     ("melpa" . 2)
-                                     ("nongnu" . 3)))
+                                     ("nongnu" . 2)
+                                     ("melpa" . 3)))
 
   ;; (package-initialize 'no-activate)
   (when (not (package-installed-p 'use-package))
