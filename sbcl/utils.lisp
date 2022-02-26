@@ -99,7 +99,8 @@
   ($caching
     (trivial-ssh:with-connection
         (c "git.fiddlerwoaroof.com"
-         (trivial-ssh:key "git" "Users/edwlan/.ssh/id_ed25519"))
+         (trivial-ssh:key "git" (namestring (merge-pathnames ".ssh/id_ed25519"
+                                                             (user-homedir-pathname)))))
         (libssh2:with-execute (s c "info")
           (let ((libssh2:*channel-read-zero-as-eof* t))
             (loop for line = (read-line s nil)
