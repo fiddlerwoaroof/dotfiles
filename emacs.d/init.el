@@ -169,6 +169,7 @@
 
 (unless (package-installed-p 'fwoar-functional-utils)
   (fwoar/load-local-packages))
+
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
   (load "site-lisp"))
@@ -265,7 +266,7 @@
 (use-package aggressive-indent :ensure t)
 (load-package-configuration 'evil)
 (load-package-configuration 'helm)
-(load-package-configuration 'projectile)
+;; (load-package-configuration 'projectile)
 
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
