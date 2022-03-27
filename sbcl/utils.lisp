@@ -64,6 +64,18 @@
                 :key (data-lens:• (data-lens:element 0)
                                   #'pathname-name)))
 
+(defun gh-repo-root (coordinate)
+  (let ((git-url (format nil "git@github.com:~a.git" coordinate)))
+    (:printv
+     (merge-pathnames (:printv
+                       (uiop:parse-unix-namestring coordinate
+                                                   :ensure-directory t))
+                      (merge-pathnames (make-pathname :directory
+                                                      (list :relative
+                                                            "git_repos"
+                                                            "github.com"))
+                                       (user-homedir-pathname))))))
+
 (defun gh (coordinate)
   (let ((git-url (format nil "git@github.com:~a.git" coordinate))
         (target (:printv
