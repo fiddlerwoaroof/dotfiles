@@ -350,6 +350,9 @@
                                  "* %? %^G\n  SCHEDULED: %T"))
         org-refile-targets '((nil . (:maxlevel . 2))))
 
+  (defvar fwoar::*lob* (f-join org-directory "lob.org"))
+  (org-babel-lob-ingest fwoar::*lob*)
+
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((restclient . t)
