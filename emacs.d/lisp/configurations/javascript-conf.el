@@ -169,3 +169,5 @@
 		               (find-package-json default-directory))))
   (def-js-like-find-system js-mode)
   (def-js-like-find-system typescript-mode))
+(cl-defmethod fwoar/find-system (&context ((projectile-project-type) (eql 'npm)))
+	(find-package-json default-directory))

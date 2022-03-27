@@ -6,6 +6,7 @@
 ;; Version: 0.0.1
 ;; Keywords: json,navigator
 ;; URL: https://fwoar.co
+;; Package-Requires: (json-mode fwoar-functional-utils)
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -25,12 +26,13 @@
 ;; simple attempts to navigate json
 
 ;;; Code:
+(require 'fwoar-functional-utils)
+(require 'json-mode)
 
 (defvar-local fwoar/json-nav--data nil)
 (defvar-local fwoar/json-nav--path nil)
 (defvar-local fwoar/json-nav--prev-buffer nil)
 (defvar-local fwoar/json-nav--start-buffer nil)
-(require 'fwoar-functional-utils)
 
 (defun fwoar/browse-json-response (url)
   (interactive "Murl? ")
@@ -53,10 +55,9 @@
     (switch-to-buffer json)))
 
 (defun fwoar/json--ensure-data ()
-  (unless fwoar/json-nav--data
-    (save-excursion
-      (goto-char (point-min))
-      (setq-local fwoar/json-nav--data (json-parse-buffer :null-object nil))))
+  (save-excursion
+    (goto-char (point-min))
+    (setq-local fwoar/json-nav--data (json-parse-buffer :null-object nil)))
   (values))
 
 (defun fwoar/json-nav--pierce-vectors (fun it)

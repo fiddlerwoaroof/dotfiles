@@ -38,3 +38,6 @@ fi
 
 gtdo() { cd ~downloads/"${(j</>)*}" }
 
+hcd () {
+  fc -e true "${${(z)$(fc -l -m '\~[a-z]*' 1 | fzf)}[1]}"
+}
