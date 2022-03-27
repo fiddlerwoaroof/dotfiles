@@ -56,6 +56,7 @@ else
     source ~/zshrc.depends
   fi
 
+  unset __ETC_PROFILE_NIX_SOURCED
   for x in $init_scripts; do
     if ! [[ -f ~/zshrc.depends ]]; then
       build_depends "$x"

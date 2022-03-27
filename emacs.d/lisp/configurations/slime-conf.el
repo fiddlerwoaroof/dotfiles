@@ -46,7 +46,7 @@
       (directory-files dir-of-asd
                        t "^[^.#][^#]*[.]asd$"))))
 
-(cl-defmethod fwoar--find-system (&context (major-mode lisp-mode))
+(cl-defmethod fwoar/find-system (&context (major-mode lisp-mode))
   (let ((systems (fwoar--get-asds)))
     (find-file (if (not (null (cdr systems)))
                    (helm-comp-read "system:" systems)
@@ -84,15 +84,17 @@
 
 (defun find-use-clause (current-form)
   (when current-form
-    (destructuring-bind (discriminator . packages) current-form
-      (case discriminator
+    (cl-destructuring-bind (discriminator . packages) current-form
+      (cl-case discriminator
         (:use (remove-if (op (or (eql :cl _)))
                          (cdr current-form)))
         (defpackage (find-use-clause
                      (find-if (lambda (f)
                                 (and (listp f)
                                      (eql (car f) :use)))
-                              '(defpackage :tracking-sim (:use :cl :alexandria :serapeum) (:export)))))))))
+                              '(defpackage :tracking-sim
+                                 (:use :cl :alexandria :serapeum)
+                                 (:export)))))))))
 
 (defun load-package-uses ()
   (interactive)
@@ -149,25 +151,25 @@ Examples:
   :config
 
   (defslimefun get-passwd (id prompt)
-               (let ((val (assoc id passwords)))
-                 (cdr
-                  (if val val
-                    (car (push (cons id (read-passwd prompt))
-                               passwords))))))
+    (let ((val (assoc id passwords)))
+      (cdr
+       (if val val
+         (car (push (cons id (read-passwd prompt))
+                    passwords))))))
   (message "%s" load-path)
   (when (or (eq system-type 'gnu/linux)
             (eq system-type 'darwin))
     (define-lisp-implementations
-     (abcl  ("abcl"))
-     (lw  ("lw"))
-     (ccl ("ccl"))
-     (clisp ("clisp"))
-     (cmucl ("cmucl" "-quiet"))
-     (ecl   ("ecl"))
-     ;;(mkcl  ("mkcl"))
-     ;;(xcl   ("xcl"))
-     (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
-     ))
+      (abcl  ("abcl"))
+      (lw  ("lw"))
+      (ccl ("ccl"))
+      (clisp ("clisp"))
+      (cmucl ("cmucl" "-quiet"))
+      (ecl   ("ecl"))
+      ;;(mkcl  ("mkcl"))
+      ;;(xcl   ("xcl"))
+      (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
+      ))
 
   (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
@@ -177,7 +179,7 @@ Examples:
           (concat "file://" common-lisp-hyperspec-root)))
 
   ;; Replace "sbcl" with the path to your implementation
-  (setq inferior-lisp-program "~/sbcl/bin/sbcl")
+  (setq inferior-lisp-program "~/.nix-profile/bin/sbcl")
 
   (add-hook 'lisp-mode-hook 'setup-lisp-mode)
   (add-hook 'emacs-lisp-mode-hook 'setup-lisp-mode)
@@ -216,7 +218,7 @@ Examples:
            slime-selector-methods
            :key #'car)
 
-  (pushnew (list ?S "Goto System" #'fwoar--find-system)
+  (pushnew (list ?S "Goto System" #'fwoar/find-system)
            slime-selector-methods
            :key #'car)
 

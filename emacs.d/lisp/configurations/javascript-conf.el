@@ -55,6 +55,8 @@
   (prettier-js-mode 1)
   (tree-sitter-mode 1)
   (tree-sitter-hl-mode 1)
+  (set-syntax-table rjsx-mode-syntax-table)
+  (setq-default typescript-indent-level 2)
   (comment
    (tide-setup)
    (tide-hl-identifier-mode 1))
@@ -161,3 +163,11 @@
 
 (defvar *tos-hook*
   (add-hook 'after-save-hook 'fwoar/test-on-save))
+
+(cl-macrolet ((def-js-like-find-system (mode)
+		            `(cl-defmethod fwoar/find-system (&context (major-mode ,mode))
+		               (find-package-json default-directory))))
+  (def-js-like-find-system js-mode)
+  (def-js-like-find-system typescript-mode))
+(cl-defmethod fwoar/find-system (&context ((projectile-project-type) (eql 'npm)))
+	(find-package-json default-directory))

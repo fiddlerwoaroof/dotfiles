@@ -101,12 +101,16 @@ REVERSE - Jump to previous position in skeleton"
                              fwoar::*package-prefix*
                              (file-name-sans-extension
                               (file-name-nondirectory
-                               (buffer-file-name))))))
+                               (buffer-file-name))))
+                   (format "%s" fwoar::*package-prefix*)))
   '(setq v1 (bobp))
   "(defpackage :" @ str "
   (:use :cl "  _ @ - ")
-  (:export " @  "))
-(in-package :" str ")" \n
+  (:export " @  "))"
+  \n
+  (when v1 "(in-package :")
+  (when v1 str)
+  (when v1 ")")
   @)
 
 
@@ -122,7 +126,7 @@ REVERSE - Jump to previous position in skeleton"
   & "(in-package :asdf-user)"
   & \n
   & \n
-  "(defsystem :" @ str " 
+  "(defsystem :" @ str "
   :description \"\"
   :author \"Ed L <edward@elangley.org>\"
   :license \"MIT\"

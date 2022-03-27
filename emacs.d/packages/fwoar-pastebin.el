@@ -50,15 +50,22 @@
                                                             "<")
                                               0)))
          (htmlized-buffer (htmlize-buffer)))
-    (with-current-buffer htmlized-buffer
-      (let ((result-name-hash (sha1 (current-buffer))))
-        (write-file (format fwoar-pastebin-tramp-url
-                            result-name-hash
-                            extension))
-        (message "Wrote file to: %s.%s.html" result-name-hash extension)
-        (browse-url (format fwoar-pastebin-web-url-pattern
-                            result-name-hash
-                            extension))))))
+    (pastebin-html htmlized-buffer extension)))
+
+;;;###autoload
+(cl-defun pastebin-html (&optional (htmlized-buffer (current-buffer))
+                                   (extension "html"))
+  (interactive)
+  (with-current-buffer htmlized-buffer
+    (let ((result-name-hash (sha1 (current-buffer))))
+      (write-file (format fwoar-pastebin-tramp-url
+                          result-name-hash
+                          extension))
+      (message "Wrote file to: %s.%s.html" result-name-hash extension)
+      (browse-url (format fwoar-pastebin-web-url-pattern
+                          result-name-hash
+                          extension)))))
+
 
 (provide 'fwoar-pastebin)
 ;;; fwoar-pastebin.el ends here

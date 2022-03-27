@@ -95,8 +95,17 @@ alias_forge bb github
 alias_forge gh github
 alias_forge gl gitlab
 
+gitlab_root() {
+  local proj_dir="$HOME"/git_repos/gitlab.com/"$1"/
+  if ! [[ -d "$proj_dir" ]]; then
+    mkdir -p "$proj_dir"
+  fi
+
+  echo "$proj_dir"
+}
+
 github_root() {
-  local proj_dir="$HOME"/git_repos/github/"$1"/
+  local proj_dir="$HOME"/git_repos/github.com/"$1"/
   if ! [[ -d "$proj_dir" ]]; then
     mkdir -p "$proj_dir"
   fi
@@ -135,10 +144,12 @@ function git-get() {
 
   # echo "git user? $git_user package? $package" >&2
   local target="$(get_forge_root "$forge" "$git_user")"
-  cd "$target"
+  (
+    cd "$target"
 
-  local forge_url_function="${$(get_forge_function "$forge"):?forge not recognized}"
-  git-forge-clone "$forge_url_function"
+    local forge_url_function="${$(get_forge_function "$forge"):?forge not recognized}"
+    git-forge-clone "$forge_url_function"
+  )
 
-  cd "$(basename "$package")"
+  cd "$target/$(basename "$package")"
 }

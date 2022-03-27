@@ -1,4 +1,4 @@
-(asdf:defsystem fwoar-sbcl
+(asdf:defsystem :fwoar-sbcl
   :depends-on ((:require :sb-aclrepl)
                (:require :sb-introspect)
                :alexandria

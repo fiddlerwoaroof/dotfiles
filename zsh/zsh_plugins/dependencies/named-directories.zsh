@@ -14,6 +14,9 @@ git_dir=($HOME/git*_repos)
 num_git_dirs="$git_dir[(I)$git_dir[-1]]" 
 if (( num_git_dirs > 0 )); then
   hash -d "g=${${git_dir[1]}%/}"
+  hash -d "gh=${${git_dir[1]}%/}/github.com"
+  hash -d "gf=${${git_dir[1]}%/}/git.fiddlerwoaroof.com"
+  hash -d "gl=${${git_dir[1]}%/}/gitlab.com"
 
   if [[ -d $HOME/dotfiles ]]; then
     hash -d zsh_conf=$HOME/dotfiles/zsh
@@ -35,3 +38,6 @@ fi
 
 gtdo() { cd ~downloads/"${(j</>)*}" }
 
+hcd () {
+  fc -e true "${${(z)$(fc -l -m '\~[a-z]*' 1 | fzf)}[1]}"
+}

@@ -1,6 +1,8 @@
 (use-package lsp-mode
   :ensure t
-  :config (setq lsp-enable-snippet t))
+  :custom
+  (lsp-enable-indentation nil)
+  (lsp-enable-snippet t))
 
 (defun fwoar/lsp-ui-hook ()
   (lsp-ui-sideline-mode -1))

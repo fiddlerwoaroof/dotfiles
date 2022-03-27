@@ -1,7 +1,16 @@
-{ pkgs }:
-let
-  packages = extras:
-    (with pkgs; [ dtach nixpkgs-fmt nixfmt glibcLocales ]) ++ extras;
+{ pkgs, homeDirectory }: rec {
+  packages = [
+    pkgs.direnv
+    pkgs.dtach
+    pkgs.ecl
+    pkgs.gnuplot
+    pkgs.jq
+    pkgs.lorri
+    pkgs.nixfmt
+    pkgs.ripgrep
+    pkgs.sbcl
+    pkgs.tree
+  ];
 
   utils = {
     untar = path:
@@ -11,5 +20,13 @@ let
         tar --strip-components=1 -xf "${path}"
       '';
   };
-in
-{ inherit packages utils; }
+
+  home-relative-git-repository = domain: owner: repo:
+    homeDirectory + "/git_repos/" + domain + "/" + owner + "/" + repo;
+
+  github-repo = home-relative-git-repository "github.com";
+  gf-repo = home-relative-git-repository "git.fiddlerwoaroof.com";
+  gitlab-repo = home-relative-git-repository "gitlab.com";
+
+  overlays = [ (import ./elangley-overlay) (import ./emacs-overlay.nix) ];
+}

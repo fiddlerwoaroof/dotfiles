@@ -1,7 +1,12 @@
+*.*fasl*
+*.elc
 *.old
 *.pyc
+*.sw[a-z]
 *jar
 *~
+.#*
+.DS_Store
 .lein-deps-sum
 .lein-failures
 .lein-plugins/
@@ -11,11 +16,7 @@
 /classes/
 /lib/
 /target/
+[#]*
+core
 pom.xml
 pom.xml.asc
-[#]*
-.#*
-*.*fasl*
-.DS_Store
-*.sw[a-z]
-core

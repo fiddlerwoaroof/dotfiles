@@ -2,7 +2,6 @@
   (interactive "P")
   (sp-wrap-with-pair "\""))
 
-
 (defun wrap-in-dollar-brace
     (&optional arg)
   (interactive "P")
@@ -13,43 +12,18 @@
   (delete-window
    (get-mru-window nil nil t)))
 
+(setq evil-want-keybinding nil)
+
 (use-package undo-fu
   :ensure t)
-
-
-(defun fwoar::get-candidates ()
-  (funcall (-compose (fwoar/exclude
-                      (fwoar/matches-regex "/\\(.*[#]\\)"))
-                     'project-files
-                     'project-current)))
-
-(defun fwoar::browse-project ()
-  (interactive)
-  (if (package-installed-p 'projectile)
-      (helm-projectile)
-    (fwoar::helm-find-file-in-project)))
-
-(defvar fwoar::*helm-project-files-source*
-  `((name . "Project Files")
-    (candidates . (lambda ()
-                    (let* ((fwoar::project (project-current))
-                           (fwoar::root (project-root fwoar::project)))
-                      (mapcar (lambda (it)
-                                (cons (f-relative it fwoar::root)
-                                      it))
-                              (project-files fwoar::project)))))
-    (action . helm-find-files-actions)))
-(defun fwoar::helm-find-file-in-project ()
-  (interactive)
-  (helm '(fwoar::*helm-project-files-source*)))
 
 (use-package evil
   :ensure t
   :after undo-fu
   :init
   (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-  (setq evil-want-keybinding nil)
-  (setq evil-undo-system 'undo-fu)
+  :custom
+  (evil-undo-system 'undo-fu)
   :config
 
   (evil-define-key 'motion 'global  (kbd "TAB") nil)
@@ -188,6 +162,7 @@
   :ensure t
   :after evil
   :config
+  (fwoar/setup-evil-collection-for-mode 'eshell)
   (fwoar/setup-evil-collection-for-mode 'deadgrep)
   ;; Bad idea, messes with bindings too much :)
   ;; (fwoar/setup-evil-collection-for-mode 'magit)
