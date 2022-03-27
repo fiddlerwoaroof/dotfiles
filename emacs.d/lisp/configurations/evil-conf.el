@@ -12,17 +12,18 @@
   (delete-window
    (get-mru-window nil nil t)))
 
+(setq evil-want-keybinding nil)
+
 (use-package undo-fu
   :ensure t)
-
-(setq evil-want-keybinding nil)
 
 (use-package evil
   :ensure t
   :after undo-fu
   :init
   (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-  (setq evil-undo-system 'undo-fu)
+  :custom
+  (evil-undo-system 'undo-fu)
   :config
 
   (evil-define-key 'motion 'global  (kbd "TAB") nil)
