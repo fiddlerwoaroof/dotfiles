@@ -360,7 +360,8 @@
      (http . t)
      (emacs-lisp . t)
      (lisp . t)
-     (haskell . t)))
+     (haskell . t)
+     (shell . t)))
 
   (define-key global-map "\C-cc" 'org-capture)
   (evil-define-key 'visual 'global (kbd "<leader>c") 'org-capture))
