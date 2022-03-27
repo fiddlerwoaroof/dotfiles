@@ -691,3 +691,6 @@
 
 (use-package nix-mode
   :ensure t)
+
+(define-derived-mode zsh-mode sh-mode "ZSH" "Mode for zsh scripts"
+  (setq-local sh-shell "zsh"))
