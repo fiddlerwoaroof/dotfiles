@@ -394,6 +394,11 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(org-table ((t (:foreground ,zenburn-blue+1))))
    `(org-table ((t (:foreground ,zenburn-blue+1))))
 
+   ;; tab-bar
+   `(tab-bar ((t (:background ,zenburn-black :foreground ,zenburn-fg))))
+   `(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :foreground ,zenburn-green+3))))
+   `(tab-line ((t (:inherit variable-pitch :background ,zenburn-black :foreground ,zenburn-fg))))
+
    ;; isearch
    `(isearch ((t (:foreground ,zenburn-red-6 :background ,zenburn-magenta))))
    `(isearch-fail ((t (:background ,zenburn-red-6))))
