@@ -14,12 +14,7 @@
       url = "https://github.com/kamadorueda/alejandra/tarball/1.1.0";
       sha256 = "0r8d4pllz3rar5b8xlk332mm395nj6w1zh6dnpbz7156fii4lhdy";
     }))
-    # Pick one from: aarch64-darwin, aarch64-linux, i686-linux, x86_64-darwin, x86_64-linux
     .aarch64-darwin;
-
-  # zsh = pkgs.zsh.overrideAttrs ({postInstall}: {postInstall = ''
-  #   make install.info install.html
-  #   '' + postInstall})
 
   common_home =
     import "${dotfileDirectory}/nix/common.nix" {inherit homeDirectory pkgs;};
@@ -37,6 +32,7 @@ in {
       pkgs.openssl
       pkgs.pandoc
       alejandra
+      pkgs.zsh
       (pkgs.emacsGit.override {nativeComp = true;})
     ];
 
