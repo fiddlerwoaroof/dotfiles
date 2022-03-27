@@ -25,10 +25,14 @@
   (define-key helm-map (kbd "<right>") 'helm-execute-persistent-action)
   (define-key helm-map (kbd "<left>") 'helm-find-files-up-one-level))
 
-
 (use-package helm-ls-git :after helm :ensure t)
 (use-package helm-org :after helm :ensure t)
-(use-package helm-rg :after helm :ensure t)
+(use-package helm-rg :after helm evil :ensure t
+  :custom
+  (helm-rg-default-directory 'git-root)
+  :config
+  (evil-define-key 'normal 'global (kbd "<leader>S") 'helm-rg)
+  )
 
 (use-package fwoar-helm-project
   :init
