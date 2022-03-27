@@ -203,8 +203,8 @@ from the selected region."
           ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
         package-archive-priorities '(("melpa-stable" . 1)
                                      ("gnu" . 0)
-                                     ("melpa" . 2)
-                                     ("nongnu" . 3)))
+                                     ("melpa" . 3)
+                                     ("nongnu" . 2)))
 
   ;; (package-initialize 'no-activate)
   (when (not (package-installed-p 'use-package))
