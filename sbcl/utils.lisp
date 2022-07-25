@@ -64,6 +64,18 @@
                 :key (data-lens:• (data-lens:element 0)
                                   #'pathname-name)))
 
+(defun gh-repo-root (coordinate)
+  (let ((git-url (format nil "git@github.com:~a.git" coordinate)))
+    (:printv
+     (merge-pathnames (:printv
+                       (uiop:parse-unix-namestring coordinate
+                                                   :ensure-directory t))
+                      (merge-pathnames (make-pathname :directory
+                                                      (list :relative
+                                                            "git_repos"
+                                                            "github.com"))
+                                       (user-homedir-pathname))))))
+
 (defun gh (coordinate)
   (let ((git-url (format nil "git@github.com:~a.git" coordinate))
         (target (:printv
@@ -99,7 +111,8 @@
   ($caching
     (trivial-ssh:with-connection
         (c "git.fiddlerwoaroof.com"
-         (trivial-ssh:key "git" "Users/edwlan/.ssh/id_ed25519"))
+         (trivial-ssh:key "git" (namestring (merge-pathnames ".ssh/id_ed25519"
+                                                             (user-homedir-pathname)))))
         (libssh2:with-execute (s c "info")
           (let ((libssh2:*channel-read-zero-as-eof* t))
             (loop for line = (read-line s nil)
