@@ -228,3 +228,12 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
               (unwind-protect (do-it operation system)
                 (when (typep system 'asdf/system:undefined-system)
                   (asdf:clear-system system))))))))))
+
+(export
+ (defmacro vj ((op &rest args))
+   `(values * (,op * ,@args))))
+
+(export
+ (defmacro wl ((op &rest args))
+   `(values * (,op ,@args))))
+
