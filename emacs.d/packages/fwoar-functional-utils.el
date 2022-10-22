@@ -31,11 +31,14 @@
 
 (cl-defmacro fwoar/def-ns-fun (name (&rest args) &body body)
   (declare (indent defun))
-  (let ((namespaced-sym (intern (format "fwoar/%s" name))))
+  (let ((namespaced-sym-old (intern (format "fwoar/%s" name)))
+        (namespaced-sym (intern (format "data-lens:%s" name))))
     `(progn
        (cl-pushnew '(,name ,args ,namespaced-sym)
                    *fwoar/namespaced-funs*
                    :test 'equal)
+       (cl-defun ,namespaced-sym-old ,args
+         ,@body)
        (cl-defun ,namespaced-sym ,args
          ,@body))))
 
@@ -49,7 +52,7 @@
 ;;;###autoload
 (cl-defmacro with-unaliased (&body body)
   `(flet ,(loop for (name raw-args namespaced) in *fwoar/namespaced-funs*
-                for rest-arg = (cl-find-if (fwoar/just-after
+                for rest-arg = (cl-find-if (data-lens:just-after
                                             (lambda (it)
                                               (member it '(&rest &body))))
                                            raw-args)
@@ -77,9 +80,15 @@
 
 (cl-defmacro fwoar/def-combinator (name (seq &rest args) &body body)
   (declare (indent defun))
-  `(fwoar/def-ns-fun ,name ,args
-     (lambda (,seq)
-       ,@body)))
+  (let* ((docstring (when (stringp (car body))
+                      (car body)))
+         (body (if docstring
+                   (cdr body)
+                 body)))
+    `(fwoar/def-ns-fun ,name ,args
+       ,docstring
+       (lambda (,seq)
+         ,@body))))
 
 (fwoar/def-ns-fun iota (count &optional (start 0))
   (cl-loop for x from start
@@ -95,9 +104,11 @@
     (funcall fun (funcall key-fun it))))
 
 (fwoar/def-combinator over (list f &rest args)
-  (mapcar (lambda (it)
-            (apply f it args))
-          list))
+  "Return a function that maps F over LIST with possible extra ARGS"
+  (map (type-of list)
+       (lambda (it)
+         (apply f it args))
+       list))
 
 (fwoar/def-combinator filter (list f &rest args)
   (cl-remove-if-not (lambda (it)
@@ -200,5 +211,24 @@
 
 (defalias 'fwoar/• '-compose)
 
+(cl-defgeneric data-lens:functionalize (it)
+  (:method ((it hash-table))
+           (lambda (key &optional default)
+             (gethash key it default)))
+  (:method ((it vector))
+           (lambda (idx &optional default)
+             (let ((present-p (and (>= idx 0)
+                                   (< idx (length it)))))
+               (if present-p
+                   (aref it idx)
+                 default))))
+  (:method ((it symbol))
+           (symbol-function it))
+  (:method ((it function))
+           it)
+  (:method ((it subr))
+           it))
+
 (provide 'fwoar-functional-utils)
+
 ;;; fwoar-functional-utils.el ends here
