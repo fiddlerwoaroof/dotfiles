@@ -66,18 +66,35 @@
 
 (defun gh-repo-root (coordinate)
   (let ((git-url (format nil "git@github.com:~a.git" coordinate)))
-    (:printv
-     (merge-pathnames (:printv
-                       (uiop:parse-unix-namestring coordinate
-                                                   :ensure-directory t))
+    (merge-pathnames (uiop:parse-unix-namestring coordinate
+                                                   :ensure-directory t)
                       (merge-pathnames (make-pathname :directory
                                                       (list :relative
                                                             "git_repos"
                                                             "github.com"))
-                                       (user-homedir-pathname))))))
+                                       (user-homedir-pathname)))))
+
+(defun gh-coordinate (coordinate)
+  (format nil "git@github.com:~a.git" coordinate))
+
+(defun gh-dir (coordinate)
+  (uiop:nest (merge-pathnames (uiop:parse-unix-namestring coordinate :ensure-directory t))
+             (merge-pathnames (make-pathname :directory (list :relative "git_repos" "github.com")))
+             (user-homedir-pathname)))
 
 (defun gh (coordinate)
-  (let ((git-url (format nil "git@github.com:~a.git" coordinate))
+  (let ((git-url (gh-coordinate coordinate))
+        (target (:printv (gh-dir coordinate))))
+    (unless (probe-file target)
+      (legit:clone git-url
+                   (ensure-directories-exist target)))
+    (directory (merge-pathnames (make-pathname :directory (list :relative :wild-inferiors)
+                                               :name :wild
+                                               :type "asd")
+                                target))))
+
+(defun gl (coordinate)
+  (let ((git-url (format nil "git@gitlab.com:~a.git" coordinate))
         (target (:printv
                  (merge-pathnames (:printv
                                    (uiop:parse-unix-namestring coordinate
@@ -85,7 +102,7 @@
                                   (merge-pathnames (make-pathname :directory
                                                                   (list :relative
                                                                         "git_repos"
-                                                                        "github.com"))
+                                                                        "gitlab.com"))
                                                    (user-homedir-pathname))))))
     (unless (probe-file target)
       (legit:clone git-url
