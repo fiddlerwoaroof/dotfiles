@@ -10,9 +10,11 @@
    (vertical-scroll-bars . nil)
    (right-divider-width . 2)
    (bottom-divider-width . 2)
+   (frame-resize-pixelwise . t)
    ;; (inhibit-double-buffering . t)
    (ns-appearance . dark)
    (ns-transparent-titlebar . t)
+   (cursor-color . "white")
    ))
 
 (setq package-user-dir
