@@ -171,6 +171,19 @@ from the selected region."
     (setq linum-format "%5d\u2502")
     (global-linum-mode))
   (fwoar/source "~/.zshrc")
+
+  (info-initialize)
+
+  (cl-loop
+   with infopath = (prog1  (getenv "INFOPATH")
+                     (message "infopath: %s" (getenv "INFOPATH")))
+   for old-pos = nil then pos
+   for pos = (cl-position ?: infopath :from-end t)
+   then (cl-position ?: infopath :from-end t :end pos)
+   for path = (cl-subseq infopath (if pos (1+ pos) 0)) then (cl-subseq infopath (if pos (1+ pos) 0) old-pos)
+   do (cl-adjoin path Info-directory-list :test 'equal)
+   while pos)
+
   ;; NOTE: this must be here...
   (global-company-mode 1))
 
