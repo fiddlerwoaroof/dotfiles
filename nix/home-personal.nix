@@ -11,10 +11,10 @@
 
   alejandra =
     (import (builtins.fetchTarball {
-      url = "https://github.com/kamadorueda/alejandra/tarball/1.1.0";
-      sha256 = "0r8d4pllz3rar5b8xlk332mm395nj6w1zh6dnpbz7156fii4lhdy";
-    }))
-    .aarch64-darwin;
+      url = "https://github.com/kamadorueda/alejandra/tarball/2.0.0";
+      sha256 = "1jpficz0f8s8kwvk91f28q2c4prz4p8yq76ssrzvjkviqbis4rca";
+    }) {inherit pkgs;})
+    .outPath;
 
   common_home =
     import "${dotfileDirectory}/nix/common.nix" {inherit homeDirectory pkgs;};
@@ -27,12 +27,18 @@ in {
   home.packages =
     common_home.packages
     ++ [
+      pkgs.graphviz
       libpng
+      pkgs.zstd
+      pkgs.zstd.dev
+      pkgs.libffi.dev
+      pkgs.pkg-config
       pkgs.libssh2
       pkgs.openssl
       pkgs.pandoc
       alejandra
       pkgs.zsh
+      pkgs.mosh
       (pkgs.emacsGit.override {nativeComp = true;})
     ];
 
