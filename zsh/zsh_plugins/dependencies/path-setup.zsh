@@ -4,9 +4,9 @@
 #:depends-on:pfff
 ###
 
-while [[ -n "${path[${path[(i)<<<]},${path[(i)>>>]}]}" ]]; do
-  path[${path[(i)<<<]},${path[(i)>>>]}]=()
-done
+#while [[ -n "${path[${path[(i)<<<]},${path[(i)>>>]}]}" ]]; do
+#  path[${path[(i)<<<]},${path[(i)>>>]}]=()
+#done
 
 prepend_exe_path "$HOME/Library/Python/2.7/bin"
 prepend_exe_path "$HOME/go/bin"
