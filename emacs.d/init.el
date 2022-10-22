@@ -138,6 +138,10 @@
   (fwoar-pastebin-web-url-pattern (when (file-exists-p "~/.pastebin-name")
                                     (cadr (read-sexps-in-file "~/.pastebin-name")))))
 
+(use-package fwoar-yank-buffer
+  :init (require 'fwoar-yank-buffer)
+  :ensure nil)
+
 (use-package fwoar-json-navigator
   :init (require 'fwoar-json-navigator)
   :ensure nil)
