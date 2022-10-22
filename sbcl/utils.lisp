@@ -237,3 +237,22 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
  (defmacro wl ((op &rest args))
    `(values * (,op ,@args))))
 
+(defun plot-stream (s &key
+                        (xrange nil xrange-p)
+                        (background "#494949")
+                        (frame-color "#7fdf7f")
+                        (line-color "#DCDCCC")
+                        (lines nil))
+  (let ((fn (format nil "/tmp/~a.svg" (gensym))))
+    (uiop:run-program (format nil
+                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat -' lt rgb '~a' notitle ~:[~;with lines~]\""
+                              xrange-p xrange
+                              background
+                              line-color
+                              frame-color
+                              lines)
+
+                      :input s
+                      :output (parse-namestring fn))
+    (swank::send-to-emacs (list :write-image fn " ")))
+  (values))
