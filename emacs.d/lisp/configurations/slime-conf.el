@@ -156,20 +156,21 @@ Examples:
        (if val val
          (car (push (cons id (read-passwd prompt))
                     passwords))))))
+
   (message "%s" load-path)
   (when (or (eq system-type 'gnu/linux)
             (eq system-type 'darwin))
     (define-lisp-implementations
-      (abcl  ("abcl"))
-      (lw  ("lw"))
-      (ccl ("ccl"))
-      (clisp ("clisp"))
-      (cmucl ("cmucl" "-quiet"))
-      (ecl   ("ecl"))
-      ;;(mkcl  ("mkcl"))
-      ;;(xcl   ("xcl"))
-      (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
-      ))
+     (abcl  ("abcl"))
+     (lw  ("lw"))
+     (ccl ("ccl"))
+     (clisp ("clisp"))
+     (cmucl ("cmucl" "-quiet"))
+     (ecl   ("ecl"))
+     ;;(mkcl  ("mkcl"))
+     ;;(xcl   ("xcl"))
+     (sbcl  ("sbcl" "--dynamic-space-size" "8192"))
+     ))
 
   (global-set-key (kbd "C-c x") 'slime-export-symbol-at-point)
 
