@@ -32,6 +32,11 @@
   (kill-new buffer-file-name))
 
 ;;;###autoload
+(defun fwoar/yank-buffer-directory ()
+  (interactive)
+  (kill-new default-directory))
+
+;;;###autoload
 (defun fwoar/yank-relative-to-project ()
   (interactive)
   (let ((default-directory (project-root (project-current))))
