@@ -70,11 +70,28 @@
   (add-to-list 'auto-mode-alist
                '("\\.tsx$" . typescript-mode)))
 
+(use-package f
+  :ensure t)
+
 (use-package tree-sitter
-  :ensure t)
+  :ensure t
+  :config
+  (cl-pushnew (expand-file-name "~/ts-langs")
+              tree-sitter-load-path))
+
 (use-package tree-sitter-langs
-  :after tree-sitter
-  :ensure t)
+  :init
+  (message "setting up tree-sitter-langs")
+  (cl-pushnew (f-join *fwoar-git-repos*
+                      "github.com"
+                      "emacs-tree-sitter"
+                      "tree-sitter-langs")
+              load-path
+              :test 'equal)
+  (require 'tree-sitter-langs)
+  :after tree-sitter f
+  :no-require t
+  :ensure nil)
 
 (comment
  (use-package tide
