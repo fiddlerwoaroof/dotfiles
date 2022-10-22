@@ -11,6 +11,7 @@
 
 (message invocation-name)
 
+(package-install 's)
 (set-exec-path-from-shell-PATH)
 (cold-boot)
 
