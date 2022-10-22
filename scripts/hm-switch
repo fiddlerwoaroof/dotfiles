@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+set -eu -o pipefail
+set -x
+
+source "$(which hm-util)"
+
+profile_path="$(hm-profile-path)"
+
+new_path="$(home-manager build)"
+
+new_profile="$(readlink "$new_path"/home-path)"
+
+if [[ "$new_profile" != "$profile_path" ]] && [[ -n "$new_path" ]]; then
+  nix profile remove "$profile_path"
+  "$new_path"/home-path/bin/home-manager switch
+fi
+

@@ -1,0 +1,19 @@
+#!/usr/bin/env zsh
+
+hm-profile() {
+  nix profile list | grep home-manager-path | head -n1 
+}
+
+hm-profile-number() {
+  hm-profile | read -r a b
+  echo "$a"
+}
+
+hm-profile-path() {
+  hm-profile | read -r a b c d 
+  echo "$d"
+}
+
+if ! [[ $ZSH_EVAL_CONTEXT =~ :file$ ]]; then
+  "$@"
+fi
