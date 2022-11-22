@@ -351,9 +351,14 @@
   (print f)
   f)
 
+(cl-defgeneric fwoar--find-system ())
+(defun fwoar-find-system ()
+  (interactive)
+  (fwoar--find-system))
+(evil-define-key 'normal 'global (kbd "<leader>O") 'fwoar-find-system)
+
 (cl-defgeneric fwoar--pl-selector ()
   (:method () (slime-selector)))
-(cl-defgeneric fwoar--find-system ())
 
 (defun fwoar-pl-selector ()
   (interactive)
