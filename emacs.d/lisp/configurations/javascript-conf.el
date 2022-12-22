@@ -124,17 +124,18 @@
    (add-to-list 'company-backends 'company-tern)
    (setq company-tooltip-align-annotations t)))
 
-(use-package jest
-  :ensure t
-  :config
-  (defun jest--project-root ()
-    "Find the project root directory."
-    (let ((closest-package-json (fwoar--find-package-json))
-          (projectile-root (projectile-project-root)))
-      (message "%s <-> %s" closest-package-json projectile-root)
-      (if (s-prefix-p projectile-root closest-package-json)
-          closest-package-json
-        projectile-root))))
+(comment
+ (use-package jest
+   :ensure t
+   :config
+   (defun jest--project-root ()
+     "Find the project root directory."
+     (let ((closest-package-json (fwoar--find-package-json))
+           (projectile-root (projectile-project-root)))
+       (message "%s <-> %s" closest-package-json projectile-root)
+       (if (s-prefix-p projectile-root closest-package-json)
+           closest-package-json
+         projectile-root)))))
 
 (comment
  (use-package vue-mode
@@ -155,28 +156,41 @@
 (cl-defgeneric fwoar/test-on-save ()
   (:method ()))
 
-(defvar-local fwoar/*test-file-name* nil)
-(defun fwoar/trigger-jest ()
-  (interactive)
-  (when-let ((test-name (if fwoar/*test-file-name*
-                            fwoar/*test-file-name*
-                          (setq-local fwoar/*test-file-name*
-                                      (if (projectile-test-file-p buffer-file-name)
-                                          buffer-file-name
-                                        (projectile-find-implementation-or-test buffer-file-name))))))
-    (let ((proc (make-network-process
-                 :name "jest-comm"
-                 :buffer "*jest-comm*"
-                 :family 'local
-                 :service "/tmp/jest.sock")))
-      (unwind-protect
-          (process-send-string proc test-name)
-        (delete-process proc)))))
+(comment
+ (defvar-local fwoar/*test-file-name* nil)
+ (defun fwoar/trigger-jest ()
+   (interactive)
+   (comment (when-let ((test-name (if fwoar/*test-file-name*
+                                      fwoar/*test-file-name*
+                                    (setq-local fwoar/*test-file-name*
+                                                (if (projectile-test-file-p buffer-file-name)
+                                                    buffer-file-name
+                                                  (projectile-find-implementation-or-test buffer-file-name))))))
+              (let ((proc (make-network-process
+                           :name "jest-comm"
+                           :buffer "*jest-comm*"
+                           :family 'local
+                           :service "/tmp/jest.sock")))
+                (unwind-protect
+                    (process-send-string proc test-name)
+                  (delete-process proc)))))
+   (let ((proc (make-network-process
+                :name "jest-comm"
+                :buffer "*jest-comm*"
+                :family 'local
+                :service "/tmp/jest.sock")))
+     (unwind-protect
+         (process-send-string proc
+                              (format "%s\n"
+                                      (f-relative buffer-file-name
+                                                  (project-root (project-current)))))
+       (delete-process proc)))))
 
 (cl-defmethod fwoar/test-on-save (&context (major-mode (derived-mode typescript-mode)))
   (fwoar/trigger-jest))
 (cl-defmethod fwoar/test-on-save (&context (major-mode (derived-mode js-mode)))
   (fwoar/trigger-jest))
+(defun fwoar/trigger-jest ())
 
 (defvar *tos-hook*
   (add-hook 'after-save-hook 'fwoar/test-on-save))
