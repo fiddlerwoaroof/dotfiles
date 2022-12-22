@@ -314,7 +314,7 @@
   :ensure t
   :after evil
   :config
-  (evil-define-key 'normal 'global (kbd "<leader>v") 'deft))
+  )
 
 (use-package emmet-mode
   :ensure t
@@ -500,8 +500,6 @@
 
 (global-set-key (kbd "C-x C-b")
                 'ibuffer)
-
-(setq org-agenda-files '("~/org/notes.org" "~/org/agenda.org"))
 
 (defvar url-pattern (when (file-exists-p "~/.pastebin-name")
                       (car (read-sexps-in-file "~/.pastebin-name"))))

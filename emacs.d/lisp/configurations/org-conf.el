@@ -38,6 +38,7 @@
   (org-log-done 'time)
   (org-log-into-drawer t)
   (org-refile-targets '((nil . (:maxlevel . 2))))
+  (org-agenda-files '("~/org/notes.org" "~/org/agenda.org"))
   :config
   (comment
    (setq org-refile-use-outline-path 'file
@@ -66,6 +67,17 @@
 
   (define-key global-map "\C-cc" 'org-capture)
   (evil-define-key 'visual 'global (kbd "<leader>c") 'org-capture))
+
+(use-package org-roam
+  :ensure t
+  :custom
+  ( org-roam-directory "~/kb/")
+  :config
+  (evil-define-key 'normal 'global
+    (kbd "<leader>v") #'org-roam-node-find)
+  (make-directory (file-truename org-roam-directory) t)
+  (org-roam-db-autosync-mode)
+  )
 
 (comment
  (use-package org-projectile
