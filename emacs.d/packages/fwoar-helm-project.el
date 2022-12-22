@@ -80,11 +80,21 @@
                            (fwoar::helm-find-file-in-project)))
                 (project-switch-project it)))))
 
+(defun fwoar::project-find-file (fn)
+  (when-let* ((fwoar::project (project-current))
+              (default-directory (project-root fwoar::project)))
+    (find-file fn)))
+
 (defun fwoar::helm-find-file-in-project ()
   (interactive)
-  (helm '(fwoar::*helm-project-files-source*
-          fwoar::*helm-project-buffers-source*
-          fwoar::*helm-project-known-projects*)))
+  (helm (list 'fwoar::*helm-project-files-source*
+              'fwoar::*helm-project-buffers-source*
+              'fwoar::*helm-project-known-projects*
+              (helm-build-dummy-source
+                  "Create Project File"
+                :action (helm-make-actions
+                         "Make file" #'fwoar::project-find-file)
+                ))))
 
 (defun fwoar::initialize-fwoar-helm-project ()
   (message "initializing fwoar-helm-project %s" project-switch-commands)
