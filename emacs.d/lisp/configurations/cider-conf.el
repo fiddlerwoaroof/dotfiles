@@ -88,11 +88,12 @@
                    (helm-comp-read "system:" systems)
                  (car systems)))))
 
-(cl-defmethod fwoar/find-system (&context (major-mode (derived-mode clojure-mode)))
+(defvar projectile-project-type nil)
+(cl-defmethod fwoar--find-system (&context (major-mode (derived-mode clojure-mode)))
   (find-clojure-project-file))
-(cl-defmethod fwoar/find-system (&context (projectile-project-type (eql clojure-mode)))
+(cl-defmethod fwoar--find-system (&context (projectile-project-type (eql clojure-mode)))
   (find-clojure-project-file))
-(cl-defmethod fwoar/find-system (&context (major-mode (derived-mode cider-repl-mode)))
+(cl-defmethod fwoar--find-system (&context (major-mode (derived-mode cider-repl-mode)))
   (find-clojure-project-file))
 
 (cl-defmethod fwoar--pl-selector (&context (major-mode clojure-mode))

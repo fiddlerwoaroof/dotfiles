@@ -182,9 +182,12 @@
   (add-hook 'after-save-hook 'fwoar/test-on-save))
 
 (cl-macrolet ((def-js-like-find-system (mode)
-		            `(cl-defmethod fwoar/find-system (&context (major-mode ,mode))
+		            `(cl-defmethod fwoar--find-system (&context (major-mode ,mode))
 		               (find-package-json default-directory))))
   (def-js-like-find-system js-mode)
   (def-js-like-find-system typescript-mode))
-(cl-defmethod fwoar/find-system (&context ((projectile-project-type) (eql 'npm)))
+
+(unless (fboundp 'projectile-project-type)
+  (defun projectile-project-type ()))
+(cl-defmethod fwoar--find-system (&context ((projectile-project-type) (eql 'npm)))
 	(find-package-json default-directory))
