@@ -44,9 +44,7 @@
   (progn ;; navigation
     (evil-define-key 'normal 'global (kbd "<leader>f") 'fwoar::browse-project)
     (evil-define-key 'normal 'global (kbd "<leader>;") 'helm-semantic-or-imenu)
-    (evil-define-key 'normal 'global (kbd "<leader>j") 'helm-buffers-list)
-    (comment
-     (evil-define-key 'normal 'global (kbd "<leader>u") 'undo-tree-visualize)))
+    (evil-define-key 'normal 'global (kbd "<leader>j") 'helm-buffers-list))
 
   (progn ;; completion
     (evil-define-key 'normal company-mode-map (kbd "TAB") 'company-indent-or-complete-common)
@@ -139,27 +137,11 @@
   (fwoar/setup-evil-collection-for-mode 'eshell)
   (fwoar/setup-evil-collection-for-mode 'deadgrep)
   (fwoar/setup-evil-collection-for-mode 'company)
-  ;; Bad idea, messes with bindings too much :)
+  ;;;; Bad idea, messes with bindings too much :)
   ;; (fwoar/setup-evil-collection-for-mode 'magit)
   (fwoar/setup-evil-collection-for-mode 'org)
   (fwoar/setup-evil-collection-for-mode 'xref)
   )
-
-(comment
- (use-package centaur-tabs
-   :ensure t
-   :after evil
-   :config
-   (setq centaur-tabs-adjust-buffer-order t
-         centaur-tabs-adjust-buffer-order 'right)
-   (centaur-tabs-enable-buffer-reordering)
-
-   (evil-define-key 'normal 'global (kbd "gt") 'centaur-tabs-forward-tab)
-   (define-key global-map (kbd "<header-line> <wheel-up>") 'centaur-tabs-forward-tab)
-   (define-key global-map (kbd "s-}") 'centaur-tabs-forward-tab)
-   (evil-define-key 'normal 'global (kbd "gT") 'centaur-tabs-backward-tab)
-   (define-key global-map (kbd "<header-line> <wheel-down>") 'centaur-tabs-backward-tab)
-   (define-key global-map (kbd "s-{") 'centaur-tabs-backward-tab)))
 
 
 (defun setup-special-mode ()
