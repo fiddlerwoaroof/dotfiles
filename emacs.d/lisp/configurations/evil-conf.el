@@ -1,8 +1,8 @@
-(defun wrap-with-doublequote (&optional arg)
+(defun fwoar:wrap-with-doublequote (&optional arg)
   (interactive "P")
   (sp-wrap-with-pair "\""))
 
-(defun wrap-in-dollar-brace
+(defun fwoar:wrap-in-dollar-brace
     (&optional arg)
   (interactive "P")
   (sp-wrap-with-pair "${"))
@@ -67,90 +67,64 @@
   :config
   (global-evil-surround-mode))
 
+(define-keymap :prefix 'fwoar:smartparens-map
+  ;; wrapping
+  "W" #'sp-wrap-round
+  "C-W" #'sp-wrap-round
+  "w" (define-keymap :prefix 'fwoar:smartparens-wrap-map
+        "(" #'sp-wrap-round
+        ")" #'sp-wrap-round
+
+        "{" #'sp-wrap-curly
+        "}" #'sp-wrap-curly
+
+        "[" #'sp-wrap-square
+        "]" #'sp-wrap-square
+
+        "\"" #'fwoar:wrap-with-doublequote
+        "$" #'fwoar:wrap-in-dollar-brace)
+
+  ;; narrowing
+  "n" (define-keymap :prefix 'fwoar:smartparens-narrow-map
+        "(" #'sp-narrow-to-sexp
+        ")" #'sp-narrow-to-sexp
+        "d" #'narrow-to-defun
+        "n" #'narrow-to-defun
+        "r" #'narrow-to-region
+        "w" #'widen)
+
+  ;; splicing
+  "S" #'sp-splice-sexp
+  "A" #'sp-splice-sexp-killing-backward
+  "D" #'sp-splice-sexp-killing-forward
+  "F" #'sp-splice-sexp-killing-around
+
+  ;; paren manipulation
+  "," #'sp-backward-barf-sexp
+  "." #'sp-forward-barf-sexp
+  "<" #'sp-backward-slurp-sexp
+  ">" #'sp-forward-slurp-sexp
+
+  ;; misc
+
+  "~" 'sp-convolute-sexp
+  "a" 'sp-absorb-sexp
+  "e" 'sp-emit-sexp
+  "`" 'sp-clone-sexp
+  "J" 'sp-join-sexp
+  "|" 'sp-split-sexp)
+
+
 (use-package evil-smartparens
   :ensure t
   :delight
   :after evil smartparens
   :config
+
   (evil-smartparens-mode 1)
 
-  (progn ;; wrapping
-    (evil-define-key 'normal 'global (kbd ",W") 'sp-wrap-round)
-    (evil-define-key 'normal 'global  (kbd "C-, W") 'sp-wrap-round)
-    (evil-define-key 'normal 'global  (kbd "C-, C-W") 'sp-wrap-round)
-
-    (evil-define-key 'normal 'global (kbd ",w(") 'sp-wrap-round)
-    (evil-define-key 'normal 'global (kbd ",w)") 'sp-wrap-round)
-    (define-key global-map (kbd "C-, (") 'sp-wrap-round)
-    (define-key global-map (kbd "C-, C-(") 'sp-wrap-round)
-    (define-key global-map (kbd "C-, )") 'sp-wrap-round)
-    (define-key global-map (kbd "C-, C-)") 'sp-wrap-round)
-
-    (evil-define-key 'normal 'global (kbd ",w$") 'wrap-in-dollar-brace)
-    (evil-define-key 'normal 'global  (kbd "C-, $") 'wrap-in-dollar-brace)
-    (evil-define-key 'normal 'global (kbd ",w{") 'sp-wrap-curly)
-    (evil-define-key 'normal 'global (kbd ",w}") 'sp-wrap-curly)
-    (define-key global-map (kbd "C-, {") 'sp-wrap-curly)
-    (define-key global-map (kbd "C-, C-{") 'sp-wrap-curly)
-    (define-key global-map (kbd "C-, }") 'sp-wrap-curly)
-    (define-key global-map (kbd "C-, C-}") 'sp-wrap-curly)
-    (define-key global-map (kbd "C-, w {") 'sp-wrap-curly)
-    (define-key global-map (kbd "C-, w }") 'sp-wrap-curly)
-
-    (evil-define-key 'normal 'global (kbd ",w[") 'sp-wrap-square)
-    (evil-define-key 'normal 'global (kbd ",w]") 'sp-wrap-square)
-    (define-key global-map (kbd "C-, w [") 'sp-wrap-square)
-    (define-key global-map (kbd "C-, <escape>") 'sp-wrap-square)
-    (define-key global-map (kbd "C-, [") 'sp-wrap-square)
-    (define-key global-map (kbd "C-, w ]") 'sp-wrap-square)
-    (define-key global-map (kbd "C-, C-]") 'sp-wrap-square)
-    (define-key global-map (kbd "C-, ]") 'sp-wrap-square)
-
-    (evil-define-key 'normal 'global (kbd ",w\"") 'wrap-with-doublequote)
-    (comment (define-key cider-mode-map (kbd "C-, w \"") 'sp-wrap-doublequote)))
-
-  (progn ;; splicing
-    (evil-define-key 'normal 'global (kbd ",S") 'sp-splice-sexp)
-    (comment (define-key cider-mode-map (kbd "C-, S") 'sp-splice-sexp)
-             (define-key cider-mode-map (kbd "C-, C-S") 'sp-splice-sexp))
-    (evil-define-key 'normal 'global (kbd ",A") 'sp-splice-sexp-killing-backward)
-    (comment (define-key cider-mode-map (kbd "C-, A") 'sp-splice-sexp-killing-backward)
-             (define-key cider-mode-map (kbd "C-, C-A") 'sp-splice-sexp-killing-backward))
-    (evil-define-key 'normal 'global (kbd ",D") 'sp-splice-sexp-killing-forward)
-    (comment (define-key cider-mode-map (kbd "C-, D") 'sp-splice-sexp-killing-forward)
-             (define-key cider-mode-map (kbd "C-, C-D") 'sp-splice-sexp-killing-forward))
-    (evil-define-key 'normal 'global (kbd ",F") 'sp-splice-sexp-killing-around)
-    (comment (define-key cider-mode-map (kbd "C-, F") 'sp-splice-sexp-killing-around)
-             (define-key cider-mode-map (kbd "C-, C-F") 'sp-splice-sexp-killing-around)))
-
-  (progn ;; barf/slurp
-    (evil-define-key 'normal 'global (kbd ",,") 'sp-backward-barf-sexp)
-    (comment (define-key cider-mode-map (kbd "C-, ,") 'sp-backward-barf-sexp)
-             (define-key cider-mode-map (kbd "C-, C-,") 'sp-backward-barf-sexp))
-    (evil-define-key 'normal 'global (kbd ",.") 'sp-forward-barf-sexp)
-    (comment (define-key cider-mode-map (kbd "C-, .") 'sp-forward-barf-sexp)
-             (define-key cider-mode-map (kbd "C-, C-.") 'sp-forward-barf-sexp))
-    (evil-define-key 'normal 'global (kbd ",<") 'sp-backward-slurp-sexp)
-    (comment (define-key cider-mode-map (kbd "C-, <") 'sp-backward-slurp-sexp)
-             (define-key cider-mode-map (kbd "C-, C-<") 'sp-backward-slurp-sexp))
-    (evil-define-key 'normal 'global (kbd ",>") 'sp-forward-slurp-sexp)
-    (comment (define-key cider-mode-map (kbd "C-, >") 'sp-forward-slurp-sexp)
-             (define-key cider-mode-map (kbd "C-, C->") 'sp-forward-slurp-sexp)))
-
-  (progn ;; misc
-    (evil-define-key 'normal 'global (kbd ",~") 'sp-convolute-sexp)
-    (evil-define-key 'normal 'global (kbd ",a") 'sp-absorb-sexp)
-    (evil-define-key 'normal 'global (kbd ",e") 'sp-emit-sexp)
-    (evil-define-key 'normal 'global (kbd ",`") 'sp-clone-sexp)
-    (evil-define-key 'normal 'global (kbd ",J") 'sp-join-sexp)
-    (evil-define-key 'normal 'global (kbd ",|") 'sp-split-sexp))
-
-  (progn ;; narrowing
-    (evil-define-key 'normal 'global (kbd "<leader>n(") 'sp-narrow-to-sexp)
-    (evil-define-key 'normal 'global (kbd "<leader>n)") 'sp-narrow-to-sexp)
-    (evil-define-key 'normal 'global (kbd "<leader>nn") 'narrow-to-defun)
-    (evil-define-key 'normal 'global (kbd "<leader>nr") 'narrow-to-region)
-    (evil-define-key 'normal 'global (kbd "<leader>nw") 'widen)))
+  (define-key global-map (kbd "C-,") 'fwoar:smartparens-map)
+  (evil-define-key 'normal 'global (kbd ",") 'fwoar:smartparens-map))
 
 (defun fwoar/setup-evil-collection-for-mode (mode)
   (evil-collection-require mode)
