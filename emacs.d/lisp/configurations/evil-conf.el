@@ -138,6 +138,7 @@
   :config
   (fwoar/setup-evil-collection-for-mode 'eshell)
   (fwoar/setup-evil-collection-for-mode 'deadgrep)
+  (fwoar/setup-evil-collection-for-mode 'company)
   ;; Bad idea, messes with bindings too much :)
   ;; (fwoar/setup-evil-collection-for-mode 'magit)
   (fwoar/setup-evil-collection-for-mode 'org)
@@ -162,7 +163,7 @@
 
 
 (defun setup-special-mode ()
-  (company-mode -1))
+  (comment (company-mode -1)))
 
 (add-hook 'special-mode-hook
           'setup-special-mode)
