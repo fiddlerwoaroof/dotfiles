@@ -5,7 +5,7 @@ GIT_DEBUG=0
 GIT_CMD="`which -p git 2>/dev/null`"
 GTI_CMD="`which -p gti 2>/dev/null`"
 
-GIT_DIR=("$HOME"/git*repos)
+FWOAR_GIT_DIR=("$HOME"/git*repos)
 if ! [[ -d "$HOME/git*_repos" ]]; then
   mkdir -p "$HOME"/git_repos
 fi
