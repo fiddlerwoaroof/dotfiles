@@ -30,7 +30,7 @@ git-pwdurl () {
 }
 
 git-cpwd () {
-  git clone "$(git-pwdurl "$1")" .
+  git clone --recursive "$(git-pwdurl "$1")" .
 }
 
 git-fp() {
