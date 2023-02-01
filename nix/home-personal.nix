@@ -28,6 +28,7 @@ in {
     common_home.packages
     ++ [
       alejandra
+      pkgs.clojure
       (pkgs.emacsGit.override {nativeComp = true;})
       pkgs.graphviz
       pkgs.libffi.dev
@@ -37,6 +38,8 @@ in {
       pkgs.openssl
       pkgs.pandoc
       pkgs.pkg-config
+      pkgs.shellcheck
+      pkgs.zeromq
       pkgs.zsh
       pkgs.zstd
       pkgs.zstd.dev
