@@ -27,19 +27,19 @@ in {
   home.packages =
     common_home.packages
     ++ [
+      alejandra
+      (pkgs.emacsGit.override {nativeComp = true;})
       pkgs.graphviz
-      libpng
-      pkgs.zstd
-      pkgs.zstd.dev
       pkgs.libffi.dev
-      pkgs.pkg-config
+      libpng
       pkgs.libssh2
+      pkgs.mosh
       pkgs.openssl
       pkgs.pandoc
-      alejandra
+      pkgs.pkg-config
       pkgs.zsh
-      pkgs.mosh
-      (pkgs.emacsGit.override {nativeComp = true;})
+      pkgs.zstd
+      pkgs.zstd.dev
     ];
 
   programs = {
