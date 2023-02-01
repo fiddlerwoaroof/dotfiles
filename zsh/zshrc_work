@@ -51,7 +51,6 @@ else
 
   init_scripts=( $PLUGIN_DIR/*.{,z}sh(N) )
 
-  PATH="<<<:$PATH:>>>"
   if [[ -f ~/zshrc.depends ]]; then
     source ~/zshrc.depends
   fi

@@ -4,19 +4,30 @@ interactive_echo() {
   esac
 }
 
+remove_path() {
+  cur_idx=$path[(i)$1]
+  while (( $cur_idx <= $#path )); do
+    path[$cur_idx]=()
+    cur_idx=$path[(i)$1]
+  done
+}
+
 add_exe_path() {
+  remove_path "$1"
   if [[ -d $1 ]]; then
     path+=("$@")
   fi
 }
 
 push_exe_path() {
+  remove_path "$1"
   if [[ -d $1 ]]; then
     path+=("$@")
   fi
 }
 
 prepend_exe_path() {
+  remove_path "$1"
   if [[ -d $1 ]]; then
     path[1]=("$@" "$path[1]")
   fi
