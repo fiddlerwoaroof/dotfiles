@@ -43,6 +43,28 @@ in {
     ];
 
   programs = {
+    git = {
+      enable = true;
+      userEmail = "el-github@elangley.org";
+      userName = "Edward Langley";
+      extraConfig = {
+        github = {
+          user = "fiddlerwoaroof";
+        };
+        init = {
+          defaultBranch = "main";
+        };
+        pull = {
+          rebase = false;
+        };
+        merge = {
+          autoStash = true;
+        };
+        rebase = {
+          autoStash = true;
+        };
+      };
+    };
     tmux = {
       enable = true;
       terminal = "screen-256color";
