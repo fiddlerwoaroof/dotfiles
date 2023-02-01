@@ -15,6 +15,7 @@
   (load-theme 'fwoar-zenburn t))
 
 (progn
+  (define-key key-translation-map (kbd "M-7") (kbd "∘"))
   (define-key key-translation-map (kbd "M-8") (kbd "•"))
   (define-key key-translation-map (kbd "M-9") (kbd "λ")))
 
