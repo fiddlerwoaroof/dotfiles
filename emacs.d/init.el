@@ -33,6 +33,10 @@
 (use-package nix-mode
   :ensure t)
 
+(use-package embark
+  :ensure t
+  :bind (:map global-map (("s-x" . embark-act))))
+
 (use-package htmlize
   :ensure t)
 
@@ -277,7 +281,7 @@
 
 ;; slime depends on fwoar-git-repo
 (load-package-configuration 'slime)
-;; (load-package-configuration 'cider)
+(load-package-configuration 'cider)
 
 (global-company-mode 1)
 
