@@ -259,3 +259,7 @@ from the selected region."
   (interactive)
   (shell-command "open -a iTerm.app"))
 (define-key global-map (kbd "C-M-s-l") 'raise-iterm)
+
+(defun fwoar:hm-edit ()
+  (interactive)
+  (with-editor-shell-command "(home-manager edit && hm-switch) &"))
