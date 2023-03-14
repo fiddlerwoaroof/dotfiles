@@ -56,12 +56,12 @@
 (use-package company
   :ensure t
   :delight
+  :bind (:map company-active-map
+              (("C-c h" . company-quickhelp-manual-begin)
+               ("M-." . company-show-location)
+               ("\C-d" . company-show-doc-buffer)))
   :config
-  ;; keybindings
-  (progn (define-key company-active-map (kbd "C-c h") 'company-quickhelp-manual-begin)
-         (define-key company-active-map (kbd "M-.") 'company-show-location)
-         (define-key company-active-map (kbd "\C-d") 'company-show-doc-buffer)
-         (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
+  (progn (define-key company-active-map (kbd "(") (kbd "RET SPC ("))
          (define-key company-active-map (kbd "{") (kbd "RET SPC {"))
          (define-key company-active-map (kbd "[") (kbd "RET [")))
 
