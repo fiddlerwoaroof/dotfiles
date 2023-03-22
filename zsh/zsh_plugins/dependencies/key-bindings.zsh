@@ -24,6 +24,8 @@ bindkey -M vicmd '^X^e' edit-command-line
 bindkey -M viins '^I' complete-word
 bindkey -M viins '^Oc' _correct_word
 bindkey -M viins '^O?' _complete_debug
+bindkey -M viins '^_' run-help
+bindkey -M vicmd '^_' run-help
 
 # detecting the terminal to get the keybindings right
 # TODO: check if obsoleted by other things
@@ -50,3 +52,11 @@ bindkey '[3~' delete-char
 
 export KEYTIMEOUT=1
 
+autoload -Uz surround
+zle -N delete-surround surround
+zle -N add-surround surround
+zle -N change-surround surround
+bindkey -a cs change-surround
+bindkey -a ds delete-surround
+bindkey -a ys add-surround
+bindkey -M visual S add-surround

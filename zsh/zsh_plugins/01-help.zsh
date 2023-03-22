@@ -10,5 +10,3 @@ if [[ -d "$HOME/.zsh_help" ]]; then
     export HELPDIR="$HOME/.zsh_help"
 fi
 alias run-help >/dev/null && unalias run-help
-bindkey -v '^_' run-help
-
