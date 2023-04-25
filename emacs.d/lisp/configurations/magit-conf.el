@@ -59,3 +59,19 @@
   :after magit
   :ensure t
   :config)
+
+
+(cl-defun fwoar::get-forge-projects (&optional (org "*") (repo "*") (forge "github.com"))
+  (mapcar 'f-dirname
+          (remove-if-not 'f-dir-p
+                         (f-glob (f-join *fwoar-git-repos*
+                                         forge
+                                         org
+                                         repo
+                                         ".git")))))
+
+
+(defun fwoar:switch-to-gh-project (project)
+  (interactive (list (completing-read "project? "
+                                      (fwoar::get-forge-projects))))
+  (project-switch-project (message project)))
