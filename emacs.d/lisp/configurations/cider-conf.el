@@ -35,7 +35,6 @@
   (require 'cider-selector)
   (evil-define-key 'normal clojure-mode-map " t" 'cider-test-run-ns-tests)
   (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
-  (evil-define-key 'normal clojure-mode-map (kbd "SPC") 'evil-send-leader)
 
   (def-cider-selector-method ?S "find clojure project file"
     (fwoar--find-system))
@@ -57,7 +56,7 @@
         cider-repl-history-file "~/.emacs.d/cider-history.clj")
 
   (define-key cider-mode-map
-    (kbd "C-c C-j") 'fwoar/cider-eval-expression-at-point-in-repl))
+              (kbd "C-c C-j") 'fwoar/cider-eval-expression-at-point-in-repl))
 
 (use-package clj-refactor
   :after cider
