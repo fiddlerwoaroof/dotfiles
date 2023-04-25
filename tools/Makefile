@@ -1,9 +1,17 @@
-all: git-pick-patch bloomutil
+all: bin bin/git-pick-patch bin/bloomutil bin/zenburn
 
-bindir:
+bin/zenburn: zenburn.lisp
+	sbcl --lose-on-corruption --disable-ldb --disable-debugger \
+		  --no-userinit --no-sysinit \
+		  --eval '(push :fw.dump *features*)' \
+		  --load zenburn.lisp \
+		  --eval '(fwoar.zenburn:dump)'
+	mv zenburn bin
+
+bin:
 	mkdir -p bin
 
-bloomutil: bloomutil.lisp
+bin/bloomutil: bloomutil.lisp
 	sbcl --disable-debugger \
 	     --no-userinit \
 	     --eval '(pushnew :fw.dump *features*)' \
@@ -11,7 +19,7 @@ bloomutil: bloomutil.lisp
 	     --eval '(fwoar.bloomutil::dump)'
 	mv bloomutil bin
 
-git-pick-patch: bindir git-pick-patch.lisp
+bin/git-pick-patch: git-pick-patch.lisp
 	sbcl --eval "(ql:quickload '(:alexandria :serapeum :cl-ppcre))" \
 	     --load git-pick-patch.lisp \
 	     --eval '(save-lisp-and-die "bin/git-pick-patch"'" :executable t :toplevel 'git-pick-patch::main :compression t)"
