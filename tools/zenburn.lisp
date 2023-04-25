@@ -12,29 +12,13 @@
 (in-package :fwoar.zenburn)
 
 (defun 256-color-text (fg bg format &rest args)
-  (cond ((and fg bg)
-         (destructuring-bind (fg-r fg-g fg-b) fg
-           (destructuring-bind (bg-r bg-g bg-b) bg
-             (format T "~c[38;2;~d;~d;~d;48;2;~d;~d;~dm~?~@*~c[39m~:*~c[49m"
-                     #\Esc
-                     fg-r fg-g fg-b
-                     bg-r bg-g bg-b
-                     format
-                     args))))
-        (fg
-         (destructuring-bind (fg-r fg-g fg-b) fg
-           (format T "~c[38;2;~d;~d;~dm~?~@*~c[39m~:*~c[49m"
-                   #\Esc
-                   fg-r fg-g fg-b
-                   format
-                   args)))
-        (bg
-         (destructuring-bind (bg-r bg-g bg-b) bg
-           (format T "~c[48;2;~d;~d;~dm~?~@*~c[39m~:*~c[49m"
-                   #\Esc
-                   bg-r bg-g bg-b
-                   format
-                   args)))
+  (cond ((or fg bg)
+         (format T "~c[~:[~;~:*38;2;~{~d;~}~]~:[~;~:*48;2;~{~d;~}~]m~?~@*~c[39m~:*~c[49m"
+                 #\Esc
+                 fg
+                 bg
+                 format
+                 args))
         (t (error "must specify either fg or bg for a color"))))
 
 (defparameter color-alist
