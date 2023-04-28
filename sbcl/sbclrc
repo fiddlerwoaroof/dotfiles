@@ -41,18 +41,6 @@
     (ql:quickload :fwoar-sbcl)
     nil)
 
-      (defun get-term-size ()
-        (flet ((ioctl-gwinsz (fd)
-                 (cffi:with-foreign-object (ptr '(:pointer (:struct winsize)))
-                   (let* ((res (osicat-posix:ioctl fd osicat-posix:tiocgwinsz ptr)))
-                     (if (= res 0)
-                         (cffi:with-foreign-slots ((ws_row ws_col) ptr (:struct winsize))
-                           (list ws_row ws_col))
-                         (format t "~&error~%"))))))
-          (loop for x from 0 to 2
-                for res = (handler-case (ioctl-gwinsz x)
-                            (osicat-posix:enotty (c) c))
-                finally (return res)))))
 #.(uiop:define-package :fwoar-user
       (:export :*term-size*)
     #.(append '(:mix :cl)
@@ -77,6 +65,18 @@
     (ws_xpixel :unsigned-short)
     (ws_ypixel :unsigned-short))
 
+  (defun get-term-size ()
+    (flet ((ioctl-gwinsz (fd)
+             (cffi:with-foreign-object (ptr '(:struct winsize))
+               (let ((res (cffi:foreign-funcall-varargs "ioctl" (:int fd :ulong osicat-posix:tiocgwinsz) :pointer ptr :int)))
+                 (if (= res 0)
+                     (cffi:with-foreign-slots ((ws_row ws_col) ptr (:struct winsize))
+                       (list ws_row ws_col))
+                     (format t "~&error~%"))))))
+      (loop for x from 0 to 2
+            for res = (handler-case (ioctl-gwinsz x)
+                        (osicat-posix:enotty (c) c))
+            finally (return res)))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (= 1 (sb-unix:unix-isatty 0))
