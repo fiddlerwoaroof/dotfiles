@@ -41,30 +41,6 @@
     (ql:quickload :fwoar-sbcl)
     nil)
 
-    #.(uiop:define-package :fwoar-user
-          (:export :*term-size*)
-        #.(append '(:mix :cl)
-                  (mapcar #'package-name (package-use-list :cl-user))
-                  '(:alexandria :serapeum :fw.lu)))
-
-    (in-package :fwoar-user)
-
-    (in-package :cl-user)
-
-    (set-dispatch-macro-character #\# #\!
-                                  (lambda (stream c n)
-                                    (declare (ignore c n))
-                                    (read-line stream)
-                                    `(eval-when (:compile-toplevel :load-toplevel :execute)
-                                       (pushnew :noscript *features*))))
-
-    (eval-when (:compile-toplevel :load-toplevel :execute)
-      (cffi:defcstruct winsize
-          (ws_row :unsigned-short)
-        (ws_col :unsigned-short)
-        (ws_xpixel :unsigned-short)
-        (ws_ypixel :unsigned-short))
-
       (defun get-term-size ()
         (flet ((ioctl-gwinsz (fd)
                  (cffi:with-foreign-object (ptr '(:pointer (:struct winsize)))
@@ -77,17 +53,42 @@
                 for res = (handler-case (ioctl-gwinsz x)
                             (osicat-posix:enotty (c) c))
                 finally (return res)))))
+#.(uiop:define-package :fwoar-user
+      (:export :*term-size*)
+    #.(append '(:mix :cl)
+              (mapcar #'package-name (package-use-list :cl-user))
+              '(:alexandria :serapeum :fw.lu)))
+
+(in-package :fwoar-user)
+
+(in-package :cl-user)
+
+(set-dispatch-macro-character #\# #\!
+                              (lambda (stream c n)
+                                (declare (ignore c n))
+                                (read-line stream)
+                                `(eval-when (:compile-toplevel :load-toplevel :execute)
+                                   (pushnew :noscript *features*))))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  (cffi:defcstruct winsize
+    (ws_row :unsigned-short)
+    (ws_col :unsigned-short)
+    (ws_xpixel :unsigned-short)
+    (ws_ypixel :unsigned-short))
+
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (= 1 (sb-unix:unix-isatty 0))
+    (destructuring-bind (height width) (get-term-size)
+      (defparameter fwoar-user::*term-size* (list height width))
+      (setf sb-ext:*posix-argv* (remove "--no-linedit" sb-ext:*posix-argv* :test 'equal)
+            *print-right-margin* (- width 10))))
+
   (when (member "--linedit" sb-ext:*posix-argv* :test 'equal)
     (when (interactive-stream-p *terminal-io*)
       (trace sb-unix:unix-isatty)
-      (when (= 1 (sb-unix:unix-isatty 0))
         #-(and darwin arm64)
-        (destructuring-bind (height width) (get-term-size)
-          (defparameter fwoar-user::*term-size* (list height width))
-          (setf sb-ext:*posix-argv* (remove "--no-linedit" sb-ext:*posix-argv* :test 'equal)
-                *print-right-margin* (- width 10))))
       (require :sb-aclrepl)
       (require :sb-introspect)
 
