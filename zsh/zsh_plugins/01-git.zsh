@@ -10,6 +10,24 @@ if ! [[ -d "$HOME/git*_repos" ]]; then
   mkdir -p "$HOME"/git_repos
 fi
 
+git-rb() {
+  FW_GIT_URL=$1
+  FW_GIT_BRANCH=""
+  if [[ "$2" == */* ]]; then
+    FW_GIT_REF="$2"
+  else
+    FW_GIT_BRANCH=$2
+    FW_GIT_REF=refs/heads/"$FW_GIT_BRANCH"
+  fi
+
+  read -A results < <( git ls-remote "$FW_GIT_URL" "$2" )
+  jq -n --arg url "$FW_GIT_URL" \
+        --arg branch "$FW_GIT_BRANCH" \
+        --arg hash "$results[1]" \
+        --arg ref "$results[2]" \
+     '{hash: $hash, ref: $ref, url: $url, branch: $branch}'
+}
+
 git-pwdurl () {
   set -x
   local -a parts
