@@ -456,7 +456,7 @@
 	<key>DimOnlyText</key>
 	<true/>
 	<key>EnableAPIServer</key>
-	<false/>
+	<true/>
 	<key>EnableDivisionView</key>
 	<false/>
 	<key>EnableRendezvous</key>
@@ -1777,6 +1777,8 @@
 			<string>Default</string>
 			<key>Disable Window Resizing</key>
 			<true/>
+			<key>Enable Triggers in Interactive Apps</key>
+			<false/>
 			<key>Flashing Bell</key>
 			<false/>
 			<key>Foreground Color</key>
@@ -4758,11 +4760,11 @@
 			<string>kNextWindowPointerAction</string>
 		</dict>
 	</dict>
-	<key>PreventEscapeSequenceFromClearingHistory</key>
-	<false/>
 	<key>Print In Black And White</key>
 	<true/>
 	<key>Selection Respects Soft Boundaries</key>
+	<true/>
+	<key>SeparateWindowTitlePerTab</key>
 	<true/>
 	<key>ShowBookmarkName</key>
 	<false/>
@@ -4805,6 +4807,8 @@
 	<key>UseUnevenTabs</key>
 	<false/>
 	<key>VisualIndicatorForEsc</key>
+	<false/>
+	<key>WindowNumber</key>
 	<false/>
 	<key>WordCharacters</key>
 	<string>/-+\~_.</string>
