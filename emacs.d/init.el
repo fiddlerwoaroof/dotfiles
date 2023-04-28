@@ -35,7 +35,7 @@
 
 (use-package embark
   :ensure t
-  :bind (:map global-map (("s-x" . embark-act))))
+  :bind (:map global-map (("s-." . embark-act))))
 
 (use-package htmlize
   :ensure t)
