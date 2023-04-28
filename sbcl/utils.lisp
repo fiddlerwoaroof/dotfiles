@@ -234,6 +234,8 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
  (defmacro wl ((op &rest args))
    `(values * (,op ,@args))))
 
+(rename-package #1=:cl-user (package-name #1#) (adjoin :• (package-nicknames #1#)))
+
 (defun plot-stream (s &key
                         (xrange nil xrange-p)
                         (background "#494949")
