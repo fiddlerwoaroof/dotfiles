@@ -149,6 +149,40 @@ Examples:
   :ensure nil
   :after smartparens
   :config
+  (lexical-let ((hyperspec-regexp "\\(HyperSpec\\)\\|\\(CLHS\\)"))
+    ;; eww customization
+    (defun fwoar::find-h1 (tree &optional found)
+      (if (or (null tree)
+              found)
+          tree
+        (if (eq (car tree) 'h1)
+            nil
+          (cons (if (consp (car tree))
+                    (fwoar::find-h1 (car tree))
+                  (car tree))
+                (if (consp (cdr tree))
+                    (fwoar::find-h1 (cdr tree))
+                  (cdr tree))))))
+
+
+    (defun fwoar::cleanup-hyperspec ()
+      (when (s-match hyperspec-regexp
+                     (plist-get eww-data :url))
+        (eww-display-html nil nil
+                          (fwoar::find-h1 (plist-get eww-data :dom))
+                          nil
+                          (current-buffer))))
+
+    (add-hook 'eww-after-render-hook 'fwoar::cleanup-hyperspec)
+    (add-hook 'eww-after-render-hook 'eww-readable)
+    (customize-set-variable 'browse-url-handlers
+                            `((,hyperspec-regexp . eww-browse-url)
+                              ("newadvent.org/cathen" . eww-browse-url)))
+    (customize-set-variable
+     'common-lisp-hyperspec-root
+     "file:///Applications/LispWorks%208.0%20(64-bit)/Library/lib/8-0-0-0/manual/html-m/CLHS/")
+    (values)
+    )
 
   (defslimefun get-passwd (id prompt)
     (let ((val (assoc id passwords)))
