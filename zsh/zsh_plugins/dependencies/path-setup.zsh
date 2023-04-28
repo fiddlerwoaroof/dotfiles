@@ -3,7 +3,7 @@
 #:depends-on:java
 ###
 
-orig_paths=("${path[@]}")
+orig_paths=("$HOME"/bin "${path[@]}")
 for fw_p in "$orig_paths[@]"; do
   push_exe_path "$fw_p"
 done
