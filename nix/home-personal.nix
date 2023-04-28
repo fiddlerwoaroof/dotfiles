@@ -18,6 +18,16 @@
 
   common_home =
     import "${dotfileDirectory}/nix/common.nix" {inherit homeDirectory pkgs;};
+
+  zsh =
+    pkgs.zsh
+    // {
+      meta =
+        pkgs.zsh.meta
+        // {
+          outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
+        };
+    };
 in {
   nixpkgs.overlays = common_home.overlays;
 
@@ -40,7 +50,8 @@ in {
       pkgs.pkg-config
       pkgs.shellcheck
       pkgs.zeromq
-      pkgs.zsh
+      zsh
+      pkgs.zsh.doc
       pkgs.zstd
       pkgs.zstd.dev
     ];
