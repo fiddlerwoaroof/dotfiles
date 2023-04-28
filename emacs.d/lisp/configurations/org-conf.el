@@ -39,22 +39,21 @@
   (org-log-into-drawer t)
   (org-refile-targets '((nil . (:maxlevel . 2))))
   (org-agenda-files '("~/org/notes.org" "~/org/agenda.org"))
-  :config
-  (comment
-   (setq org-refile-use-outline-path 'file
-         org-outline-path-complete-in-steps nil
-         org-capture-templates '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-                                  "* TODO %?\n  %i\n  %a")
-                                 ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
-                                  "* %?\nEntered on %U\n  %i\n  %a")
-                                 ("s" "Snippet" entry (file "~/org/snippets.org")
-                                  "* %?\n#+BEGIN_SRC\n%i\n#+END_SRC")
-                                 ("b" "Bookmarks" entry (file+olp+datetree "~/org/bookmarks.org")
-                                  "* %? %^g\n%c\n")
-                                 ("a" "Agenda" entry
-                                  (file "~/org/agenda.org")
-                                  "* %? %^G\n  SCHEDULED: %T"))))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-capture-templates '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+                            "* TODO %?\n  %i\n  %a")
+                           ("j" "Journal" entry (file+olp+datetree "~/org/journal.org")
+                            "* %?\nEntered on %U\n  %i\n  %a")
+                           ("s" "Snippet" entry (file "~/org/snippets.org")
+                            "* %?\n#+BEGIN_SRC\n%i\n#+END_SRC")
+                           ("b" "Bookmarks" entry (file+olp+datetree "~/org/bookmarks.org")
+                            "* %? %^g\n%c\n")
+                           ("a" "Agenda" entry
+                            (file "~/org/agenda.org")
+                            "* %? %^G\n  SCHEDULED: %T")))
 
+  :config
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
@@ -72,6 +71,14 @@
   :ensure t
   :custom
   ( org-roam-directory "~/kb/")
+  ( org-roam-capture-templates
+    '(("d" "default" plain "%?"
+       :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+       :unnarrowed t)
+      ("j" "Journal" plain "* %?\nEntered on %U\n  %i\n  %a"
+       :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                          "#+title: ${title}\n"))
+      ))
   :config
   (evil-define-key 'normal 'global
     (kbd "<leader>v") #'org-roam-node-find)
