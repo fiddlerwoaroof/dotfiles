@@ -22,7 +22,7 @@ function alias_forge() {
 }
 
 function github_url() {
-  local git_spec="$package"
+  local git_spec="${package:-$1}"
 
   if [[ -n "$git_user" ]]; then
     git_spec="$git_user/$package"
@@ -36,7 +36,7 @@ function github_url() {
 }
 
 function bitbucket_url() {
-  local git_spec="$package"
+  local git_spec="${package:-$1}"
 
   if [[ -n "$git_user" ]]; then
     git_spec="$git_user/$package"
@@ -50,7 +50,7 @@ function bitbucket_url() {
 }
 
 function gitlab_url() {
-  local git_spec="$package"
+  local git_spec="${package:-$1}"
 
   if [[ -n "$git_user" ]]; then
     git_spec="$git_user/$package"
