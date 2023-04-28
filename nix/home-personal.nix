@@ -38,22 +38,26 @@ in {
     common_home.packages
     ++ [
       alejandra
+      pkgs.cargo
       pkgs.clojure
       (pkgs.emacsGit.override {nativeComp = true;})
       pkgs.graphviz
+      pkgs.ispell
       pkgs.libffi.dev
+      pkgs.libheif.dev
       libpng
       pkgs.libssh2
       pkgs.mosh
+      pkgs.nodejs
       pkgs.openssl
       pkgs.pandoc
       pkgs.pkg-config
       pkgs.shellcheck
       pkgs.zeromq
-      zsh
       pkgs.zsh.doc
       pkgs.zstd
       pkgs.zstd.dev
+      zsh
     ];
 
   programs = {
