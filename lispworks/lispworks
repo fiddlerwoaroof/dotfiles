@@ -1,11 +1,29 @@
 (in-package :cl-user)
 
+(defun read-evaluated-form (&optional (prompt-control nil promptp)
+                            &rest prompt-args)
+  (apply #'format *query-io*
+         (if promptp prompt-control "~&Enter a form to be evaluated: ")
+         prompt-args)
+  (finish-output *query-io*)
+  (list (eval (read *query-io*))))
+
 (defun load-init-file (filename &optional (conf-dir ".lispworks.d"))
- (let ((fn (merge-pathnames (make-pathname :directory `(:relative ,conf-dir)
-                                           :name filename)
-                            (user-homedir-pathname))))
-   (when (probe-file fn)
-     (load fn)))
+  (let ((fn (merge-pathnames (make-pathname :directory `(:relative ,conf-dir)
+                                            :name filename
+                                            :type "lisp")
+                             (user-homedir-pathname))))
+    (tagbody
+     top
+       (restart-case (if (probe-file fn)
+                         (load fn)
+                         (cerror "skip this init file" "file ~s not found" fn))
+         (store-value (value)
+           :report (lambda (stream)
+                     (format stream "Supply a new value for ~S." filename))
+           :interactive read-evaluated-form
+           (setf fn value)
+           (goto top))))))
 
 (change-directory (user-homedir-pathname))
 
@@ -22,28 +40,30 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (load "~/quicklisp/setup.lisp"))
 
+(ql:quickload :lw-add-ons)
+
 (editor:bind-key "Insert Space And Show Arglist" "Space")
 (editor:bind-key "Indent Form" #("Control-c" "Meta-q"))
 (editor:bind-key "Insert Parentheses For Selection" #\( :mode "Lisp")
 (editor:bind-key "Indent New Line" "Return" :mode "Lisp")
 (editor:bind-key "Compile and Load Buffer File" #("Control-c" "Control-k"))
+
 (editor:defcommand "Move Over ()" (p)
-                   "Move past the next close parenthesis.
+  "Move past the next close parenthesis.
 Any indentation preceeding the parenthesis is deleted."
-                   "Move past the next close parenthesis."
-                   (declare (ignore p))
-                   (let ((point (editor:current-point)))
-                     (editor:with-point ((m point))
-                       (cond ((editor::forward-up-list m)
-                              (editor:move-point point m)
-                              (editor::point-before point)
-                              (loop (editor:with-point ((back point))
-                                      (editor::back-to-indentation back)
-                                      (unless (editor:point= back point)
-                                        (return)))
-                                    (editor::delete-indentation point))
-                              (editor::point-after point))
-                             (t (editor:editor-error))))))
+  (declare (ignore p))
+  (let ((point (editor:current-point)))
+    (editor:with-point ((m point))
+      (cond ((editor::forward-up-list m)
+             (editor:move-point point m)
+             (editor::point-before point)
+             (loop (editor:with-point ((back point))
+                     (editor::back-to-indentation back)
+                     (unless (editor:point= back point)
+                       (return)))
+                   (editor::delete-indentation point))
+             (editor::point-after point))
+            (t (editor:editor-error))))))
 
 (editor:bind-key "Move Over ()" #\) :mode "Lisp")
 
@@ -62,6 +82,3 @@ Any indentation preceeding the parenthesis is deleted."
                   'system:locale-file-encoding
                   system:*file-encoding-detection-algorithm*))
 (set-default-character-element-type 'simple-char)
-
-(ql:quickload :lw-add-ons)
-
