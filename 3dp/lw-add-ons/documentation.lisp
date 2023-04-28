@@ -34,9 +34,11 @@
 directory, optionally appending the string RELATIVE-PATH."
   (namestring (sys:lispworks-dir
                (format nil
+                       #+:lispworks8
+                       "manual/html-m/~A"
                        #+(or :lispworks6.1 :lispworks7)
                        "manual/online/~A"
-                       #-(or :lispworks6.1 :lispworks7)
+                       #-(or :lispworks6.1 :lispworks7 :lispworks8)
                        "manual/online/web/~A"
                        (or relative-path "")))))
 

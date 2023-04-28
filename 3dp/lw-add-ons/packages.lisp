@@ -43,7 +43,7 @@
            :*product-registry-path*
            :*show-doc-string-when-showing-arglist*
            :*swank-loader-pathname*
-           #-:lispworks7
+           #-(or :lispworks8 :lispworks7)
            :*translate-asdf-systems*
            :*use-abbreviated-complete-symbol*
            :*use-quicklisp-for-shortcut-l*

@@ -241,7 +241,7 @@ as members of type :SYSTEM.  Returns its original argument."
           (gc-if-needed)
           module-name)))))
 
-#-:lispworks7
+#-(or :lispworks8 :lispworks7)
 (defadvice (asdf::parse-component-form translate :around
                                        :documentation "Whenever
 an ASDF system is parsed we translate it to a Common Defsystem
@@ -254,7 +254,7 @@ system definition on the fly.")
         (translate-module candidate)))
     candidate))
 
-#-:lispworks7
+#-(or :lispworks8 :lispworks7)
 ;; translate the systems that have already been loaded
 (dolist (sys-name '(:cl-ppcre :cl-who :lw-doc :lw-add-ons))
   (translate-module (asdf:find-system sys-name)))

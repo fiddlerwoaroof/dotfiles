@@ -34,9 +34,11 @@
                  :type nil
                  :version nil
                  :defaults 
+                 #+:lispworks8
+                 (sys:lispworks-dir "manual/html-m/")
                  #+(or :lispworks6.1 :lispworks7)
                  (sys:lispworks-dir "manual/online/")
-                 #-(or :lispworks6.1 :lispworks7)
+                 #-(or :lispworks6.1 :lispworks7 :lispworks8)
                  (sys:lispworks-dir "manual/online/web/"))
   "A pathname denoting the directory where the browsable
 documentation can be found.")
@@ -102,6 +104,7 @@ be bound to a prefix which will be added to each link.")
   #+:lispworks6.0 "http://www.lispworks.com/documentation/lw60/"
   #+:lispworks6.1 "http://www.lispworks.com/documentation/lw61/"
   #+:lispworks7.0 "http://www.lispworks.com/documentation/lw70/"
+  #+:lispworks8.0 "http://www.lispworks.com/documentation/lw80/"
   "The prefix for the LispWorks online documentation.")
 
 (defvar *html-stream* nil
