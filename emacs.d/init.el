@@ -261,7 +261,7 @@
   (browse-at-remote-prefer-symbolic nil)
 
   :config
-  (cl-pushnew '("git.fiddlerwoaroof.com$" . "gitlist")
+  (cl-pushnew '(:host "git.fiddlerwoaroof.com$" :type "gitlist")
               browse-at-remote-remote-type-regexps
               :test 'equal)
 
