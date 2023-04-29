@@ -11,8 +11,8 @@
 
   alejandra =
     (import (builtins.fetchTarball {
-      url = "https://github.com/kamadorueda/alejandra/tarball/2.0.0";
-      sha256 = "1jpficz0f8s8kwvk91f28q2c4prz4p8yq76ssrzvjkviqbis4rca";
+      url = "https://github.com/kamadorueda/alejandra/tarball/3.0.0";
+      sha256 = "18jm0d5xrxk38hw5sa470zgfz9xzdcyaskjhgjwhnmzd5fgacny4";
     }) {inherit pkgs;})
     .outPath;
 
