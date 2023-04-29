@@ -1,6 +1,4 @@
-self: super: 
-
-{
+self: super: {
   fwoar = {
     gsed = super.callPackage ./prefixed-gnused {};
     sbcl_2_1_7 = super.callPackage ./sbcl.nix {

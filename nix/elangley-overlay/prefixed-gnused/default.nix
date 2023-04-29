@@ -1,5 +1,10 @@
-{ pkgs ? import <nixpkgs> {}, lib ? pkgs.lib, stdenv ? pkgs.stdenv , fetchurl ? pkgs.fetchurl , perl ? pkgs.perl }:
-
+{
+  pkgs ? import <nixpkgs> {},
+  lib ? pkgs.lib,
+  stdenv ? pkgs.stdenv,
+  fetchurl ? pkgs.fetchurl,
+  perl ? pkgs.perl,
+}:
 stdenv.mkDerivation rec {
   pname = "gnused-prefixed";
   version = "4.8";
@@ -9,14 +14,17 @@ stdenv.mkDerivation rec {
     sha256 = "0cznxw73fzv1n3nj2zsq6nf73rvsbxndp444xkpahdqvlzz0r6zp";
   };
 
-  outputs = [ "out" "info" ];
-  configureFlags = [ "--program-prefix=g" ];
+  outputs = ["out" "info"];
+  configureFlags = ["--program-prefix=g"];
 
-  nativeBuildInputs = [ perl ];
+  nativeBuildInputs = [perl];
   preConfigure = "patchShebangs ./build-aux/help2man";
 
   # Prevents attempts of running 'help2man' on cross-built binaries.
-  PERL = if stdenv.hostPlatform == stdenv.buildPlatform then null else "missing";
+  PERL =
+    if stdenv.hostPlatform == stdenv.buildPlatform
+    then null
+    else "missing";
 
   meta = {
     homepage = "https://www.gnu.org/software/sed/";
@@ -35,6 +43,6 @@ stdenv.mkDerivation rec {
     license = lib.licenses.gpl3Plus;
 
     platforms = lib.platforms.unix;
-    maintainers = [ ];
+    maintainers = [];
   };
 }

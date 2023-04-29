@@ -1,23 +1,45 @@
-{ pkgs ? import <nixpkgs> {} } :
-
+{pkgs ? import <nixpkgs> {}}:
 pkgs.llvmPackages_9.stdenv.mkDerivation rec {
   pname = "clickhouse";
   version = "20.8.11.17-lts";
 
   src = pkgs.fetchFromGitHub {
-    owner  = "ClickHouse";
-    repo   = "ClickHouse";
-    rev    = "v${version}";
+    owner = "ClickHouse";
+    repo = "ClickHouse";
+    rev = "v${version}";
     fetchSubmodules = true;
     sha256 = "0c87k0xqwj9sc3xy2f3ngfszgjiz4rzd787bdg6fxp94w1adjhny";
   };
 
-  nativeBuildInputs = with pkgs; [ cmake libtool llvmPackages_9.lldClang.bintools ninja ];
+  nativeBuildInputs = with pkgs; [cmake libtool llvmPackages_9.lldClang.bintools ninja];
   buildInputs = with pkgs; [
-    boost brotli capnproto cctz clang_9 double-conversion
-    icu jemalloc libcpuid libxml2 lld_9 llvm_9 lz4 libmysqlclient openssl perl
-    poco protobuf python3 rapidjson re2 rdkafka readline sparsehash unixODBC
-    xxHash zstd
+    boost
+    brotli
+    capnproto
+    cctz
+    clang_9
+    double-conversion
+    icu
+    jemalloc
+    libcpuid
+    libxml2
+    lld_9
+    llvm_9
+    lz4
+    libmysqlclient
+    openssl
+    perl
+    poco
+    protobuf
+    python3
+    rapidjson
+    re2
+    rdkafka
+    readline
+    sparsehash
+    unixODBC
+    xxHash
+    zstd
   ];
 
   patches = [
@@ -65,6 +87,5 @@ pkgs.llvmPackages_9.stdenv.mkDerivation rec {
       --replace "<errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>" "<console>1</console>"
   '';
 
-  hardeningDisable = [ "format" ];
-
+  hardeningDisable = ["format"];
 }

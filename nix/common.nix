@@ -1,4 +1,7 @@
-{ pkgs, homeDirectory }: rec {
+{
+  pkgs,
+  homeDirectory,
+}: rec {
   packages = [
     pkgs.direnv
     pkgs.dtach
@@ -14,7 +17,7 @@
 
   utils = {
     untar = path:
-      pkgs.runCommand "untar" { buildInputs = [ pkgs.gnutar ]; } ''
+      pkgs.runCommand "untar" {buildInputs = [pkgs.gnutar];} ''
         mkdir -p "$out"
         cd "$out"
         tar --strip-components=1 -xf "${path}"
@@ -28,5 +31,5 @@
   gf-repo = home-relative-git-repository "git.fiddlerwoaroof.com";
   gitlab-repo = home-relative-git-repository "gitlab.com";
 
-  overlays = [ (import ./elangley-overlay) (import ./emacs-overlay.nix) ];
+  overlays = [(import ./elangley-overlay) (import ./emacs-overlay.nix)];
 }
