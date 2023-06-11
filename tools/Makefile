@@ -1,4 +1,4 @@
-all: bin bin/git-pick-patch bin/bloomutil bin/zenburn
+all: bin bin/git-pick-patch bin/bloomutil bin/zenburn bin/file-indexer
 
 bin/zenburn: zenburn.lisp
 	sbcl --lose-on-corruption --disable-ldb --disable-debugger \
@@ -18,6 +18,14 @@ bin/bloomutil: bloomutil.lisp
 	     --load bloomutil.lisp \
 	     --eval '(fwoar.bloomutil::dump)'
 	mv bloomutil bin
+
+bin/file-indexer: file-indexer.lisp
+	sbcl --disable-debugger \
+	     --no-userinit \
+	     --eval '(pushnew :fw.dump *features*)' \
+	     --load file-indexer.lisp \
+	     --eval '(fwoar.file-indexer::dump)'
+	mv file-indexer bin
 
 bin/git-pick-patch: git-pick-patch.lisp
 	sbcl --eval "(ql:quickload '(:alexandria :serapeum :cl-ppcre))" \
