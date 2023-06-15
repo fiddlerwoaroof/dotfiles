@@ -21,7 +21,7 @@
                  args))
         (t (error "must specify either fg or bg for a color"))))
 
-(defparameter color-alist
+(defparameter *color-alist*
   '((fg+2     . (#xFF #xFF #xEF))
     (fg+1     . (#xF5 #xF5 #xD6))
     (fg       . (#xDC #xDC #xCC))
@@ -71,13 +71,21 @@
     (blue-5   . (#x36 #x60 #x60))
     (magenta  . (#xDC #x8C #xC3))))
 
+(defun theme-color (name)
+  (cdr (assoc name *color-alist*)))
+
+(defun html-color (name &optional (s t))
+  (let ((values (theme-color name)))
+    (prog1 (format s "#~{~2,'0x~}" values)
+      (unless (null s)
+        (format s "~%")))))
 (defun zenburn-text (fg bg text &rest format-args)
-  (let ((fgcolor (when fg (cdr (assoc fg color-alist :test 'equal))))
-        (bgcolor (when bg (cdr (assoc bg color-alist :test 'equal)))))
+  (let ((fgcolor (when fg (cdr (assoc fg *color-alist* :test 'equal))))
+        (bgcolor (when bg (cdr (assoc bg *color-alist* :test 'equal)))))
     (apply #'256-color-text fgcolor bgcolor text format-args)))
 
 (defun summary ()
-  (loop for (color . values) in color-alist
+  (loop for (color . values) in *color-alist*
         do
            (zenburn-text () color (make-string 32 :initial-element #\space))
            (format t "  ~8<~a~> (~{~2x~^, ~}) ~:* (~{~3d~^, ~})~%" color values)))
@@ -85,13 +93,13 @@
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
     (flag :short-name "h" :long-name "help")
-    (enum :short-name "f" :long-name "fg" :enum (mapcar 'car color-alist)
+    (enum :short-name "f" :long-name "fg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's foreground color")
-    (enum :short-name "b" :long-name "bg" :enum (mapcar 'car color-alist)
+    (enum :short-name "b" :long-name "bg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's background color")
-    (enum :long-name "html"  :enum (mapcar 'car color-alist)
+    (enum :long-name "html"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as an HTML RGB literal")
-    (enum :long-name "css"  :enum (mapcar 'car color-alist)
+    (enum :long-name "css"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as an CSS RGB literal")))
 
 (defun main ()
@@ -113,11 +121,10 @@
            (format *error-output* "Can't use HTML and CSS options together~%")
            (net.didierverna.clon:help))
           (css
-           (let ((values (cdr (assoc css color-alist))))
+           (let ((values (cdr (assoc css *color-alist*))))
              (format t "rgb(~{~d~^, ~})~%" values)))
           (html
-           (let ((values (cdr (assoc html color-alist))))
-             (format t "#~{~2,'0x~}~%" values)))
+           (html-color html t))
           ((null remainder)
            (summary))
           ((or foreground background)
