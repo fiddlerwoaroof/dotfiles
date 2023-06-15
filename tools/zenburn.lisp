@@ -8,7 +8,9 @@
 
 (defpackage :fwoar.zenburn
   (:use :cl )
-  (:export dump))
+  (:export #:dump
+           #:html-color
+           #:rgb-color))
 (in-package :fwoar.zenburn)
 
 (defun 256-color-text (fg bg format &rest args)
@@ -79,6 +81,24 @@
     (prog1 (format s "#~{~2,'0x~}" values)
       (unless (null s)
         (format s "~%")))))
+
+(defmacro may ((op arg &rest r))
+  (let ((cond (case op
+                (cl:funcall (car r))
+                (t arg))))
+    (alexandria:once-only (arg)
+      `(when ,cond
+         (,op ,arg ,@r)))))
+
+(defun rgb-color (name &optional (float t))
+  (let* ((lookup (find-symbol (string name) :fwoar.zenburn))
+         (color (may (theme-color lookup))))
+    (cond ((and color float)
+           (mapcar (lambda (it)
+                     (/ it 255d0))
+                   color))
+          (color))))
+
 (defun zenburn-text (fg bg text &rest format-args)
   (let ((fgcolor (when fg (cdr (assoc fg *color-alist* :test 'equal))))
         (bgcolor (when bg (cdr (assoc bg *color-alist* :test 'equal)))))
