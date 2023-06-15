@@ -110,6 +110,7 @@
            (zenburn-text () color (make-string 32 :initial-element #\space))
            (format t "  ~8<~a~> (~{~2x~^, ~}) ~:* (~{~3d~^, ~})~%" color values)))
 
+#+fw.dump
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
     (flag :short-name "h" :long-name "help")
@@ -122,6 +123,7 @@
     (enum :long-name "css"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as an CSS RGB literal")))
 
+#+fw.dump
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
          (net.didierverna.clon:*context* context)
@@ -152,7 +154,7 @@
           (t
            (net.didierverna.clon:help)))))
 
-
+#+fw.dump
 (defun dump ()
   (setf net.didierverna.clon:*context* nil
         *features* (remove :fw.dump *features*)
