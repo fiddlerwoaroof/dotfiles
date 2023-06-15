@@ -53,7 +53,7 @@
                                                      "insert into files_shasums (file,shasum,size)
                                                       values (?,?,?)
                                                       on conflict do nothing"
-                                                     (namestring (truename file))
+                                                     (uiop:native-namestring (truename file))
                                                      sum
                                                      length)))))))
            (terpri)))))
