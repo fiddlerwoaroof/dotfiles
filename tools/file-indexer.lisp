@@ -22,8 +22,7 @@
 
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
-         (net.didierverna.clon:*context* context)
-         (hashes '(:sha256)))
+         (net.didierverna.clon:*context* context))
     (cond ((net.didierverna.clon:getopt :context context
                                         :long-name "help")
            (net.didierverna.clon:help))
