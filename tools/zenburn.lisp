@@ -4,7 +4,7 @@
   (require :uiop))
 
 #+fw.dump
-(ql:quickload '(:net.didierverna.clon))
+(ql:quickload '(:net.didierverna.clon :alexandria))
 
 (defpackage :fwoar.zenburn
   (:use :cl )
