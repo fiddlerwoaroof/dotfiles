@@ -20,6 +20,7 @@
   (net.didierverna.clon:defsynopsis (:postfix "DB FILES..." :make-default nil)
     (flag :short-name "h" :long-name "help")))
 
+
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
          (net.didierverna.clon:*context* context))
@@ -30,50 +31,31 @@
            (destructuring-bind (db-fn . files)
                (net.didierverna.clon:remainder :context context)
              (sqlite:with-open-database (db db-fn)
-               (sqlite:execute-non-query
-                db
-                "create table if not exists files (name text)")
-               (sqlite:execute-non-query
-                db
-                "create table if not exists shasums (sum text)")
-               (sqlite:execute-non-query
-                db
-                "create unique index if not exists files_unique_name on files(name)")
-               (sqlite:execute-non-query
-                db
-                "create unique index if not exists shasums_unique_sum on shasums(sum)")
+               (sqlite:execute-non-query db "pragma journal_mode=wal")
                (sqlite:execute-non-query
                 db
                 "create table if not exists
-                  files_shasums (file integer,
-                                 shasum integer,
-                                 foreign key (file) references files(rowid),
-                                 foreign key (shasum) references shasums(rowid))")
+                  files_shasums (file text,
+                                 shasum text,
+                                 size bigint)")
                (sqlite:execute-non-query
                 db
                 "create unique index if not exists shasums_files_unique_assuc on files_shasums(file,shasum)")
-               (loop for file in files
+               (loop for raw-file in files
+                     for file = (uiop:parse-native-namestring raw-file)
                      do
-                        (format t "Processing file ~s~%" file)
                         (sqlite:with-transaction db
-                          (let* ((sum (ironclad:byte-array-to-hex-string
-                                       (ironclad:digest-file :sha256 file)))
-                                 (file-id
-                                   (progn
-                                     (sqlite:execute-single
-                                      db "insert into files (name) values (?) on conflict do nothing" file)
-                                     (sqlite:execute-single db "select rowid from files where name = ?" file)))
-                                 (sum-id
-                                   (progn
-                                     (sqlite:execute-single
-                                      db "insert into shasums (sum) values (?) on conflict do nothing" sum)
-                                     (sqlite:execute-single db "select rowid from shasums where sum = ?" sum))))
-                            (sqlite:execute-single db
-                                                   "insert into files_shasums (file,shasum) values (?,?)
-                                                    on conflict do nothing"
-                                                   file-id
-                                                   sum-id)
-                            (format t "Done with file ~s, sum: ~s~%" file sum))))))
+                          (with-open-file (s file :element-type '(unsigned-byte 8))
+                            (let* ((sum (ironclad:byte-array-to-hex-string
+                                         (ironclad:digest-file :sha256 file)))
+                                   (length (file-length s)))
+                              (sqlite:execute-single db
+                                                     "insert into files_shasums (file,shasum,size)
+                                                      values (?,?,?)
+                                                      on conflict do nothing"
+                                                     (namestring (truename file))
+                                                     sum
+                                                     length)))))))
            (terpri)))))
 
 (defun dump ()
