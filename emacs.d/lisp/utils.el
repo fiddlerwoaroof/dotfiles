@@ -153,7 +153,7 @@ from the selected region."
 (defun start-server ()
   (unless (fboundp 'server-running-p)
     (require 'server))
-  (let ((server-name (if fwoar.is-ordinary
+  (let ((server-name (if fwoar::*is-ordinary*
                          server-name
                        "notes")))
     (unless (server-running-p)
@@ -186,7 +186,7 @@ from the selected region."
   ;; NOTE: this must be here...
   (global-company-mode 1))
 
-(defvar fwoar.is-ordinary)
+(defvar fwoar::*is-ordinary*)
 
 (defun fwoar/source (filename pattern)
   "Update environment variables from a shell source file."

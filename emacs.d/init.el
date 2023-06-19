@@ -489,11 +489,6 @@
 
 ;;(setq gc-cons-threshold (* 100 1024))
 
-(unless fwoar.is-ordinary
-  (setq with-editor-emacsclient-executable "/usr/local/bin/emacsclient")
-  (require 'cjpad)
-  (find-file "~/org/notes.org"))
-
 (put 'narrow-to-region
      'disabled
      nil)
