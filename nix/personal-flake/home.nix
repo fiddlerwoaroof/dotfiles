@@ -22,7 +22,6 @@ in {
   home.file.".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
 
   home.packages = [
-    (pkgs.emacsGit.override {nativeComp = true;})
     libpng
     pkgs.alejandra
     pkgs.cargo
@@ -30,6 +29,7 @@ in {
     pkgs.direnv
     pkgs.dtach
     pkgs.ecl
+    pkgs.emacs-git
     pkgs.gnuplot
     pkgs.graphviz
     pkgs.ispell
