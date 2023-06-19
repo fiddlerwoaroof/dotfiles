@@ -12,12 +12,16 @@
       url = "github:kamadorueda/alejandra/3.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    emacs-community = {
+      url = "github:nix-community/emacs-overlay";
+    };
   };
 
   outputs = {
     nixpkgs,
     home-manager,
     alejandra,
+    emacs-community,
     ...
   }: let
     system = "aarch64-darwin";
@@ -30,7 +34,7 @@
       inherit system;
       overlays = [
         (import ./elangley-overlay)
-        (import ./emacs-overlay.nix)
+        emacs-community.overlay
         extraOverlay
       ];
     };
