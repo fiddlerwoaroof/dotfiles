@@ -1,6 +1,5 @@
-(require 'cl-generic)
-(cl-defgeneric (setf seq-elt) (store sequence n))
-
+;; (require 'cl-generic)
+;; (cl-defgeneric (setf seq-elt) (store sequence n))
 
 (setq package-user-dir
       (locate-user-emacs-file
