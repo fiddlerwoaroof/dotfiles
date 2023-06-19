@@ -9,11 +9,6 @@
  inhibit-splash-screen t
  inhibit-startup-message t)
 
-(let ((my-theme-path (expand-file-name "~/.emacs.d/themes/")))
-  (add-to-list 'load-path my-theme-path)
-  (add-to-list 'custom-theme-load-path my-theme-path)
-  (load-theme 'fwoar-zenburn t))
-
 (progn
   (define-key key-translation-map (kbd "M-7") (kbd "∘"))
   (define-key key-translation-map (kbd "M-8") (kbd "•"))
