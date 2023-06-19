@@ -6,10 +6,6 @@
  inhibit-splash-screen t
  inhibit-startup-message t)
 
-(progn
-  (define-key key-translation-map (kbd "M-7") (kbd "∘"))
-  (define-key key-translation-map (kbd "M-8") (kbd "•"))
-  (define-key key-translation-map (kbd "M-9") (kbd "λ")))
 
 (message invocation-name)
 
@@ -20,6 +16,11 @@
   (load "utils"))
 
 (set-exec-path-from-shell-PATH)
+(progn
+  (define-key key-translation-map (kbd "M-7") (kbd "∘"))
+  (define-key key-translation-map (kbd "M-8") (kbd "•"))
+  (define-key key-translation-map (kbd "M-9") (kbd "λ")))
+
 (cold-boot)
 
 (use-package nix-mode
