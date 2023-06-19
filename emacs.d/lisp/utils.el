@@ -170,7 +170,6 @@ from the selected region."
       (global-display-line-numbers-mode)
     (setq linum-format "%5d\u2502")
     (global-linum-mode))
-  (fwoar/source "~/.zshrc")
 
   (info-initialize)
 
@@ -189,7 +188,7 @@ from the selected region."
 
 (defvar fwoar.is-ordinary)
 
-(defun fwoar/source (filename)
+(defun fwoar/source (filename pattern)
   "Update environment variables from a shell source file."
   (interactive "fSource file: ")
 
@@ -201,24 +200,26 @@ from the selected region."
       ;; Remove environment variables
       (while (search-forward-regexp (concat "^-" envvar-re) nil t)
         (let ((var (match-string 1)))
-          (message "%s" (prin1-to-string `(setenv ,var nil)))
-          (setenv var nil)
-          ))
+          (when (s-match pattern var)
+            (message "%s" (prin1-to-string `(setenv ,var nil)))
+            (setenv var nil))))
 
       ;; Update environment variables
       (goto-char (point-min))
       (while (search-forward-regexp (concat "^+" envvar-re) nil t)
         (let ((var (match-string 1))
               (value (string-trim (match-string 2) "'" "'")))
-          (message "%s" (prin1-to-string `(setenv ,var ,value)))
-          (setenv var value)
-          ))))
+          (when (s-match pattern var)
+            (message "%s" (prin1-to-string `(setenv ,var ,value)))
+            (setenv var value))))))
   (message "Sourcing environment from `%s'... done." filename))
 
 (defun cold-boot ()
   ""
+  (fwoar/source "~/.zshrc" ".*PATH")
+  (set-exec-path-from-shell-PATH)
   (run-with-idle-timer 5 t 'garbage-collect)
-  (setq fwoar.is-ordinary (not (string= invocation-name "EmacsNotes")))
+  (setq fwoar::is-ordinary (not (string= invocation-name "EmacsNotes")))
   (add-hook 'after-init-hook 'post-init)
   (electric-indent-mode -1)
   (comment
