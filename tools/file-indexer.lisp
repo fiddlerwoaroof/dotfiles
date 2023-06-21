@@ -37,26 +37,31 @@
                 "create table if not exists
                   files_shasums (file text,
                                  shasum text,
-                                 size bigint)")
+                                 size bigint,
+                                 count bigint,
+                                 ts datetime default current_timestamp)")
                (sqlite:execute-non-query
                 db
                 "create unique index if not exists shasums_files_unique_assuc on files_shasums(file,shasum)")
                (loop for raw-file in files
                      for file = (uiop:parse-native-namestring raw-file)
                      do
+                        (when (< (random 1000000)
+                                 100)
+                          (format *error-output* "~&processed: ~a~%" (uiop:native-namestring file)))
                         (sqlite:with-transaction db
                           (with-open-file (s file :element-type '(unsigned-byte 8))
                             (let* ((sum (ironclad:byte-array-to-hex-string
                                          (ironclad:digest-file :sha256 file)))
                                    (length (file-length s)))
                               (sqlite:execute-single db
-                                                     "insert into files_shasums (file,shasum,size)
-                                                      values (?,?,?)
-                                                      on conflict do nothing"
+                                                     "insert into files_shasums (file,shasum,size,count)
+                                                      values (?,?,?, 1)
+                                                      on conflict do update set count = (count + 1),
+                                                                                ts = current_timestamp"
                                                      (uiop:native-namestring (truename file))
                                                      sum
-                                                     length)))))))
-           (terpri)))))
+                                                     length)))))))))))
 
 (defun dump ()
   (setf net.didierverna.clon:*context* nil
