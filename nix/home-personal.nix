@@ -29,6 +29,8 @@
         };
     };
 in {
+  home.file.".ssh/allowed_signers".text = "* ${builtins.readFile "${homeDirectory}/.ssh/id_ed25519.pub"}";
+
   nixpkgs.overlays = common_home.overlays;
 
   ## Doesn't work???
@@ -66,11 +68,17 @@ in {
       userEmail = "el-github@elangley.org";
       userName = "Edward Langley";
       extraConfig = {
+        commit = {gpgsign = true;};
         github = {user = "fiddlerwoaroof";};
+        gpg = {
+          format = "ssh";
+          allowedSignersFile = "${homeDirectory}/.ssh/allowed_signers";
+        };
         init = {defaultBranch = "main";};
         merge = {autoStash = true;};
         pull = {rebase = false;};
         rebase = {autoStash = true;};
+        user = {signingkey = "${homeDirectory}/.ssh/id_ed25519.pub";};
       };
     };
     tmux = {
