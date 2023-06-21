@@ -43,7 +43,7 @@
          ,@body))))
 
 (fwoar/def-ns-fun just-after (pred)
-  (lexical-let ((state nil))
+  (let ((state nil))
     (lambda (it)
       (cond
        (state it)
@@ -143,7 +143,7 @@
 
 
 (fwoar/def-ns-fun matches-regex (regex &optional start)
-  (lexical-let ((regex regex))
+  (let ((regex regex))
     (lambda (data)
       (if start
           (string-match-p regex data start)
