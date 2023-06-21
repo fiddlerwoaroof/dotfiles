@@ -11,6 +11,7 @@
                :printv
                :puri
                :serapeum
+               #+(or)
                :swank
                :trivial-ssh)
   :components ((:file "utils")))

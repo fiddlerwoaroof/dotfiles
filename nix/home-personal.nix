@@ -66,21 +66,11 @@ in {
       userEmail = "el-github@elangley.org";
       userName = "Edward Langley";
       extraConfig = {
-        github = {
-          user = "fiddlerwoaroof";
-        };
-        init = {
-          defaultBranch = "main";
-        };
-        pull = {
-          rebase = false;
-        };
-        merge = {
-          autoStash = true;
-        };
-        rebase = {
-          autoStash = true;
-        };
+        github = {user = "fiddlerwoaroof";};
+        init = {defaultBranch = "main";};
+        merge = {autoStash = true;};
+        pull = {rebase = false;};
+        rebase = {autoStash = true;};
       };
     };
     tmux = {
