@@ -6,7 +6,6 @@
   (smartparens-strict-mode 1))
 
 (defun fwoar/cider-hook-base ()
-  (helm-cider-mode 1)
   (cider-company-enable-fuzzy-completion))
 (defun fwoar/cider-hook ()
   (fwoar/cider-hook-base)
@@ -34,7 +33,6 @@
   :config
   (require 'cider-selector)
   (evil-define-key 'normal clojure-mode-map " t" 'cider-test-run-ns-tests)
-  (evil-define-key 'normal clojure-mode-map " '" 'helm-cider-apropos)
 
   (def-cider-selector-method ?S "find clojure project file"
     (fwoar--find-system))
@@ -64,10 +62,6 @@
   :config
   (evil-define-key 'normal clojure-mode-map (kbd "<leader> r") 'hydra-cljr-help-menu/body))
 
-
-(use-package helm-cider
-  :after cider helm
-  :ensure t)
 
 (use-package flycheck-clj-kondo
   :after flycheck
