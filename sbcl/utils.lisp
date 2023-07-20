@@ -152,17 +152,21 @@
                                 (lambda (it) (fwoar.string-utils:split #\tab it)))
                    (gf-repos/raw))))
 
+(defun gf-url (coordinate)
+  (format nil "git@git.fiddlerwoaroof.com:~a.git" coordinate))
+
+(defun gf-target-dir (coordinate)
+  (merge-pathnames (uiop:parse-unix-namestring coordinate
+                                               :ensure-directory t)
+                   (merge-pathnames (make-pathname :directory
+                                                   (list :relative
+                                                         "git_repos"
+                                                         "git.fiddlerwoaroof.com"))
+                                    (user-homedir-pathname))))
+
 (defun gf (coordinate)
-  (let ((git-url (format nil "git@git.fiddlerwoaroof.com:~a.git" coordinate))
-        (target (:printv
-                 (merge-pathnames (:printv
-                                   (uiop:parse-unix-namestring coordinate
-                                                               :ensure-directory t))
-                                  (merge-pathnames (make-pathname :directory
-                                                                  (list :relative
-                                                                        "git_repos"
-                                                                        "git.fiddlerwoaroof.com"))
-                                                   (user-homedir-pathname))))))
+  (let ((git-url (gf-url coordinate))
+        (target (:printv (gf-target-dir coordinate))))
     (unless (probe-file target)
       (legit:clone git-url
                    (ensure-directories-exist target)))
@@ -236,16 +240,19 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 
 (rename-package #1=:cl-user (package-name #1#) (adjoin :• (package-nicknames #1#)))
 
+#+(or)
 (defun plot-stream (s &key
                         (xrange nil xrange-p)
-                        (background "#494949")
+                        (yrange nil yrange-p)
+                        (background "#2A2B2E")
                         (frame-color "#7fdf7f")
                         (line-color "#DCDCCC")
                         (lines nil))
   (let ((fn (format nil "/tmp/~a.svg" (gensym))))
     (uiop:run-program (format nil
-                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat -' lt rgb '~a' notitle ~:[~;with lines~]\""
+                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat -' lt rgb '~a' notitle ~:[~;with lines~]\""
                               xrange-p xrange
+                              yrange-p yrange
                               background
                               line-color
                               frame-color

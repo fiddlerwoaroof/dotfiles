@@ -32,14 +32,15 @@
                        (user-homedir-pathname))
       cffi:*foreign-library-directories*)
 
-#.(progn
-    (require :sb-aclrepl)
-    (when (and (interactive-stream-p *terminal-io*)
-               (find-package 'sb-aclrepl))
-      (push :aclrepl cl:*features*))
-    (asdf:load-asd (truename "~/.sbcl.asd"))
-    (ql:quickload :fwoar-sbcl)
-    nil)
+#.(handler-case
+      (progn (require :sb-aclrepl)
+             (when (and (interactive-stream-p *terminal-io*)
+                        (find-package 'sb-aclrepl))
+               (push :aclrepl cl:*features*))
+             (asdf:load-asd (truename "~/.sbcl.asd"))
+             (ql:quickload :fwoar-sbcl)
+             nil)
+    (error (c) (warn "error while loading fowar-sbcl: ~s" c)))
 
 #.(uiop:define-package :fwoar-user
       (:export :*term-size*)

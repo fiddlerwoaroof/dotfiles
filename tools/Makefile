@@ -28,7 +28,9 @@ bin/file-indexer: file-indexer.lisp
 	mv file-indexer bin
 
 bin/git-pick-patch: git-pick-patch.lisp
-	sbcl --eval "(ql:quickload '(:alexandria :serapeum :cl-ppcre))" \
+	sbcl --disable-ldb --lose-on-corruption --disable-debugger --no-userinit --no-sysinit \
+		  --load "$(HOME)"/quicklisp/setup.lisp \
+	     --eval "(ql:quickload '(:alexandria :serapeum :cl-ppcre))" \
 	     --load git-pick-patch.lisp \
 	     --eval '(save-lisp-and-die "bin/git-pick-patch"'" :executable t :toplevel 'git-pick-patch::main :compression t)"
 

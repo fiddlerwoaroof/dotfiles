@@ -20,12 +20,14 @@ git-rb() {
     FW_GIT_REF=refs/heads/"$FW_GIT_BRANCH"
   fi
 
-  read -A results < <( git ls-remote "$FW_GIT_URL" "$2" )
-  jq -n --arg url "$FW_GIT_URL" \
-        --arg branch "$FW_GIT_BRANCH" \
-        --arg hash "$results[1]" \
-        --arg ref "$results[2]" \
-     '{hash: $hash, ref: $ref, url: $url, branch: $branch}'
+  read -A results < <( git ls-remote "$FW_GIT_URL" "$2" | tr '\n' '\t')
+  for (( idx=1; idx < ${#results}; idx += 2 )); do
+    jq -n --arg url "$FW_GIT_URL" \
+          --arg branch "$FW_GIT_BRANCH" \
+          --arg hash "$results[$idx]" \
+          --arg ref "$results[$((idx+1))]" \
+       '{hash: $hash, ref: $ref, url: $url, branch: $branch}'
+   done
 }
 
 git-pwdurl () {

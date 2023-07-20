@@ -43,7 +43,7 @@
     (with-current-buffer json
       (when-let* ((buffer-name (buffer-name))
                   ((s-prefix-p " " buffer-name)))
-        (setf (buffer-name) (subseq buffer-name 1)))
+        (rename-buffer (subseq buffer-name 1)))
       (json-mode)
       (goto-char (point-min))
       (kill-paragraph 1)
