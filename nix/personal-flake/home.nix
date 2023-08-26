@@ -32,6 +32,7 @@ in {
     pkgs.emacs-git
     pkgs.gnuplot
     pkgs.graphviz
+    pkgs.groff
     pkgs.ispell
     pkgs.jq
     pkgs.libffi.dev
@@ -60,6 +61,7 @@ in {
       enable = true;
       userEmail = "el-github@elangley.org";
       userName = "Edward Langley";
+      lfs.enable = true;
       extraConfig = {
         commit = {gpgsign = true;};
         github = {user = "fiddlerwoaroof";};
