@@ -26,6 +26,7 @@ in {
     pkgs.alejandra
     pkgs.cargo
     pkgs.clojure
+    pkgs.coreutils-prefixed
     pkgs.direnv
     pkgs.dtach
     pkgs.ecl

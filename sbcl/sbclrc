@@ -1,7 +1,11 @@
 ;; --*- Mode: Lisp -*--
 
 (sb-ext:restrict-compiler-policy 'debug 3)
+#+(or)
 (sb-ext:restrict-compiler-policy 'safety 1)
+#+(or)
+(sb-ext:restrict-compiler-policy 'speed 0 1)
+
 ;;; The following lines added by ql:add-to-init-file:
 #-quicklisp
 #.(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
@@ -89,7 +93,6 @@
   (when (member "--linedit" sb-ext:*posix-argv* :test 'equal)
     (when (interactive-stream-p *terminal-io*)
       (trace sb-unix:unix-isatty)
-        #-(and darwin arm64)
       (require :sb-aclrepl)
       (require :sb-introspect)
 
@@ -120,10 +123,11 @@
                                                             f :function)))))
   (setq cl:*features* (delete :aclrepl cl:*features*)))
 
-;; (sb-ext:set-sbcl-source-location
-;;   (merge-pathnames (make-pathname :directory '(:relative "sbcl-source")
-;;                                   :defaults #1=(user-homedir-pathname))
-;;                    #1#))
+#+(or)
+(sb-ext:set-sbcl-source-location
+ (merge-pathnames (make-pathname :directory '(:relative "sbcl-source")
+                                 :defaults #1=(user-homedir-pathname))
+                  #1#))
 
 (defun asdf-cwd ()
   (push (truename #p".") asdf:*central-registry*))

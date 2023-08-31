@@ -31,11 +31,10 @@ __license__ = '''\
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'''
 
 import sys
+import os.path
 
 if sys.version_info[0] == 3:
-	try:
-		from sitecustomize3 import *
-	except ImportError:
-		pass
+        sys.path.append (os.path.dirname(__file__))
+        from sitecustomize3 import *
 else:
-	from sitecustomize2 import *
+        from sitecustomize2 import *

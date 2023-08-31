@@ -4,8 +4,8 @@
  gc-cons-threshold 100000000
  load-prefer-newer t
  inhibit-splash-screen t
- inhibit-startup-message t)
-
+ inhibit-startup-message t
+ native-comp-debug 3)
 
 (message invocation-name)
 

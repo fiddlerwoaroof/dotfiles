@@ -94,6 +94,7 @@
   (fwoar/json--ensure-data)
   (let ((data (fwoar/json-nav--get-path fwoar/json-nav--data
                                         (reverse fwoar/json-nav--path))))
+    (message "%s" data)
     (sort (cl-etypecase data
             (hash-table (hash-table-keys data))
             (vector (remove-duplicates (sort (fwoar/json-nav--with-collector (c)

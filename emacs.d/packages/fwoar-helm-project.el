@@ -96,6 +96,48 @@
                          "Make file" #'fwoar::project-find-file)
                 ))))
 
+(defun fwoar::spotlight-validate-or-make-dummy-process (input)
+  (cond
+   ((< (length input) helm-rg-input-min-search-chars)
+    (helm-rg--make-dummy-process
+     input
+     (format "must be at least %d characters" helm-rg-input-min-search-chars)))
+   (t t)))
+
+(defun fwoar::spotlight-search (s)
+  (s-split "\n" (shell-command-to-string
+                 (format "mdfind %s"
+                         (shell-quote-argument s)))))
+
+(defun fwoar::spotlight-search ()
+  "Invoke ripgrep in `helm-rg--current-dir' with `helm-pattern'.
+Make a dummy process if the input is empty with a clear message to the user."
+  (let* ((input helm-pattern))
+    (pcase-exhaustive (fwoar::spotlight-validate-or-make-dummy-process input)
+      ((and (pred processp) x)
+       (setq helm-rg--last-argv nil)
+       x)
+      (`t
+       (let* ((rg-regexp (helm-rg--helm-pattern-to-ripgrep-regexp input))
+              (argv (helm-rg--construct-argv rg-regexp))
+              (real-proc (helm-rg--make-process-from-argv argv)))
+         (setq helm-rg--last-argv argv)
+         real-proc)))))
+
+(defvar *fwoar::spotlight-source*
+  (helm-build-async-source
+      "find files with spotlight"
+    :candidates-process 'fwoar::spotlight-search
+    :action (helm-make-actions
+             "Open" #'find-file)
+    ))
+(defun fwoar:spotlight-search ()
+  (interactive)
+  (helm (list )
+        :input ":write-image"
+        :prompt "Spotlight expression: "
+        ))
+
 (defun fwoar::initialize-fwoar-helm-project ()
   (message "initializing fwoar-helm-project %s" project-switch-commands)
   (define-key project-prefix-map

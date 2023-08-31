@@ -1,4 +1,4 @@
-#!/home/edwlan/bin/sbcl --script
+#!/Users/edwlan/sbcl-m1/bin/sbcl --script
 
 #-noscript
 (load "~/quicklisp/setup.lisp")
@@ -31,6 +31,11 @@
                        (parent (plump:parent sibling))
                        (text (progn (plump:remove-child sibling)
                                     (plump:text parent))))
+                  (princ "> ")
+                  (princ (plump:text sibling))
+                  (princ " ")
+                  (princ ref)
+                  (terpri)
                   (list 'ref
                         work
                         (serapeum:string-join

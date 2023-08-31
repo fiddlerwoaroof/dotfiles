@@ -1,12 +1,12 @@
 #!/usr/bin/env zsh
 
-dot -Gbgcolor=$(zenburn --html bg+1) \
+dot -Gbgcolor="$(zenburn --hsv bg+1)" \
     -Gpad=0.5,0.25 \
-    -Nfontcolor=$(zenburn --html fg) \
-    -Ncolor=$(zenburn --html yellow) \
-    -Nshape=box \
-    -Ecolor=$(zenburn --html fg) \
-    -Grankdir=LR \
+    -Gconcentrate=true \
     -Gsplines=ortho \
+    -Nfontcolor="$(zenburn --hsv fg)" \
+    -Nshape=box \
+    -Ecolor="$(zenburn --hsv fg)" \
+    -Grankdir=LR \
     -Gsize=15,15\! \
     -Gdpi=50

@@ -240,7 +240,7 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 
 (rename-package #1=:cl-user (package-name #1#) (adjoin :• (package-nicknames #1#)))
 
-#+(or)
+;;#+(or)
 (defun plot-stream (s &key
                         (xrange nil xrange-p)
                         (yrange nil yrange-p)
@@ -249,16 +249,30 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
                         (line-color "#DCDCCC")
                         (lines nil))
   (let ((fn (format nil "/tmp/~a.svg" (gensym))))
-    (uiop:run-program (format nil
-                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat -' lt rgb '~a' notitle ~:[~;with lines~]\""
-                              xrange-p xrange
-                              yrange-p yrange
-                              background
-                              line-color
-                              frame-color
-                              lines)
+    (uiop:run-program (with-output-to-string (s)
+                        (format (make-broadcast-stream s *error-output*)
+                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                                xrange-p xrange
+                                yrange-p yrange
+                                background
+                                line-color
+                                frame-color
+                                lines))
 
                       :input s
+                      :error-output *error-output*
                       :output (parse-namestring fn))
     (swank::send-to-emacs (list :write-image fn " ")))
   (values))
+
+#+(or)
+(defun wi (fn)
+  (swank::send-to-emacs (list :write-image fn " ")))
+
+(export
+ (defun dl (&optional (*default-pathname-defaults* *default-pathname-defaults*))
+   (let ((files (funcall (data-lens:exclude (data-lens:on (data-lens:regex-match "^[.]")
+                                                          'pathname-name))
+                         (directory "*.asd"))))
+     (values (mapcar 'load-asd files)
+             files))))

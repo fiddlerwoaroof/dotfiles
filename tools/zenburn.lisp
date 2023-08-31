@@ -4,7 +4,7 @@
   (require :uiop))
 
 #+fw.dump
-(ql:quickload '(:net.didierverna.clon :alexandria))
+(ql:quickload '(:net.didierverna.clon :alexandria :dufy))
 
 (defpackage :fwoar.zenburn
   (:use :cl )
@@ -82,6 +82,18 @@
       (unless (null s)
         (format s "~%")))))
 
+(defun hsv-color (name &optional (s t))
+  (let ((values (theme-color name)))
+    (destructuring-bind (r g b) values
+      (multiple-value-bind (h sa v) (dufy:rgb-to-hsv (/ r 255.0)
+                                                     (/ g 255.0)
+                                                     (/ b 255.0))
+        (prog1 (format s
+                       "~,3f ~,3f ~,3f"
+                       (/ h 360.0) sa v)
+          (unless (null s)
+            (format s "~%")))))))
+
 (defmacro may ((op arg &rest r))
   (let ((cond (case op
                 (cl:funcall (car r))
@@ -113,13 +125,15 @@
 #+fw.dump
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
-    (flag :short-name "h" :long-name "help")
+      (flag :short-name "h" :long-name "help")
     (enum :short-name "f" :long-name "fg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's foreground color")
     (enum :short-name "b" :long-name "bg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's background color")
     (enum :long-name "html"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as an HTML RGB literal")
+    (enum :long-name "hsv"  :enum (mapcar 'car *color-alist*)
+          :description "Show COLOR as a RGB hsv")
     (enum :long-name "css"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as an CSS RGB literal")))
 
@@ -134,6 +148,8 @@
          (remainder (net.didierverna.clon:remainder :context context))
          (css (net.didierverna.clon:getopt :context context
                                            :long-name "css"))
+         (hsv (net.didierverna.clon:getopt :context context
+                                           :long-name "hsv"))
          (html (net.didierverna.clon:getopt :context context
                                             :long-name "html")))
     (cond ((net.didierverna.clon:getopt :context context
@@ -147,6 +163,8 @@
              (format t "rgb(~{~d~^, ~})~%" values)))
           (html
            (html-color html t))
+          (hsv
+           (hsv-color hsv t))
           ((null remainder)
            (summary))
           ((or foreground background)

@@ -265,7 +265,9 @@ Examples:
                          slime-mdot-fu
                          slime-buffer-streams
                          slime-indentation
-                         slime-asdf)
+                         slime-asdf
+                         ;; slime-clime
+                         )
         slime-export-save-file t)
 
   (slime-setup slime-contribs)

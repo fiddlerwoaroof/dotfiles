@@ -134,7 +134,7 @@ Also bind `class' to ((class color) (min-colors 89))."
                           :slant normal :weight normal :height 130 :width normal
                           :foreground ,zenburn-fg :background ,zenburn-bg
                           :inherit fwoar-zenburn-face))))
-   `(variable-pitch ((t (:family "Lato"))))
+   `(variable-pitch ((t (:family "Concourse 2" :height 160 :inherit default))))
 
    `(highlight ((t (:inverse-video t))))
 

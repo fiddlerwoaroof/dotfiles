@@ -51,7 +51,7 @@
   (when (s-suffix-p ".tsx" buffer-file-name)
     (setq-local tree-sitter-language (tree-sitter-require 'tsx)))
   (flycheck-mode 1)
-  (lsp)
+  ;;(lsp)
   (prettier-js-mode 1)
   (tree-sitter-mode 1)
   (tree-sitter-hl-mode 1)
@@ -108,7 +108,7 @@
 (use-package rjsx-mode
   :ensure t
   :config
-  (add-hook 'js2-mode-hook 'lsp)
+  ;; (add-hook 'js2-mode-hook 'lsp)
   (define-key rjsx-mode-map (kbd "M-.") nil)
   (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
 

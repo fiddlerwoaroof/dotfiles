@@ -35,7 +35,7 @@
   (evil-define-key 'normal clojure-mode-map " t" 'cider-test-run-ns-tests)
 
   (def-cider-selector-method ?S "find clojure project file"
-    (fwoar--find-system))
+                             (fwoar--find-system))
 
   (add-hook 'clojure-mode-hook 'fwoar/clojure-hook)
   (add-hook 'cider-mode-hook 'fwoar/cider-hook)

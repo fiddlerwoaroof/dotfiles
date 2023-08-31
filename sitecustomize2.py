@@ -61,8 +61,9 @@ def getTerminalSize():
 
 
 def cmp(a,b): return (a > b) - (a < b)
+
 def sort_(nms):
-	return sorted(nms, cmp = lambda x,y: cmp(x.lower().lstrip('_').rpartition('__')[2], y.lower().lstrip('_').rpartition('__')[2]))
+	return sorted(nms, key = cmp_to_key(lambda x,y: cmp(x.lower().lstrip('_').rpartition('__')[2], y.lower().lstrip('_').rpartition('__')[2])))
 
 def sort_decorator(func):
 	@functools.wraps(func)
@@ -79,30 +80,29 @@ def pprint_decorator(func):
 	return _inner
 
 def dir_decorator(func):
-	@functools.wraps(func)
-	def _inner(nm=__Null, match=__Null):
-		print get_interpframe()
-		result = None
-		if nm is __Null: result = get_interpframe().f_globals.keys()
-		else:
-			result = func(nm)
-			if match is not __Null:
-				x = [x for x in result if x.startswith(match)]
-				if x: result = x
-				else:
-					x = [x for x in result if x.endswith(match)]
-					if x: result = x
-					else:
-						omatch = match
-						if not hasattr(match, 'match'): match = re.compile(match)
-						x = [x for x in result if match.match(x)]
-						if x: result = x
-						else:
-							raise ValueError('No symbols match %s' % omatch)
-
-				if x: result = x
-		return result
-	return _inner
+    @functools.wraps(func)
+    def _inner(nm=__Null, match=__Null):
+            print(get_interpframe())
+            result = None
+            if nm is __Null: result = get_interpframe().f_globals.keys()
+            else:
+                    result = func(nm)
+                    if match is not __Null:
+                            x = [x for x in result if x.startswith(match)]
+                            if x: result = x
+                            else:
+                                    x = [x for x in result if x.endswith(match)]
+                                    if x: result = x
+                                    else:
+                                            omatch = match
+                                            if not hasattr(match, 'match'): match = re.compile(match)
+                                            x = [x for x in result if match.match(x)]
+                                            if x: result = x
+                                            else:
+                                                    raise ValueError('No symbols match %s' % omatch)
+                            if x: result = x
+            return result
+    return _inner
 
 def _pprint(nms):
 	length = max(len(s) for s in nms)
@@ -113,8 +113,9 @@ def _pprint(nms):
 	cc -= 1
 	if cc <= 0: cc = 1
 	for v, c in enumerate(nms):
-		print c.strip().ljust(length),
-		if v % cc == cc-1: print
+		print(c.strip().ljust(length),end='')
+		if v % cc == cc-1: print()
+
 pprint = _pprint
 
 try:
