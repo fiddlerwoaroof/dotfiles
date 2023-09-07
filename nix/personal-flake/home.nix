@@ -63,6 +63,7 @@ in {
       userEmail = "el-github@elangley.org";
       userName = "Edward Langley";
       lfs.enable = true;
+      difftastic.enable = true;
       extraConfig = {
         commit = {gpgsign = true;};
         github = {user = "fiddlerwoaroof";};
@@ -84,7 +85,7 @@ in {
       clock24 = true;
       newSession = true;
       keyMode = "vi";
-      extraConfig = builtins.readFile ../../tmux.conf;
+      extraConfig = builtins.readFile ./tmux.conf;
     };
   };
 
