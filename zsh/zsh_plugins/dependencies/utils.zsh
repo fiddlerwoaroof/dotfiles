@@ -22,6 +22,9 @@ add_exe_path() {
 push_exe_path() {
   remove_path "$1"
   if [[ -d $1 ]]; then
+    while (( idx = $path[(Ie)$1] )); do
+      path[$idx]=()
+    done
     path+=("$@")
   fi
 }
@@ -29,7 +32,10 @@ push_exe_path() {
 prepend_exe_path() {
   remove_path "$1"
   if [[ -d $1 ]]; then
-    path[1]=("$@" "$path[1]")
+    while (( idx = $path[(Ie)$1] )); do
+      path[$idx]=()
+    done
+    path[1]=("$1" "$path[1]")
   fi
 }
 
