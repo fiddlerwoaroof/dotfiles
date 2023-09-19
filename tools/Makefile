@@ -1,4 +1,4 @@
-all: bin bin/git-pick-patch bin/bloomutil bin/zenburn bin/file-indexer
+all: bin bin/git-pick-patch bin/bloomutil bin/zenburn bin/file-indexer bin/cls
 
 bin/zenburn: zenburn.lisp
 	sbcl --lose-on-corruption --disable-ldb --disable-debugger \
@@ -33,6 +33,14 @@ bin/git-pick-patch: git-pick-patch.lisp
 	     --eval "(ql:quickload '(:alexandria :serapeum :cl-ppcre))" \
 	     --load git-pick-patch.lisp \
 	     --eval '(save-lisp-and-die "bin/git-pick-patch"'" :executable t :toplevel 'git-pick-patch::main :compression t)"
+
+bin/cls: cls.lisp
+	sbcl --disable-debugger \
+	     --no-userinit \
+	     --eval '(pushnew :fw.dump *features*)' \
+	     --load cls.lisp \
+	     --eval '(fwoar.cls::dump)'
+	mv cls bin
 
 install: all
 	mkdir -p ${HOME}/bin
