@@ -16,6 +16,10 @@
     }) {inherit pkgs;})
     .outPath;
 
+  # zsh = pkgs.zsh.overrideAttrs ({postInstall}: {postInstall = ''
+  #   make install.info install.html
+  #   '' + postInstall})
+
   common_home =
     import "${dotfileDirectory}/nix/common.nix" {inherit homeDirectory pkgs;};
 
