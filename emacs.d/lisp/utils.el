@@ -183,6 +183,11 @@ from the selected region."
    do (cl-adjoin path Info-directory-list :test 'equal)
    while pos)
 
+  (eval-after-load 'with-editor
+    (progn
+      (setenv "EDITOR" with-editor-emacsclient-executable)
+      (setenv "VISUAL" with-editor-emacsclient-executable)))
+
   ;; NOTE: this must be here...
   (global-company-mode 1))
 
@@ -234,23 +239,6 @@ from the selected region."
   (make-directory default-directory t)
 
   (setq vc-follow-symlinks t)
-
-  (require 'package)
-
-  (setq package-archives
-        '(("gnu" . "http://elpa.gnu.org/packages/")
-          ("melpa" . "https://melpa.org/packages/")
-          ("melpa-stable" . "http://stable.melpa.org/packages/")
-          ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
-        package-archive-priorities '(("melpa-stable" . 1)
-                                     ("gnu" . 0)
-                                     ("melpa" . 3)
-                                     ("nongnu" . 2)))
-
-  ;; (package-initialize 'no-activate)
-  (when (not (package-installed-p 'use-package))
-    (package-refresh-contents)
-    (package-install 'use-package))
 
   (setq browse-url-browser-function 'browse-url-default-browser
         history-delete-duplicates t)

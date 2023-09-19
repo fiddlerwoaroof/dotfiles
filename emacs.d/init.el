@@ -9,6 +9,23 @@
 
 (message invocation-name)
 
+(require 'package)
+
+(setq package-archives
+      '(("gnu" . "http://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")
+        ("melpa-stable" . "http://stable.melpa.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+      package-archive-priorities '(("melpa-stable" . 1)
+                                   ("gnu" . 0)
+                                   ("melpa" . 3)
+                                   ("nongnu" . 2)))
+
+;; (package-initialize 'no-activate)
+(when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
+
 (let ((default-directory  "~/.emacs.d/lisp/"))
   (make-directory default-directory t)
   (add-to-list 'load-path (expand-file-name default-directory))
@@ -143,6 +160,7 @@
   :ensure nil)
 
 (use-package fwoar-json-navigator
+  :after json-mode
   :init (require 'fwoar-json-navigator)
   :ensure nil)
 
