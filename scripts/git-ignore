@@ -1,4 +1,4 @@
-#!/usr/bin/env sbcl --script
+#!/usr/bin/env -S sbcl --script
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (require :uiop))
