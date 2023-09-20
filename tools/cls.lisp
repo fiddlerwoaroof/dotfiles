@@ -26,6 +26,18 @@
   (net.didierverna.clon:defsynopsis (:postfix "PATHS..." :make-default nil)
     (flag :short-name "h" :long-name "help")))
 
+(defun stat-file-type (path-stat)
+  (let ((mode (sb-posix:stat-mode path-stat)))
+    (cond
+      ((sb-posix:s-isdir mode))
+      ((sb-posix:s-isreg mode) :regular-file)
+      ((sb-posix:s-isblk mode) :block-device)
+      ((sb-posix:s-ischr mode) :character-device)
+      ((sb-posix:s-issock mode) :socket)
+      ((sb-posix:s-islnk mode) :symlink)
+      ((sb-posix:s-isfifo mode) :fifo)
+      (t :other))))
+
 (defun directoryp (path-stat)
   (sb-posix:s-isdir (sb-posix:stat-mode path-stat)))
 
@@ -34,19 +46,13 @@
                          (if (directoryp stat)
                              (values (map-directory-entries path
                                                             (data-lens:juxt (constantly :name) 'sb-posix:dirent-name
+                                                                            (constantly :path) (lambda (it)
+                                                                                                 (format nil "~a/~a" path (sb-posix:dirent-name it)))
                                                                             (constantly :inode) 'sb-posix:dirent-ino))
                                      :directory)
                              (values (handle-non-directory path)
-                                     (let ((mode (sb-posix:stat-mode stat)))
-                                       (cond
-                                         ((sb-posix:s-isreg mode) :regular-file)
-                                         ((sb-posix:s-isblk mode) :block-device)
-                                         ((sb-posix:s-ischr mode) :character-device)
-                                         ((sb-posix:s-issock mode) :socket)
-                                         ((sb-posix:s-islnk mode) :symlink)
-                                         ((sb-posix:s-isfifo mode) :fifo)
-                                         (t :other)))))))
-    (error (c) (format *error-output* "~a" c))))
+                                     (stat-file-type stat)))))
+    (error (c) (format *error-output* "~a (~a) ~a" path (type-of c) c))))
 
 (defun main-ld (paths)
   (loop for path in paths
@@ -67,16 +73,23 @@
 
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
-         (net.didierverna.clon:*context* context)
-         (hashes '(:md5 :sha256)))
+         (net.didierverna.clon:*context* context))
     (cond ((net.didierverna.clon:getopt :context context
                                         :long-name "help")
            (net.didierverna.clon:help))
 
 
           (t
-           (main-ld (net.didierverna.clon:remainder :context context))
-           (terpri)))))
+           (let ((input (net.didierverna.clon:remainder :context context)))
+             (if input
+                 (main-ld input)
+                 (loop for input = (read-line *standard-input*
+                                              nil)
+                       while input
+                       for parsed = (coerce (gethash "path" (yason:parse input))
+                                            'simple-string)
+                       do (main-ld (list parsed)))))
+           (fresh-line)))))
 
 (defun dump ()
   (setf net.didierverna.clon:*context* nil
