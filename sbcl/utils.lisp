@@ -240,7 +240,7 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 
 (rename-package #1=:cl-user (package-name #1#) (adjoin :• (package-nicknames #1#)))
 
-;;#+(or)
+#+swank
 (defun plot-stream (s &key
                         (xrange nil xrange-p)
                         (yrange nil yrange-p)
@@ -265,7 +265,7 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
     (swank::send-to-emacs (list :write-image fn " ")))
   (values))
 
-#+(or)
+#+swank
 (defun wi (fn)
   (swank::send-to-emacs (list :write-image fn " ")))
 
