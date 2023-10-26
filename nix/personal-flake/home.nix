@@ -23,6 +23,7 @@ in {
   home.file.".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
 
   home.packages = [
+    #pkgs.gnumake.info
     libpng
     pkgs.alejandra
     pkgs.cargo
@@ -32,12 +33,12 @@ in {
     pkgs.dtach
     pkgs.ecl
     pkgs.emacs-git
+    pkgs.fwoar.gsed
+    pkgs.gawk
     pkgs.gnumake
-    #pkgs.gnumake.info
     pkgs.gnuplot
     pkgs.graphviz
     pkgs.groff
-    pkgs.texinfoInteractive
     pkgs.ispell
     pkgs.jq
     pkgs.libffi.dev
@@ -51,13 +52,16 @@ in {
     pkgs.pandoc
     pkgs.pkg-config
     pkgs.ripgrep
-    sbcl
     pkgs.shellcheck
+    pkgs.texinfoInteractive
     pkgs.tree
+    pkgs.vim
+    pkgs.visidata
     pkgs.zeromq
     pkgs.zsh.doc
     pkgs.zstd
     pkgs.zstd.dev
+    sbcl
     zsh
   ];
 
