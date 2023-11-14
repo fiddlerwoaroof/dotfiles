@@ -1,4 +1,4 @@
 import (builtins.fetchTarball {
-  url = https://github.com/fwoar-greenhouse/emacs-overlay/archive/f8f1aacce3de2db735520e71fde8fbab4c9dbbfc.tar.gz;
-  sha256 = "1739vhg9l36l0zww10x9jx548akp9i5kpdsypgzjq8gvqs9ikr29";
+  url = https://github.com/fwoar-greenhouse/emacs-overlay/archive/c5f0c468f8e92246473c1eabe997ad1c41fb6a1a.tar.gz;
+  sha256 = "1qkdbm4g67rlq0q8c8w4kvzvmk9mvgn5k63wm8l35qnlalx9qzr3";
 })

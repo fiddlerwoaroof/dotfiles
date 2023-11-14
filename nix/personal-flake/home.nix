@@ -3,11 +3,12 @@
   pkgs,
   ...
 }: let
-  libpng =
-    pkgs.libpng.overrideAttrs (_: {meta.outputsToInstall = _.outputs;});
   username = "edwlan";
   homeDirectory = "/Users/${username}";
   dotfileDirectory = "${homeDirectory}/git_repos/dotfiles";
+
+  libpng =
+    pkgs.libpng.overrideAttrs (_: {meta.outputsToInstall = _.outputs;});
 
   zsh =
     pkgs.zsh
