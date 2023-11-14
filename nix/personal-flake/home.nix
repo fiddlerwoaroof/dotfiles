@@ -19,6 +19,7 @@
           outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
         };
     };
+  sbcl = pkgs.fwoar.sbcl_master;
 in {
   home.file.".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
 
@@ -32,9 +33,12 @@ in {
     pkgs.dtach
     pkgs.ecl
     pkgs.emacs-git
+    pkgs.gnumake
+    #pkgs.gnumake.info
     pkgs.gnuplot
     pkgs.graphviz
     pkgs.groff
+    pkgs.texinfoInteractive
     pkgs.ispell
     pkgs.jq
     pkgs.libffi.dev
@@ -48,7 +52,7 @@ in {
     pkgs.pandoc
     pkgs.pkg-config
     pkgs.ripgrep
-    pkgs.sbcl
+    sbcl
     pkgs.shellcheck
     pkgs.tree
     pkgs.zeromq
