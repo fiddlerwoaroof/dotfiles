@@ -12,6 +12,7 @@
 in rec {
   packages = [
     alejandra
+    pkgs.difftastic
     pkgs.direnv
     pkgs.dtach
     pkgs.ecl
