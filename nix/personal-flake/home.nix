@@ -27,6 +27,7 @@ in {
     #pkgs.gnumake.info
     libpng
     pkgs.alejandra
+    pkgs.borgbackup
     pkgs.cargo
     pkgs.clojure
     pkgs.coreutils-prefixed
