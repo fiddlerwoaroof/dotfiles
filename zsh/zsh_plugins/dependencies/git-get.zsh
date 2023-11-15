@@ -1,6 +1,8 @@
 GIT_3DP_DIR="${GIT_3DP_DIR:-"$HOME/git_repos/3dp"}"
 GITHUB_USE_SSH=${GIT_USE_SSH:-${GITHUB_USE_SSH:-yes}}
 GITLAB_USE_SSH=${GIT_USE_SSH:-${GITLAB_USE_SSH:-yes}}
+GIT_CLONE_ARGS=()
+
 typeset -g -A FORGE_ALIASES
 
 function initialize-git-get() {
@@ -65,7 +67,7 @@ function gitlab_url() {
 
 function git-forge-clone() {
   if [[ ! -e "$(basename "$package")" ]]; then
-    git clone "$($1)"
+    git clone "${GIT_CLONE_ARGS[@]}" "$($1)"
   else
     echo "package already cloned"
   fi
