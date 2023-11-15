@@ -59,6 +59,7 @@
    '((emacs-lisp . t)
      (graphql . t)
      (haskell . t)
+     (dot . t)
      (http . t)
      (lisp . t)
      (restclient . t)
