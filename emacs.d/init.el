@@ -432,8 +432,6 @@
 
 (use-package ripgrep :ensure t)
 
-(use-package scss-mode :ensure t)
-
 (use-package smartparens :ensure t :ensure t :config
   (sp-pair "${" "}")
   (sp-with-modes sp--lisp-modes
