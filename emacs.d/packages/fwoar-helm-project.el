@@ -47,8 +47,8 @@
 (defvar fwoar::*helm-project-files-source*
   `((name . "Project Files")
     (candidates . (lambda ()
-                    (when-let* ((fwoar::project (project-current))
-                                (fwoar::root (project-root fwoar::project)))
+                    (when-let* ((fwoar::project fwoar-helm-project::*current-project*)
+                                (fwoar::root (project-root fwoar-helm-project::*current-project*)))
                       (mapcar (lambda (it)
                                 (cons (f-relative it fwoar::root)
                                       it))
@@ -58,7 +58,7 @@
 (defvar fwoar::*helm-project-buffers-source*
   `((name . "Project Buffers")
     (candidates . (lambda ()
-                    (when-let* ((fwoar::project (project-current)))
+                    (when-let* ((fwoar::project fwoar-helm-project::*current-project*))
                       (funcall (-compose (fwoar/over (lambda (it)
                                                        (cons (buffer-name it)
                                                              it)))
@@ -85,16 +85,17 @@
               (default-directory (project-root fwoar::project)))
     (find-file fn)))
 
+(defvar fwoar-helm-project::*current-project*)
 (defun fwoar::helm-find-file-in-project ()
   (interactive)
-  (helm (list 'fwoar::*helm-project-files-source*
-              'fwoar::*helm-project-buffers-source*
-              'fwoar::*helm-project-known-projects*
-              (helm-build-dummy-source
-                  "Create Project File"
-                :action (helm-make-actions
-                         "Make file" #'fwoar::project-find-file)
-                ))))
+  (let ((fwoar-helm-project::*current-project* (project-current nil)))
+    (helm (list 'fwoar::*helm-project-files-source*
+                'fwoar::*helm-project-buffers-source*
+                'fwoar::*helm-project-known-projects*
+                (helm-build-dummy-source
+                    "Create Project File"
+                  :action (helm-make-actions
+                           "Make file" #'fwoar::project-find-file))))))
 
 (defun fwoar::spotlight-validate-or-make-dummy-process (input)
   (cond
@@ -141,9 +142,11 @@ Make a dummy process if the input is empty with a clear message to the user."
 (defun fwoar::initialize-fwoar-helm-project ()
   (message "initializing fwoar-helm-project %s" project-switch-commands)
   (define-key project-prefix-map
-    "f" 'fwoar::helm-find-file-in-project)
+              "f"
+              'fwoar::helm-find-file-in-project)
 
-  (let ((it (assoc 'project-find-file project-switch-commands)))
+  (let ((it (assoc 'project-find-file
+                   project-switch-commands)))
     (when it
       (rplaca it
               'fwoar::helm-find-file-in-project)))
