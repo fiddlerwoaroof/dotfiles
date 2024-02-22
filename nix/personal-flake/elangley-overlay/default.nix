@@ -6,8 +6,8 @@ self: super: {
       src = super.fetchFromGitHub {
         owner = "sbcl";
         repo = "sbcl";
-        rev = "de68e71a81a5ca270ebb796e5d0bb1b47f1a609a";
-        sha256 = "5iVDTXTCH+gxlVGJVqzN3WZ+/qvu0CGB1AbN1YtV1zs=";
+        rev = "ccc6ce08ff4e6de764713acb315f24138e74dca3";
+        sha256 = "aJQb1RENFRixBDx0aISd7Vb8mHP2UT5TDXepoLhIUhY=";
       };
     };
     sbcl_2_3_10 = super.callPackage ./sbcl.nix {
