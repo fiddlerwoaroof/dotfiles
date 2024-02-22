@@ -39,6 +39,11 @@
       ];
     };
   in {
+    defaultPackage.aarch64-darwin = pkgs.mkShell {
+      buildInputs = [
+        pkgs.alejandra
+      ];
+    };
     homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
 

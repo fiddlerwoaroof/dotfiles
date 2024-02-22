@@ -2,7 +2,7 @@ self: super: {
   fwoar = {
     gsed = super.callPackage ./prefixed-gnused {};
     sbcl_master = super.callPackage ./sbcl-master.nix {
-      sbclBootstrap=super.sbcl;
+      sbclBootstrap = super.sbcl;
       src = super.fetchFromGitHub {
         owner = "sbcl";
         repo = "sbcl";
