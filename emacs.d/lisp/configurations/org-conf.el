@@ -3,7 +3,7 @@
     (when (file-exists-p fn)
       (fwoar:read-strings-in-file fn))))
 
-(defun fwoar/mark-safe (fn)
+(defun fwoar:mark-safe (fn)
   (interactive (list buffer-file-name))
   (with-temp-buffer
     (insert "\n")
@@ -14,7 +14,7 @@
 (defvar-local safe-file-p nil)
 (setf (get 'safe-file-p 'risky-local-variable) t)
 
-(defun fwoar/confirm-babel-evaluate (lang body)
+(defun fwoar:confirm-babel-evaluate (lang body)
   (message "Buffer file name: %s" buffer-file-name)
   (let ((result (or safe-file-p
                     (member buffer-file-name (safe-files)))))
@@ -32,7 +32,7 @@
   :ensure t
   :pin gnu
   :custom
-  (org-confirm-babel-evaluate 'fwoar/confirm-babel-evaluate)
+  (org-confirm-babel-evaluate 'fwoar:confirm-babel-evaluate)
   (org-default-notes-file (concat org-directory "/scratch.org"))
   (org-directory "~/org")
   (org-log-done 'time)

@@ -331,7 +331,7 @@
 
 #+NAME: get-face-grid
 #+BEGIN_SRC emacs-lisp :exports code
-  (defun fwoar/tmp/zenburn-nearest-color (target)
+  (defun fwoar-tmp::zenburn-nearest-color (target)
     (rassoc (caar (cl-sort (fwoar:zenburn-with-color-variables
                              (mapcar (lambda (_)
                                        (cons _
@@ -343,19 +343,19 @@
                            :key 'cdr))
             fwoar-zenburn-default-colors-alist))
 
-  (defun fwoar/tmp/get-prefix (v)
+  (defun fwoar-tmp::get-prefix (v)
     (car
      (s-split-up-to "-"
                     (symbol-name v)
                     1)))
 
-  (defun fwoar/tmp/break-by-prefix (tab)
+  (defun fwoar-tmp::break-by-prefix (tab)
     (nreverse
      (reduce (lambda (accum next)
                (let ((accum-key (caar accum))
                      (next-key (car next)))
-                 (if (equal (fwoar/tmp/get-prefix accum-key)
-                            (fwoar/tmp/get-prefix next-key))
+                 (if (equal (fwoar-tmp::get-prefix accum-key)
+                            (fwoar-tmp::get-prefix next-key))
                      (cons next accum)
                    (list* next 'hline accum))))
              (cdr tab)
@@ -363,7 +363,7 @@
 
   (list* '(FACE PARENT FOREGROUND NEAREST\ FG DISTANCE BACKGROUND NEAREST\ BG DISTANCE)
          'hline
-         (fwoar/tmp/break-by-prefix
+         (fwoar-tmp::break-by-prefix
           (cl-sort (mapcan (lambda (f)
                              (let ((r (face-attribute f :inherit nil nil)))
                                (if (or (and (eq (face-attribute f :foreground) 'unspecified)
@@ -387,12 +387,12 @@
 
                                              (if (eq 'unspecified (face-attribute f :foreground))
                                                  ""
-                                               (car (fwoar/tmp/zenburn-nearest-color (face-attribute f :foreground))))
+                                               (car (fwoar-tmp::zenburn-nearest-color (face-attribute f :foreground))))
                                              (if (eq 'unspecified (face-attribute f :foreground))
                                                  ""
                                                (format "%6.2f"
                                                        (* (/ (color-distance (face-attribute f :foreground)
-                                                                             (cdr (fwoar/tmp/zenburn-nearest-color
+                                                                             (cdr (fwoar-tmp::zenburn-nearest-color
                                                                                    (face-attribute f :foreground))))
                                                              65536.0)
                                                           100)))
@@ -401,12 +401,12 @@
                                                (face-attribute f :background))
                                              (if (eq 'unspecified (face-attribute f :background))
                                                  ""
-                                               (car (fwoar/tmp/zenburn-nearest-color (face-attribute f :background))))
+                                               (car (fwoar-tmp::zenburn-nearest-color (face-attribute f :background))))
                                              (if (eq 'unspecified (face-attribute f :background))
                                                  ""
                                                (format "%6.2f"
                                                        (* (/ (color-distance (face-attribute f :background)
-                                                                             (cdr (fwoar/tmp/zenburn-nearest-color
+                                                                             (cdr (fwoar-tmp::zenburn-nearest-color
                                                                                    (face-attribute f :background))))
                                                              65536.0)
                                                           100))))))))

@@ -131,7 +131,7 @@
                   "git@git.fiddlerwoaroof.com:dotfiles.git"
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
-(defun fwoar/setup-load-path ()
+(defun fwoar:setup-load-path ()
   (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
                                    load-path
                                    :test 'equal))
@@ -145,7 +145,7 @@
                                    :test 'equal)))
     (setq load-path new-load-path)))
 
-(fwoar/setup-load-path)
+(fwoar:setup-load-path)
 
 (use-package fwoar-pastebin :ensure nil
   :custom
@@ -163,8 +163,8 @@
   :init (require 'fwoar-json-navigator)
   :ensure nil)
 
-(defun fwoar/package-configuration (package)
-  (fwoar/setup-load-path)
+(defun fwoar:package-configuration (package)
+  (fwoar:setup-load-path)
   (let* ((local-configs)
          (git-configs (concat *dotfiles-repo*
                               "emacs.d/lisp/configurations/"))
@@ -173,7 +173,7 @@
     conf-file))
 
 (defun load-package-configuration (package)
-  (let ((conf-file (fwoar/package-configuration package)))
+  (let ((conf-file (fwoar:package-configuration package)))
     (load conf-file)))
 
 (defmacro define-obsolete-function-alias ( obsolete-name current-name &optional when docstring)
@@ -182,7 +182,7 @@
      (defalias ,obsolete-name ,current-name ,docstring)
      (make-obsolete ,obsolete-name ,current-name ,(or when "unspecified"))))
 
-(defun fwoar/load-local-packages ()
+(defun fwoar:load-local-packages ()
   (interactive)
   (mapc 'package-install-file
         (directory-files (format "%s/%s" *dotfiles-repo* "emacs.d/packages/")
@@ -191,7 +191,7 @@
 (use-package json-mode
   :ensure t)
 (unless (package-installed-p 'fwoar-functional-utils)
-  (fwoar/load-local-packages))
+  (fwoar:load-local-packages))
 
 (defvar fwoar-git-mode :ssh)
 (when (locate-library "site-lisp")
@@ -237,7 +237,7 @@
     (magit-keyword-test "^\\(\\(?:test(\\([^)]+?\\))\\)\\|\\(?:test\\>\\)\\)")
     ))
 
-(defun fwoar/propertize-magit-log (_rev msg)
+(defun fwoar:propertize-magit-log (_rev msg)
   (cl-loop for (face regexp) in fwoar::*magit-log-regexp-faces*
            do (let ((boundary 0))
                 (while (string-match regexp msg boundary)
@@ -265,7 +265,7 @@
   'magit-dispatch
 
   (advice-add 'magit-log-propertize-keywords :after
-              'fwoar/propertize-magit-log))
+              'fwoar:propertize-magit-log))
 
 (use-package browse-at-remote
   :ensure t
@@ -299,7 +299,7 @@
 
 
 
-(defun fwoar/c-a-p ()
+(defun fwoar:c-a-p ()
   (interactive)
   (save-excursion
     (cl-destructuring-bind (start . _end) (bounds-of-thing-at-point 'defun)
@@ -418,14 +418,14 @@
 
 
 
-(defun fwoar/markdown-mode-hook ()
+(defun fwoar:markdown-mode-hook ()
   (setf left-margin-width 10
         right-margin-width 10))
 (use-package markdown-mode
   :ensure t
   :config
   (add-hook 'markdown-mode-hook 'variable-pitch-mode)
-  (add-hook 'markdown-mode-hook 'fwoar/markdown-mode-hook))
+  (add-hook 'markdown-mode-hook 'fwoar:markdown-mode-hook))
 
 (use-package rainbow-delimiters :ensure t)
 
@@ -527,7 +527,7 @@
   (define-key global-map "\C-c[" "\C-u-1\C-xnp\M-<"))
 
 
-(defun fwoar/zenburn-css ()
+(defun fwoar:zenburn-css ()
   (interactive)
   (mapcar (lambda (desc)
             (cl-destructuring-bind (name . value) desc
@@ -537,7 +537,7 @@
                          value)))
           fwoar-zenburn-default-colors-alist))
 
-(defun fwoar/camel-kebab (string)
+(defun fwoar:camel-kebab (string)
   (let ((case-fold-search nil))
     (downcase
      (format "%c%s"
@@ -548,12 +548,12 @@
                                      string nil nil nil 1))
                  string)))))
 
-(defun fwoar/cc-camel-kebab (start end)
+(defun fwoar:cc-camel-kebab (start end)
   (interactive "*r")
   (let ((target (buffer-substring start end)))
     (save-excursion
       (delete-region start end)
-      (insert (fwoar/camel-kebab target)))))
+      (insert (fwoar:camel-kebab target)))))
 
 (defun fwoar--find-package-json ()
   (expand-file-name
@@ -590,7 +590,7 @@
 
 (setq diary-file (expand-file-name "~/diary"))
 
-(cl-defmacro fwoar/binding (setter target &body bindings)
+(cl-defmacro fwoar:binding (setter target &body bindings)
   (declare (indent 2))
   (let ((target-sym (gensym)))
     `(let ((,target-sym ,target))
@@ -605,7 +605,7 @@
   (set-window-dedicated-p (selected-window) t)
   (when-let (w (window-in-direction 'above))
     (set-window-parameter w 'no-delete-other-windows t))
-  (fwoar/binding set-window-parameter (selected-window)
+  (fwoar:binding set-window-parameter (selected-window)
     (no-other-window t)
     (no-delete-other-windows t))
   ())
@@ -627,7 +627,7 @@
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
 (put 'list-timers 'disabled nil)
 
-(defun fwoar/center-defun ()
+(defun fwoar:center-defun ()
   (interactive)
   (cl-destructuring-bind (a . b) (bounds-of-thing-at-point 'defun)
     (save-excursion

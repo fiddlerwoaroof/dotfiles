@@ -16,5 +16,5 @@ This uses (interactive \"r\") to automagically populate the arguments
 from the selected region."
   (interactive "r")
   (browse-url
-   (fwoar/doc-for-resource-type
+   (fwoar:doc-for-resource-type
     (buffer-substring min max))))

@@ -16,7 +16,7 @@
     "Face for parts of commit messages inside brackets."
     :group 'magit-faces))
 
-(defun fwoar/propertize-magit-log (_rev msg)
+(defun fwoar:propertize-magit-log (_rev msg)
   (let ((boundary 0))
     (while (string-match "^\\(\\(?:feat\\(?:ure\\)?(\\([^)]+?\\))\\)\\|\\(?:feat\\(ure\\)?\\>\\)\\)" msg boundary)
       (setq boundary (match-end 0))
@@ -53,7 +53,7 @@
   'magit-dispatch
 
   (advice-add 'magit-log-propertize-keywords :after
-              'fwoar/propertize-magit-log))
+              'fwoar:propertize-magit-log))
 
 (use-package browse-at-remote
   :after magit

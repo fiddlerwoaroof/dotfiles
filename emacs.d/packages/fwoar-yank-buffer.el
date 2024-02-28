@@ -27,23 +27,23 @@
 ;;; Code:
 
 ;;;###autoload
-(defun fwoar/yank-buffer-file ()
+(defun fwoar:yank-buffer-file ()
   (interactive)
   (kill-new buffer-file-name))
 
 ;;;###autoload
-(defun fwoar/yank-buffer-directory ()
+(defun fwoar:yank-buffer-directory ()
   (interactive)
   (kill-new default-directory))
 
 ;;;###autoload
-(defun fwoar/yank-relative-to-project ()
+(defun fwoar:yank-relative-to-project ()
   (interactive)
   (let ((default-directory (project-root (project-current))))
     (kill-new (file-relative-name buffer-file-name))))
 
 ;;;###autoload
-(defun fwoar/yank-buffer-name ()
+(defun fwoar:yank-buffer-name ()
   (interactive)
   (kill-new (buffer-name)))
 

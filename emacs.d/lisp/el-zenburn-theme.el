@@ -17,7 +17,7 @@ Each element has the form (NAME . HEX).
   "fwoar zenburn theme"
   :group 'faces)
 
-(defmacro fwoar/facify-alist (&rest specs)
+(defmacro fwoar:facify-alist (&rest specs)
   `(progn ,@(mapcan (lambda (spec)
                       (cl-destructuring-bind (name . value) spec
                         `((defface ,(make-symbol (format "%s-face" name))
@@ -450,7 +450,7 @@ Each element has the form (NAME . HEX).
  '(treemacs-root-face ((t (:inherit font-lock-constant-face :height 1.5))))
  '(default ((t (:family "Source Code Pro" :foundry "nil" :slant normal :weight normal
                         :height 130 :width normal
-                        :inherit fwoar-zenburn-face))))) 
+                        :inherit fwoar-zenburn-face)))))
 
 ;;;###autoload
 (when load-file-name

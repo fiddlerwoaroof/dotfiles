@@ -4,14 +4,14 @@
   (lsp-enable-indentation nil)
   (lsp-enable-snippet t))
 
-(defun fwoar/lsp-ui-hook ()
+(defun fwoar:lsp-ui-hook ()
   (lsp-ui-sideline-mode -1))
 
 (use-package lsp-ui
   :after lsp-mode
   :ensure t
   :config
-  (add-hook 'lsp-ui-mode-hook 'fwoar/lsp-ui-hook))
+  (add-hook 'lsp-ui-mode-hook 'fwoar:lsp-ui-hook))
 
 (use-package lsp-treemacs
   :after treemacs lsp

@@ -182,7 +182,7 @@
 (defvar fwoar::*is-ordinary*
   (not (string= invocation-name "EmacsNotes")))
 
-(defun fwoar/source (filename pattern)
+(defun fwoar:source (filename pattern)
   "Update environment variables from a shell source file."
   (interactive "fSource file: ")
 
@@ -210,7 +210,7 @@
 
 (defun cold-boot ()
   ""
-  (fwoar/source "~/.zshrc" ".*PATH")
+  (fwoar:source "~/.zshrc" ".*PATH")
   (set-exec-path-from-shell-PATH)
   (run-with-idle-timer 5 t 'garbage-collect)
   ;; (setq fwoar::*is-ordinary* (not (string= invocation-name "EmacsNotes")))

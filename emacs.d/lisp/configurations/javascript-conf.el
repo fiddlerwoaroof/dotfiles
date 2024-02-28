@@ -9,7 +9,7 @@
   (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode))
   (setq-default js2-basic-offset 4)
   (setq-default js-indent-level 4)
-  (define-key js2-mode-map (kbd "<leader>t") 'fwoar/trigger-jest)
+  (define-key js2-mode-map (kbd "<leader>t") 'fwoar:trigger-jest)
   (add-hook 'js2-mode-hook 'flycheck-mode)
   (customize-set-variable 'js2-mode-show-parse-errors nil)
   (customize-set-variable 'js2-strict-missing-semi-warning nil)
@@ -46,7 +46,7 @@
                    ;; return NaN anyway.  Shouldn't be a problem.
                    (memq (char-before) '(?, ?} ?{)))))))))
 
-(defun fwoar/typescript-mode-hook ()
+(defun fwoar:typescript-mode-hook ()
   (tree-sitter-require 'typescript)
   (when (s-suffix-p ".tsx" buffer-file-name)
     (setq-local tree-sitter-language (tree-sitter-require 'tsx)))
@@ -65,8 +65,8 @@
 (use-package typescript-mode
   :ensure t
   :config
-  (define-key typescript-mode-map (kbd "<leader>t") 'fwoar/trigger-jest)
-  (add-hook 'typescript-mode-hook 'fwoar/typescript-mode-hook)
+  (define-key typescript-mode-map (kbd "<leader>t") 'fwoar:trigger-jest)
+  (add-hook 'typescript-mode-hook 'fwoar:typescript-mode-hook)
   (add-to-list 'auto-mode-alist
                '("\\.tsx$" . typescript-mode)))
 
@@ -98,7 +98,7 @@
    :ensure t
    :config
    (add-hook 'js2-mode-hook 'tide-setup)
-   (add-hook 'typescript-mode-hook 'fwoar/typescript-mode-hook)
+   (add-hook 'typescript-mode-hook 'fwoar:typescript-mode-hook)
    (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
    (comment
     (flycheck-add-next-checker 'javascript-eslint
@@ -153,16 +153,16 @@
   (add-hook 'js2-mode-hook 'prettier-js-mode)
   (add-hook 'css-mode 'prettier-js-mode))
 
-(cl-defgeneric fwoar/test-on-save ()
+(cl-defgeneric fwoar:test-on-save ()
   (:method ()))
 
 (comment
- (defvar-local fwoar/*test-file-name* nil)
- (defun fwoar/trigger-jest ()
+ (defvar-local fwoar:*test-file-name* nil)
+ (defun fwoar:trigger-jest ()
    (interactive)
-   (comment (when-let ((test-name (if fwoar/*test-file-name*
-                                      fwoar/*test-file-name*
-                                    (setq-local fwoar/*test-file-name*
+   (comment (when-let ((test-name (if fwoar:*test-file-name*
+                                      fwoar:*test-file-name*
+                                    (setq-local fwoar:*test-file-name*
                                                 (if (projectile-test-file-p buffer-file-name)
                                                     buffer-file-name
                                                   (projectile-find-implementation-or-test buffer-file-name))))))
@@ -186,14 +186,14 @@
                                                   (project-root (project-current)))))
        (delete-process proc)))))
 
-(cl-defmethod fwoar/test-on-save (&context (major-mode (derived-mode typescript-mode)))
-  (fwoar/trigger-jest))
-(cl-defmethod fwoar/test-on-save (&context (major-mode (derived-mode js-mode)))
-  (fwoar/trigger-jest))
-(defun fwoar/trigger-jest ())
+(cl-defmethod fwoar:test-on-save (&context (major-mode (derived-mode typescript-mode)))
+  (fwoar:trigger-jest))
+(cl-defmethod fwoar:test-on-save (&context (major-mode (derived-mode js-mode)))
+  (fwoar:trigger-jest))
+(defun fwoar:trigger-jest ())
 
 (defvar *tos-hook*
-  (add-hook 'after-save-hook 'fwoar/test-on-save))
+  (add-hook 'after-save-hook 'fwoar:test-on-save))
 
 (cl-macrolet ((def-js-like-find-system (mode)
 		            `(cl-defmethod fwoar--find-system (&context (major-mode ,mode))

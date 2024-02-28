@@ -28,33 +28,33 @@
 ;;; Code:
 (require 'reazon)
 
-(reazon-defrel fwoar/tago (tag dom)
+(reazon-defrel fwoar:tago (tag dom)
   (reazon-caro dom tag))
 
-(reazon-defrel fwoar/attro (attr value dom)
+(reazon-defrel fwoar:attro (attr value dom)
   (reazon-fresh (attrs attr-pair dom-cdr)
     (reazon-cdro dom dom-cdr)
     (reazon-caro dom-cdr attrs)
     (reazon-membero attr-pair attrs)
     (reazon-conso attr value attr-pair)))
 
-(reazon-defrel fwoar/childreno (children dom)
+(reazon-defrel fwoar:childreno (children dom)
   (reazon-fresh (attrs attr-pair dom-cdr)
     (reazon-cdro dom dom-cdr)
     (reazon-cdro dom-cdr children)))
 
-(reazon-defrel fwoar/childo (child dom)
+(reazon-defrel fwoar:childo (child dom)
   (reazon-fresh (children)
-    (fwoar/childreno children dom)
+    (fwoar:childreno children dom)
     (reazon-membero child children)))
 
-(reazon-defrel fwoar/dom-searcho (child dom)
+(reazon-defrel fwoar:dom-searcho (child dom)
   (reazon-disj
    (reazon-== child dom)
    (reazon-fresh (int)
      (reazon-conj
-      (fwoar/childo int dom)
-      (fwoar/dom-searcho child int)))))
+      (fwoar:childo int dom)
+      (fwoar:dom-searcho child int)))))
 
 
 (provide 'fwoar-kanren-utils)

@@ -123,7 +123,7 @@
   (define-key global-map (kbd "C-,") 'fwoar:smartparens-map)
   (evil-define-key 'normal 'global (kbd ",") 'fwoar:smartparens-map))
 
-(defun fwoar/setup-evil-collection-for-mode (mode)
+(defun fwoar:setup-evil-collection-for-mode (mode)
   (evil-collection-require mode)
   (lexical-let ((mode mode))
     (with-eval-after-load mode
@@ -133,13 +133,13 @@
   :ensure t
   :after evil
   :config
-  (fwoar/setup-evil-collection-for-mode 'eshell)
-  (fwoar/setup-evil-collection-for-mode 'deadgrep)
-  (fwoar/setup-evil-collection-for-mode 'company)
+  (fwoar:setup-evil-collection-for-mode 'eshell)
+  (fwoar:setup-evil-collection-for-mode 'deadgrep)
+  (fwoar:setup-evil-collection-for-mode 'company)
   ;;;; Bad idea, messes with bindings too much :)
-  ;; (fwoar/setup-evil-collection-for-mode 'magit)
-  (fwoar/setup-evil-collection-for-mode 'org)
-  (fwoar/setup-evil-collection-for-mode 'xref)
+  ;; (fwoar:setup-evil-collection-for-mode 'magit)
+  (fwoar:setup-evil-collection-for-mode 'org)
+  (fwoar:setup-evil-collection-for-mode 'xref)
   )
 
 

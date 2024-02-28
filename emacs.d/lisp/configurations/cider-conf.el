@@ -1,20 +1,20 @@
-(defun fwoar/clojure-hook ()
+(defun fwoar:clojure-hook ()
   (message "clojure-hook")
   (flycheck-mode 1)
   (rainbow-delimiters-mode 1)
   (evil-smartparens-mode 1)
   (smartparens-strict-mode 1))
 
-(defun fwoar/cider-hook-base ()
+(defun fwoar:cider-hook-base ()
   (cider-company-enable-fuzzy-completion))
-(defun fwoar/cider-hook ()
-  (fwoar/cider-hook-base)
+(defun fwoar:cider-hook ()
+  (fwoar:cider-hook-base)
   (aggressive-indent-mode 1))
-(defun fwoar/cider-repl-hook ()
-  (fwoar/cider-hook-base)
+(defun fwoar:cider-repl-hook ()
+  (fwoar:cider-hook-base)
   (aggressive-indent-mode 0))
 
-(defun fwoar/cider-eval-expression-at-point-in-repl ()
+(defun fwoar:cider-eval-expression-at-point-in-repl ()
   (interactive)
   (let ((form (cider-defun-at-point)))
     ;; Strip excess whitespace
@@ -37,9 +37,9 @@
   (def-cider-selector-method ?S "find clojure project file"
                              (fwoar--find-system))
 
-  (add-hook 'clojure-mode-hook 'fwoar/clojure-hook)
-  (add-hook 'cider-mode-hook 'fwoar/cider-hook)
-  (add-hook 'cider-repl-mode-hook 'fwoar/cider-repl-hook)
+  (add-hook 'clojure-mode-hook 'fwoar:clojure-hook)
+  (add-hook 'cider-mode-hook 'fwoar:cider-hook)
+  (add-hook 'cider-repl-mode-hook 'fwoar:cider-repl-hook)
 
   (modify-syntax-entry ?: "w" clojure-mode-syntax-table)
   (modify-syntax-entry ?_ "w" clojure-mode-syntax-table)
@@ -54,7 +54,7 @@
         cider-repl-history-file "~/.emacs.d/cider-history.clj")
 
   (define-key cider-mode-map
-              (kbd "C-c C-j") 'fwoar/cider-eval-expression-at-point-in-repl))
+              (kbd "C-c C-j") 'fwoar:cider-eval-expression-at-point-in-repl))
 
 (use-package clj-refactor
   :after cider
