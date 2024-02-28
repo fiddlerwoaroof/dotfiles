@@ -68,7 +68,7 @@ Each element has the form (NAME . HEX).
 `+N' suffixes indicate a color is lighter.
 `-N' suffixes indicate a color is darker.")
 
-(defmacro fwoar/zenburn-with-color-variables (&rest body)
+(defmacro fwoar:zenburn-with-color-variables (&rest body)
   "`let' bind all colors defined in `zenburn-colors-alist' around BODY.
 Also bind `class' to ((class color) (min-colors 89))."
   (declare (indent 0))
@@ -77,7 +77,7 @@ Also bind `class' to ((class color) (min-colors 89))."
                  fwoar-zenburn-default-colors-alist)
      ,@body))
 
-(fwoar/zenburn-with-color-variables
+(fwoar:zenburn-with-color-variables
   (defface fwoar-zenburn-1-face
     `((default :foreground ,zenburn-fg-1 :background ,zenburn-bg-1))
     "fwoar-zenburn-1" :group 'fwoar-zenburn)
@@ -107,7 +107,7 @@ Also bind `class' to ((class color) (min-colors 89))."
 
 
 
-(fwoar/zenburn-with-color-variables
+(fwoar:zenburn-with-color-variables
   (customize-set-variable 'vc-annotate-color-map
                           `((20  . ,zenburn-red)
                             (40  . ,zenburn-red-1)

@@ -201,7 +201,7 @@
 
 
 
-(fwoar/zenburn-with-color-variables
+(fwoar:zenburn-with-color-variables
   (defface magit-keyword-feature
     `((t :foreground ,zenburn-green :inherit magit-keyword))
     "Face for parts of commit messages inside brackets."

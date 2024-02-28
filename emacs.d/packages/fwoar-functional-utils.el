@@ -27,22 +27,22 @@
 ;;; Code:
 
 (eval-when (compile load eval)
-  (defvar *fwoar/namespaced-funs* ()))
+  (defvar fwoar:*namespaced-funs* ()))
 
-(cl-defmacro fwoar/def-ns-fun (name (&rest args) &body body)
+(cl-defmacro fwoar:def-ns-fun (name (&rest args) &body body)
   (declare (indent defun))
-  (let ((namespaced-sym-old (intern (format "fwoar/%s" name)))
+  (let ((namespaced-sym-old (intern (format "fwoar:%s" name)))
         (namespaced-sym (intern (format "data-lens:%s" name))))
     `(progn
        (cl-pushnew '(,name ,args ,namespaced-sym)
-                   *fwoar/namespaced-funs*
+                   fwoar:*namespaced-funs*
                    :test 'equal)
        (cl-defun ,namespaced-sym-old ,args
          ,@body)
        (cl-defun ,namespaced-sym ,args
          ,@body))))
 
-(fwoar/def-ns-fun just-after (pred)
+(fwoar:def-ns-fun just-after (pred)
   (let ((state nil))
     (lambda (it)
       (cond
@@ -51,7 +51,7 @@
 
 ;;;###autoload
 (cl-defmacro with-unaliased (&body body)
-  `(flet ,(loop for (name raw-args namespaced) in *fwoar/namespaced-funs*
+  `(flet ,(loop for (name raw-args namespaced) in fwoar:*namespaced-funs*
                 for rest-arg = (cl-find-if (data-lens:just-after
                                             (lambda (it)
                                               (member it '(&rest &body))))
@@ -78,71 +78,71 @@
                                      (list rest-arg)))))
      ,@body))
 
-(cl-defmacro fwoar/def-combinator (name (seq &rest args) &body body)
+(cl-defmacro fwoar:def-combinator (name (seq &rest args) &body body)
   (declare (indent defun))
   (let* ((docstring (when (stringp (car body))
                       (car body)))
          (body (if docstring
                    (cdr body)
                  body)))
-    `(fwoar/def-ns-fun ,name ,args
+    `(fwoar:def-ns-fun ,name ,args
        ,docstring
        (lambda (,seq)
          ,@body))))
 
-(fwoar/def-ns-fun iota (count &optional (start 0))
+(fwoar:def-ns-fun iota (count &optional (start 0))
   (cl-loop for x from start
            repeat count
            collect x))
 
-(fwoar/def-ns-fun applying (f &rest pos-args)
+(fwoar:def-ns-fun applying (f &rest pos-args)
   (lambda (list)
     (apply f (append pos-args list))))
 
-(fwoar/def-ns-fun on (fun key-fun)
+(fwoar:def-ns-fun on (fun key-fun)
   (lambda (it)
     (funcall fun (funcall key-fun it))))
 
-(fwoar/def-combinator over (list f &rest args)
+(fwoar:def-combinator over (list f &rest args)
   "Return a function that maps F over LIST with possible extra ARGS"
   (map (type-of list)
        (lambda (it)
          (apply f it args))
        list))
 
-(fwoar/def-combinator filter (list f &rest args)
+(fwoar:def-combinator filter (list f &rest args)
   (cl-remove-if-not (lambda (it)
                       (apply f it args))
                     list))
 
-(fwoar/def-combinator zip-with (lists f)
+(fwoar:def-combinator zip-with (lists f)
   (apply 'cl-mapcar f lists))
 
-(fwoar/def-ns-fun element (num)
+(fwoar:def-ns-fun element (num)
   (lambda (it)
     (elt it num)))
 
-(fwoar/def-ns-fun hash-lookup (ht)
+(fwoar:def-ns-fun hash-lookup (ht)
   (lambda (key)
     (gethash key ht)))
 
-(cl-defgeneric fwoar/eq (a b)
+(cl-defgeneric fwoar:eq (a b)
   (:method (a b)
            (eql a b))
   (:method ((a string) (b string))
            (equal a b)))
 
-(fwoar/def-ns-fun == (v)
+(fwoar:def-ns-fun == (v)
   (lambda (it)
-    (fwoar/eq v it)))
+    (fwoar:eq v it)))
 
-(fwoar/def-ns-fun applicable-when (cond fn)
+(fwoar:def-ns-fun applicable-when (cond fn)
   (lambda (data)
     (when (funcall cond data)
       (funcall fn data))))
 
 
-(fwoar/def-ns-fun matches-regex (regex &optional start)
+(fwoar:def-ns-fun matches-regex (regex &optional start)
   (let ((regex regex))
     (lambda (data)
       (if start
@@ -150,7 +150,7 @@
         (string-match-p regex data)))))
 
 
-(cl-defmacro fwoar/and (&rest fns)
+(cl-defmacro fwoar:and (&rest fns)
   (let ((dat (gensym "dat")))
     `(lambda (,dat)
        (and ,@(mapcar (lambda (fn)
@@ -159,7 +159,7 @@
 
 ;; TODO: think about whether the plist behavior here makes sense
 ;;       should we require plists to have symbol keys?
-(cl-defgeneric fwoar/extract-key (map key)
+(cl-defgeneric fwoar:extract-key (map key)
   (:method ((map hash-table) key)
            (gethash key map))
   (:method ((map list) key)
@@ -171,45 +171,45 @@
   (:method ((map vector) (key number))
            (elt map key)))
 
-(fwoar/def-ns-fun key (key)
+(fwoar:def-ns-fun key (key)
   (lambda (map)
-    (fwoar/extract-key map key)))
+    (fwoar:extract-key map key)))
 
-(fwoar/def-ns-fun keys (key &rest keys)
+(fwoar:def-ns-fun keys (key &rest keys)
   (lambda (map)
     (cl-loop for key in (cons key keys)
-             for cur = (fwoar/extract-key map key) then (fwoar/extract-key cur key)
+             for cur = (fwoar:extract-key map key) then (fwoar:extract-key cur key)
              finally (return cur))))
 
 (comment
- (fwoar/def-ns-fun regex-match (regex)
+ (fwoar:def-ns-fun regex-match (regex)
    (lambda (data)
      (cl-ppcre:scan-to-strings regex data))))
 
-(fwoar/def-ns-fun include (pred)
+(fwoar:def-ns-fun include (pred)
   (lambda (seq)
     (cl-remove-if-not pred seq)))
 
-(fwoar/def-ns-fun exclude (pred)
+(fwoar:def-ns-fun exclude (pred)
   (lambda (seq)
     (cl-remove-if pred seq)))
 
-(fwoar/def-ns-fun pick (selector)
+(fwoar:def-ns-fun pick (selector)
   (lambda (seq)
     (cl-map 'list selector seq)))
 
-(fwoar/def-ns-fun slice (start &optional end)
+(fwoar:def-ns-fun slice (start &optional end)
   (lambda (it)
     (cl-subseq it start end)))
 
-(fwoar/def-ns-fun juxt (fun1 &rest r)
+(fwoar:def-ns-fun juxt (fun1 &rest r)
   (lambda (&rest args)
     (list* (apply fun1 args)
            (mapcar (lambda (f)
                      (apply f args))
                    r))))
 
-(defalias 'fwoar/• '-compose)
+(defalias 'fwoar:• '-compose)
 
 (cl-defgeneric data-lens:functionalize (it)
   (:method ((it hash-table))

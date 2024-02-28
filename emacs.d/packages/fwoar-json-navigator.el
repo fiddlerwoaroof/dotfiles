@@ -29,12 +29,12 @@
 (require 'fwoar-functional-utils)
 (require 'json-mode)
 
-(defvar-local fwoar/json-nav--data nil)
-(defvar-local fwoar/json-nav--path nil)
-(defvar-local fwoar/json-nav--prev-buffer nil)
-(defvar-local fwoar/json-nav--start-buffer nil)
+(defvar-local fwoar:json-nav--data nil)
+(defvar-local fwoar:json-nav--path nil)
+(defvar-local fwoar:json-nav--prev-buffer nil)
+(defvar-local fwoar:json-nav--start-buffer nil)
 
-(defun fwoar/browse-json-response (url)
+(defun fwoar:browse-json-response (url)
   (interactive "Murl? ")
   (let ((json (url-retrieve-synchronously url)))
     (comment
@@ -54,35 +54,35 @@
                  (buffer-string)))))
     (switch-to-buffer json)))
 
-(defun fwoar/json--ensure-data ()
+(defun fwoar:json--ensure-data ()
   (save-excursion
     (goto-char (point-min))
-    (setq-local fwoar/json-nav--data (json-parse-buffer :null-object nil)))
+    (setq-local fwoar:json-nav--data (json-parse-buffer :null-object nil)))
   (values))
 
-(defun fwoar/json-nav--pierce-vectors (fun it)
+(defun fwoar:json-nav--pierce-vectors (fun it)
   (cl-typecase it
     (vector (map 'vector
                  (lambda (next)
-                   (fwoar/json-nav--pierce-vectors fun next))
+                   (fwoar:json-nav--pierce-vectors fun next))
                  it))
     (t (funcall fun it))))
 
-(defun fwoar/json-nav--get-path (data path)
+(defun fwoar:json-nav--get-path (data path)
   (cl-loop with cur = data for key in path
            do
            (setf cur
                  (cl-etypecase cur
                    (vector
-                    (fwoar/json-nav--pierce-vectors (fwoar/key key)
+                    (fwoar:json-nav--pierce-vectors (fwoar:key key)
                                                     cur))
                    (hash-table
-                    (funcall (fwoar/key key)
+                    (funcall (fwoar:key key)
                              cur))
                    (null ())))
            finally (return cur)))
 
-(cl-defmacro fwoar/json-nav--with-collector ((c) &body body)
+(cl-defmacro fwoar:json-nav--with-collector ((c) &body body)
   (declare (indent 1))
   (let ((v (gensym "v")))
     `(let ((,v ()))
@@ -90,15 +90,15 @@
          ,@body
          (nreverse ,v)))))
 
-(defun fwoar/json-nav--get-keys ()
-  (fwoar/json--ensure-data)
-  (let ((data (fwoar/json-nav--get-path fwoar/json-nav--data
-                                        (reverse fwoar/json-nav--path))))
+(defun fwoar:json-nav--get-keys ()
+  (fwoar:json--ensure-data)
+  (let ((data (fwoar:json-nav--get-path fwoar:json-nav--data
+                                        (reverse fwoar:json-nav--path))))
     (message "%s" data)
     (sort (cl-etypecase data
             (hash-table (hash-table-keys data))
-            (vector (remove-duplicates (sort (fwoar/json-nav--with-collector (c)
-                                               (fwoar/json-nav--pierce-vectors
+            (vector (remove-duplicates (sort (fwoar:json-nav--with-collector (c)
+                                               (fwoar:json-nav--pierce-vectors
                                                 (lambda (next)
                                                   (when next
                                                     (map nil #'c
@@ -108,35 +108,35 @@
                                        :test 'equal)))
           'string<)))
 
-(defun fwoar/dive (s)
+(defun fwoar:dive (s)
   (interactive (list (completing-read "key? "
-                                      (fwoar/json-nav--get-keys))))
-  (fwoar/json--ensure-data)
-  (let* ((path (cons s fwoar/json-nav--path))
-         (data fwoar/json-nav--data)
+                                      (fwoar:json-nav--get-keys))))
+  (fwoar:json--ensure-data)
+  (let* ((path (cons s fwoar:json-nav--path))
+         (data fwoar:json-nav--data)
          (last-buffer (buffer-name)))
     (with-current-buffer (switch-to-buffer-other-window
                           (format "*test-buffer: %s*"
                                   (s-join "/" (reverse path))))
       (json-mode)
-      (setq-local fwoar/json-nav--data data
-                  fwoar/json-nav--path path
-                  fwoar/json-nav--prev-buffer last-buffer)
+      (setq-local fwoar:json-nav--data data
+                  fwoar:json-nav--path path
+                  fwoar:json-nav--prev-buffer last-buffer)
       (setf (buffer-string)
-            (json-serialize (fwoar/json-nav--get-path fwoar/json-nav--data
+            (json-serialize (fwoar:json-nav--get-path fwoar:json-nav--data
                                                       (reverse path))
                             :null-object nil))
       (json-pretty-print-buffer)
       (goto-char (point-min))))
   (goto-char (point-min)))
 
-(defun fwoar/return ()
+(defun fwoar:return ()
   (interactive)
-  (when fwoar/json-nav--prev-buffer
+  (when fwoar:json-nav--prev-buffer
     (let ((old-buffer (current-buffer))
-          (prev-buffer fwoar/json-nav--prev-buffer))
-      (switch-to-buffer-other-window fwoar/json-nav--prev-buffer)
-      (unless fwoar/json-nav--prev-buffer
+          (prev-buffer fwoar:json-nav--prev-buffer))
+      (switch-to-buffer-other-window fwoar:json-nav--prev-buffer)
+      (unless fwoar:json-nav--prev-buffer
         (with-current-buffer prev-buffer
           (delete-other-windows)))
       (kill-buffer old-buffer)))

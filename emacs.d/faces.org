@@ -332,7 +332,7 @@
 #+NAME: get-face-grid
 #+BEGIN_SRC emacs-lisp :exports code
   (defun fwoar/tmp/zenburn-nearest-color (target)
-    (rassoc (caar (cl-sort (fwoar/zenburn-with-color-variables
+    (rassoc (caar (cl-sort (fwoar:zenburn-with-color-variables
                              (mapcar (lambda (_)
                                        (cons _
                                              (color-distance target

@@ -118,7 +118,7 @@
                       ,@(cdr pck)))
                  packages)))
 
-(defmacro fwoar/defvaralias! (var val-var)
+(defmacro fwoar:defvaralias! (var val-var)
   `(progn
      (setq ,var ,val-var)
      (defvaralias ',var ',val-var)))
@@ -126,11 +126,11 @@
 (defun setup-indentation ()
   (setq-default indent-tabs-mode nil
                 tab-width 2)
-  (fwoar/defvaralias! c-basic-offset tab-width)
-  (fwoar/defvaralias! sh-basic-offset tab-width)
-  (fwoar/defvaralias! js2-basic-offset tab-width)
-  (fwoar/defvaralias! sgml-basic-offset tab-width)
-  (fwoar/defvaralias! cperl-indent-level tab-width)
+  (fwoar:defvaralias! c-basic-offset tab-width)
+  (fwoar:defvaralias! sh-basic-offset tab-width)
+  (fwoar:defvaralias! js2-basic-offset tab-width)
+  (fwoar:defvaralias! sgml-basic-offset tab-width)
+  (fwoar:defvaralias! cperl-indent-level tab-width)
   nil)
 
 (defun start-server ()

@@ -33,8 +33,8 @@
 (require 'fwoar-functional-utils)
 
 (defun fwoar::get-candidates ()
-  (funcall (-compose (fwoar/exclude
-                      (fwoar/matches-regex "/\\(.*[#]\\)"))
+  (funcall (-compose (fwoar:exclude
+                      (fwoar:matches-regex "/\\(.*[#]\\)"))
                      'project-files
                      'project-current)))
 
@@ -59,14 +59,14 @@
   `((name . "Project Buffers")
     (candidates . (lambda ()
                     (when-let* ((fwoar::project fwoar-helm-project::*current-project*))
-                      (funcall (-compose (fwoar/over (lambda (it)
+                      (funcall (-compose (fwoar:over (lambda (it)
                                                        (cons (buffer-name it)
                                                              it)))
                                          (lambda (it)
                                            (cl-sort it 'string-lessp
                                                     :key 'buffer-name))
-                                         (fwoar/exclude
-                                          (fwoar/on (fwoar/matches-regex "^ ")
+                                         (fwoar:exclude
+                                          (fwoar:on (fwoar:matches-regex "^ ")
                                                     'buffer-name))
                                          'project-buffers)
                                fwoar::project))))
