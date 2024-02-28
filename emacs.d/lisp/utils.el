@@ -159,6 +159,11 @@ from the selected region."
     (unless (server-running-p)
       (server-start))))
 
+(defun fwoar:force-info-init ()
+  (interactive)
+  (setf Info-directory-list nil)
+  (info-initialize))
+
 (defun post-init ()
   ;;(centaur-tabs-mode 1)
   (evil-mode 1)
@@ -171,7 +176,7 @@ from the selected region."
     (setq linum-format "%5d\u2502")
     (global-linum-mode))
 
-  (info-initialize)
+  (fwoar:force-info-init)
 
   (cl-loop
    with infopath = (prog1  (getenv "INFOPATH")
