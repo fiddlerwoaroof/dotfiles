@@ -27,6 +27,7 @@ in {
     #pkgs.gnumake.info
     libpng
     pkgs.alejandra
+    pkgs.atuin
     pkgs.borgbackup
     pkgs.cargo
     pkgs.clojure
@@ -59,6 +60,7 @@ in {
     pkgs.tree
     pkgs.vim
     pkgs.visidata
+    pkgs.xmlstarlet
     pkgs.zeromq
     pkgs.zsh.doc
     pkgs.zstd
