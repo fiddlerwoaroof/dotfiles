@@ -67,7 +67,7 @@
     (funcall (helm-comp-read "code template: " skeletons))
     (evil-insert 1)))
 
-(defun create-system-files ()
+(defun fwoar:create-system-files ()
   (interactive)
   (save-excursion
     (mark-defun)
