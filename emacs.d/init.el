@@ -151,9 +151,9 @@
 (use-package fwoar-pastebin :ensure nil
   :custom
   (fwoar-pastebin-tramp-url (when (file-exists-p "~/.pastebin-name")
-                              (car (read-sexps-in-file "~/.pastebin-name"))))
+                              (car (fwoar:read-sexps-in-file "~/.pastebin-name"))))
   (fwoar-pastebin-web-url-pattern (when (file-exists-p "~/.pastebin-name")
-                                    (cadr (read-sexps-in-file "~/.pastebin-name")))))
+                                    (cadr (fwoar:read-sexps-in-file "~/.pastebin-name")))))
 
 (use-package fwoar-yank-buffer
   :init (require 'fwoar-yank-buffer)
@@ -345,8 +345,8 @@
 
   (define-key evil-insert-state-map (kbd "C-c j") 'skeleton-next-position)
   (define-key evil-insert-state-map (kbd "C-c k") 'skeleton-prev-position)
-  (evil-define-key 'normal 'global (kbd "<leader>g") 'helm-generate-lisp-skeleton)
-  (evil-define-key 'visual 'global (kbd "<leader>g") 'helm-generate-lisp-skeleton))
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'fwoar:helm-generate-lisp-skeleton)
+  (evil-define-key 'visual 'global (kbd "<leader>g") 'fwoar:helm-generate-lisp-skeleton))
 
 
 (use-package htmlize
@@ -513,7 +513,7 @@
                 'ibuffer)
 
 (defvar url-pattern (when (file-exists-p "~/.pastebin-name")
-                      (car (read-sexps-in-file "~/.pastebin-name"))))
+                      (car (fwoar:read-sexps-in-file "~/.pastebin-name"))))
 
 (defun delete-mru-window ()
   (interactive)

@@ -86,15 +86,15 @@
   (when current-form
     (cl-destructuring-bind (discriminator . packages) current-form
       (cl-case discriminator
-        (:use (remove-if (op (or (eql :cl _)))
+        (:use (remove-if (fwoar:op (or (eql :cl _)))
                          (cdr current-form)))
         (defpackage (find-use-clause
                      (find-if (lambda (f)
                                 (and (listp f)
                                      (eql (car f) :use)))
                               '(defpackage :tracking-sim
-                                 (:use :cl :alexandria :serapeum)
-                                 (:export)))))))))
+                                           (:use :cl :alexandria :serapeum)
+                                           (:export)))))))))
 
 (defun load-package-uses ()
   (interactive)

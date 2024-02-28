@@ -5,8 +5,7 @@
 
 ;;; Code:
 
-
-(defun read-sexps-in-buffer (buffer)
+(defun fwoar:read-sexps-in-buffer (buffer)
   (with-temp-buffer
     (save-excursion
       (insert "(")
@@ -15,7 +14,7 @@
       (insert "\n)"))
     (read (current-buffer))))
 
-(defun read-sexps-in-file (fn)
+(defun fwoar:read-sexps-in-file (fn)
   (with-temp-buffer
     (save-excursion
       (insert "(")
@@ -24,7 +23,7 @@
       (insert "\n)"))
     (read (current-buffer))))
 
-(defun read-strings-in-file (fn)
+(defun fwoar:read-strings-in-file (fn)
   (with-temp-buffer
     (insert-file fn)
     (mark-whole-buffer)
@@ -32,31 +31,32 @@
     (goto-char (point-min))
     (remove "" (s-lines (buffer-string)))))
 
-(defun op--collect-args (body)
+(defun fwoar::op--collect-args (body)
   (cl-flet ((walker (body &optional args)
-                    (if (null body)
-                        args
-                      (if (symbolp body)
-                          (when (eql ?\_ (elt (symbol-name body) 0))
-                            (cons body args))
-                        (if (listp body)
-                            (append (op--collect-args (car body))
-                                    (op--collect-args (cdr body))
-                                    ))))))
+              (if (null body)
+                  args
+                (if (symbolp body)
+                    (when (eql ?\_ (elt (symbol-name body) 0))
+                      (cons body args))
+                  (if (listp body)
+                      (append (fwoar::op--collect-args (car body))
+                              (fwoar::op--collect-args (cdr body))
+                              ))))))
     (sort (walker body)
           (lambda (a b)
             (< (string-to-number (subseq (symbol-name a) 1))
                (string-to-number (subseq (symbol-name b) 1)))))))
 
-(defmacro op (&rest body)
-  `(lambda ,(op--collect-args body)
+(defmacro fwoar:op (&rest body)
+  `(lambda ,(fwoar::op--collect-args body)
      ,@body))
 
-(defun blank-line-p ()
+(defun fwoar:blank-line-p ()
   (= (current-indentation)
-     (- (line-end-position) (line-beginning-position))))
+     (- (line-end-position)
+        (line-beginning-position))))
 
-(defun helm-generate-lisp-skeleton ()
+(defun fwoar:helm-generate-lisp-skeleton ()
   (interactive)
   (let ((skeletons '(("defunction" . skel-defun)
                      ("defmacro" . skel-defmacro)

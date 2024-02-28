@@ -1,7 +1,7 @@
 (defun safe-files ()
   (let ((fn (expand-file-name "~/.safe-files")))
     (when (file-exists-p fn)
-      (read-strings-in-file fn))))
+      (fwoar:read-strings-in-file fn))))
 
 (defun fwoar/mark-safe (fn)
   (interactive (list buffer-file-name))
