@@ -514,11 +514,6 @@
 (defvar url-pattern (when (file-exists-p "~/.pastebin-name")
                       (car (fwoar:read-sexps-in-file "~/.pastebin-name"))))
 
-(defun delete-mru-window ()
-  (interactive)
-  (delete-window
-   (get-mru-window nil nil t)))
-
 (add-to-list 'browse-url-filename-alist
              '("/Users/\\([^/]+\\)/\\(Sites\\|public_html\\)\\(/.*\\)" . "https://localhost/~\\1\\3"))
 
@@ -570,24 +565,6 @@
 (cl-defmethod fwoar--find-system (&context (major-mode (derived-mode js-mode)))
   (find-package-json default-directory))
 
-(comment
- (use-package org-brain :ensure t
-   :init
-   (setq org-brain-path "~/org-brain/")
-
-   :config
-   (eval-after-load 'evil
-     '(evil-set-initial-state 'org-brain-visualize-mode 'emacs))
-
-   (push '("B" "Brain" plain (function org-brain-goto-end)
-           "* %i%?" :empty-lines 1)
-         org-capture-templates)
-
-   (setq org-id-track-globally t
-         org-id-locations-file "~/.emacs.d/.org-id-locations"
-         org-brain-visualize-default-choices 'all
-         org-brain-title-max-length 0)))
-
 (setq diary-file (expand-file-name "~/diary"))
 
 (cl-defmacro fwoar:binding (setter target &body bindings)
@@ -599,7 +576,7 @@
                         `(,setter ,target-sym ',(car binding) ,@(cdr binding)))
                       bindings)))))
 
-(defun make-info-window ()
+(defun fwoar:make-info-window ()
   (setq mode-line-format nil)
   ;;(centaur-tabs-local-mode 1)
   (set-window-dedicated-p (selected-window) t)
@@ -640,9 +617,6 @@
   :config
   (which-key-mode 1)
   (which-key-posframe-mode 1))
-
-(use-package nix-mode
-  :ensure t)
 
 (define-derived-mode zsh-mode sh-mode "ZSH" "Mode for zsh scripts"
   (setq-local sh-shell "zsh"))

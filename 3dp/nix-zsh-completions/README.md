@@ -6,16 +6,23 @@ This project aims to provide a highly complete set of ZSH completions for [Nix](
 
 NixOS
 ----------------------
-Set `programs.zsh.enableCompletion = true` in `/etc/nix/configuration.nix` and either add `nix-zsh-completions` to `systemPackages` or install it locally: `nix-env -iA nixos.nix-zsh-completions`
+Setting `programs.zsh.enable = true` in `/etc/nixos/configuration.nix` will automatically install and enable `nix-zsh-compeletions`.
 
 Oh-My-ZSH Installation
 ----------------------
 
 ```zsh
-git clone git@github.com:spwhitt/nix-zsh-completions.git ~/.oh-my-zsh/custom/plugins/nix
+cd ~/.oh-my-zsh/custom/plugins
+git clone git@github.com:nix-community/nix-zsh-completions.git
 ```
 
-Then add `nix` to the plugins list in `~/.zshrc`
+Then add `nix-zsh-completions` to the plugins list in `~/.zshrc`
+
+If you want your prompt to be prefixed by `[nix-shell]` when you're in a nix-shell add this to your zshrc:
+
+```
+prompt_nix_shell_setup
+```
 
 Antigen Installation
 --------------------
@@ -23,7 +30,7 @@ Antigen Installation
 Add the following to `~/.zshrc`
 
 ```zsh
-antigen bundle git@github.com:spwhitt/nix-zsh-completions.git
+antigen bundle git@github.com:nix-community/nix-zsh-completions.git
 ```
 
 Plain ZSH Installation
@@ -33,10 +40,16 @@ Clone this repository and add the following to `~/.zshrc` with the path to
 `nix-zsh-completions` updated as necessary.
 
 ```zsh
-source $HOME/nix-zsh-completions/nix.plugin.zsh
+source $HOME/nix-zsh-completions/nix-zsh-completions.plugin.zsh
 fpath=($HOME/nix-zsh-completions $fpath)
 autoload -U compinit && compinit
 ```
+
+Required ZSH version
+------------------------
+
+The completion scripts are known to be broken in ZSH version `5.0.8` or older, `5.2` or newer works.
+
 
 ZSH Completions Tutorial
 ------------------------
