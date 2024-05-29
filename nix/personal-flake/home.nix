@@ -34,6 +34,7 @@ in {
     pkgs.coreutils-prefixed
     pkgs.direnv
     pkgs.dtach
+    pkgs.duckdb
     pkgs.ecl
     pkgs.emacs-git
     pkgs.fwoar.gsed
@@ -49,11 +50,13 @@ in {
     pkgs.libssh2
     pkgs.lorri
     pkgs.mosh
-    pkgs.nixfmt
+    pkgs.nixfmt-rfc-style
     pkgs.nodejs
     pkgs.openssl
     pkgs.pandoc
     pkgs.pkg-config
+    pkgs.pdftk
+    pkgs.python311
     pkgs.ripgrep
     pkgs.shellcheck
     pkgs.texinfoInteractive

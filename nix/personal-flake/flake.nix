@@ -44,6 +44,13 @@
         pkgs.alejandra
       ];
     };
+    packages.aarch64-darwin.mycurl = pkgs.curl.override {
+      http3Support = true;
+      rustlsSupport = true;
+      gnutlsSupport = false;
+      opensslSupport = false;
+      wolfsslSupport = false;
+    };
     homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
 
