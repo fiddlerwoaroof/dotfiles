@@ -10,20 +10,34 @@
   (require :uiop))
 
 #+fw.dump
-(ql:quickload '(:net.didierverna.clon :ironclad :sqlite))
+(ql:quickload '(:net.didierverna.clon :ironclad :sqlite :local-time))
 
 (defpackage :fwoar.file-indexer
   (:use :cl)
   (:export ))
 (in-package :fwoar.file-indexer)
+
+(defparameter +my-format+
+  '((:YEAR 4) #\- (:MONTH 2) #\- (:DAY 2) #\Space
+    (:HOUR 2) #\: (:MIN 2) #\: (:SEC 2)))
+
+(defun now-time ()
+  (local-time:format-timestring nil 
+                                (local-time:now)
+                                :format +my-format+))
+
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "DB FILES..." :make-default nil)
+    (stropt :long-name "ts" :env-var "FWOAR_TX_TS")
     (flag :short-name "h" :long-name "help")))
-
 
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
-         (net.didierverna.clon:*context* context))
+         (net.didierverna.clon:*context* context)
+         (ts (or (net.didierverna.clon:getopt :context context
+                                              :long-name "ts")
+                 (now-time))))
+    (format *error-output* "Got ts: ~a~%" ts)
     (cond ((net.didierverna.clon:getopt :context context
                                         :long-name "help")
            (net.didierverna.clon:help))
@@ -55,13 +69,14 @@
                                          (ironclad:digest-file :sha256 file)))
                                    (length (file-length s)))
                               (sqlite:execute-single db
-                                                     "insert into files_shasums (file,shasum,size,count)
-                                                      values (?,?,?, 1)
+                                                     "insert into files_shasums (file,shasum,size,count,ts)
+                                                      values (?,?,?, 1,?)
                                                       on conflict do update set count = (count + 1),
-                                                                                ts = current_timestamp"
+                                                                                ts = excluded.ts"
                                                      (uiop:native-namestring (truename file))
                                                      sum
-                                                     length)))))))))))
+                                                     length
+                                                     ts)))))))))))
 
 (defun dump ()
   (setf net.didierverna.clon:*context* nil
