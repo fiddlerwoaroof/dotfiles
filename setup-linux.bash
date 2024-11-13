@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -x -e -u -o pipefail
 
+
 mkdir "$HOME/emacs-home/"
 cd "$HOME/emacs-home/"
 git init
@@ -32,3 +33,18 @@ cd "$HOME/git_repos/dotfiles"
 git reset --hard
 
 (cd /tmp; curl -O https://beta.quicklisp.org/quicklisp.lisp; sbcl --load quicklisp.lisp)
+
+if [[ "$(uname -s)" == "Darwin"]]; then
+	echo 'install iTerm2 https://iterm2.com and hit enter'
+	read
+	echo 'TODO: configure iterm2 settings repository'
+
+	echo 'install Karabiner Elements https://karabiner-elements.pqrs.org and hit enter'
+	read
+	mkdir -p ~/.config
+	ln -sv "$PWD"/karabiner ~/.config
+
+	echo 'install Moom https://manytricks.com/moom/ and hit enter'
+	read
+	open ./moom-settings/basics.moom
+fi
