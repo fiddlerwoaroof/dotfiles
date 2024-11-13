@@ -30,3 +30,5 @@ ln -s "$HOME/git_repos/dotfiles/emacs.d/emacs.d/early-init.el" ~/.emacs.d
 eval "$(curl -L "https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh")"
 cd "$HOME/git_repos/dotfiles"
 git reset --hard
+
+(cd /tmp; curl -O https://beta.quicklisp.org/quicklisp.lisp; sbcl --load quicklisp.lisp)
