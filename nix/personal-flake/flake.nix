@@ -28,15 +28,11 @@
     system = "aarch64-darwin";
     common_home =
       import ./common.nix {inherit pkgs;};
-    extraOverlay = self: super: {
-      alejandra = alejandra.defaultPackage.${system};
-    };
     pkgs = import nixpkgs {
       inherit system;
       overlays = [
         (import ./elangley-overlay)
         emacs-community.overlay
-        extraOverlay
       ];
     };
   in {
@@ -54,6 +50,14 @@
     };
     homeManagerModules = {
       main = import ./home.nix;
+      fonts = {
+        home.packages = [
+          pkgs.lato
+          pkgs.alegreya
+          pkgs.source-code-pro
+          pkgs.alegreya-sans
+        ];
+      };
     };
     homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
@@ -61,9 +65,14 @@
       # Specify your home configuration modules here, for example,
       # the path to your home.nix.
       modules = [
-        ({pkgs, ...}: {home.packages = [pkgs.aria2];})
-        ({pkgs, ...}: {home.packages = [pkgs.source-code-pro];})
+        {
+          home.packages = [alejandra.defaultPackage.${system}];
+        }
+        {
+          home.packages = [pkgs.aria2];
+        }
         self.homeManagerModules.main
+        self.homeManagerModules.fonts
         {
           # You can update Home Manager without changing this value. See
           # the Home Manager release notes for a list of state version

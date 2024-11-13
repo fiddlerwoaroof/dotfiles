@@ -25,7 +25,6 @@ in {
   home.packages = [
     #pkgs.gnumake.info
     libpng
-    pkgs.alejandra
     pkgs.atuin
     pkgs.borgbackup
     pkgs.SDL2
