@@ -268,6 +268,16 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
   (values))
 
 #+swank
+(defun plot-data (x y &rest r &key image-size xrange yrange)
+  (with-input-from-string (s (with-output-to-string (r)
+                               (map nil
+                                    (lambda (xn yn)
+                                      (format r "~a ~a~%" xn yn))
+                                    x
+                                    y)))
+    (apply #'plot-stream s r)))
+
+#+swank
 (defun wi (fn)
   (swank::send-to-emacs (list :write-image fn " ")))
 
@@ -297,3 +307,30 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 
 (defun load-projects ()
   (load-all-asds (directory "PROJECTS:**;*.ASD")))
+
+
+
+(defun my-mexp-hook (&optional (old-hook *macroexpand-hook*))
+  (labels ((show-def (type name)
+             ;; Only show package markers when compiling. Showing
+             ;; them when loading shows a bunch of ASDF system
+             ;; package noise.
+             (when *compile-file-pathname*
+               (fresh-line)
+               (format t (format nil "[def (~(~a ~A ...)~)]~%" type name)))))
+    (lambda (fun form env)
+      (cond
+        ((and (consp form)
+              (symbolp (first form))
+              (>= (length (symbol-name (first form)))
+                  3)
+              (equalp (subseq (symbol-name (first form)) 0 3)
+                      "def"))
+         (show-def (first form) (second form))))
+      (when old-hook
+        (funcall old-hook fun form env)))))
+
+;; (defparameter *old-macroexpand-hook*
+;;   *macroexpand-hook*)
+;;
+;; (setf *macroexpand-hook* (my-mexp-hook *macroexpand-hook*))
