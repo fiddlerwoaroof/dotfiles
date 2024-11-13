@@ -26,6 +26,7 @@ rm "$HOME/git_repos/dotfiles/emacs.d/lisp/el-zenburn-theme.el"
 ln -s "$HOME/git_repos/dotfiles/emacs.d/lisp/fwoar-zenburn-theme.el" "$HOME/.emacs.d/themes"
 mkdir "$HOME/.emacs.d/lisp/configurations"
 ln -s "$HOME/git_repos/dotfiles/emacs.d/lisp/configurations/"*-conf.el  "$HOME/.emacs.d/lisp/configurations"
+ln -s "$HOME/git_repos/dotfiles/emacs.d/emacs.d/early-init.el" ~/.emacs.d
 eval "$(curl -L "https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh")"
 cd "$HOME/git_repos/dotfiles"
 git reset --hard
