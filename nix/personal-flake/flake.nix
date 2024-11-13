@@ -62,6 +62,7 @@
       # the path to your home.nix.
       modules = [
         ({pkgs, ...}: {home.packages = [pkgs.aria2];})
+        ({pkgs, ...}: {home.packages = [pkgs.source-code-pro];})
         self.homeManagerModules.main
         {
           # You can update Home Manager without changing this value. See
