@@ -133,7 +133,7 @@
 #+fw.dump
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
-    (flag :short-name "h" :long-name "help")
+      (flag :short-name "h" :long-name "help")
     (enum :short-name "f" :long-name "fg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's foreground color")
     (enum :short-name "b" :long-name "bg" :enum (mapcar 'car *color-alist*)
@@ -142,6 +142,7 @@
           :description "Show COLOR as an HTML RGB literal")
     (enum :long-name "hsv"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as a RGB hsv")
+    #+(or)
     (enum :long-name "hsl"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as a RGB hsv")
     (enum :long-name "css"  :enum (mapcar 'car *color-alist*)
@@ -175,6 +176,7 @@
            (html-color html t))
           (hsv
            (hsv-color hsv t))
+          #+(or)
           (hsl
            (hsl-color hsv t))
           #+(or)
