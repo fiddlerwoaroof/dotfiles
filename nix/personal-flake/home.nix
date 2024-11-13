@@ -28,9 +28,12 @@ in {
     pkgs.alejandra
     pkgs.atuin
     pkgs.borgbackup
+    pkgs.SDL2
+    pkgs.SDL2.dev
     pkgs.cargo
     pkgs.clojure
     pkgs.coreutils-prefixed
+    pkgs.difftastic
     pkgs.direnv
     pkgs.dtach
     pkgs.duckdb
@@ -42,6 +45,9 @@ in {
     pkgs.gnuplot
     pkgs.graphviz
     pkgs.groff
+    pkgs.htop
+    pkgs.imagemagick
+    pkgs.texinfoInteractive
     pkgs.ispell
     pkgs.jq
     pkgs.libffi.dev
