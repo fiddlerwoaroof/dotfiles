@@ -8,5 +8,6 @@ dot -Gbgcolor="$(zenburn --hsv bg+1)" \
     -Nfontcolor="$(zenburn --hsv fg)" \
     -Nshape=box \
     -Ecolor="$(zenburn --hsv fg)" \
-    -Gsize=15,15\! \
-    -Gdpi=50 "$@"
+    "$@"
+    #-Gsize=15,15\! \
+    #-Gdpi=50 \
