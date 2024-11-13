@@ -17,6 +17,7 @@ in rec {
     pkgs.dtach
     pkgs.ecl
     pkgs.gnuplot
+    pkgs.htop
     pkgs.info
     pkgs.jq
     pkgs.lorri

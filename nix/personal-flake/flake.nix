@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     alejandra = {
-      url = "github:kamadorueda/alejandra/3.0.0";
+      url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs-community = {
@@ -18,6 +18,7 @@
   };
 
   outputs = {
+    self,
     nixpkgs,
     home-manager,
     alejandra,
@@ -51,12 +52,24 @@
       opensslSupport = false;
       wolfsslSupport = false;
     };
+    homeManagerModules = {
+      main = import ./home.nix;
+    };
     homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
 
       # Specify your home configuration modules here, for example,
       # the path to your home.nix.
-      modules = [./home.nix];
+      modules = [
+        ({pkgs, ...}: {home.packages = [pkgs.aria2];})
+        self.homeManagerModules.main
+        {
+          # You can update Home Manager without changing this value. See
+          # the Home Manager release notes for a list of state version
+          # changes in each release.
+          home.stateVersion = "22.05";
+        }
+      ];
 
       # Optionally use extraSpecialArgs
       # to pass through arguments to home.nix
