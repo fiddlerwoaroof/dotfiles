@@ -10,11 +10,6 @@
   "fwoar zenburn theme"
   :group 'faces)
 
-(unless (font-info "Equity A")
-  (display-warning 'fwoar-zenburn "Missing font Equity A" :error))
-(unless (font-info "Source Code Pro")
-  (display-warning 'fwoar-zenburn "Missing font Source Code Pro" :error))
-
 
 (defvar fwoar-zenburn-default-colors-alist
   '(("zenburn-fg+2"     . "#FFFFEF")
