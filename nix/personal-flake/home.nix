@@ -55,7 +55,7 @@ in {
     pkgs.libssh2
     pkgs.lorri
     pkgs.mosh
-    pkgs.ncdu
+    #pkgs.ncdu
     pkgs.nixfmt-classic
     pkgs.nodejs
     pkgs.openssl
