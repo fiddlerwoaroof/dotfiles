@@ -2463,13 +2463,13 @@
 				<key>Alpha Component</key>
 				<real>1</real>
 				<key>Blue Component</key>
-				<real>0.18431372940540314</real>
+				<real>0.070588235294117646</real>
 				<key>Color Space</key>
-				<string>sRGB</string>
+				<string>P3</string>
 				<key>Green Component</key>
-				<real>0.088143564760684967</real>
+				<real>0.066666666666666666</real>
 				<key>Red Component</key>
-				<real>0.18321901897411408</real>
+				<real>0.066666666666666666</real>
 			</dict>
 			<key>Background Image Location</key>
 			<string></string>
@@ -2500,10 +2500,7 @@
 				<real>0.86274510622024536</real>
 			</dict>
 			<key>Bound Hosts</key>
-			<array>
-				<string>*.elangley.org</string>
-				<string>*.edw.ai</string>
-			</array>
+			<array/>
 			<key>Character Encoding</key>
 			<integer>4</integer>
 			<key>Close Sessions On End</key>
