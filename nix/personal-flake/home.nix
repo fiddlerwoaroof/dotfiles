@@ -19,7 +19,6 @@
           outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
         };
     };
-  sbcl = pkgs.fwoar.sbcl_master;
 in {
   home.file.".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
 
@@ -50,14 +49,16 @@ in {
     pkgs.libssh2
     pkgs.lorri
     pkgs.mosh
-    pkgs.nixfmt-rfc-style
+    pkgs.ncdu
+    pkgs.nixfmt-classic
     pkgs.nodejs
     pkgs.openssl
     pkgs.pandoc
-    pkgs.pkg-config
     pkgs.pdftk
+    pkgs.pkg-config
     pkgs.python311
     pkgs.ripgrep
+    (pkgs.sbcl.overrideAttrs (_: {enableFeatures = ["sb-thread" "sb-core-compression" "sb-simd" "sb-xref-for-internals" "sb-after-xc-core" "sb-doc"];}))
     pkgs.shellcheck
     pkgs.texinfoInteractive
     pkgs.tree
@@ -68,7 +69,6 @@ in {
     pkgs.zsh.doc
     pkgs.zstd
     pkgs.zstd.dev
-    sbcl
     zsh
   ];
 
