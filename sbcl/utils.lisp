@@ -244,6 +244,7 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 (defun plot-stream (s &key
                         (xrange nil xrange-p)
                         (yrange nil yrange-p)
+                        (image-size nil image-size-p)
                         (background "#2A2B2E")
                         (frame-color "#7fdf7f")
                         (line-color "#DCDCCC")
@@ -251,9 +252,10 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
   (let ((fn (format nil "/tmp/~a.svg" (gensym))))
     (uiop:run-program (with-output-to-string (s)
                         (format (make-broadcast-stream s *error-output*)
-                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a'; set logscale y 2; plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
                                 xrange-p xrange
                                 yrange-p yrange
+                                image-size-p image-size
                                 background
                                 line-color
                                 frame-color

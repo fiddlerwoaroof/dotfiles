@@ -85,12 +85,20 @@
 (defun hsv-color (name &optional (s t))
   (let ((values (theme-color name)))
     (destructuring-bind (r g b) values
-      (multiple-value-bind (h sa v) (dufy:rgb-to-hsv (/ r 255.0)
-                                                     (/ g 255.0)
-                                                     (/ b 255.0))
+      (multiple-value-bind (h sa v) (dufy:qrgb-to-hsv r g b)
         (prog1 (format s
                        "~,3f ~,3f ~,3f"
-                       (/ h 360.0) sa v)
+                       h sa v)
+          (unless (null s)
+            (format s "~%")))))))
+
+(defun hsl-color (name &optional (s t))
+  (let ((values (theme-color name)))
+    (destructuring-bind (r g b) values
+      (multiple-value-bind (h sa l) (dufy:qrgb-to-hsl r g b)
+        (prog1 (format s
+                       "hsl(~,3f, ~,3f%, ~,3f%)"
+                       h (* 100.0 sa) (* 100.0 l))
           (unless (null s)
             (format s "~%")))))))
 
