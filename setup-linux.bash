@@ -16,10 +16,12 @@ mkdir "$HOME/.emacs.d/"{lisp,themes}
 if [[ -z "$git_mode" ]]; then
   select git_mode in http ssh; do
     echo "(setq fwoar-git-mode :$git_mode)" > "$HOME/.emacs.d/lisp/site-lisp.el"
+    echo "GIT_SSH_MODE=\"$git_mode\"" > "$HOME/.localzshrc.sh"
     break;
   done
 else
     echo "(setq fwoar-git-mode :$git_mode)" > "$HOME/.emacs.d/lisp/site-lisp.el"
+    echo "GIT_SSH_MODE=\"$git_mode\"" > "$HOME/.localzshrc.sh"
 fi
 
 ln -s "$HOME/git_repos/dotfiles/emacs.d/lisp/"*.el "$HOME/.emacs.d/lisp"
