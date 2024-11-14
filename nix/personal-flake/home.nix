@@ -20,7 +20,6 @@
         };
     };
 in {
-  home.file.".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
 
   home.packages = [
     #pkgs.gnumake.info
@@ -77,26 +76,6 @@ in {
   ];
 
   programs = {
-    git = {
-      enable = true;
-      userEmail = "el-github@elangley.org";
-      userName = "Edward Langley";
-      lfs.enable = true;
-      difftastic.enable = true;
-      extraConfig = {
-        commit = {gpgsign = true;};
-        github = {user = "fiddlerwoaroof";};
-        gpg = {
-          format = "ssh";
-          allowedSignersFile = "${homeDirectory}/.ssh/allowed_signers";
-        };
-        init = {defaultBranch = "main";};
-        merge = {autoStash = true;};
-        pull = {rebase = false;};
-        rebase = {autoStash = true;};
-        user = {signingkey = "${homeDirectory}/.ssh/id_ed25519.pub";};
-      };
-    };
     tmux = {
       enable = true;
       terminal = "screen-256color";
