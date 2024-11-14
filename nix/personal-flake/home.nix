@@ -37,7 +37,6 @@ in {
     pkgs.dtach
     pkgs.duckdb
     pkgs.ecl
-    pkgs.emacs-git
     pkgs.fwoar.gsed
     pkgs.gawk
     pkgs.gnumake
