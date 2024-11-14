@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Custom Controls (4001)</key>
+	<array>
+		<dict>
+			<key>Action</key>
+			<integer>10001</integer>
+			<key>Chain Mode</key>
+			<integer>0</integer>
+			<key>Children</key>
+			<array>
+				<dict>
+					<key>Action</key>
+					<integer>33</integer>
+					<key>Hot Key</key>
+					<dict>
+						<key>Identifier</key>
+						<string>23B913BB-5C04-450C-AB47-094255D4D6EF</string>
+						<key>Key Code</key>
+						<integer>124</integer>
+						<key>Modifier Flags</key>
+						<integer>11272481</integer>
+						<key>Visual Representation</key>
+						<string>⌃⌥→</string>
+					</dict>
+					<key>Identifier</key>
+					<string>23B913BB-5C04-450C-AB47-094255D4D6EF</string>
+					<key>Move to Edge/Corner Direction</key>
+					<integer>5</integer>
+				</dict>
+				<dict>
+					<key>Action</key>
+					<integer>33</integer>
+					<key>Hot Key</key>
+					<dict>
+						<key>Identifier</key>
+						<string>3D2EE39D-ABCE-41BC-89AE-6F22B5E8930F</string>
+						<key>Key Code</key>
+						<integer>123</integer>
+						<key>Modifier Flags</key>
+						<integer>11272481</integer>
+						<key>Visual Representation</key>
+						<string>⌃⌥←</string>
+					</dict>
+					<key>Identifier</key>
+					<string>3D2EE39D-ABCE-41BC-89AE-6F22B5E8930F</string>
+					<key>Move to Edge/Corner Direction</key>
+					<integer>9</integer>
+				</dict>
+				<dict>
+					<key>Action</key>
+					<integer>19</integer>
+					<key>Configuration Grid</key>
+					<dict>
+						<key>Configuration Grid: Columns</key>
+						<integer>6</integer>
+						<key>Configuration Grid: Rows</key>
+						<integer>4</integer>
+					</dict>
+					<key>Hot Key</key>
+					<dict>
+						<key>Identifier</key>
+						<string>41936C9B-EA90-4561-B31F-8DF7CEDE5DE3</string>
+						<key>Key Code</key>
+						<integer>124</integer>
+						<key>Modifier Flags</key>
+						<integer>12321065</integer>
+						<key>Visual Representation</key>
+						<string>⌃⌥⌘→</string>
+					</dict>
+					<key>Identifier</key>
+					<string>41936C9B-EA90-4561-B31F-8DF7CEDE5DE3</string>
+					<key>Relative Frame</key>
+					<string>{{0.33333333333333331, 0}, {0.66666666666666674, 1}}</string>
+					<key>Title</key>
+					<string>To Left Third</string>
+					<key>Window Description</key>
+					<dict>
+						<key>Application Name</key>
+						<string>Safari</string>
+						<key>Available Screen Frame</key>
+						<string>{{0, 0}, {1800, 1125}}</string>
+						<key>Bundle Identifier</key>
+						<string>com.apple.safari</string>
+						<key>Screen Frame</key>
+						<string>{{0, 0}, {1800, 1169}}</string>
+						<key>Window Frame</key>
+						<string>{{0, 0}, {599, 1125}}</string>
+						<key>Window Subrole</key>
+						<string>AXStandardWindow</string>
+						<key>Window Title</key>
+						<string>Atlanta • Max</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>Action</key>
+					<integer>19</integer>
+					<key>Configuration Grid</key>
+					<dict>
+						<key>Configuration Grid: Columns</key>
+						<integer>6</integer>
+						<key>Configuration Grid: Rows</key>
+						<integer>4</integer>
+					</dict>
+					<key>Hot Key</key>
+					<dict>
+						<key>Identifier</key>
+						<string>2D6E26F7-98EB-4F64-A648-BBEC443EDE9E</string>
+						<key>Key Code</key>
+						<integer>123</integer>
+						<key>Modifier Flags</key>
+						<integer>12321065</integer>
+						<key>Visual Representation</key>
+						<string>⌃⌥⌘←</string>
+					</dict>
+					<key>Identifier</key>
+					<string>2D6E26F7-98EB-4F64-A648-BBEC443EDE9E</string>
+					<key>Relative Frame</key>
+					<string>{{0, 0}, {0.33333333333333331, 1}}</string>
+					<key>Title</key>
+					<string>To Right Third</string>
+					<key>Window Description</key>
+					<dict>
+						<key>Application Name</key>
+						<string>Safari</string>
+						<key>Available Screen Frame</key>
+						<string>{{0, 0}, {1800, 1125}}</string>
+						<key>Bundle Identifier</key>
+						<string>com.apple.safari</string>
+						<key>Screen Frame</key>
+						<string>{{0, 0}, {1800, 1169}}</string>
+						<key>Window Frame</key>
+						<string>{{0, 0}, {599, 1125}}</string>
+						<key>Window Subrole</key>
+						<string>AXStandardWindow</string>
+						<key>Window Title</key>
+						<string>Atlanta • Max</string>
+					</dict>
+				</dict>
+			</array>
+			<key>Children Expanded</key>
+			<true/>
+			<key>Identifier</key>
+			<string>7C8127AE-3920-45A7-BE38-C0E5ED850AA6</string>
+			<key>Title</key>
+			<string>basics</string>
+		</dict>
+	</array>
+</dict>
+</plist>
