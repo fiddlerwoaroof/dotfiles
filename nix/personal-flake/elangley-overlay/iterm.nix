@@ -1,14 +1,17 @@
-{ fetchzip, lib, stdenvNoCC, version }:
-
- /*
- This cannot be built from source as it requires entitlements and
- for that it needs to be code signed. Automatic updates will have
- to be disabled via preferences instead of at build time. To do
- that edit $HOME/Library/Preferences/com.googlecode.iterm2.plist
- and add:
- SUEnableAutomaticChecks = 0;
- */
-
+{
+  fetchzip,
+  lib,
+  stdenvNoCC,
+  version,
+}:
+/*
+This cannot be built from source as it requires entitlements and
+for that it needs to be code signed. Automatic updates will have
+to be disabled via preferences instead of at build time. To do
+that edit $HOME/Library/Preferences/com.googlecode.iterm2.plist
+and add:
+SUEnableAutomaticChecks = 0;
+*/
 stdenvNoCC.mkDerivation rec {
   pname = "iterm2";
   inherit version;
@@ -39,8 +42,8 @@ stdenvNoCC.mkDerivation rec {
     homepage = "https://www.iterm2.com/";
     hydraPlatforms = []; # The build is little more than copying the binary
     license = licenses.gpl2;
-    maintainers = with maintainers; [ steinybot tricktron ];
-    platforms = [ "x86_64-darwin" "aarch64-darwin" ];
-    sourceProvenance = [ sourceTypes.binaryNativeCode ];
+    maintainers = with maintainers; [steinybot tricktron];
+    platforms = ["x86_64-darwin" "aarch64-darwin"];
+    sourceProvenance = [sourceTypes.binaryNativeCode];
   };
 }
