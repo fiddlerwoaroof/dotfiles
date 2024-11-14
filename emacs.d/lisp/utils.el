@@ -235,7 +235,7 @@
 
 (defun raise-iterm ()
   (interactive)
-  (shell-command "open -a iTerm.app"))
+  (shell-command "open -a iTerm2.app"))
 (define-key global-map (kbd "C-M-s-l") 'raise-iterm)
 
 (defun fwoar:hm-edit ()
