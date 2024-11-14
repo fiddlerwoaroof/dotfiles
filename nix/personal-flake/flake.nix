@@ -60,6 +60,9 @@
         ];
       };
       mac-apps = import ./mac-apps;
+      alejandra = {
+        home.packages = [alejandra.defaultPackage.${system}];
+      };
     };
     homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
@@ -67,12 +70,7 @@
       # Specify your home configuration modules here, for example,
       # the path to your home.nix.
       modules = [
-        {
-          home.packages = [alejandra.defaultPackage.${system}];
-        }
-        {
-          home.packages = [pkgs.aria2];
-        }
+        self.homeManagerModules.alejandra
         self.homeManagerModules.main
         self.homeManagerModules.git-config
         self.homeManagerModules.fonts
@@ -82,6 +80,7 @@
           # the Home Manager release notes for a list of state version
           # changes in each release.
           home.stateVersion = "22.05";
+          home.packages = [pkgs.aria2];
         }
       ];
 

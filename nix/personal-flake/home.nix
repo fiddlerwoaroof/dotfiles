@@ -20,7 +20,6 @@
         };
     };
 in {
-
   home.packages = [
     #pkgs.gnumake.info
     libpng
