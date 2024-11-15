@@ -26,8 +26,6 @@
     ...
   }: let
     system = "aarch64-darwin";
-    common_home =
-      import ./common.nix {inherit pkgs;};
     pkgs = import nixpkgs {
       inherit system;
       overlays = [
@@ -49,8 +47,54 @@
       wolfsslSupport = false;
     };
     homeManagerModules = {
-      main = import ./home.nix;
-      git-config = import ./git-config.nix;
+      common = {
+        home.packages = [
+          alejandra.defaultPackage.${system}
+          pkgs.clojure
+          pkgs.coreutils-prefixed
+          pkgs.difftastic
+          pkgs.direnv
+          pkgs.dtach
+          pkgs.ecl
+          pkgs.fwoar.gsed
+          pkgs.gawk
+          pkgs.gnumake
+          pkgs.gnuplot
+          pkgs.groff
+          pkgs.htop
+          pkgs.jq
+          pkgs.lorri
+          pkgs.mosh
+          # pkgs.ncdu ## currently broken
+          pkgs.nixfmt-classic
+          pkgs.pandoc
+          pkgs.pkg-config
+          pkgs.ripgrep
+          (pkgs.sbcl.overrideAttrs (_: {
+            enableFeatures = [
+              "sb-thread"
+              "sb-core-compression"
+              "sb-simd"
+              "sb-xref-for-internals"
+              "sb-after-xc-core"
+              "sb-doc"
+            ];
+          }))
+          pkgs.shellcheck
+          pkgs.texinfoInteractive
+          pkgs.tree
+          pkgs.vim
+          pkgs.visidata
+          (pkgs.zsh
+            // {
+              meta =
+                pkgs.zsh.meta
+                // {
+                  outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
+                };
+            })
+        ];
+      };
       fonts = {
         home.packages = [
           pkgs.lato
@@ -59,10 +103,9 @@
           pkgs.alegreya-sans
         ];
       };
+      git-config = import ./git-config.nix;
       mac-apps = import ./mac-apps;
-      alejandra = {
-        home.packages = [alejandra.defaultPackage.${system}];
-      };
+      main = import ./home.nix;
     };
     homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
@@ -70,7 +113,7 @@
       # Specify your home configuration modules here, for example,
       # the path to your home.nix.
       modules = [
-        self.homeManagerModules.alejandra
+        self.homeManagerModules.common
         self.homeManagerModules.main
         self.homeManagerModules.git-config
         self.homeManagerModules.fonts
