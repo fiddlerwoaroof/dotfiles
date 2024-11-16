@@ -29,7 +29,7 @@
     pkgs = import nixpkgs {
       inherit system;
       overlays = [
-        (import ./elangley-overlay)
+        (import ./personal-flake/elangley-overlay)
         emacs-community.overlay
       ];
     };
@@ -103,11 +103,11 @@
           pkgs.alegreya-sans
         ];
       };
-      git-config = import ./git-config.nix;
-      mac-apps = import ./mac-apps;
-      main = import ./home.nix;
+      git-config = import ./personal-flake/git-config.nix;
+      mac-apps = import ./personal-flake/mac-apps;
+      main = import ./personal-flake/home.nix;
     };
-    homeConfigurations."edwlan" = home-manager.lib.homeManagerConfiguration {
+    homeConfigurations."ouranos" = home-manager.lib.homeManagerConfiguration {
       pkgs = pkgs;
 
       # Specify your home configuration modules here, for example,
