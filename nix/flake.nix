@@ -36,7 +36,7 @@
   in {
     defaultPackage.aarch64-darwin = pkgs.mkShell {
       buildInputs = [
-        pkgs.alejandra
+        alejandra.outputs.packages.${system}.default
       ];
     };
     packages.aarch64-darwin.mycurl = pkgs.curl.override {
@@ -47,54 +47,7 @@
       wolfsslSupport = false;
     };
     homeManagerModules = {
-      common = {
-        home.packages = [
-          alejandra.defaultPackage.${system}
-          pkgs.clojure
-          pkgs.coreutils-prefixed
-          pkgs.difftastic
-          pkgs.direnv
-          pkgs.dtach
-          pkgs.ecl
-          pkgs.fwoar.gsed
-          pkgs.gawk
-          pkgs.gnumake
-          pkgs.gnuplot
-          pkgs.groff
-          pkgs.htop
-          pkgs.jq
-          pkgs.lorri
-          pkgs.mosh
-          # pkgs.ncdu ## currently broken
-          pkgs.nixfmt-classic
-          pkgs.pandoc
-          pkgs.pkg-config
-          pkgs.ripgrep
-          (pkgs.sbcl.overrideAttrs (_: {
-            enableFeatures = [
-              "sb-thread"
-              "sb-core-compression"
-              "sb-simd"
-              "sb-xref-for-internals"
-              "sb-after-xc-core"
-              "sb-doc"
-            ];
-          }))
-          pkgs.shellcheck
-          pkgs.texinfoInteractive
-          pkgs.tree
-          pkgs.vim
-          pkgs.visidata
-          (pkgs.zsh
-            // {
-              meta =
-                pkgs.zsh.meta
-                // {
-                  outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
-                };
-            })
-        ];
-      };
+      common = import ./common-module.nix;
       fonts = {
         home.packages = [
           pkgs.lato
@@ -103,8 +56,8 @@
           pkgs.alegreya-sans
         ];
       };
-      git-config = import ./personal-flake/git-config.nix;
-      mac-apps = import ./personal-flake/mac-apps;
+      git-config = import ./git-config.nix;
+      mac-apps = import ./mac-apps;
       main = import ./personal-flake/home.nix;
     };
     homeConfigurations."ouranos" = home-manager.lib.homeManagerConfiguration {
@@ -118,6 +71,7 @@
         self.homeManagerModules.git-config
         self.homeManagerModules.fonts
         self.homeManagerModules.mac-apps
+        {home.packages = [pkgs.cmake pkgs.nasm pkgs.ninja pkgs.autoconf pkgs.automake pkgs.autoconf-archive];}
         {
           # You can update Home Manager without changing this value. See
           # the Home Manager release notes for a list of state version
@@ -129,6 +83,12 @@
 
       # Optionally use extraSpecialArgs
       # to pass through arguments to home.nix
+      extraSpecialArgs = {
+        inherit system;
+        extraFlakes = {
+          inherit alejandra;
+        };
+      };
     };
   };
 }
