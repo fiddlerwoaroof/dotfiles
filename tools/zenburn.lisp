@@ -160,6 +160,8 @@
                                            :long-name "css"))
          (hsv (net.didierverna.clon:getopt :context context
                                            :long-name "hsv"))
+         (hsl (net.didierverna.clon:getopt :context context
+                                           :long-name "hsl"))
          (html (net.didierverna.clon:getopt :context context
                                             :long-name "html")))
     (cond ((net.didierverna.clon:getopt :context context
