@@ -18,23 +18,20 @@
     }: system: let
       pkgs = nixpkgs.legacyPackages.${system};
       sbcl = pkgs.sbcl.withPackages lispDeps;
-    in {
-      ${name} = let
-      in
-        pkgs.stdenv.mkDerivation {
-          inherit system name;
-          src = ./tools;
-          builder = ./build.sh;
-          dontStrip = true;
-          buildInputs = [
-            pkgs.makeWrapper
-            pkgs.openssl.dev
-            sbcl
-            pkgs.which
-            pkgs.zsh
-          ];
-        };
-    };
+    in
+      pkgs.stdenv.mkDerivation {
+        inherit system name;
+        src = ./tools;
+        builder = ./build.sh;
+        dontStrip = true;
+        buildInputs = [
+          pkgs.makeWrapper
+          pkgs.openssl.dev
+          sbcl
+          pkgs.which
+          pkgs.zsh
+        ];
+      };
     mkZenburn = mkTool {
       name = "zenburn";
       lispDeps = ps:
