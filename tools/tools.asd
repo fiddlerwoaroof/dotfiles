@@ -14,10 +14,21 @@
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"
   :depends-on (#:alexandria
-               #:uiop
-               #:serapeum
+               #:dufy
                #:net.didierverna.clon
-               #:alexandria
-               #:dufy)
+               #:serapeum
+               #:uiop)
   :serial t
   :components ((:file "zenburn")))
+
+(defsystem :tools/cls
+  :description "list files as json"
+  :author "Ed L <el-l@elangley.org>"
+  :license "MIT"
+  :depends-on (#:alexandria
+               #:data-lens
+               #:local-time
+               #:net.didierverna.clon
+               #:yason)
+  :serial t
+  :components ((:file "cls")))

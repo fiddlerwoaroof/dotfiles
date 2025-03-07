@@ -44,8 +44,22 @@
           #uiop
         ];
     };
+    mkCls = mkTool {
+      name = "cls";
+      lispDeps = ps:
+        with ps; [
+          alexandria
+          data-lens
+          local-time
+          net_dot_didierverna_dot_clon
+          net_dot_didierverna_dot_clon_dot_termio
+          yason
+          #uiop
+        ];
+    };
     mkTools = system: {
       zenburn = mkZenburn system;
+      cls = mkCls system;
     };
   in {
     packages = builtins.mapAttrs (system: f: f system) {

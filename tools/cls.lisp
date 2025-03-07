@@ -9,7 +9,7 @@
 
 (defpackage :fwoar.cls
   (:use :cl)
-  (:export ))
+  (:export dump))
 (in-package :fwoar.cls)
 
 (defun format-stat-time (accessor stat)
