@@ -3,7 +3,7 @@
   (load "~/quicklisp/setup.lisp")
   (require :uiop))
 
-#+fw.dump
+#+(or fw.dump)
 (ql:quickload '(:net.didierverna.clon :alexandria :dufy))
 
 (defpackage :fwoar.zenburn
@@ -311,8 +311,11 @@
            (net.didierverna.clon:help)))))
 
 #+(or fw.dump fw.main)
-(defun dump ()
+(defun dump (&optional out-path)
   (setf net.didierverna.clon:*context* nil
         *features* (remove :fw.dump *features*)
         *print-case* :downcase)
-  (net.didierverna.clon:dump "zenburn" main))
+  (net.didierverna.clon:dump (if out-path
+                                 (format nil "~a/zenburn" out-path)
+                                 "zenburn")
+                             main))
