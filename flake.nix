@@ -57,9 +57,19 @@
           #uiop
         ];
     };
+    mkGitPickPatch = mkTool {
+      name = "git-pick-patch";
+      lispDeps = ps:
+        with ps; [
+          alexandria
+          serapeum
+          cl-ppcre
+        ];
+    };
     mkTools = system: {
       zenburn = mkZenburn system;
       cls = mkCls system;
+      git-pick-patch = mkGitPickPatch system;
     };
   in {
     packages = builtins.mapAttrs (system: f: f system) {

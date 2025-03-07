@@ -10,7 +10,9 @@
   (:use :cl )
   (:export #:dump
            #:html-color
-           #:rgb-color))
+           #:rgb-color
+           #:prepare-dump
+           #:main))
 
 (in-package :fwoar.zenburn)
 
@@ -310,11 +312,15 @@
           (t
            (net.didierverna.clon:help)))))
 
+
 #+(or fw.dump fw.main)
-(defun dump (&optional out-path)
+(defun prepare-dump ()
   (setf net.didierverna.clon:*context* nil
         *features* (remove :fw.dump *features*)
-        *print-case* :downcase)
+        *print-case* :downcase))
+#+(or fw.dump fw.main)
+(defun dump (&optional out-path)
+  (prepare-dump)
   (net.didierverna.clon:dump (if out-path
                                  (format nil "~a/zenburn" out-path)
                                  "zenburn")

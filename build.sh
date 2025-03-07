@@ -21,13 +21,12 @@ buildPhase() {
        --eval '(require :asdf)' \
        --eval '(asdf:load-asd (truename "tools.asd"))' \
        --eval "(asdf:load-system :tools/$name)" \
-       --load "$name".lisp \
-       --eval "(fwoar.$name:dump)"
+       --eval "(asdf:operate :program-op :tools/$name)"
 }
 
 installPhase() {
   mkdir -p "$out"/bin
-  mv "$name" "$out"/bin
+  mv "$HOME/$name" "$out"/bin
   wrapProgram "$out/bin/$name"
 }
 
