@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 # set -x
-# set -eu -o pipefail
+set -e -o pipefail
 
 source "$stdenv"/setup
 
@@ -20,18 +20,15 @@ buildPhase() {
        --eval '(push :fw.main *features*)' \
        --eval '(require :asdf)' \
        --eval '(asdf:load-asd (truename "tools.asd"))' \
-       --eval '(asdf:load-system :tools/zenburn)' \
-       --load zenburn.lisp \
-       --eval "(fwoar.zenburn:dump)"
+       --eval "(asdf:load-system :tools/$name)" \
+       --load "$name".lisp \
+       --eval "(fwoar.$name:dump)"
 }
 
 installPhase() {
   mkdir -p "$out"/bin
-  mv zenburn "$out"/bin
-  mkdir -p "$out"/lib/sbcl/
-  #cp "$(dirname "$(which sbcl)")"/../lib/sbcl/sbcl.core "$out"/lib/sbcl/
-  env
-  wrapProgram "$out/bin/zenburn"
+  mv "$name" "$out"/bin
+  wrapProgram "$out/bin/$name"
 }
 
 genericBuild

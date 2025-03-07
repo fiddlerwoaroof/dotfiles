@@ -12,23 +12,17 @@
     self,
     nixpkgs,
   }: let
-    mkDerivation = system: let
+    mkTool = {
+      name,
+      lispDeps,
+    }: system: let
       pkgs = nixpkgs.legacyPackages.${system};
+      sbcl = pkgs.sbcl.withPackages lispDeps;
     in {
-      zenburn = let
-        sbcl = pkgs.sbcl.withPackages (ps:
-          with ps; [
-            alexandria
-            dufy
-            net_dot_didierverna_dot_clon
-            net_dot_didierverna_dot_clon_dot_termio
-            serapeum
-            #uiop
-          ]);
+      ${name} = let
       in
         pkgs.stdenv.mkDerivation {
-          inherit system;
-          name = "zenburn";
+          inherit system name;
           src = ./tools;
           builder = ./build.sh;
           dontStrip = true;
@@ -41,9 +35,23 @@
           ];
         };
     };
+    mkZenburn = mkTool {
+      name = "zenburn";
+      lispDeps = ps:
+        with ps; [
+          alexandria
+          dufy
+          net_dot_didierverna_dot_clon
+          net_dot_didierverna_dot_clon_dot_termio
+          serapeum
+          #uiop
+        ];
+    };
   in {
-    packages."aarch64-darwin" = mkDerivation "aarch64-darwin";
-    packages."aarch64-linux" = mkDerivation "aarch64-linux";
-    packages."x86_64-linux" = mkDerivation "x86_64-linux";
+    packages = builtins.mapAttrs (system: f: f system) {
+      "aarch64-darwin" = mkZenburn;
+      "aarch64-linux" = mkZenburn;
+      "x86_64-linux" = mkZenburn;
+    };
   };
 }
