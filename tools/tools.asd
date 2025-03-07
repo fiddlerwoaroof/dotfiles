@@ -25,7 +25,9 @@
   :description "list files as json"
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"
-  :depends-on (#:alexandria
+  :depends-on ((:require :sb-posix)
+               (:require :uiop)
+               #:alexandria
                #:data-lens
                #:local-time
                #:net.didierverna.clon
