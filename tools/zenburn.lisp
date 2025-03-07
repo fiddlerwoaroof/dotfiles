@@ -339,7 +339,8 @@
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
     (flag :short-name "h" :long-name "help")
-    (flag :short-name "a" :long-name "alt" :description "use alternate colors")
+    (flag :short-name "a" :long-name "alt" :description "use alternate colors"
+          :env-var "ZENBURN_ALT_PALETTE")
     (enum :short-name "f" :long-name "fg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's foreground color")
     (enum :short-name "b" :long-name "bg" :enum (mapcar 'car *color-alist*)
@@ -373,8 +374,7 @@
          (list-names (net.didierverna.clon:getopt :context context
                                                   :long-name "list-names"))
          (alt (net.didierverna.clon:getopt :context context
-                                           :long-name "alt"
-                                           :env-var "ZENBURN_ALT_PALETTE"))
+                                           :long-name "alt"))
          (hsv (net.didierverna.clon:getopt :context context
                                            :long-name "hsv"))
          (hsl (net.didierverna.clon:getopt :context context
