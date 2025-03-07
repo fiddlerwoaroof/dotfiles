@@ -14,15 +14,15 @@ buildPhase() {
   echo -n "NOTICE ME: "
   pwd
   ls -dl "$PWD"
-	sbcl --lose-on-corruption --disable-ldb --disable-debugger \
-		  --no-userinit --no-sysinit \
-	    --eval "(sb-ext:restrict-compiler-policy 'safety 1)" \
-		  --eval '(push :fw.main *features*)' \
-      --eval '(require :asdf)' \
-      --eval '(asdf:load-asd (truename "tools.asd"))' \
-      --eval '(asdf:load-system :tools/zenburn)' \
-		  --load zenburn.lisp \
-		  --eval "(fwoar.zenburn:dump)"
+  sbcl --lose-on-corruption --disable-ldb --disable-debugger \
+       --no-userinit --no-sysinit \
+       --eval "(sb-ext:restrict-compiler-policy 'safety 1)" \
+       --eval '(push :fw.main *features*)' \
+       --eval '(require :asdf)' \
+       --eval '(asdf:load-asd (truename "tools.asd"))' \
+       --eval '(asdf:load-system :tools/zenburn)' \
+       --load zenburn.lisp \
+       --eval "(fwoar.zenburn:dump)"
 }
 
 installPhase() {
