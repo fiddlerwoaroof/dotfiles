@@ -209,7 +209,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(mode-line ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg
                                 :weight semibold :inherit (fwoar-zenburn-1-face variable-pitch)))))
    `(mode-line-inactive ((t (:background unspecified :foreground unspecified :box nil :overline ,zenburn-fg-1
-                                         :inherit fwoar-zenburn-1-face))))
+                                         :inherit (fwoar-zenburn-1-face variable-pitch)))))
    `(mode-line-buffer-id ((t (:foreground ,zenburn-blue-2))))
 
    `(region ((t (:foreground unspecified :background unspecified :inverse-video t))))

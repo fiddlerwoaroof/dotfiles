@@ -206,6 +206,10 @@ if [[ ! -z "$GIT_CMD" ]]; then
   }
 fi
 
+git-extend() {
+  git commit --amend --no-edit "$@"
+}
+
 cr() {
   cd "$(fzf --preview='git --git-dir={1}/.git --work-tree={1} status' < "$HOME"/.git_repos)"
 }

@@ -31,6 +31,12 @@
   (normal-top-level-add-subdirs-to-load-path)
   (load "utils"))
 
+
+(unless (font-info "Equity A")
+  (display-warning 'fwoar-zenburn "Missing font Equity A" :error))
+(unless (font-info "Source Code Pro")
+  (display-warning 'fwoar-zenburn "Missing font Source Code Pro" :error))
+
 (progn
   (define-key key-translation-map (kbd "M-7") (kbd "∘"))
   (define-key key-translation-map (kbd "M-8") (kbd "•"))
