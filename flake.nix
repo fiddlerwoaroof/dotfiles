@@ -47,11 +47,14 @@
           #uiop
         ];
     };
+    mkTools = system: {
+      zenburn = mkZenburn system;
+    };
   in {
     packages = builtins.mapAttrs (system: f: f system) {
-      "aarch64-darwin" = mkZenburn;
-      "aarch64-linux" = mkZenburn;
-      "x86_64-linux" = mkZenburn;
+      "aarch64-darwin" = mkTools;
+      "aarch64-linux" = mkTools;
+      "x86_64-linux" = mkTools;
     };
   };
 }
