@@ -4,14 +4,28 @@
       type = "github";
       owner = "nixos";
       repo = "nixpkgs";
-      ref = "nixos-24.11";
+      ref = "nixos-unstable";
+    };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    emacs-community = {
+      url = "github:nix-community/emacs-overlay";
     };
   };
 
   outputs = {
     self,
     nixpkgs,
-  }: let
+    home-manager,
+    alejandra,
+    emacs-community,
+  } @ inputs: let
     mkTool = {
       name,
       lispDeps,
@@ -66,16 +80,44 @@
           cl-ppcre
         ];
     };
+    mkCurl = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      pkgs.curl.override {
+        openssl = pkgs.quictls;
+        http3Support = true;
+      };
     mkTools = system: {
       zenburn = mkZenburn system;
       cls = mkCls system;
       git-pick-patch = mkGitPickPatch system;
+      mycurl = mkCurl system;
     };
+    withSystem = system: attrSet: attrSet // {inherit system;};
+    withAppleSilicon = withSystem "aarch64-darwin";
   in {
     packages = builtins.mapAttrs (system: f: f system) {
       "aarch64-darwin" = mkTools;
       "aarch64-linux" = mkTools;
       "x86_64-linux" = mkTools;
+    };
+
+    homeManagerModules = {
+      common = import ./nix/common-module.nix;
+      fonts = {pkgs, ...}: {
+        home.packages = [
+          pkgs.lato
+          pkgs.alegreya
+          pkgs.source-code-pro
+          pkgs.alegreya-sans
+        ];
+      };
+      git-config = import ./nix/git-config.nix;
+      mac-apps = import ./nix/mac-apps;
+      main = import ./nix/personal-flake/home.nix;
+    };
+    homeConfigurations = {
+      "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
     };
   };
 }

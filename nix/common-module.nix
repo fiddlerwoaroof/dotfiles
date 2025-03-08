@@ -1,6 +1,13 @@
-{extraFlakes, pkgs, system, ...}: {
+{
+  alejandra-pkgs,
+  fwoar-pkgs,
+  pkgs,
+  system,
+  ...
+}: {
   home.packages = [
-    extraFlakes.alejandra.defaultPackage.${system}
+    alejandra-pkgs.default
+    fwoar-pkgs.zenburn
     pkgs.clojure
     pkgs.coreutils-prefixed
     pkgs.difftastic
@@ -37,12 +44,12 @@
     pkgs.vim
     pkgs.visidata
     (pkgs.zsh
-     // {
-       meta =
-         pkgs.zsh.meta
-         // {
-           outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
-         };
-     })
+      // {
+        meta =
+          pkgs.zsh.meta
+          // {
+            outputsToInstall = pkgs.zsh.meta.outputsToInstall ++ ["info" "doc"];
+          };
+      })
   ];
 }
