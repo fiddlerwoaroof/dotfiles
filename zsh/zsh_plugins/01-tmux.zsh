@@ -1,7 +1,7 @@
 man-() {
   (echo ".ll 18.0i"; echo ".nr LL 18.0i"; /bin/cat) |
-    /usr/bin/tbl |
-    /usr/bin/groff -Wall -mtty-char -Tascii -mandoc -c
+    tbl |
+    groff -Wall -mtty-char -Tascii -mandoc -c
 }
 
 vspf() {

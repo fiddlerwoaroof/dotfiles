@@ -23,5 +23,8 @@ self: super: {
       version = "2.0.10";
       sha = "sha256:0mq5ga977hzsq4wgv31l8d6rpa186q8xc4x2awwcskf5nq842xai";
     };
+    iterm2 = super.callPackage ./iterm.nix {
+      version = "3.5.8";
+    };
   };
 }

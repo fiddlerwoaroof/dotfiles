@@ -3,15 +3,108 @@
   (load "~/quicklisp/setup.lisp")
   (require :uiop))
 
-#+fw.dump
+#+(or fw.dump)
 (ql:quickload '(:net.didierverna.clon :alexandria :dufy))
 
 (defpackage :fwoar.zenburn
   (:use :cl )
   (:export #:dump
            #:html-color
-           #:rgb-color))
+           #:rgb-color
+           #:prepare-dump
+           #:main))
+
 (in-package :fwoar.zenburn)
+
+
+#+(or)
+(defun round-lab-coordinates (L a b)
+  (declare (optimize (speed 3)))
+  (flet ((round-3 (n)
+           (declare (type double-float n)
+                    (optimize (speed 3)
+                              (safety 0)))
+           (* (fround (* n 1000d0))
+              0.001d0)))
+    (declare (ftype (function (double-float) double-float) round-3)
+             (inline round-3))
+    (macrolet ((num-dispatch (exp)
+                 (alexandria:once-only (exp)
+                   `(typecase ,exp
+                      (double-float ,exp)
+                      (single-float (coerce ,exp 'double-float))
+                      (number (coerce ,exp 'double-float))))))
+      (values (round-3 (num-dispatch L))
+              (round-3 (num-dispatch a))
+              (round-3 (num-dispatch b))))))
+
+(defun mv-compose (a b)
+  (lambda (&rest args)
+    (declare (dynamic-extent args))
+    (multiple-value-call a (apply b args))))
+
+(defun xyz-to-oklab (x y z)
+  (declare (optimize (speed 3)))
+  (flet ((cube-root (n)
+           (* 1d0
+              (signum n)
+              (expt (abs n) #.(coerce 1/3 'double-float)))))
+    (declare (inline cube-root))
+    (let ((m1 #.(make-array '(3 3)
+                            :element-type 'double-float
+                            :initial-contents
+                            '((0.8189330101d0 0.3618667424d0 -0.1288597137d0)
+                              (0.0329845436d0 0.9293118715d0  0.0361456387d0)
+                              (0.0482003018d0 0.2643662691d0  0.6338517070d0))))
+          (m2 #.(make-array '(3 3)
+                            :element-type 'double-float
+                            :initial-contents
+                            '((+0.2104542553d0 +0.7936177850d0 -0.0040720468d0)
+                              (+1.9779984951d0 -2.4285922050d0 +0.4505937099d0)
+                              (+0.0259040371d0 +0.7827717662d0 -0.8086757660d0)))))
+      (multiple-value-call #'dufy/internal:multiply-mat-vec m2
+        (multiple-value-call
+            (lambda (l m s)
+              (values (cube-root l)
+                      (cube-root m)
+                      (cube-root s)))
+          (dufy/internal:multiply-mat-vec m1 x y z))))))
+
+(defun oklab-to-xyz (L a b)
+  (declare (optimize (speed 3)))
+  (let ((m1 (load-time-value
+             (dufy/internal:invert-matrix
+              #.(make-array '(3 3)
+                            :element-type 'double-float
+                            :initial-contents
+                            '((0.8189330101d0 0.3618667424d0 -0.1288597137d0)
+                              (0.0329845436d0 0.9293118715d0  0.0361456387d0)
+                              (0.0482003018d0 0.2643662691d0  0.6338517070d0))))))
+        (m2 (load-time-value
+             (dufy/internal:invert-matrix
+              #.(make-array '(3 3)
+                            :element-type 'double-float
+                            :initial-contents
+                            '((+0.2104542553d0 +0.7936177850d0 -0.0040720468d0)
+                              (+1.9779984951d0 -2.4285922050d0 +0.4505937099d0)
+                              (+0.0259040371d0 +0.7827717662d0 -0.8086757660d0)))))))
+    (multiple-value-call #'dufy/internal:multiply-mat-vec
+      m1
+      (multiple-value-call
+          (lambda (l m s)
+            (values (expt l 3)
+                    (expt m 3)
+                    (expt s 3)))
+        (dufy/internal:multiply-mat-vec m2 L a b)))))
+
+(defun set-L-oklab (L r g b)
+  (multiple-value-list
+   (multiple-value-bind (_ a b)
+       (multiple-value-call #'xyz-to-oklab
+         (dufy:qrgb-to-xyz r g b))
+     (declare (ignore _))
+     (multiple-value-call #'dufy:xyz-to-qrgb
+       (oklab-to-xyz L a b)))))
 
 (defun 256-color-text (fg bg format &rest args)
   (cond ((or fg bg)
@@ -24,12 +117,7 @@
         (t (error "must specify either fg or bg for a color"))))
 
 (defparameter *color-alist*
-  '((fg+2     . (#xFF #xFF #xEF))
-    (fg+1     . (#xF5 #xF5 #xD6))
-    (fg       . (#xDC #xDC #xCC))
-    (fg-1     . (#xA6 #xA6 #x89))
-    (fg-2     . (#x65 #x65 #x55))
-    (black    . (#x00 #x00 #x00))
+  '((black    . (#x00 #x00 #x00))
     (bg-2     . (#x00 #x00 #x00))
     (bg-1     . (#x11 #x11 #x12))
     (bg-05    . (#x38 #x38 #x38))
@@ -38,19 +126,24 @@
     (bg+1     . (#x4F #x4F #x4F))
     (bg+2     . (#x5F #x5F #x5F))
     (bg+3     . (#x6F #x6F #x6F))
-    (red+2    . (#xEC #xB3 #xB3))
-    (red+1    . (#xDC #xA3 #xA3))
-    (red      . (#xCC #x93 #x93))
-    (red-1    . (#xBC #x83 #x83))
-    (red-2    . (#xAC #x73 #x73))
-    (red-3    . (#x9C #x63 #x63))
-    (red-4    . (#x8C #x53 #x53))
-    (red-5    . (#x7C #x43 #x43))
+    (fg-2     . (#x65 #x65 #x55))
+    (fg-1     . (#xA6 #xA6 #x89))
+    (fg       . (#xDC #xDC #xCC))
+    (fg+1     . (#xF5 #xF5 #xD6))
+    (fg+2     . (#xFF #xFF #xEF))
     (red-6    . (#x6C #x33 #x33))
+    (red-5    . (#x7C #x43 #x43))
+    (red-4    . (#x8C #x53 #x53))
+    (red-3    . (#x9C #x63 #x63))
+    (red-2    . (#xAC #x73 #x73))
+    (red-1    . (#xBC #x83 #x83))
+    (red      . (#xCC #x93 #x93))
+    (red+1    . (#xDC #xA3 #xA3))
+    (red+2    . (#xEC #xB3 #xB3))
     (orange   . (#xDF #xAF #x8F))
-    (yellow   . (#xF0 #xDF #xAF))
-    (yellow-1 . (#xE0 #xCF #x9F))
     (yellow-2 . (#xD0 #xBF #x8F))
+    (yellow-1 . (#xE0 #xCF #x9F))
+    (yellow   . (#xF0 #xDF #xAF))
     (green-5  . (#x2F #x4F #x2F))
     (green-4  . (#x3F #x5F #x3F))
     (green-3  . (#x4F #x6F #x4F))
@@ -62,19 +155,106 @@
     (green+3  . (#xAF #xD8 #xAF))
     (green+4  . (#xBF #xEB #xBF))
     (cyan     . (#x93 #xE0 #xE3))
-    (blue+3   . (#xBD #xE0 #xF3))
-    (blue+2   . (#xAC #xE0 #xE3))
-    (blue+1   . (#x94 #xBF #xF3))
-    (blue     . (#x8C #xD0 #xD3))
-    (blue-1   . (#x7C #xB8 #xBB))
-    (blue-2   . (#x6C #xA0 #xA3))
-    (blue-3   . (#x5C #x88 #x8B))
-    (blue-4   . (#x4C #x70 #x73))
     (blue-5   . (#x36 #x60 #x60))
+    (blue-4   . (#x4C #x70 #x73))
+    (blue-3   . (#x5C #x88 #x8B))
+    (blue-2   . (#x6C #xA0 #xA3))
+    (blue-1   . (#x7C #xB8 #xBB))
+    (blue     . (#x8C #xD0 #xD3))
+    (blue+1   . (#x94 #xBF #xF3))
+    (blue+2   . (#xAC #xE0 #xE3))
+    (blue+3   . (#xBD #xE0 #xF3))
     (magenta  . (#xDC #x8C #xC3))))
+
+(defun list-names (&optional (s t))
+  (format s "~(~{~a~%~}~)"
+          (mapcar #'car *color-alist*)))
 
 (defun theme-color (name)
   (cdr (assoc name *color-alist*)))
+
+(defun match-alist-order (pattern target)
+  (format t "NOTICE ME: ~s~%"
+          (set-difference (mapcar #'car pattern)
+                          (mapcar #'car target)))
+
+  (loop for (key . _) in pattern
+        collect (assoc key target)))
+(defparameter *alt-color-alist*
+  (match-alist-order
+   *color-alist*
+   (append (mapcar (lambda (it)
+                     (cons it (theme-color it)))
+                   '(black
+                     bg-2 bg-1 bg-05 bg bg+05 bg+1 bg+2 bg+3
+                     fg-2 fg-1 fg fg+1 fg+2))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.45
+                                  (theme-color it))))
+                   '(red-6))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.5
+                                  (theme-color it))))
+                   '(red-5 green-5 blue-5))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.55
+                                  (theme-color it))))
+                   '(red-4 green-4 blue-4))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.6
+                                  (theme-color it))))
+                   '(red-3 green-3 blue-3))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.65
+                                  (theme-color it))))
+                   '(red-2 yellow-2 green-2 blue-2))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.7
+                                  (theme-color it))))
+                   '(blue-1 green-1 yellow-1 red-1))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.75
+                                  (theme-color it))))
+                   '(red orange yellow green cyan blue magenta))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.8
+                                  (theme-color it))))
+                   '(red+1 green+1 blue+1))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.85
+                                  (theme-color it))))
+                   '(red+2 green+2 blue+2))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.9
+                                  (theme-color it))))
+                   '(green+3 blue+3))
+           (mapcar (lambda (it)
+                     (cons it
+                           (apply #'set-l-oklab
+                                  0.95
+                                  (theme-color it))))
+                   '(green+4))
+           )))
 
 (defun html-color (name &optional (s t))
   (let ((values (theme-color name)))
@@ -85,12 +265,45 @@
 (defun hsv-color (name &optional (s t))
   (let ((values (theme-color name)))
     (destructuring-bind (r g b) values
-      (multiple-value-bind (h sa v) (dufy:rgb-to-hsv (/ r 255.0)
-                                                     (/ g 255.0)
-                                                     (/ b 255.0))
+      (multiple-value-bind (h sa v) (dufy:qrgb-to-hsv r g b)
         (prog1 (format s
                        "~,3f ~,3f ~,3f"
-                       (/ h 360.0) sa v)
+                       h sa v)
+          (unless (null s)
+            (format s "~%")))))))
+
+(defun hsl-color (name &optional (s t))
+  (let ((values (theme-color name)))
+    (destructuring-bind (r g b) values
+      (multiple-value-bind (h sa l) (dufy:qrgb-to-hsl r g b)
+        (prog1 (format s
+                       "hsl(~,3f, ~,3f%, ~,3f%)"
+                       h (* 100.0 sa) (* 100.0 l))
+          (unless (null s)
+            (format s "~%")))))))
+
+(defun oklab-value (name)
+  (let ((values (theme-color name)))
+    (destructuring-bind (r g b) values
+      (multiple-value-list (multiple-value-call #'xyz-to-oklab
+                             (dufy:qrgb-to-xyz r g b))))))
+
+(defun oklab-color (name &optional (s t))
+  (prog1 (apply #'format s
+                "oklab(~,3f% ~,3f ~,3f)"
+                (oklab-value name))
+    (unless (null s)
+      (format s "~%"
+              ))))
+
+(defun cielab-color (name &optional (s t))
+  (let ((values (theme-color name)))
+    (destructuring-bind (r g b) values
+      (multiple-value-bind (l a b) (multiple-value-call #'dufy:xyz-to-lab
+                                     (dufy:qrgb-to-xyz r g b))
+        (prog1 (format s
+                       "lab(~,3f% ~,3f ~,3f)"
+                       l a b)
           (unless (null s)
             (format s "~%")))))))
 
@@ -122,22 +335,32 @@
            (zenburn-text () color (make-string 32 :initial-element #\space))
            (format t "  ~8<~a~> (~{~2x~^, ~}) ~:* (~{~3d~^, ~})~%" color values)))
 
-#+fw.dump
+#+(or fw.dump fw.main)
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
-      (flag :short-name "h" :long-name "help")
+    (flag :short-name "h" :long-name "help")
+    (flag :short-name "a" :long-name "alt" :description "use alternate colors"
+          :env-var "ZENBURN_ALT_PALETTE")
     (enum :short-name "f" :long-name "fg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's foreground color")
     (enum :short-name "b" :long-name "bg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's background color")
+    (flag :short-name "l" :long-name "list-names"
+          :description "List all available color names")
     (enum :long-name "html"  :enum (mapcar 'car *color-alist*)
           :description "Show COLOR as an HTML RGB literal")
     (enum :long-name "hsv"  :enum (mapcar 'car *color-alist*)
-          :description "Show COLOR as a RGB hsv")
+          :description "Show COLOR as hsv")
+    (enum :long-name "hsl"  :enum (mapcar 'car *color-alist*)
+          :description "Show COLOR as a CSS hsl literal")
     (enum :long-name "css"  :enum (mapcar 'car *color-alist*)
-          :description "Show COLOR as an CSS RGB literal")))
+          :description "Show COLOR as an CSS RGB literal")
+    (enum :long-name "oklab"  :enum (mapcar 'car *color-alist*)
+          :description "Show COLOR as an CSS oklab literal")
+    (enum :long-name "cielab"  :enum (mapcar 'car *color-alist*)
+          :description "Show COLOR as an CSS lab literal")))
 
-#+fw.dump
+#+(or fw.dump fw.main)
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
          (net.didierverna.clon:*context* context)
@@ -148,33 +371,64 @@
          (remainder (net.didierverna.clon:remainder :context context))
          (css (net.didierverna.clon:getopt :context context
                                            :long-name "css"))
+         (list-names (net.didierverna.clon:getopt :context context
+                                                  :long-name "list-names"))
+         (alt (net.didierverna.clon:getopt :context context
+                                           :long-name "alt"))
          (hsv (net.didierverna.clon:getopt :context context
                                            :long-name "hsv"))
+         (hsl (net.didierverna.clon:getopt :context context
+                                           :long-name "hsl"))
+         (oklab (net.didierverna.clon:getopt :context context
+                                             :long-name "oklab"))
+         (cielab (net.didierverna.clon:getopt :context context
+                                              :long-name "cielab"))
          (html (net.didierverna.clon:getopt :context context
                                             :long-name "html")))
-    (cond ((net.didierverna.clon:getopt :context context
-                                        :long-name "help")
-           (net.didierverna.clon:help))
-          ((and html css)
-           (format *error-output* "Can't use HTML and CSS options together~%")
-           (net.didierverna.clon:help))
-          (css
-           (let ((values (cdr (assoc css *color-alist*))))
-             (format t "rgb(~{~d~^, ~})~%" values)))
-          (html
-           (html-color html t))
-          (hsv
-           (hsv-color hsv t))
-          ((null remainder)
-           (summary))
-          ((or foreground background)
-           (zenburn-text foreground background "~{~a~^ ~}" remainder))
-          (t
-           (net.didierverna.clon:help)))))
+    (let ((*color-alist* (if alt
+                             *alt-color-alist*
+                             *color-alist*)))
+      (cond ((net.didierverna.clon:getopt :context context
+                                          :long-name "help")
+             (net.didierverna.clon:help))
+            (list-names
+             (list-names t))
+            ((and html css)
+             (format *error-output* "Can't use HTML and CSS options together~%")
+             (net.didierverna.clon:help))
+            (css
+             (let ((values (cdr (assoc css *color-alist*))))
+               (format t "rgb(~{~d~^, ~})~%" values)))
+            (html
+             (html-color html t))
+            (hsv
+             (hsv-color hsv t))
+            (hsl
+             (hsl-color hsl t))
+            (oklab
+             (oklab-color oklab t))
+            (cielab
+             (cielab-color cielab t))
+            #+(or)
+            (float
+             (float-color float t))
+            ((null remainder)
+             (summary))
+            ((or foreground background)
+             (zenburn-text foreground background "~{~a~^ ~}" remainder))
+            (t
+             (net.didierverna.clon:help))))))
 
-#+fw.dump
-(defun dump ()
+
+#+(or fw.dump fw.main)
+(defun prepare-dump ()
   (setf net.didierverna.clon:*context* nil
         *features* (remove :fw.dump *features*)
-        *print-case* :downcase)
-  (net.didierverna.clon:dump "zenburn" main))
+        *print-case* :downcase))
+#+(or fw.dump fw.main)
+(defun dump (&optional out-path)
+  (prepare-dump)
+  (net.didierverna.clon:dump (if out-path
+                                 (format nil "~a/zenburn" out-path)
+                                 "zenburn")
+                             main))

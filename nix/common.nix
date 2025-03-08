@@ -17,7 +17,8 @@ in rec {
     pkgs.dtach
     pkgs.ecl
     pkgs.gnuplot
-    pkgs.texinfoInteractive
+    pkgs.htop
+    pkgs.info
     pkgs.jq
     pkgs.lorri
     pkgs.ncdu

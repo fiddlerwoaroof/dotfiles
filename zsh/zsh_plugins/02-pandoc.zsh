@@ -12,7 +12,7 @@ alias html2man='2man html'
 alias md2man='2man markdown'
 alias latex2man='2man latex'
 vmd() {
-  md2man $1 | man- | less
+  md2man $1 | man- | less -R
 }
 
 _pandoc_view() {

@@ -1,6 +1,6 @@
 (defpackage :git-pick-patch
   (:use :cl :alexandria :serapeum)
-  (:export ))
+  (:export :main))
 (in-package :git-pick-patch)
 
 (defun read-header (inp)
@@ -66,8 +66,8 @@
       (format t "~&Must provide a pattern!")
       (let* ((pattern (cadr sb-ext:*posix-argv*)))
         (loop for patch = (get-file-patch *standard-input*)
-           for filtered = (when patch (filter-file-hunks patch
-                                                         (op (cl-ppcre:scan pattern _))))
-           until (equal patch '("" nil))
-           when filtered do
-             (format t "~&~a~&" (rebuild-file-patch filtered))))))
+              for filtered = (when patch (filter-file-hunks patch
+                                                            (op (cl-ppcre:scan pattern _))))
+              until (equal patch '("" nil))
+              when filtered do
+                (format t "~&~a~&" (rebuild-file-patch filtered))))))

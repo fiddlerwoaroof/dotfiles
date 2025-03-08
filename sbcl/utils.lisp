@@ -244,6 +244,7 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 (defun plot-stream (s &key
                         (xrange nil xrange-p)
                         (yrange nil yrange-p)
+                        (image-size nil image-size-p)
                         (background "#2A2B2E")
                         (frame-color "#7fdf7f")
                         (line-color "#DCDCCC")
@@ -251,9 +252,10 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
   (let ((fn (format nil "/tmp/~a.svg" (gensym))))
     (uiop:run-program (with-output-to-string (s)
                         (format (make-broadcast-stream s *error-output*)
-                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced  background '~a'; set border lw 3 lc rgb '~a'; plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a'; set logscale y 2; plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
                                 xrange-p xrange
                                 yrange-p yrange
+                                image-size-p image-size
                                 background
                                 line-color
                                 frame-color
@@ -264,6 +266,16 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
                       :output (parse-namestring fn))
     (swank::send-to-emacs (list :write-image fn " ")))
   (values))
+
+#+swank
+(defun plot-data (x y &rest r &key image-size xrange yrange)
+  (with-input-from-string (s (with-output-to-string (r)
+                               (map nil
+                                    (lambda (xn yn)
+                                      (format r "~a ~a~%" xn yn))
+                                    x
+                                    y)))
+    (apply #'plot-stream s r)))
 
 #+swank
 (defun wi (fn)
@@ -295,3 +307,30 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 
 (defun load-projects ()
   (load-all-asds (directory "PROJECTS:**;*.ASD")))
+
+
+
+(defun my-mexp-hook (&optional (old-hook *macroexpand-hook*))
+  (labels ((show-def (type name)
+             ;; Only show package markers when compiling. Showing
+             ;; them when loading shows a bunch of ASDF system
+             ;; package noise.
+             (when *compile-file-pathname*
+               (fresh-line)
+               (format t (format nil "[def (~(~a ~A ...)~)]~%" type name)))))
+    (lambda (fun form env)
+      (cond
+        ((and (consp form)
+              (symbolp (first form))
+              (>= (length (symbol-name (first form)))
+                  3)
+              (equalp (subseq (symbol-name (first form)) 0 3)
+                      "def"))
+         (show-def (first form) (second form))))
+      (when old-hook
+        (funcall old-hook fun form env)))))
+
+;; (defparameter *old-macroexpand-hook*
+;;   *macroexpand-hook*)
+;;
+;; (setf *macroexpand-hook* (my-mexp-hook *macroexpand-hook*))
