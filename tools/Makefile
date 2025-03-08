@@ -47,6 +47,15 @@ bin/cls: cls.lisp
 	     --eval '(fwoar.cls::dump)'
 	mv cls bin
 
+bin/json-formatter: json-formatter.lisp
+	sbcl --disable-debugger \
+	     --no-userinit \
+	     --eval "(sb-ext:restrict-compiler-policy 'safety 1)" \
+	     --eval '(pushnew :fw.dump *features*)' \
+	     --load json-formatter.lisp \
+	     --eval '(fwoar.json-formatter::dump)'
+	mv json-formatter bin
+
 install: all
 	mkdir -p ${HOME}/bin
 	ln -sf ${PWD}/bin/* ${HOME}/bin
