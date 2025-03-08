@@ -14,6 +14,8 @@
     notmuch tag +attend -- "folder:\"personal/Inbox/Attention Needed\" and -tag:attend"
     notmuch tag +receipt -- "folder:\"personal/Inbox/Receipts\" and -tag:receipt"
     notmuch tag +main -- "folder:\"personal/Inbox\" and -tag:main"
+    notmuch tag +gordon -- "to:\"el-gordons@elangley.org\""
+    notmuch tag +klwine -- "to:\"el-klwines@elangley.org\""
     notmuch tag +wine -main -inbox -- "(from:\"wine enthusiast\" OR to:\"el-gordons@elangley.org\" OR from:\"garagiste\") and -tag:wine"
     notmuch tag +travel -main -inbox -- "from:\"priceline\" -tag:travel"
     notmuch tag +shopping -main -inbox -- "(from:nordstrom OR from:\"Julianna Rae\" OR from:\"D'artagnan\" OR from:\"brightcellars.com\" OR from:\"shoppremiumoutlets.com\") -tag:shopping"
@@ -22,9 +24,34 @@
     notmuch tag +archive -inbox -main -- "folder:/personal.Archive.*/ and -tag:archive"
     notmuch tag +cigars -inbox -- "folder:personal/cigars and -tag:cigars"
     notmuch tag +sunpower -inbox -- "from:sunpower and -tag:sunpower"
+    notmuch search --output summary --format json date:-1week..today |
+        jq -c '[.[] | select(.authors == "Cron Daemon" | not)]' > "$HOME"/public_html/recent.json
   '';
   openssl = pkgs.openssl.overrideAttrs (oldAttrs: {meta = oldAttrs.meta // {outputsToInstall = oldAttrs.meta.outputsToInstall or ["out"] ++ ["dev"];};});
-  packages = common_home.packages ++ ([pkgs.cachix pkgs.pass pkgs.direnv pkgs.emacs-git pkgs.glibcLocales pkgs.gron pkgs.libssh2 pkgs.lorri pkgs.zeromq pkgs.sqlite.dev pkgs.sqlite openssl (import (dotfileDirectory + "/nix/lpass-nix") {inherit pkgs;})] ++ lisps);
+  packages =
+    common_home.packages
+    ++ ([
+      pkgs.cvs
+      pkgs.nix
+        pkgs.visidata
+        pkgs.curl
+        pkgs.awscli
+        pkgs.cachix
+        pkgs.pass
+        pkgs.direnv
+        pkgs.emacs-git
+        pkgs.glibcLocales
+        pkgs.gron
+        pkgs.libssh2
+        pkgs.lorri
+        pkgs.zeromq
+        pkgs.sqlite.dev
+        pkgs.sqlite.out
+        pkgs.sqlite
+        openssl
+        (import (dotfileDirectory + "/nix/lpass-nix") {inherit pkgs;})
+      ]
+      ++ lisps);
   syncMailNotArchive = pkgs.writeScript "sync-mail-not-archive" ''
     #!${pkgs.zsh}/bin/zsh
 
@@ -72,6 +99,7 @@ in {
     file = {
       "sbcl-source".source = utils.untar pkgs.sbcl.src;
       ".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
+      #"lib/libsqlite.so" = "${pkgs.sqlite}/lib/libsqlite.so";
     };
   };
   nixpkgs.overlays = common_home.overlays;
