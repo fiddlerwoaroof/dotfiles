@@ -17,13 +17,13 @@ in rec {
     pkgs.dtach
     pkgs.ecl
     pkgs.gnuplot
-    pkgs.info
+    pkgs.texinfoInteractive
     pkgs.jq
     pkgs.lorri
     pkgs.ncdu
     pkgs.nixfmt
     pkgs.ripgrep
-    pkgs.sbcl
+    (pkgs.sbcl.overrideAttrs (_: {propagatedBuildInputs = [pkgs.sqlite];}))
     pkgs.tree
   ];
 

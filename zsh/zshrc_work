@@ -9,6 +9,7 @@ if [[ "$TERM" == "dumb" ]]; then
     unfunction precmd
     unfunction preexec
     PS1='$ '
+    source "$HOME/.zsh.d/nix.zsh"
 else
   PLUGIN_DIR="${PLUGIN_DIR:-$HOME/.zsh.d}"
 
