@@ -23,7 +23,6 @@
   (let* ((exe-name (asdf/system:component-build-pathname c))
          (result (merge-pathnames exe-name
                                   (user-homedir-pathname))))
-    (format *error-output* "NOTICE ME: output to ~s" result)
     (values (list result)
             t)))
 
@@ -60,6 +59,20 @@
   :serial t
   :components ((:file "cls")))
 
+(defsystem :tools/json-formatter
+  :description "json formatter"
+  :author "Ed L <el-l@elangley.org>"
+  :license "MIT"
+  :class fw-tool-system
+  :build-pathname "json-formatter"
+  :entry-point "fwoar.json-formatter:main"
+  :depends-on (#:alexandria
+               #:serapeum
+               #:com.inuoe.jzon
+               #:net.didierverna.clon)
+  :serial t
+  :components ((:file "json-formatter")))
+
 (defsystem :tools/git-pick-patch
   :description "list files as json"
   :author "Ed L <el-l@elangley.org>"
@@ -73,7 +86,6 @@
                             (let* ((exe-name (asdf/system:component-build-pathname c))
                                    (result (merge-pathnames exe-name
                                                             (user-homedir-pathname))))
-                              (format *error-output* "NOTICE ME: output to ~s" result)
                               (values (list result)
                                       t)))
   :serial t

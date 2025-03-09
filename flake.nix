@@ -80,6 +80,17 @@
           cl-ppcre
         ];
     };
+    mkJsonFormatter = mkTool {
+      name = "json-formatter";
+      lispDeps = ps:
+        with ps; [
+          net_dot_didierverna_dot_clon
+          net_dot_didierverna_dot_clon_dot_termio
+          alexandria
+          serapeum
+          com_dot_inuoe_dot_jzon
+        ];
+    };
     mkCurl = system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in
@@ -91,6 +102,7 @@
       zenburn = mkZenburn system;
       cls = mkCls system;
       git-pick-patch = mkGitPickPatch system;
+      json-formatter = mkJsonFormatter system;
       mycurl = mkCurl system;
     };
     withSystem = system: attrSet: attrSet // {inherit system;};

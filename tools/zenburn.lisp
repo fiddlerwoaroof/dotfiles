@@ -174,10 +174,6 @@
   (cdr (assoc name *color-alist*)))
 
 (defun match-alist-order (pattern target)
-  (format t "NOTICE ME: ~s~%"
-          (set-difference (mapcar #'car pattern)
-                          (mapcar #'car target)))
-
   (loop for (key . _) in pattern
         collect (assoc key target)))
 (defparameter *alt-color-alist*
@@ -423,7 +419,7 @@
 #+(or fw.dump fw.main)
 (defun prepare-dump ()
   (setf net.didierverna.clon:*context* nil
-        *features* (remove :fw.dump *features*)
+        *features* (remove :fw.main (remove :fw.dump *features*))
         *print-case* :downcase))
 #+(or fw.dump fw.main)
 (defun dump (&optional out-path)

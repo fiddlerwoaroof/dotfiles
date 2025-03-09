@@ -11,9 +11,6 @@ buildPhase() {
   cp -R "$src" src
   chmod -R +w src
   cd src
-  echo -n "NOTICE ME: "
-  pwd
-  ls -dl "$PWD"
   sbcl --lose-on-corruption --disable-ldb --disable-debugger \
        --no-userinit --no-sysinit \
        --eval "(sb-ext:restrict-compiler-policy 'safety 1)" \
@@ -24,10 +21,11 @@ buildPhase() {
        --eval "(asdf:operate :program-op :tools/$name)"
 }
 
-installPhase() {
+installPhase() (
+  set -x
   mkdir -p "$out"/bin
   mv "$HOME/$name" "$out"/bin
   wrapProgram "$out/bin/$name"
-}
+)
 
 genericBuild
