@@ -1,13 +1,6 @@
-#+fw.dump
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (load "~/quicklisp/setup.lisp"))
-
-#+fw.dump
-(ql:quickload '(:net.didierverna.clon :alexandria :serapeum :com.inuoe.jzon))
-
 (defpackage :fwoar.json-formatter
   (:use :cl )
-  (:export ))
+  (:export :main :prepare-dump :dump))
 (in-package :fwoar.json-formatter)
 
 (defgeneric pprint-json (client obj context stream))
@@ -50,12 +43,10 @@
             do (princ "," stream) (pprint-newline :mandatory stream)
           do (pprint-json client sub obj stream))))
 
-#+fw.dump
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "PATHS" :make-default nil)
-      (flag :short-name "h" :long-name "help")))
+    (flag :short-name "h" :long-name "help")))
 
-#+fw.dump
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
          (net.didierverna.clon:*context* context))
@@ -72,8 +63,10 @@
                  (pprint-json :flat decoded nil *standard-output*))))
            (fresh-line)))))
 
-#+fw.dump
-(defun dump ()
+(defun prepare-dump ()
   (setf net.didierverna.clon:*context* nil
-        *features* (remove :fw.dump *features*))
+        *features* (remove :fw.main (remove :fw.dump *features*))))
+
+(defun dump ()
+  (prepare-dump)
   (net.didierverna.clon:dump "json-formatter" main))

@@ -160,7 +160,7 @@
 
 (defun prepare-dump ()
   (setf net.didierverna.clon:*context* nil
-        *features* (remove :fw.dump *features*)))
+        *features* (remove :fw.main (remove :fw.dump *features*))))
 (defun dump ()
   (prepare-dump)
   (net.didierverna.clon:dump "cls" main))
