@@ -1,12 +1,29 @@
 {
-  config,
-  pkgs,
+  self,
+  system,
+  nixpkgs,
+  home-manager,
+  alejandra,
+  emacs-community,
   ...
 }: let
-  common_home = import "${homeDirectory}/git_repos/dotfiles/nix/common.nix" {inherit homeDirectory pkgs;};
+  pkgs = import nixpkgs {
+    inherit system;
+    overlays = [
+      (import ../personal-flake/elangley-overlay)
+    ];
+  };
+  emacs-pkgs = emacs-community.packages.${system};
+  common_home = import ../common.nix {inherit homeDirectory pkgs;};
   dotfileDirectory = "${homeDirectory}/git_repos/dotfiles";
   homeDirectory = "/home/${username}";
-  lisps = with pkgs; [ccl ecl gcl cmucl_binary nixpkgs-fmt];
+  lisps = with pkgs; [
+    ccl
+    ecl
+    #gcl
+    cmucl_binary
+    nixpkgs-fmt
+  ];
   notmuchTag = pkgs.writeScript "notmuch-tag" ''
     #!${pkgs.zsh}/bin/zsh
     PATH=${pkgs.notmuch}/bin:$PATH
@@ -31,25 +48,25 @@
   packages =
     common_home.packages
     ++ ([
-      pkgs.cvs
-      pkgs.nix
-        pkgs.visidata
-        pkgs.curl
+        (import ../lpass-nix {inherit pkgs;})
+        emacs-pkgs.emacs-git
+        openssl
         pkgs.awscli
         pkgs.cachix
-        pkgs.pass
+        pkgs.curl
+        pkgs.cvs
         pkgs.direnv
-        pkgs.emacs-git
         pkgs.glibcLocales
         pkgs.gron
         pkgs.libssh2
         pkgs.lorri
-        pkgs.zeromq
+        pkgs.nix
+        pkgs.pass
+        pkgs.sqlite
         pkgs.sqlite.dev
         pkgs.sqlite.out
-        pkgs.sqlite
-        openssl
-        (import (dotfileDirectory + "/nix/lpass-nix") {inherit pkgs;})
+        pkgs.visidata
+        pkgs.zeromq
       ]
       ++ lisps);
   syncMailNotArchive = pkgs.writeScript "sync-mail-not-archive" ''
@@ -65,98 +82,110 @@
   '';
   username = "edwlan";
   utils = common_home.utils;
-in {
-  accounts = {
-    email = {
-      accounts = {
-        personal = {
-          address = "edward@elangley.org";
-          imap = {host = "mb.elangley.org";};
-          mbsync = {
+in
+  home-manager.lib.homeManagerConfiguration {
+    inherit pkgs;
+    modules = [
+      {
+        accounts = {
+          email = {
+            accounts = {
+              personal = {
+                address = "edward@elangley.org";
+                imap = {host = "mb.elangley.org";};
+                mbsync = {
+                  enable = true;
+                  create = "maildir";
+                  patterns = ["*" "!tmp" "!dovecot" "!dovecot/%"];
+                };
+                msmtp = {enable = true;};
+                notmuch = {enable = true;};
+                neomutt.enable = true;
+                primary = true;
+                realName = "Edward Langley";
+                passwordCommand = "mail-password";
+                smtp = {
+                  host = "mb.elangley.org";
+                  port = 587;
+                  tls.useStartTls = true;
+                };
+                userName = "edward@howit.is";
+              };
+            };
+          };
+        };
+        home = {
+          inherit username homeDirectory packages;
+          stateVersion = "21.03";
+          file = {
+            "sbcl-source".source = utils.untar pkgs.sbcl.src;
+            ".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
+            #"lib/libsqlite.so" = "${pkgs.sqlite}/lib/libsqlite.so";
+          };
+        };
+        nixpkgs.overlays = common_home.overlays;
+        programs = {
+          direnv = {
             enable = true;
-            create = "maildir";
-            patterns = ["*" "!tmp" "!dovecot" "!dovecot/%"];
+            nix-direnv = {enable = true;};
           };
+          git = {
+            enable = true;
+            userEmail = "el-github@elangley.org";
+            userName = "Edward Langley";
+            lfs.enable = true;
+            difftastic.enable = true;
+            extraConfig = {
+              commit = {gpgsign = true;};
+              github = {user = "fiddlerwoaroof";};
+              gpg = {
+                format = "ssh";
+                allowedSignersFile = "${homeDirectory}/.ssh/allowed_signers";
+              };
+              init = {defaultBranch = "main";};
+              merge = {autoStash = true;};
+              pull = {rebase = false;};
+              rebase = {autoStash = true;};
+              user = {signingkey = "${homeDirectory}/.ssh/id_ed25519.pub";};
+            };
+          };
+          home-manager = {enable = true;};
+          mbsync = {enable = true;};
           msmtp = {enable = true;};
-          notmuch = {enable = true;};
-          neomutt.enable = true;
-          primary = true;
-          realName = "Edward Langley";
-          passwordCommand = "mail-password";
-          smtp = {
-            host = "mb.elangley.org";
-            port = 587;
-            tls.useStartTls = true;
+          neomutt = {enable = true;};
+          notmuch = {
+            enable = true;
+            hooks = {
+              preNew = "${syncMailNotArchive}";
+              postNew = "${notmuchTag}";
+            };
+            extraConfig = {index = {"header.dt" = "Delivered-To";};};
           };
-          userName = "edward@howit.is";
+          password-store = {
+            enable = false;
+            settings = {
+              PASSWORD_STORE_DIR = "/some/directory";
+              PASSWORD_STORE_KEY = "12345678";
+              PASSWORD_STORE_CLIP_TIME = "60";
+            };
+          };
+          tmux = {
+            enable = true;
+            terminal = "screen-256color";
+            escapeTime = 0;
+            clock24 = true;
+            newSession = true;
+            keyMode = "vi";
+            extraConfig = builtins.readFile (../../tmux.conf);
+          };
         };
-      };
+        targets.genericLinux.enable = true;
+      }
+    ];
+    extraSpecialArgs = {
+      inherit system;
+      fwoar-pkgs = self.packages.${system};
+      emacs-pkgs = emacs-community.packages.${system};
+      alejandra-pkgs = alejandra.packages.${system};
     };
-  };
-  home = {
-    inherit username homeDirectory packages;
-    stateVersion = "21.03";
-    file = {
-      "sbcl-source".source = utils.untar pkgs.sbcl.src;
-      ".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
-      #"lib/libsqlite.so" = "${pkgs.sqlite}/lib/libsqlite.so";
-    };
-  };
-  nixpkgs.overlays = common_home.overlays;
-  programs = {
-    direnv = {
-      enable = true;
-      nix-direnv = {enable = true;};
-    };
-    git = {
-      enable = true;
-      userEmail = "el-github@elangley.org";
-      userName = "Edward Langley";
-      lfs.enable = true;
-      difftastic.enable = true;
-      extraConfig = {
-        commit = {gpgsign = true;};
-        github = {user = "fiddlerwoaroof";};
-        gpg = {
-          format = "ssh";
-          allowedSignersFile = "${homeDirectory}/.ssh/allowed_signers";
-        };
-        init = {defaultBranch = "main";};
-        merge = {autoStash = true;};
-        pull = {rebase = false;};
-        rebase = {autoStash = true;};
-        user = {signingkey = "${homeDirectory}/.ssh/id_ed25519.pub";};
-      };
-    };
-    home-manager = {enable = true;};
-    mbsync = {enable = true;};
-    msmtp = {enable = true;};
-    neomutt = {enable = true;};
-    notmuch = {
-      enable = true;
-      hooks = {
-        preNew = "${syncMailNotArchive}";
-        postNew = "${notmuchTag}";
-      };
-      extraConfig = {index = {"header.dt" = "Delivered-To";};};
-    };
-    password-store = {
-      enable = false;
-      settings = {
-        PASSWORD_STORE_DIR = "/some/directory";
-        PASSWORD_STORE_KEY = "12345678";
-        PASSWORD_STORE_CLIP_TIME = "60";
-      };
-    };
-    tmux = {
-      enable = true;
-      terminal = "screen-256color";
-      escapeTime = 0;
-      clock24 = true;
-      newSession = true;
-      keyMode = "vi";
-      extraConfig = builtins.readFile (dotfileDirectory + "/tmux.conf");
-    };
-  };
-  targets.genericLinux.enable = true;
-}
+  }

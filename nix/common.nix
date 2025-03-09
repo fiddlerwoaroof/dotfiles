@@ -18,11 +18,11 @@ in rec {
     pkgs.ecl
     pkgs.gnuplot
     pkgs.htop
-    pkgs.info
+    pkgs.texinfoInteractive
     pkgs.jq
     pkgs.lorri
     pkgs.ncdu
-    pkgs.nixfmt
+    pkgs.nixfmt-classic
     pkgs.ripgrep
     (pkgs.sbcl.overrideAttrs (_: {propagatedBuildInputs = [pkgs.sqlite];}))
     pkgs.tree

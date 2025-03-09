@@ -95,6 +95,7 @@
     };
     withSystem = system: attrSet: attrSet // {inherit system;};
     withAppleSilicon = withSystem "aarch64-darwin";
+    withx8664Linux = withSystem "x86_64-linux";
   in {
     packages = builtins.mapAttrs (system: f: f system) {
       "aarch64-darwin" = mkTools;
@@ -118,6 +119,7 @@
     };
     homeConfigurations = {
       "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
+      "titan" = import ./nix/titan/home.nix (withx8664Linux inputs);
     };
   };
 }
