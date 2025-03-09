@@ -26,7 +26,7 @@
     pkgs.jq
     pkgs.lorri
     pkgs.mosh
-    # pkgs.ncdu ## currently broken
+    pkgs.ncdu
     pkgs.nixfmt-classic
     pkgs.pandoc
     pkgs.pkg-config
