@@ -14,7 +14,7 @@
     ];
   };
   emacs-pkgs = emacs-community.packages.${system};
-  common_home = import ../common.nix {inherit homeDirectory pkgs;};
+  common_home = import ../common.nix {inherit pkgs;};
   dotfileDirectory = "${homeDirectory}/git_repos/dotfiles";
   homeDirectory = "/home/${username}";
   lisps = with pkgs; [
@@ -46,29 +46,29 @@
   '';
   openssl = pkgs.openssl.overrideAttrs (oldAttrs: {meta = oldAttrs.meta // {outputsToInstall = oldAttrs.meta.outputsToInstall or ["out"] ++ ["dev"];};});
   packages =
-    common_home.packages
-    ++ ([
-        (import ../lpass-nix {inherit pkgs;})
-        emacs-pkgs.emacs-git
-        openssl
-        pkgs.awscli
-        pkgs.cachix
-        pkgs.curl
-        pkgs.cvs
-        pkgs.direnv
-        pkgs.glibcLocales
-        pkgs.gron
-        pkgs.libssh2
-        pkgs.lorri
-        pkgs.nix
-        pkgs.pass
-        pkgs.sqlite
-        pkgs.sqlite.dev
-        pkgs.sqlite.out
-        pkgs.visidata
-        pkgs.zeromq
-      ]
-      ++ lisps);
+    [
+      pkgs.ncdu
+      (import ../lpass-nix {inherit pkgs;})
+      emacs-pkgs.emacs-git
+      openssl
+      pkgs.awscli
+      pkgs.cachix
+      pkgs.curl
+      pkgs.cvs
+      pkgs.direnv
+      pkgs.glibcLocales
+      pkgs.gron
+      pkgs.libssh2
+      pkgs.lorri
+      pkgs.nix
+      pkgs.pass
+      pkgs.sqlite
+      pkgs.sqlite.dev
+      pkgs.sqlite.out
+      pkgs.visidata
+      pkgs.zeromq
+    ]
+    ++ lisps;
   syncMailNotArchive = pkgs.writeScript "sync-mail-not-archive" ''
     #!${pkgs.zsh}/bin/zsh
 
@@ -86,6 +86,8 @@ in
   home-manager.lib.homeManagerConfiguration {
     inherit pkgs;
     modules = [
+      self.homeManagerModules.common
+      self.homeManagerModules.fonts
       {
         accounts = {
           email = {
@@ -116,38 +118,16 @@ in
         };
         home = {
           inherit username homeDirectory packages;
-          stateVersion = "21.03";
           file = {
             "sbcl-source".source = utils.untar pkgs.sbcl.src;
             ".ssh/allowed_signers".text = "* ${builtins.readFile ./id_ed25519.pub}";
             #"lib/libsqlite.so" = "${pkgs.sqlite}/lib/libsqlite.so";
           };
         };
-        nixpkgs.overlays = common_home.overlays;
         programs = {
           direnv = {
             enable = true;
             nix-direnv = {enable = true;};
-          };
-          git = {
-            enable = true;
-            userEmail = "el-github@elangley.org";
-            userName = "Edward Langley";
-            lfs.enable = true;
-            difftastic.enable = true;
-            extraConfig = {
-              commit = {gpgsign = true;};
-              github = {user = "fiddlerwoaroof";};
-              gpg = {
-                format = "ssh";
-                allowedSignersFile = "${homeDirectory}/.ssh/allowed_signers";
-              };
-              init = {defaultBranch = "main";};
-              merge = {autoStash = true;};
-              pull = {rebase = false;};
-              rebase = {autoStash = true;};
-              user = {signingkey = "${homeDirectory}/.ssh/id_ed25519.pub";};
-            };
           };
           home-manager = {enable = true;};
           mbsync = {enable = true;};
@@ -176,11 +156,34 @@ in
             clock24 = true;
             newSession = true;
             keyMode = "vi";
-            extraConfig = builtins.readFile (../../tmux.conf);
+            extraConfig = builtins.readFile ../../tmux.conf;
           };
         };
         targets.genericLinux.enable = true;
       }
+      {
+        programs.git = {
+          enable = true;
+          userEmail = "el-github@elangley.org";
+          userName = "Edward Langley";
+          lfs.enable = true;
+          difftastic.enable = true;
+          extraConfig = {
+            commit = {gpgsign = true;};
+            github = {user = "fiddlerwoaroof";};
+            gpg = {
+              format = "ssh";
+              allowedSignersFile = "${homeDirectory}/.ssh/allowed_signers";
+            };
+            init = {defaultBranch = "main";};
+            merge = {autoStash = true;};
+            pull = {rebase = false;};
+            rebase = {autoStash = true;};
+            user = {signingkey = "${homeDirectory}/.ssh/id_ed25519.pub";};
+          };
+        };
+      }
+      {home.stateVersion = "21.03";}
     ];
     extraSpecialArgs = {
       inherit system;
