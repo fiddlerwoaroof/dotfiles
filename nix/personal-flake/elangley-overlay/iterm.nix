@@ -3,6 +3,7 @@
   lib,
   stdenvNoCC,
   version,
+  hash
 }:
 /*
 This cannot be built from source as it requires entitlements and
@@ -18,7 +19,7 @@ stdenvNoCC.mkDerivation rec {
 
   src = fetchzip {
     url = "https://iterm2.com/downloads/stable/iTerm2-${lib.replaceStrings ["."] ["_"] version}.zip";
-    hash = "sha256-o2GCjQvpblV+6r9xhe5wFEy1harhgtnRrnKWUxWHF8E=";
+    inherit hash;
   };
 
   dontFixup = true;

@@ -10,6 +10,7 @@
   };
   home.packages = [
     alejandra-pkgs.default
+    fwoar-pkgs.gsed
     fwoar-pkgs.zenburn
     pkgs.clojure
     pkgs.coreutils-prefixed
@@ -17,7 +18,6 @@
     pkgs.direnv
     pkgs.dtach
     pkgs.ecl
-    pkgs.fwoar.gsed
     pkgs.gawk
     pkgs.gnumake
     pkgs.gnuplot

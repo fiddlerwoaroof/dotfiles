@@ -3,11 +3,12 @@
   config,
   pkgs,
   emacs-pkgs,
+  fwoar-pkgs,
   ...
 }: {
   home.packages = [
     pkgs.crawlTiles
-    pkgs.fwoar.iterm2
+    fwoar-pkgs.iterm2
     emacs-pkgs.emacs-git
   ];
   home.activation.install-apps = lib.hm.dag.entryAfter ["linkGeneration"] ''

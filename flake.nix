@@ -91,6 +91,10 @@
           com_dot_inuoe_dot_jzon
         ];
     };
+    mkPrefixedSed = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      pkgs.callPackage ./nix/personal-flake/elangley-overlay/prefixed-gnused {};
     mkCurl = system: let
       pkgs = nixpkgs.legacyPackages.${system};
     in
@@ -104,13 +108,25 @@
       git-pick-patch = mkGitPickPatch system;
       json-formatter = mkJsonFormatter system;
       mycurl = mkCurl system;
+      gsed = mkPrefixedSed system;
     };
     withSystem = system: attrSet: attrSet // {inherit system;};
     withAppleSilicon = withSystem "aarch64-darwin";
     withx8664Linux = withSystem "x86_64-linux";
+    darwinPackages = system:
+      (mkTools system)
+      // {
+        iterm2 = let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+          pkgs.callPackage ./nix/personal-flake/elangley-overlay/iterm.nix {
+            version = "3.5.11";
+            hash = "sha256-vcZL74U9RNjhpIQRUUn6WueYhE/LfLqpb/JgWunY5dI=";
+          };
+      };
   in {
     packages = builtins.mapAttrs (system: f: f system) {
-      "aarch64-darwin" = mkTools;
+      "aarch64-darwin" = darwinPackages;
       "aarch64-linux" = mkTools;
       "x86_64-linux" = mkTools;
     };
