@@ -5,6 +5,9 @@
   system,
   ...
 }: {
+  programs = {
+    home-manager = {enable = true;};
+  };
   home.packages = [
     alejandra-pkgs.default
     fwoar-pkgs.zenburn
