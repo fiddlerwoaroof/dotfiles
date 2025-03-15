@@ -3,7 +3,7 @@
   lib,
   stdenvNoCC,
   version,
-  hash
+  hash,
 }:
 /*
 This cannot be built from source as it requires entitlements and

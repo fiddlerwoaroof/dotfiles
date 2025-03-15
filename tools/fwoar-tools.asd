@@ -1,7 +1,7 @@
 ;;; -*- Mode:Lisp; Syntax:ANSI-Common-Lisp; Package: ASDF-USER -*-
 (in-package :asdf-user)
 
-(defsystem :tools
+(defsystem :fwoar-tools
   :description "Tool for generating colored text"
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"
@@ -26,7 +26,7 @@
     (values (list result)
             t)))
 
-(defsystem :tools/zenburn
+(defsystem :fwoar-tools/zenburn
   :description "Tool for generating colored text"
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"
@@ -42,7 +42,7 @@
   :serial t
   :components ((:file "zenburn")))
 
-(defsystem :tools/cls
+(defsystem :fwoar-tools/cls
   :description "list files as json"
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"
@@ -59,7 +59,7 @@
   :serial t
   :components ((:file "cls")))
 
-(defsystem :tools/json-formatter
+(defsystem :fwoar-tools/json-formatter
   :description "json formatter"
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"
@@ -73,7 +73,7 @@
   :serial t
   :components ((:file "json-formatter")))
 
-(defsystem :tools/git-pick-patch
+(defsystem :fwoar-tools/git-pick-patch
   :description "list files as json"
   :author "Ed L <el-l@elangley.org>"
   :license "MIT"

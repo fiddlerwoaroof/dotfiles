@@ -16,9 +16,9 @@ buildPhase() {
        --eval "(sb-ext:restrict-compiler-policy 'safety 1)" \
        --eval '(push :fw.main *features*)' \
        --eval '(require :asdf)' \
-       --eval '(asdf:load-asd (truename "tools.asd"))' \
-       --eval "(asdf:load-system :tools/$name)" \
-       --eval "(asdf:operate :program-op :tools/$name)"
+       --eval '(asdf:load-asd (truename "fwoar-tools.asd"))' \
+       --eval "(asdf:load-system :fwoar-tools/$name)" \
+       --eval "(asdf:operate :program-op :fwoar-tools/$name)"
 }
 
 installPhase() (
