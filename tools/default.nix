@@ -1,11 +1,13 @@
 {nixpkgs, ...}: let
+  asdf-dependencies = builtins.fromJSON (builtins.readFile ./asdf-dependencies.json);
+  getAsdfDependencies = s: p: builtins.map (s: builtins.getAttr s p) asdf-dependencies.${s};
   mkTool = {
     name,
-    lispDeps,
+    system-name,
     system,
   }: let
     pkgs = nixpkgs.legacyPackages.${system};
-    sbcl = pkgs.sbcl.withPackages lispDeps;
+    sbcl = pkgs.sbcl.withPackages (getAsdfDependencies system-name);
   in
     pkgs.stdenv.mkDerivation {
       inherit system name;
@@ -22,53 +24,24 @@
     };
 in
   system: {
-    zenburn = mkTool {
+    zenburn = mkTool rec {
       inherit system;
       name = "zenburn";
-      lispDeps = ps:
-        with ps; [
-          alexandria
-          dufy
-          net_dot_didierverna_dot_clon
-          net_dot_didierverna_dot_clon_dot_termio
-          serapeum
-          #uiop
-        ];
+      system-name = "fwoar-tools/${name}";
     };
-    cls = mkTool {
+    cls = mkTool rec {
       inherit system;
       name = "cls";
-      lispDeps = ps:
-        with ps; [
-          alexandria
-          data-lens
-          local-time
-          net_dot_didierverna_dot_clon
-          net_dot_didierverna_dot_clon_dot_termio
-          yason
-          #uiop
-        ];
+      system-name = "fwoar-tools/${name}";
     };
-    git-pick-patch = mkTool {
+    git-pick-patch = mkTool rec {
       inherit system;
       name = "git-pick-patch";
-      lispDeps = ps:
-        with ps; [
-          alexandria
-          serapeum
-          cl-ppcre
-        ];
+      system-name = "fwoar-tools/${name}";
     };
-    json-formatter = mkTool {
+    json-formatter = mkTool rec {
       inherit system;
       name = "json-formatter";
-      lispDeps = ps:
-        with ps; [
-          net_dot_didierverna_dot_clon
-          net_dot_didierverna_dot_clon_dot_termio
-          alexandria
-          serapeum
-          com_dot_inuoe_dot_jzon
-        ];
+      system-name = "fwoar-tools/${name}";
     };
   }
