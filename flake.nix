@@ -49,5 +49,17 @@
       "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
       "titan" = import ./nix/titan/home.nix (withx8664Linux inputs);
     };
+    apps.aarch64-darwin = let
+      system = "aarch64-darwin";
+      pkgs = nixpkgs.legacyPackages.${system};
+      self-pkgs = self.packages.${system};
+      writeZsh = pkgs.writers.makeScriptWriter {interpreter = "${pkgs.zsh}/bin/zsh";};
+    in {
+      cls = {
+        type = "app";
+        buildInputs = [self-pkgs.cls];
+        program = "${self-pkgs.cls}/bin/cls";
+      };
+    };
   };
 }
