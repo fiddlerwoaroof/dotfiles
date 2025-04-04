@@ -112,5 +112,24 @@
     "closer-mop",
     "trivia_dot_level1",
     "trivia_dot_level0"
+  ],
+  "fwoar-tools/file-indexer":[
+    "local-time",
+    "sqlite",
+    "net_dot_didierverna_dot_clon",
+    "cffi",
+    "iterate",
+    "net_dot_didierverna_dot_clon_dot_termio",
+    "net_dot_didierverna_dot_clon_dot_core",
+    "babel",
+    "trivial-features",
+    "alexandria",
+    "ironclad",
+    "bordeaux-threads",
+    "net_dot_didierverna_dot_clon_dot_setup",
+    "trivial-garbage",
+    "global-vars",
+    "named-readtables",
+    "mgl-pax-bootstrap"
   ]
 }

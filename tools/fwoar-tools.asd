@@ -90,3 +90,19 @@
                                       t)))
   :serial t
   :components ((:file "git-pick-patch")))
+
+(defsystem :fwoar-tools/file-indexer
+  :description "list files as json"
+  :author "Ed L <el-l@elangley.org>"
+  :license "MIT"
+  :build-pathname "file-indexer"
+  :entry-point "fwoar.file-indexer:main"
+  :depends-on (:net.didierverna.clon :ironclad :sqlite :local-time)
+  :output-files (program-op (o c)
+                            (let* ((exe-name (asdf/system:component-build-pathname c))
+                                   (result (merge-pathnames exe-name
+                                                            (user-homedir-pathname))))
+                              (values (list result)
+                                      t)))
+  :serial t
+  :components ((:file "file-indexer")))

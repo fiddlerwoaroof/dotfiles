@@ -35,6 +35,10 @@ in
       inherit system;
       name = "git-pick-patch";
     };
+    file-indexer = mkTool rec {
+      inherit system;
+      name = "file-indexer";
+    };
     json-formatter = mkTool rec {
       inherit system;
       name = "json-formatter";

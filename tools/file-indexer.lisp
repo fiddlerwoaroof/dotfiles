@@ -1,20 +1,22 @@
-#+fw.dump
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (load "~/quicklisp/setup.lisp")
-  (require :asdf))
+;; #+fw.dump
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (load "~/quicklisp/setup.lisp")
+;;   (require :asdf))
 
-#+fw.dump
-(progn
-  (asdf:load-asd
-   (asdf:system-relative-pathname :net.didierverna.clon "termio/net.didierverna.clon.termio.asd"))
-  (require :uiop))
+;; #+fw.dump
+;; (progn
+;;   (asdf:load-asd
+;;     (asdf:system-relative-pathname :net.didierverna.clon "termio/net.didierverna.clon.termio.asd"))
+;;   (require :uiop))
 
-#+fw.dump
-(ql:quickload '(:net.didierverna.clon :ironclad :sqlite :local-time))
+;; #+fw.dump
+;; (ql:quickload '(:net.didierverna.clon :ironclad :sqlite :local-time))
 
 (defpackage :fwoar.file-indexer
   (:use :cl)
-  (:export ))
+  (:export
+   #:prepare-dump
+   #:main))
 (in-package :fwoar.file-indexer)
 
 (defparameter +my-format+
@@ -22,7 +24,7 @@
     (:HOUR 2) #\: (:MIN 2) #\: (:SEC 2)))
 
 (defun now-time ()
-  (local-time:format-timestring nil 
+  (local-time:format-timestring nil
                                 (local-time:now)
                                 :format +my-format+))
 
@@ -78,6 +80,11 @@
                                                      length
                                                      ts)))))))))))
 
+(defun prepare-dump ()
+  (setf net.didierverna.clon:*context* nil
+        *features* (remove :fw.main (remove :fw.dump *features*))))
+
+#+(or)
 (defun dump ()
   (setf net.didierverna.clon:*context* nil
         *features* (remove :fw.dump *features*))
