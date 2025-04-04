@@ -1,21 +1,20 @@
 {
   inputs = {
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    emacs-community = {url = "github:nix-community/emacs-overlay";};
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-editor = {url = "github:snowfallorg/nix-editor";};
     nixpkgs = {
       type = "github";
       owner = "nixos";
       repo = "nixpkgs";
       ref = "nixos-unstable";
-    };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    alejandra = {
-      url = "github:kamadorueda/alejandra";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    emacs-community = {
-      url = "github:nix-community/emacs-overlay";
     };
   };
 
@@ -25,6 +24,7 @@
     home-manager,
     alejandra,
     emacs-community,
+    ...
   } @ inputs: let
     withSystem = system: attrSet: attrSet // {inherit system;};
     withAppleSilicon = withSystem "aarch64-darwin";

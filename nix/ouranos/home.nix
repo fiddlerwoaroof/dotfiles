@@ -1,10 +1,11 @@
 {
   self,
-  system,
-  nixpkgs,
-  home-manager,
   alejandra,
   emacs-community,
+  home-manager,
+  nix-editor,
+  nixpkgs,
+  system,
   ...
 }: let
   pkgs = import nixpkgs {
@@ -25,8 +26,13 @@ in
       self.homeManagerModules.git-config
       self.homeManagerModules.fonts
       self.homeManagerModules.mac-apps
-      {
+      ({
+        pkgs,
+        nix-editor-pkgs,
+        ...
+      }: {
         home.packages = [
+          nix-editor-pkgs.default
           pkgs.cmake
           pkgs.nasm
           pkgs.ninja
@@ -34,7 +40,7 @@ in
           pkgs.automake
           pkgs.autoconf-archive
         ];
-      }
+      })
       {
         # You can update Home Manager without changing this value. See
         # the Home Manager release notes for a list of state version
@@ -49,6 +55,7 @@ in
     extraSpecialArgs = {
       inherit system;
       fwoar-pkgs = self.packages.${system};
+      nix-editor-pkgs = nix-editor.packages.${system};
       emacs-pkgs = emacs-community.packages.${system};
       alejandra-pkgs = alejandra.packages.${system};
     };
