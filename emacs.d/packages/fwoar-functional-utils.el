@@ -50,7 +50,7 @@
        ((funcall pred it) (setf state t) nil)))))
 
 ;;;###autoload
-(cl-defmacro with-unaliased (&body body)
+(cl-defmacro data-lens:with-unaliased (&body body)
   `(flet ,(loop for (name raw-args namespaced) in fwoar:*namespaced-funs*
                 for rest-arg = (cl-find-if (data-lens:just-after
                                             (lambda (it)
@@ -202,12 +202,28 @@
   (lambda (it)
     (cl-subseq it start end)))
 
+
+(fwoar:def-ns-fun sorted (comparator &key key)
+  (declare (ignore key))
+  (lambda (it)
+    (cl-stable-sort (copy-seq it)
+                    comparator
+                    :key key)))
+
+
 (fwoar:def-ns-fun juxt (fun1 &rest r)
   (lambda (&rest args)
     (list* (apply fun1 args)
            (mapcar (lambda (f)
                      (apply f args))
                    r))))
+
+(fwoar:def-ns-fun explode (fun1 fun2 &rest r)
+  (lambda (lst)
+    (mapcan (lambda (it)
+              (loop for f in (list* fun1 fun2 r)
+                    collect (funcall f it)))
+            lst)))
 
 (defalias 'fwoar:• '-compose)
 

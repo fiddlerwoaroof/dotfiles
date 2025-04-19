@@ -20,12 +20,13 @@
   darwinPackages = system:
     (mkTools system)
     // {
+      clasp-cl = nixpkgs.legacyPackages.x86_64-darwin.clasp-common-lisp;
       iterm2 = let
         pkgs = nixpkgs.legacyPackages.${system};
       in
         pkgs.callPackage ./iterm.nix {
-          version = "3.5.11";
-          hash = "sha256-vcZL74U9RNjhpIQRUUn6WueYhE/LfLqpb/JgWunY5dI=";
+          version = "3.5.13";
+          hash = "sha256-PoHgAE2yooQivAXfDweeQW0KmS32XuxrXjlLIsigh+o=";
         };
     };
 in

@@ -16,6 +16,7 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
+    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
   };
 
   outputs = {

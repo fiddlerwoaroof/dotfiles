@@ -3,13 +3,16 @@
   config,
   pkgs,
   emacs-pkgs,
+  emacs-hack-pkgs,
   fwoar-pkgs,
   ...
-}: {
+}: let
+  emacs = emacs-hack-pkgs.default;
+in {
   home.packages = [
     pkgs.crawlTiles
     fwoar-pkgs.iterm2
-    emacs-pkgs.emacs-git
+    emacs
   ];
   home.activation.install-apps = lib.hm.dag.entryAfter ["linkGeneration"] ''
     new_nix_apps="${config.home.homeDirectory}/Applications/Nix"
