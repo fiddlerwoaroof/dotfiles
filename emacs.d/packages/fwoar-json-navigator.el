@@ -51,7 +51,7 @@
       (json-pretty-print-buffer)
       (comment
        (insert (with-current-buffer json
-                 (buffer-string)))))
+                 (erase-buffer)))))
     (switch-to-buffer json)))
 
 (defun fwoar:json--ensure-data ()
