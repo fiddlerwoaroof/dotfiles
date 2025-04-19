@@ -3,9 +3,10 @@
 ;; Copyright (C) 2020 Edward Langley
 
 ;; Author: Edward Langley <fwoar@elangley.org>
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: fp,combinators
 ;; URL: https://fwoar.co
+;; Package-Requires: (cl-lib)
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 ;;; Code:
 
-(eval-when (compile load eval)
+(cl-eval-when (compile load eval)
   (defvar fwoar:*namespaced-funs* ()))
 
 (cl-defmacro fwoar:def-ns-fun (name (&rest args) &body body)
@@ -51,31 +52,31 @@
 
 ;;;###autoload
 (cl-defmacro data-lens:with-unaliased (&body body)
-  `(flet ,(loop for (name raw-args namespaced) in fwoar:*namespaced-funs*
-                for rest-arg = (cl-find-if (data-lens:just-after
-                                            (lambda (it)
-                                              (member it '(&rest &body))))
-                                           raw-args)
-                for args = (cl-remove-if (lambda (it)
-                                           (or (eql it rest-arg)
-                                               (and (symbolp it)
-                                                    (= ?&
-                                                       (elt
-                                                        (symbol-name it)
-                                                        0)))))
-                                         raw-args)
+  `(flet ,(cl-loop for (name raw-args namespaced) in fwoar:*namespaced-funs*
+                   for rest-arg = (cl-find-if (data-lens:just-after
+                                               (lambda (it)
+                                                 (member it '(&rest &body))))
+                                              raw-args)
+                   for args = (cl-remove-if (lambda (it)
+                                              (or (eql it rest-arg)
+                                                  (and (symbolp it)
+                                                       (= ?&
+                                                          (elt
+                                                           (symbol-name it)
+                                                           0)))))
+                                            raw-args)
 
-                collect `(,name ,raw-args
-                                (,@(if rest-arg
-                                       `(apply ',namespaced)
-                                     (list namespaced))
-                                 ,@(mapcar (lambda (it)
-                                             (if (listp it)
-                                                 (car it)
-                                               it))
-                                           args)
-                                 ,@(when rest-arg
-                                     (list rest-arg)))))
+                   collect `(,name ,raw-args
+                                   (,@(if rest-arg
+                                          `(apply ',namespaced)
+                                        (list namespaced))
+                                    ,@(mapcar (lambda (it)
+                                                (if (listp it)
+                                                    (car it)
+                                                  it))
+                                              args)
+                                    ,@(when rest-arg
+                                        (list rest-arg)))))
      ,@body))
 
 (cl-defmacro fwoar:def-combinator (name (seq &rest args) &body body)
@@ -105,10 +106,10 @@
 
 (fwoar:def-combinator over (list f &rest args)
   "Return a function that maps F over LIST with possible extra ARGS"
-  (map (type-of list)
-       (lambda (it)
-         (apply f it args))
-       list))
+  (cl-map (type-of list)
+          (lambda (it)
+            (apply f it args))
+          list))
 
 (fwoar:def-combinator filter (list f &rest args)
   (cl-remove-if-not (lambda (it)
@@ -163,11 +164,11 @@
   (:method ((map hash-table) key)
            (gethash key map))
   (:method ((map list) key)
-           (typecase (car map)
+           (cl-typecase (car map)
              (cons (cdr (cl-assoc key map :test 'equal)))
              (t (cl-loop for (a-key . value) on map by #'cddr
                          when (equal key a-key) do
-                         (return (car value))))))
+                         (cl-return (car value))))))
   (:method ((map vector) (key number))
            (elt map key)))
 
@@ -179,12 +180,12 @@
   (lambda (map)
     (cl-loop for key in (cons key keys)
              for cur = (fwoar:extract-key map key) then (fwoar:extract-key cur key)
-             finally (return cur))))
+             finally (cl-return cur))))
 
-(comment
- (fwoar:def-ns-fun regex-match (regex)
-   (lambda (data)
-     (cl-ppcre:scan-to-strings regex data))))
+;; (comment
+;;  (fwoar:def-ns-fun regex-match (regex)
+;;    (lambda (data)
+;;      (cl-ppcre:scan-to-strings regex data))))
 
 (fwoar:def-ns-fun include (pred)
   (lambda (seq)
@@ -206,23 +207,23 @@
 (fwoar:def-ns-fun sorted (comparator &key key)
   (declare (ignore key))
   (lambda (it)
-    (cl-stable-sort (copy-seq it)
+    (cl-stable-sort (cl-copy-seq it)
                     comparator
                     :key key)))
 
 
 (fwoar:def-ns-fun juxt (fun1 &rest r)
   (lambda (&rest args)
-    (list* (apply fun1 args)
-           (mapcar (lambda (f)
-                     (apply f args))
-                   r))))
+    (cl-list* (apply fun1 args)
+              (mapcar (lambda (f)
+                        (apply f args))
+                      r))))
 
 (fwoar:def-ns-fun explode (fun1 fun2 &rest r)
   (lambda (lst)
     (mapcan (lambda (it)
-              (loop for f in (list* fun1 fun2 r)
-                    collect (funcall f it)))
+              (cl-loop for f in (cl-list* fun1 fun2 r)
+                       collect (funcall f it)))
             lst)))
 
 (defalias 'fwoar:• '-compose)
