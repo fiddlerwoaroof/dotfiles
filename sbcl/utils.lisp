@@ -252,7 +252,7 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
   (let ((fn (format nil "/tmp/~a.svg" (gensym))))
     (uiop:run-program (with-output-to-string (s)
                         (format (make-broadcast-stream s *error-output*)
-                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a'; set logscale y 2; plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
                                 xrange-p xrange
                                 yrange-p yrange
                                 image-size-p image-size
@@ -334,3 +334,31 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
 ;;   *macroexpand-hook*)
 ;;
 ;; (setf *macroexpand-hook* (my-mexp-hook *macroexpand-hook*))
+
+(defun dep-tree (system-designator)
+  (let ((start (string-downcase (asdf:coerce-name (asdf:find-system system-designator))))
+        (to-process (list system-designator))
+        (result (make-hash-table :test #'equal)))
+    (labels ((%inner (system-designator)
+               (let* ((system (asdf:find-system system-designator))
+                      (deps (asdf:system-depends-on system)))
+                 (setf (gethash (asdf:component-name system)
+                                result)
+                       (mapcar (lambda (it)
+                                 (let ((*print-case* :downcase))
+                                   (princ-to-string it)))
+                               deps))
+                 (mapc (lambda (it)
+                         (let ((thing (asdf/find-component:resolve-dependency-spec system
+                                                                                   it)))
+                           (when (and thing
+                                      (null (gethash (asdf:primary-system-name thing)
+                                                     result)))
+                             (pushnew (asdf:primary-system-name thing)
+                                      to-process
+                                      :test 'equal))))
+                       deps))))
+      (loop while to-process
+            for val = (pop to-process)
+            do (%inner val))
+      (values result start))))
