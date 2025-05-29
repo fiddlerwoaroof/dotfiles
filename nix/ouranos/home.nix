@@ -27,6 +27,7 @@ in
       self.homeManagerModules.git-config
       self.homeManagerModules.fonts
       self.homeManagerModules.mac-apps
+      (import ./email.nix)
       ({
         pkgs,
         nix-editor-pkgs,
