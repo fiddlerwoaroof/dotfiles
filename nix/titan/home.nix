@@ -24,6 +24,16 @@ in
       self.homeManagerModules.git-config
       (import ./email.nix)
       {
+        home.file = {
+          ".zshrc".source = ../../zsh/zshrc_work;
+          ".zsh.d/nix-zsh-completions".source = ../../3dp/nix-zsh-completions;
+          ".zsh.d" = {
+            source = ../../zsh/zsh_plugins;
+            recursive = true;
+          };
+        };
+      }
+      {
         targets.genericLinux.enable = true;
         home.stateVersion = "21.03";
       }
