@@ -8,7 +8,7 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usbhid" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
@@ -47,6 +47,22 @@
     { device = "/dev/disk/by-id/nvme-Samsung_SSD_990_PRO_2TB_S7KHNJ0X715552N-part1";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
+    };
+
+  fileSystems."/home/edwlan/Maildir" =
+    { device = "zpool/home/edwlan/Maildir";
+      fsType = "zfs";
+    };
+
+  fileSystems."/home/edwlan/oldhome" =
+    { device = "/dev/disk/by-uuid/e99a31c0-e201-4f6f-8b9b-9d856841ae99";
+      fsType = "ext4";
+    };
+
+  fileSystems."/home/edwlan/Langleys Dropbox" =
+    { device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
+      fsType = "none";
+      options = [ "bind" ];
     };
 
   swapDevices = [ ];

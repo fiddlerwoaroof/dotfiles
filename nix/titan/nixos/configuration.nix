@@ -60,13 +60,14 @@
       device = "zpool/home/edwlan/Maildir";
       fsType = "zfs";
       options = ["zfsutil"];
+      depends = ["/home"];
     };
 
     "/home/edwlan/oldhome" = {
       label = "dat";
       fsType = "ext4";
       options = ["discard"];
-      depends = ["/home/edwlan"];
+      depends = ["/home"];
     };
 
     "/home/edwlan/Langleys\ Dropbox" = {
