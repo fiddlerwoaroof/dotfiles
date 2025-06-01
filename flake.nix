@@ -17,6 +17,7 @@
       ref = "nixos-unstable";
     };
     emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
   outputs = {

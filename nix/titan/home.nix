@@ -4,6 +4,7 @@
   home-manager,
   nixpkgs,
   self,
+  sops-nix,
   system,
   ...
 }: let
@@ -22,9 +23,19 @@ in
   home-manager.lib.homeManagerConfiguration {
     inherit pkgs;
     modules = [
+      sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
       self.homeManagerModules.fonts
       (import ./legacy.nix)
+      {
+        sops = {
+          age.keyFile = "/home/${username}/.age-key.txt";
+          defaultSopsFile = ./secrets.json;
+          secrets.mail-password = {
+            path = "%r/mail-password.txt";
+          };
+        };
+      }
       {
         home = {
           packages =
