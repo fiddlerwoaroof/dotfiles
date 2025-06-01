@@ -1,5 +1,6 @@
 {
   inputs = {
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     alejandra = {
       url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,10 +23,11 @@
 
   outputs = {
     self,
-    nixpkgs,
-    home-manager,
     alejandra,
     emacs-community,
+    home-manager,
+    nixpkgs,
+    titan-nixpkgs,
     ...
   } @ inputs: let
     withSystem = system: attrSet: attrSet // {inherit system;};
@@ -62,6 +64,10 @@
         buildInputs = [self-pkgs.cls];
         program = "${self-pkgs.cls}/bin/cls";
       };
+    };
+    nixosConfigurations.titan = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [./nix/titan/nixos/configuration.nix];
     };
   };
 }
