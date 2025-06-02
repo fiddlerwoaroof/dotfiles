@@ -64,14 +64,14 @@
     };
 
     "/home/edwlan/oldhome" = {
-      label = "dat";
+      device = "/dev/disk/by-uuid/e99a31c0-e201-4f6f-8b9b-9d856841ae99";
       fsType = "ext4";
       options = ["discard"];
       depends = ["/home"];
     };
 
     "/home/edwlan/Langleys\ Dropbox" = {
-      device = "/home/edwlan/oldhome/edwlan/Langleys\ Dropbox/";
+      device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
       options = ["bind"];
       depends = ["/home/edwlan/oldhome"];
     };

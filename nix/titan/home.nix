@@ -122,11 +122,11 @@ in
           ".vimrc".source = ../../vimrc_work;
           ".vim/repos/github.com/Shougo/dein.vim".source =
             (pkgs.fetchFromGitHub {
-            owner = "Shougo";
-            repo = "dein.vim";
-            rev = "master";
-            hash = "sha256-whrWIex57PwSSIOViLby71slC6VXDOapdaICO7o6Oms";
-          }).outPath;
+              owner = "Shougo";
+              repo = "dein.vim";
+              rev = "master";
+              hash = "sha256-whrWIex57PwSSIOViLby71slC6VXDOapdaICO7o6Oms";
+            }).outPath;
           ".zshrc".source = ../../zsh/zshrc_work;
           ".zsh.d/nix-zsh-completions".source = ../../3dp/nix-zsh-completions;
           ".zsh.d" = {

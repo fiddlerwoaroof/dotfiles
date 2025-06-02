@@ -65,9 +65,12 @@
         program = "${self-pkgs.cls}/bin/cls";
       };
     };
-    nixosConfigurations.titan = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [./nix/titan/nixos/configuration.nix];
+      modules = [
+        #./nix/titan/nixos/hardware-configuration.nix
+        ./nix/titan/nixos/configuration.nix
+      ];
     };
   };
 }
