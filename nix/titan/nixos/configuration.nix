@@ -1,3 +1,6 @@
+# Edit this configuration file to define what should be installed on
+# your system. Help is available in the configuration.nix(5) man page, on
+# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 {
   config,
   lib,
@@ -73,7 +76,7 @@
     "/home/edwlan/Langleys\ Dropbox" = {
       device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
       options = ["bind"];
-      depends = ["/home/edwlan/oldhome"];
+      depends = ["/home/edwlan/oldhome" "/home"];
     };
 
     "/boot" = {
@@ -92,14 +95,7 @@
 
   services.zfs.trim.enable = true;
   services.zfs.autoScrub.enable = true;
-  networking = {
-    hostId = "8425e349";
-    hostName = "titan"; # Define your hostname.
-    domain = "h.elangley.org";
-  };
   # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -157,6 +153,30 @@
     git
   ];
 
+  networking = {
+    hostId = "8425e349";
+    hostName = "titan"; # Define your hostname.
+    domain = "h.elangley.org";
+    # Open ports in the firewall.
+    firewall.allowedTCPPorts = [22];
+    # firewall.allowedUDPPorts = [ ... ];
+    # Or disable the firewall altogether.
+    # firewall.enable = false;
+    # wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+    # networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+    #nameservers = [
+    #  "172.16.1.1"
+    #];
+  };
+
+  # services.resolved = {
+  #   enable = true;
+  #   domains = [ "h.elangley.org." ];
+  # #  fallbackDns = [
+  # #	  "172.16.1.1"
+  # #  ];
+  # };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -178,12 +198,6 @@
   programs.firefox.enable = true;
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
-
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [22];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

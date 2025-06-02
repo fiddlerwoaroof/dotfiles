@@ -68,7 +68,6 @@
     nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        #./nix/titan/nixos/hardware-configuration.nix
         ./nix/titan/nixos/configuration.nix
       ];
     };
