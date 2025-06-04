@@ -150,6 +150,7 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     file
+    findutils
     git
   ];
 
@@ -158,7 +159,7 @@
     hostName = "titan"; # Define your hostname.
     domain = "h.elangley.org";
     # Open ports in the firewall.
-    firewall.allowedTCPPorts = [22];
+    firewall.allowedTCPPorts = [22 11434];
     # firewall.allowedUDPPorts = [ ... ];
     # Or disable the firewall altogether.
     # firewall.enable = false;
@@ -167,6 +168,11 @@
     #nameservers = [
     #  "172.16.1.1"
     #];
+  };
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
   };
 
   # services.resolved = {

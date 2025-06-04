@@ -76,6 +76,7 @@ in
           timers = {
             nm-new = {
               Unit = {
+                After = ["sops-nix.service"];
                 Description = "Check Mail every fifteen minutes";
                 RefuseManualStart = false;
                 RefuseManualStop = false;
@@ -90,7 +91,6 @@ in
 
               Install = {
                 WantedBy = ["timers.target"];
-                After = ["sops-nix.service"];
               };
             };
           };
