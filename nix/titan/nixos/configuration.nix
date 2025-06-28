@@ -95,6 +95,15 @@
 
   services.zfs.trim.enable = true;
   services.zfs.autoScrub.enable = true;
+  services.gitolite = {
+    enable = true;
+    adminPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP3Dt99tfZLxBQcLa/shJA12+aw5fNClP0ZzwPCto3lU f@localhost";
+    extraGitoliteRc = ''
+      # setup gitolite mirror
+      $RC{GIT_CONFIG_KEYS} = 'gitolite\.mirror\..*';
+    '';
+    commonHooks = [ ../gitolite-hooks/post-receive ];
+  };
   # Pick only one of the below networking options.
 
   # Set your time zone.
