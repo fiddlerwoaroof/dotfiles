@@ -21,6 +21,7 @@
     pkgs.gawk
     pkgs.gnumake
     pkgs.gnuplot
+    pkgs.graphviz
     pkgs.groff
     pkgs.htop
     pkgs.jq
