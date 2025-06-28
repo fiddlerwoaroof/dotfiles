@@ -11,36 +11,6 @@ in {
   home = {
     inherit username;
     homeDirectory = "/home/${username}";
-    packages =
-      [
-        pkgs.ncdu
-        (import ../lpass-nix {inherit pkgs;})
-        emacs-pkgs.emacs-git
-        openssl
-        pkgs.awscli
-        pkgs.cachix
-        pkgs.curl
-        pkgs.cvs
-        pkgs.direnv
-        pkgs.glibcLocales
-        pkgs.gron
-        pkgs.libssh2
-        pkgs.lorri
-        pkgs.nix
-        pkgs.pass
-        pkgs.sqlite
-        pkgs.sqlite.dev
-        pkgs.sqlite.out
-        pkgs.visidata
-        pkgs.zeromq
-      ]
-      ++ (with pkgs; [
-        ccl
-        ecl
-        #gcl
-        cmucl_binary
-        nixpkgs-fmt
-      ]);
 
     file = {
       "sbcl-source".source = utils.untar pkgs.sbcl.src;
