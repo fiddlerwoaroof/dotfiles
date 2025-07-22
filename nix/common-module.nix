@@ -18,6 +18,7 @@
     pkgs.direnv
     pkgs.dtach
     pkgs.ecl
+    pkgs.exiftool
     pkgs.gawk
     pkgs.gnumake
     pkgs.gnuplot
