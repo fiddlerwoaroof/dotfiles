@@ -6,6 +6,7 @@
   nix-editor,
   nixpkgs,
   emacs-hack,
+  sops-nix,
   system,
   ...
 }: let
@@ -22,6 +23,7 @@ in
     # Specify your home configuration modules here, for example,
     # the path to your home.nix.
     modules = [
+      sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
       self.homeManagerModules.main
       self.homeManagerModules.git-config
