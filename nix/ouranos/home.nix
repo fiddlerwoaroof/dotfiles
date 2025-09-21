@@ -24,6 +24,22 @@ in
     # the path to your home.nix.
     modules = [
       sops-nix.homeManagerModules.sops
+      {
+        home.file = {
+          "nginx-conf/ca.pem".source = ./ca.pem;
+        };
+        sops = {
+          # It's also possible to use a ssh key, but only when it has no password:
+          age.sshKeyPaths = [ "/Users/edwlan/.ssh/id_ed25519" ];
+          defaultSopsFile = ./secrets.yml;
+          secrets.nginx_local_key = {
+            # %r gets replaced with a runtime directory, use %% to specify a '%'
+            # sign. Runtime dir is $XDG_RUNTIME_DIR on linux and
+            # $(getconf DARWIN_USER_TEMP_DIR) on darwin.
+            path = "/Users/edwlan/nginx-conf/ca-key.pem";
+          };
+        };
+      }
       self.homeManagerModules.common
       self.homeManagerModules.main
       self.homeManagerModules.git-config

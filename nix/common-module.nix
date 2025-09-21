@@ -44,6 +44,7 @@
       ];
     }))
     pkgs.shellcheck
+    pkgs.sops
     pkgs.texinfoInteractive
     pkgs.tree
     pkgs.vim
