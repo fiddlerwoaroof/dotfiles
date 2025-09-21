@@ -41,6 +41,12 @@ in
           pkgs.autoconf
           pkgs.automake
           pkgs.autoconf-archive
+          pkgs.openjdk8
+          pkgs.cachix
+          pkgs.libpq
+          pkgs.libpg_query
+          pkgs.c2ffi
+          pkgs.nginx
         ];
       })
       {
