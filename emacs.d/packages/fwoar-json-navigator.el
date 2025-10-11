@@ -3,10 +3,10 @@
 ;; Copyright (C) 2020 Edward Langley
 
 ;; Author: Edward Langley <fwoar@elangley.org>
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: json,navigator
 ;; URL: https://fwoar.co
-;; Package-Requires: (json-mode fwoar-functional-utils)
+;; Package-Requires: (json-mode fwoar-functional-utils s cl-lib)
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -37,13 +37,13 @@
 (defun fwoar:browse-json-response (url)
   (interactive "Murl? ")
   (let ((json (url-retrieve-synchronously url)))
-    (comment
-     (buffer (generate-new-buffer
-              (format "*API result: %s*" url))))
+    ;;(comment
+    ;; (buffer (generate-new-buffer
+    ;;          (format "*API result: %s*" url))))
     (with-current-buffer json
       (when-let* ((buffer-name (buffer-name))
                   ((s-prefix-p " " buffer-name)))
-        (rename-buffer (subseq buffer-name 1)))
+        (rename-buffer (cl-subseq buffer-name 1)))
       (json-mode)
       (goto-char (point-min))
       (kill-paragraph 1)
@@ -51,21 +51,21 @@
       (json-pretty-print-buffer)
       (comment
        (insert (with-current-buffer json
-                 (buffer-string)))))
+                 (erase-buffer)))))
     (switch-to-buffer json)))
 
 (defun fwoar:json--ensure-data ()
   (save-excursion
     (goto-char (point-min))
     (setq-local fwoar:json-nav--data (json-parse-buffer :null-object nil)))
-  (values))
+  (cl-values))
 
 (defun fwoar:json-nav--pierce-vectors (fun it)
   (cl-typecase it
-    (vector (map 'vector
-                 (lambda (next)
-                   (fwoar:json-nav--pierce-vectors fun next))
-                 it))
+    (vector (cl-map 'vector
+                    (lambda (next)
+                      (fwoar:json-nav--pierce-vectors fun next))
+                    it))
     (t (funcall fun it))))
 
 (defun fwoar:json-nav--get-path (data path)
@@ -97,15 +97,15 @@
     (message "%s" data)
     (sort (cl-etypecase data
             (hash-table (hash-table-keys data))
-            (vector (remove-duplicates (sort (fwoar:json-nav--with-collector (c)
-                                               (fwoar:json-nav--pierce-vectors
-                                                (lambda (next)
-                                                  (when next
-                                                    (map nil #'c
-                                                         (hash-table-keys next))))
-                                                data))
-                                             'string<)
-                                       :test 'equal)))
+            (vector (cl-remove-duplicates (sort (fwoar:json-nav--with-collector (c)
+                                                  (fwoar:json-nav--pierce-vectors
+                                                   (lambda (next)
+                                                     (when next
+                                                       (cl-map nil #'c
+                                                               (hash-table-keys next))))
+                                                   data))
+                                                'string<)
+                                          :test 'equal)))
           'string<)))
 
 (defun fwoar:dive (s)
@@ -122,10 +122,10 @@
       (setq-local fwoar:json-nav--data data
                   fwoar:json-nav--path path
                   fwoar:json-nav--prev-buffer last-buffer)
-      (setf (buffer-string)
-            (json-serialize (fwoar:json-nav--get-path fwoar:json-nav--data
-                                                      (reverse path))
-                            :null-object nil))
+      (erase-buffer)
+      (insert (json-serialize (fwoar:json-nav--get-path fwoar:json-nav--data
+                                                        (reverse path))
+                              :null-object nil))
       (json-pretty-print-buffer)
       (goto-char (point-min))))
   (goto-char (point-min)))

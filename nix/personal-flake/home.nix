@@ -21,7 +21,6 @@ in {
     pkgs.cargo
     pkgs.coreutils-prefixed
     pkgs.duckdb
-    pkgs.fwoar.gsed
     pkgs.graphviz
     pkgs.imagemagick
     pkgs.ispell

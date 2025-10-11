@@ -9,7 +9,9 @@
 
 (defpackage :fwoar.cls
   (:use :cl)
-  (:export ))
+  (:export #:dump
+           #:prepare-dump
+           #:main))
 (in-package :fwoar.cls)
 
 (defun format-stat-time (accessor stat)
@@ -156,7 +158,9 @@
                        do (main-ld (list parsed)))))
            (fresh-line)))))
 
-(defun dump ()
+(defun prepare-dump ()
   (setf net.didierverna.clon:*context* nil
-        *features* (remove :fw.dump *features*))
+        *features* (remove :fw.main (remove :fw.dump *features*))))
+(defun dump ()
+  (prepare-dump)
   (net.didierverna.clon:dump "cls" main))

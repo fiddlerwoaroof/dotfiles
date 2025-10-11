@@ -1,31 +1,66 @@
 {
   inputs = {
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    emacs-community = {url = "github:nix-community/emacs-overlay";};
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-editor = {url = "github:snowfallorg/nix-editor";};
     nixpkgs = {
       type = "github";
       owner = "nixos";
       repo = "nixpkgs";
-      ref = "bd15cafc53d0aecd90398dd3ffc83a908bceb734";
+      ref = "nixos-unstable";
     };
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
-    flake-utils.url = "github:numtide/flake-utils";
+    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
   };
 
   outputs = {
     self,
-      nixpkgs,
-      flake-compat,
-      flake-utils,
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs { inherit system; };
-    in {
-      devShell = pkgs.mkShell {
-        buildInputs = [
-
+    nixpkgs,
+    home-manager,
+    alejandra,
+    emacs-community,
+    ...
+  } @ inputs: let
+    withSystem = system: attrSet: attrSet // {inherit system;};
+    withAppleSilicon = withSystem "aarch64-darwin";
+    withx8664Linux = withSystem "x86_64-linux";
+  in {
+    packages = import ./nix/packages inputs;
+    homeManagerModules = {
+      common = import ./nix/common-module.nix;
+      fonts = {pkgs, ...}: {
+        home.packages = [
+          pkgs.lato
+          pkgs.alegreya
+          pkgs.source-code-pro
+          pkgs.alegreya-sans
         ];
       };
-    });
+      git-config = import ./nix/git-config.nix;
+      mac-apps = import ./nix/mac-apps;
+      main = import ./nix/personal-flake/home.nix;
+    };
+    homeConfigurations = {
+      "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
+      "titan" = import ./nix/titan/home.nix (withx8664Linux inputs);
+    };
+    apps.aarch64-darwin = let
+      system = "aarch64-darwin";
+      pkgs = nixpkgs.legacyPackages.${system};
+      self-pkgs = self.packages.${system};
+      writeZsh = pkgs.writers.makeScriptWriter {interpreter = "${pkgs.zsh}/bin/zsh";};
+    in {
+      cls = {
+        type = "app";
+        buildInputs = [self-pkgs.cls];
+        program = "${self-pkgs.cls}/bin/cls";
+      };
+    };
+  };
 }

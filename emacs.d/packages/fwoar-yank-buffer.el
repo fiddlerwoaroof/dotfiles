@@ -3,9 +3,10 @@
 ;; Copyright (C) 2020 Edward Langley
 
 ;; Author: Edward Langley <fwoar@elangley.org>
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: yank,buffer
 ;; URL: https://fwoar.co
+;; Package-Requires: (emacs)
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

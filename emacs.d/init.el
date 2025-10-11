@@ -444,7 +444,10 @@
     (sp-local-pair "`" nil :actions nil))
   (add-hook 'smartparens-enabled-hook 'evil-smartparens-mode))
 
-(use-package web-mode :ensure t)
+(use-package web-mode
+  :ensure t
+  :bind ( :map web-mode-map (("C-c C-v" . browse-url-of-buffer)))
+  )
 
 (use-package yaml-mode :ensure t)
 
