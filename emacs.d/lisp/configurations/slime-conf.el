@@ -26,13 +26,13 @@
                                        :key 'car)))))
 
 (defun setup-lisp-mode ()
-  (unless (string= "*slime-scratch*" (buffer-name))
-    (smartparens-strict-mode 1)
-    (evil-smartparens-mode 1)
-    (aggressive-indent-mode 1))
+  (comment (unless (string= "*slime-scratch*" (buffer-name))
+             (smartparens-strict-mode 1)
+             (evil-smartparens-mode 1)
+             (aggressive-indent-mode 1))
 
-  (define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-  (rainbow-delimiters-mode))
+           (define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
+           (rainbow-delimiters-mode)))
 
 (defun fwoar--clhs-lookup (&rest args)
   (let ((browse-url-browser-function 'eww-browse-url))

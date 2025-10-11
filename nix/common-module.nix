@@ -18,9 +18,11 @@
     pkgs.direnv
     pkgs.dtach
     pkgs.ecl
+    pkgs.exiftool
     pkgs.gawk
     pkgs.gnumake
     pkgs.gnuplot
+    pkgs.graphviz
     pkgs.groff
     pkgs.htop
     pkgs.jq
@@ -42,6 +44,7 @@
       ];
     }))
     pkgs.shellcheck
+    pkgs.sops
     pkgs.texinfoInteractive
     pkgs.tree
     pkgs.vim

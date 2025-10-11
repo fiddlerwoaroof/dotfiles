@@ -1,5 +1,7 @@
 {
   inputs = {
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     alejandra = {
       url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,14 +19,17 @@
       ref = "nixos-unstable";
     };
     emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
   outputs = {
     self,
-    nixpkgs,
-    home-manager,
     alejandra,
     emacs-community,
+    home-manager,
+    nixpkgs,
+    sops-nix,
+    titan-nixpkgs,
     ...
   } @ inputs: let
     withSystem = system: attrSet: attrSet // {inherit system;};
@@ -61,6 +66,10 @@
         buildInputs = [self-pkgs.cls];
         program = "${self-pkgs.cls}/bin/cls";
       };
+    };
+    nixosConfigurations.titan = import ./nix/titan/nixos-configuration.nix {
+      nixpkgs = titan-nixpkgs;
+      inherit sops-nix home-manager;
     };
   };
 }

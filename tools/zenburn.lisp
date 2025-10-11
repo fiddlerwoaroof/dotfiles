@@ -171,7 +171,7 @@
           (mapcar #'car *color-alist*)))
 
 (defun theme-color (name)
-  (cdr (assoc name *color-alist*)))
+  (cdr (assoc name *color-alist* :test #'string-equal)))
 
 (defun match-alist-order (pattern target)
   (loop for (key . _) in pattern
