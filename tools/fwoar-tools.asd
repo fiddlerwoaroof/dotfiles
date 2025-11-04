@@ -106,3 +106,19 @@
                                       t)))
   :serial t
   :components ((:file "file-indexer")))
+
+(defsystem :fwoar-tools/embedding-hash
+  :description "list files as json"
+  :author "Ed L <el-l@elangley.org>"
+  :license "MIT"
+  :build-pathname "embedding-hash"
+  :entry-point "fwoar.embedding-hash:main"
+  :depends-on (:drakma :yason :bit-smasher :net.didierverna.clon)
+  :output-files (program-op (o c)
+                            (let* ((exe-name (asdf/system:component-build-pathname c))
+                                   (result (merge-pathnames exe-name
+                                                            (user-homedir-pathname))))
+                              (values (list result)
+                                      t)))
+  :serial t
+  :components ((:file "embedding-hash")))

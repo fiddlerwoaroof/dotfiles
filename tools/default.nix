@@ -43,4 +43,8 @@ in
       inherit system;
       name = "json-formatter";
     };
+    embedding-hash = mkTool rec {
+      inherit system;
+      name = "embedding-hash";
+    };
   }
