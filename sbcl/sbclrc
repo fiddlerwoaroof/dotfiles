@@ -21,6 +21,20 @@
     nil)
 
 #.(progn
+    (push (merge-pathnames ".nix-profile/lib/"
+                           (user-homedir-pathname))
+          cffi:*foreign-library-directories*)
+    nil)
+
+#.(progn (require :sb-aclrepl)
+         (when (and (interactive-stream-p *terminal-io*)
+                    (find-package 'sb-aclrepl))
+           (push :aclrepl cl:*features*))
+         (asdf:load-asd (truename "~/.sbcl.asd"))
+         (ql:quickload :fwoar-sbcl)
+         nil)
+
+#.(progn
     (push (format nil
                   "-I~a"
                   (namestring
@@ -35,16 +49,6 @@
 (push (merge-pathnames (make-pathname :directory '(:relative ".nix-profile" "lib"))
                        (user-homedir-pathname))
       cffi:*foreign-library-directories*)
-
-#.(handler-case
-      (progn (require :sb-aclrepl)
-             (when (and (interactive-stream-p *terminal-io*)
-                        (find-package 'sb-aclrepl))
-               (push :aclrepl cl:*features*))
-             (asdf:load-asd (truename "~/.sbcl.asd"))
-             (ql:quickload :fwoar-sbcl)
-             nil)
-    (error (c) (warn "error while loading fowar-sbcl: ~s" c)))
 
 #.(uiop:define-package :fwoar-user
       (:export :*term-size*)
