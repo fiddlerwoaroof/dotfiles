@@ -45,6 +45,7 @@ in
       self.homeManagerModules.git-config
       self.homeManagerModules.fonts
       self.homeManagerModules.mac-apps
+      (import ./info.nix)
       (import ./email.nix)
       ({
         pkgs,
@@ -53,6 +54,7 @@ in
       }: {
         home.packages = [
           nix-editor-pkgs.default
+          pkgs.protobuf
           pkgs.cmake
           pkgs.nasm
           pkgs.ninja
