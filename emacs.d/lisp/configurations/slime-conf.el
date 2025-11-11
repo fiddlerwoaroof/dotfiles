@@ -5,10 +5,10 @@
              (fwoar-git-repo "3dp/slime/"
                              "git@github.com:slime/slime.git"
                              "https://github.com/slime/slime.git"))
-(add-to-list 'load-path
-             (fwoar-git-repo "3dp/slime-company/"
-                             "git@github.com:anwyn/slime-company.git"
-                             "https://github.com/anwyn/slime-company.git"))
+;; (add-to-list 'load-path
+;;              (fwoar-git-repo "3dp/slime-company/"
+;;                              "git@github.com:anwyn/slime-company.git"
+;;                              "https://github.com/anwyn/slime-company.git"))
 ;; (require 'slime)
 
 
@@ -26,13 +26,12 @@
                                        :key 'car)))))
 
 (defun setup-lisp-mode ()
-  (comment (unless (string= "*slime-scratch*" (buffer-name))
+  (unless (string= "*slime-scratch*" (buffer-name))
              (smartparens-strict-mode 1)
              (evil-smartparens-mode 1)
              (aggressive-indent-mode 1))
 
-           (define-key evil-insert-state-map "^N" 'slime-fuzzy-indent-and-complete-symbol)
-           (rainbow-delimiters-mode)))
+  (rainbow-delimiters-mode))
 
 (defun fwoar--clhs-lookup (&rest args)
   (let ((browse-url-browser-function 'eww-browse-url))
@@ -136,12 +135,12 @@ Examples:
   (sp-backward-whitespace))
 
 
-(use-package slime-company
-  :ensure nil
-  :no-require t
-  :config
-  (setq slime-company-completion 'fuzzy)
-  )
+;; (use-package slime-company
+;;   :ensure nil
+;;   :no-require t
+;;   :config
+;;   (setq slime-company-completion 'fuzzy)
+;;   )
 
 (defvar passwords ())
 
@@ -259,7 +258,7 @@ Examples:
 
   (setq slime-contribs '(slime-media
                          slime-fancy
-                         slime-company
+                         ;;slime-company
                          slime-macrostep
                          slime-trace-dialog
                          slime-mdot-fu
