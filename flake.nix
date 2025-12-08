@@ -1,6 +1,6 @@
 {
   inputs = {
-    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     alejandra = {
       url = "github:kamadorueda/alejandra";
@@ -8,7 +8,7 @@
     };
     emacs-community = {url = "github:nix-community/emacs-overlay";};
     titan-home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "titan-nixpkgs";
     };
     home-manager = {
