@@ -5,7 +5,7 @@
         personal = {
           address = "edward@elangley.org";
           imap = {host = "mb.elangley.org";};
-          msmtp = {enable = true;};
+          #msmtp = {enable = true;};
           neomutt.enable = false;
           primary = true;
           realName = "Edward Langley";
@@ -21,7 +21,7 @@
     };
   };
   programs = {
-    msmtp = {enable = true;};
+    #msmtp = {enable = true;};
     neomutt = {
       package = pkgs.neomutt.override {withNotmuch = false;};
       enable = true;

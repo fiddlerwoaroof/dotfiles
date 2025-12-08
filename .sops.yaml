@@ -4,8 +4,10 @@
 # for a more complex example.
 keys:
   - &admin_edwlan age1rqzmdt6jgxqxutfc2de576eatk58f8tvf8t6h0rgpgh647t974fsrvmlaa
+  - &admin_edwlan_ouranos age1nt7zu7rujmrvmc9t2pwdnqe4wyfzuq2pq0fu04ucjrsnydchku6s8jaw7d
 creation_rules:
-  - path_regex: .*/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: nix/ouranos/(.*/)?[^/]+\.(yml|yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_edwlan
+        - *admin_edwlan_ouranos

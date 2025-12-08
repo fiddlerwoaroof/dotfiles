@@ -7,7 +7,7 @@
   fwoar-pkgs,
   ...
 }: let
-  emacs = emacs-hack-pkgs.default;
+  emacs = emacs-pkgs.emacs-git;
 in {
   home.packages = [
     pkgs.crawlTiles
