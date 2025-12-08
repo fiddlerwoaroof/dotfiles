@@ -53,17 +53,17 @@
     options = ["fmask=0022" "dmask=0022"];
   };
 
-  fileSystems."/home/edwlan/oldhome" = {
-    device = "/dev/disk/by-uuid/e99a31c0-e201-4f6f-8b9b-9d856841ae99";
-    fsType = "ext4";
-  };
-
-  fileSystems."/home/edwlan/Langleys Dropbox" = {
-    device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
-    fsType = "none";
-    options = ["bind"];
-  };
-
+  #  fileSystems."/home/edwlan/oldhome" = {
+  #    device = "/dev/disk/by-uuid/e99a31c0-e201-4f6f-8b9b-9d856841ae99";
+  #    fsType = "ext4";
+  #  };
+  #
+  #  fileSystems."/home/edwlan/Langleys Dropbox" = {
+  #    device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
+  #    fsType = "none";
+  #    options = ["bind"];
+  #  };
+  #
   swapDevices = [];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

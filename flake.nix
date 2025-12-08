@@ -7,6 +7,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs-community = {url = "github:nix-community/emacs-overlay";};
+    titan-home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "titan-nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -30,6 +34,7 @@
     nixpkgs,
     sops-nix,
     titan-nixpkgs,
+    titan-home-manager,
     ...
   } @ inputs: let
     withSystem = system: attrSet: attrSet // {inherit system;};
@@ -53,7 +58,11 @@
     };
     homeConfigurations = {
       "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
-      "titan" = import ./nix/titan/home.nix (withx8664Linux inputs);
+      "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
+        // {
+          nixpkgs = titan-nixpkgs;
+          home-manager = titan-home-manager;
+        });
     };
     apps.aarch64-darwin = let
       system = "aarch64-darwin";
@@ -70,29 +79,36 @@
     nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        {
+        ({lib, ...}: {
           nix.registry.nixpkgs.flake = titan-nixpkgs;
           nix.nixPath = [
             "nixpkgs=/etc/channels/nixpkgs"
             "nixos-config=/etc/nixos/configuration.nix"
             "/nix/var/nix/profiles/per-user/root/channels"
           ];
-          environment.etc."channels/nixpkgs".source = inputs.nixpkgs.outPath;
-        }
-        (let pkgs = nixpkgs.legacyPackages.x86_64-linux; in
-        {
-          services.ollama = {
-            enable = true;
-            #package = pkgs.ollama.override {acceleration = "rocm";};
-            acceleration = "rocm";
-            openFirewall = true;
-            host = "172.16.31.3";
-            loadModels = ["gemma3:4b-it-qat" "nomic-embed-text"];
-          };
+          environment.etc."channels/nixpkgs".source = inputs.titan-nixpkgs.outPath;
+          nixpkgs.config.allowUnfreePredicate = pkg:
+            builtins.elem (lib.getName pkg) [
+              "dropbox"
+            ];
         })
+        ({pkgs, ...}: {
+          environment.systemPackages = [
+            pkgs.alejandra
+            pkgs.dmidecode
+            pkgs.gitFull
+            pkgs.htop
+            pkgs.lsof
+            pkgs.sops
+            pkgs.vim
+            pkgs.wget
+          ];
+        })
+        ./nix/titan/nixos/ollama.nix
         ./nix/titan/nixos/configuration.nix
         sops-nix.nixosModules.sops
-        home-manager.nixosModules.home-manager
+        titan-home-manager.nixosModules.home-manager
+        ./nix/nixos-modules/home-assistant.nix
         {
           home-manager.useGlobalPkgs = false;
           home-manager.useUserPackages = false;

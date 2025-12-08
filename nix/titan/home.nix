@@ -12,11 +12,16 @@
   username = "edwlan";
   common_home = import ../common.nix {inherit pkgs;};
   utils = common_home.utils;
+  lib = nixpkgs.lib;
   pkgs = import nixpkgs {
     inherit system;
     overlays = [
       (import ../personal-flake/elangley-overlay)
     ];
+    config.allowUnfreePredicate = pkg:
+      builtins.elem (lib.getName pkg) [
+        "dropbox"
+      ];
   };
   emacs-pkgs = emacs-community.packages.${system};
 in
@@ -37,12 +42,20 @@ in
         };
       }
       {
+        home.packages = [
+          emacs-pkgs.emacs-git
+        ];
+        services.emacs = {
+          enable = true;
+          package = emacs-pkgs.emacs-git;
+        };
+      }
+      {
         home = {
           packages =
             [
               pkgs.ncdu
               (import ../lpass-nix {inherit pkgs;})
-              emacs-pkgs.emacs-git
               openssl
               pkgs.awscli
               pkgs.cachix
@@ -68,6 +81,11 @@ in
               cmucl_binary
               nixpkgs-fmt
             ]);
+        };
+      }
+      {
+        services.dropbox = {
+          enable = true;
         };
       }
       (import ./sops.nix)
