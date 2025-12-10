@@ -31,6 +31,7 @@
   (normal-top-level-add-subdirs-to-load-path)
   (load "utils"))
 
+
 (when (window-system)
   (unless (font-info "Equity A")
     (display-warning 'fwoar-zenburn "Missing font Equity A" :error))
