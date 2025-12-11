@@ -66,18 +66,18 @@
       depends = ["/home"];
     };
 
-    "/home/edwlan/oldhome" = {
-      device = "/dev/disk/by-uuid/e99a31c0-e201-4f6f-8b9b-9d856841ae99";
-      fsType = "ext4";
-      options = ["discard"];
-      depends = ["/home"];
-    };
-
-    "/home/edwlan/Langleys\ Dropbox" = {
-      device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
-      options = ["bind"];
-      depends = ["/home/edwlan/oldhome" "/home"];
-    };
+    #"/home/edwlan/oldhome" = {
+    #  device = "/dev/disk/by-uuid/e99a31c0-e201-4f6f-8b9b-9d856841ae99";
+    #  fsType = "ext4";
+    #  options = ["discard"];
+    #  depends = ["/home"];
+    #};
+    #
+    #"/home/edwlan/Langleys\ Dropbox" = {
+    #  device = "/home/edwlan/oldhome/edwlan/Langleys\040Dropbox";
+    #  options = ["bind"];
+    #  depends = ["/home/edwlan/oldhome" "/home"];
+    #};
 
     "/boot" = {
       device = "/dev/disk/by-id/nvme-Samsung_SSD_990_PRO_2TB_S7KHNJ0X715552N-part1";
@@ -87,8 +87,13 @@
   };
 
   boot = {
+    kernelPackages = pkgs.linuxPackages_6_12;
+    kernelParams = [
+      "zfs.zfs_arc_max=12884901888"
+      "amdgpu.vm_update_mode=3"
+      "amdgpu.ppfeaturemask=0xffffffff"
+    ];
     loader.systemd-boot.enable = true;
-    kernelParams = ["zfs.zfs_arc_max=12884901888"];
     zfs.devNodes = "/dev/disk/by-id";
     zfs.extraPools = ["zpool"];
   };
@@ -102,7 +107,7 @@
       # setup gitolite mirror
       $RC{GIT_CONFIG_KEYS} = 'gitolite\.mirror\..*';
     '';
-    commonHooks = [ ../gitolite-hooks/post-receive ];
+    commonHooks = [../gitolite-hooks/post-receive];
   };
   # Pick only one of the below networking options.
 
@@ -161,6 +166,10 @@
     file
     findutils
     git
+    nvme-cli
+    pciutils
+    bluez
+    blueman
   ];
 
   networking = {
@@ -177,11 +186,6 @@
     #nameservers = [
     #  "172.16.1.1"
     #];
-  };
-
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
   };
 
   # services.resolved = {
@@ -213,6 +217,14 @@
   programs.firefox.enable = true;
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
+
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+  services.blueman = {
+    enable = true;
+  };
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

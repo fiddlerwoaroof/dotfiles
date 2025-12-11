@@ -1,12 +1,16 @@
 {
   inputs = {
-    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     alejandra = {
       url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     emacs-community = {url = "github:nix-community/emacs-overlay";};
+    titan-home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "titan-nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -30,6 +34,7 @@
     nixpkgs,
     sops-nix,
     titan-nixpkgs,
+    titan-home-manager,
     ...
   } @ inputs: let
     withSystem = system: attrSet: attrSet // {inherit system;};
@@ -53,7 +58,11 @@
     };
     homeConfigurations = {
       "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
-      "titan" = import ./nix/titan/home.nix (withx8664Linux inputs);
+      "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
+        // {
+          nixpkgs = titan-nixpkgs;
+          home-manager = titan-home-manager;
+        });
     };
     apps.aarch64-darwin = let
       system = "aarch64-darwin";
@@ -67,9 +76,44 @@
         program = "${self-pkgs.cls}/bin/cls";
       };
     };
-    nixosConfigurations.titan = import ./nix/titan/nixos-configuration.nix {
-      nixpkgs = titan-nixpkgs;
-      inherit sops-nix home-manager;
+    nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ({lib, ...}: {
+          nix.registry.nixpkgs.flake = titan-nixpkgs;
+          nix.nixPath = [
+            "nixpkgs=/etc/channels/nixpkgs"
+            "nixos-config=/etc/nixos/configuration.nix"
+            "/nix/var/nix/profiles/per-user/root/channels"
+          ];
+          environment.etc."channels/nixpkgs".source = inputs.titan-nixpkgs.outPath;
+          nixpkgs.config.allowUnfreePredicate = pkg:
+            builtins.elem (lib.getName pkg) [
+              "dropbox"
+            ];
+        })
+        ({pkgs, ...}: {
+          environment.systemPackages = [
+            pkgs.alejandra
+            pkgs.dmidecode
+            pkgs.gitFull
+            pkgs.htop
+            pkgs.lsof
+            pkgs.sops
+            pkgs.vim
+            pkgs.wget
+          ];
+        })
+        ./nix/titan/nixos/ollama.nix
+        ./nix/titan/nixos/configuration.nix
+        sops-nix.nixosModules.sops
+        titan-home-manager.nixosModules.home-manager
+        ./nix/nixos-modules/home-assistant.nix
+        {
+          home-manager.useGlobalPkgs = false;
+          home-manager.useUserPackages = false;
+        }
+      ];
     };
   };
 }
