@@ -252,7 +252,8 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
   (let ((fn (format nil "/tmp/~a.svg" (gensym))))
     (uiop:run-program (with-output-to-string (s)
                         (format (make-broadcast-stream s *error-output*)
-                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]; set logscale y;set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                                r
                                 xrange-p xrange
                                 yrange-p yrange
                                 image-size-p image-size
@@ -260,6 +261,34 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
                                 line-color
                                 frame-color
                                 lines))
+
+                      :input s
+                      :error-output *error-output*
+                      :output (parse-namestring fn))
+    (swank::send-to-emacs (list :write-image fn " ")))
+  (values))
+
+#+swank
+(defun plot-csv-file (path &key
+                             (xrange nil xrange-p)
+                             (yrange nil yrange-p)
+                             (image-size nil image-size-p)
+                             (background "#2A2B2E")
+                             (frame-color "#7fdf7f")
+                             (line-color "#DCDCCC")
+                             (lines nil))
+  (let ((fn (format nil "/tmp/~a.svg" (gensym))))
+    (uiop:run-program (format (make-broadcast-stream s *error-output*)
+                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]; set logscale y;set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '~a' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                              r
+                              xrange-p xrange
+                              yrange-p yrange
+                              image-size-p image-size
+                              background
+                              (uiop:unix-namestring path)
+                              line-color
+                              frame-color
+                              lines)
 
                       :input s
                       :error-output *error-output*
@@ -362,3 +391,30 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
             for val = (pop to-process)
             do (%inner val))
       (values result start))))
+
+
+(defun extract-paths-from-zsh ()
+  (flet ((path-var-p (it)
+           (search "PATH" it
+                   :end2 (position #\= it)))
+         (split-path-var (it)
+           (let ((=-pos (position #\= it)))
+             (list (subseq it 0 =-pos)
+                   (subseq it (1+ =-pos)))))
+         (split-path-list (it)
+           (loop with acc = ()
+                 for s-pos = 0 then (1+ e-pos)
+                 for e-pos = (position #\: it :start s-pos)
+                 if e-pos collect (subseq it s-pos e-pos)
+                   else collect (subseq it s-pos)
+                 while e-pos)))
+    (values-list
+     (loop with s = (make-string-input-stream (uiop:run-program
+                                               "zsh -c \"source \"$HOME/.zshrc\"; env\""
+                                               :output :string :wait nil))
+           for line = (read-line s nil :end)
+           until (eq line :end)
+           when (path-var-p line)
+             collect (funcall (data-lens:transform-elt 1 (data-lens:∘ (data-lens:include #'probe-file)
+                                                                      #'split-path-list))
+                              (split-path-var line))))))
