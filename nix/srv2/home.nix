@@ -15,7 +15,6 @@
       (import ../personal-flake/elangley-overlay)
     ];
   };
-  emacs-pkgs = emacs-community.packages.${system};
 in
   home-manager.lib.homeManagerConfiguration {
     inherit pkgs;
@@ -23,6 +22,7 @@ in
       sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
       self.homeManagerModules.fonts
+      self.homeManagerModules.emacs
       #{
       #  sops = {
       #    age.keyFile = "/home/${username}/.age-key.txt";
@@ -66,27 +66,6 @@ in
         #targets.genericLinux.enable = true;
         home.stateVersion = "25.05";
       }
-      ({emacs-pkgs, ...}: let
-        writeZsh = pkgs.writers.makeScriptWriter {interpreter = "${pkgs.zsh}/bin/zsh";};
-      in {
-        systemd.user = {
-          enable = true;
-          services = {
-            emacs-server = {
-              Unit = {
-                Description = "Start emacs daemon";
-              };
-              Service = {
-                ExecStart = writeZsh "emacs-daemon" ''
-                  set -eu -o pipefail
-                  export PATH=$PATH:"$HOME"/bin
-                  ${emacs-pkgs.emacs-git}/bin/emacs --fg-daemon
-                '';
-              };
-            };
-          };
-        };
-      })
     ];
     extraSpecialArgs = {
       inherit system;

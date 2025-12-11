@@ -1,6 +1,5 @@
 {
   pkgs,
-  emacs-pkgs,
   ...
 }: let
   openssl = pkgs.openssl.overrideAttrs (oldAttrs: {meta = oldAttrs.meta // {outputsToInstall = oldAttrs.meta.outputsToInstall or ["out"] ++ ["dev"];};});
@@ -8,7 +7,6 @@ in {
   home = {
     packages =
       [
-        emacs-pkgs.emacs-git
         openssl
         pkgs.awscli
         pkgs.cachix

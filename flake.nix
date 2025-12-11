@@ -44,6 +44,15 @@
     packages = import ./nix/packages inputs;
     homeManagerModules = {
       common = import ./nix/common-module.nix;
+      emacs = {emacs-pkgs, ...}: {
+        home.packages = [
+          emacs-pkgs.emacs-git
+        ];
+        services.emacs = {
+          enable = true;
+          package = emacs-pkgs.emacs-git;
+        };
+      };
       fonts = {pkgs, ...}: {
         home.packages = [
           pkgs.lato
