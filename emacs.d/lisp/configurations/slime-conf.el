@@ -5,15 +5,15 @@
              (fwoar-git-repo "3dp/slime/"
                              "git@github.com:slime/slime.git"
                              "https://github.com/slime/slime.git"))
-;; (add-to-list 'load-path
-;;              (fwoar-git-repo "3dp/slime-company/"
-;;                              "git@github.com:anwyn/slime-company.git"
-;;                              "https://github.com/anwyn/slime-company.git"))
-;; (require 'slime)
+(add-to-list 'load-path
+             (fwoar-git-repo "3dp/slime-company/"
+                             "git@github.com:anwyn/slime-company.git"
+                             "https://github.com/anwyn/slime-company.git"))
+(require 'slime)
 
 
 ;; put slime-company in load-path
-;; (require 'slime-company)
+(require 'slime-company)
 
 (defmacro define-lisp-implementations (&rest decl)
   `(progn
@@ -30,7 +30,6 @@
              (smartparens-strict-mode 1)
              (evil-smartparens-mode 1)
              (aggressive-indent-mode 1))
-
   (rainbow-delimiters-mode))
 
 (defun fwoar--clhs-lookup (&rest args)
@@ -135,12 +134,12 @@ Examples:
   (sp-backward-whitespace))
 
 
-;; (use-package slime-company
-;;   :ensure nil
-;;   :no-require t
-;;   :config
-;;   (setq slime-company-completion 'fuzzy)
-;;   )
+(use-package slime-company
+  :ensure nil
+  :no-require t
+  :config
+  (setq slime-company-completion 'fuzzy)
+  )
 
 (defvar passwords ())
 
@@ -258,7 +257,7 @@ Examples:
 
   (setq slime-contribs '(slime-media
                          slime-fancy
-                         ;;slime-company
+                         slime-company
                          slime-macrostep
                          slime-trace-dialog
                          slime-mdot-fu

@@ -130,8 +130,8 @@ Also bind `class' to ((class color) (min-colors 89))."
   (custom-theme-set-faces
    'fwoar-zenburn
 
-   `(default ((t (:family "Source Code Pro" :foundry "nil"
-                          :slant normal :weight normal :height 130 :width normal
+   `(default ((t (:family "Berkeley Mono Variable" :foundry "nil"
+                          :slant normal :weight semi-light :height 140 :width normal
                           :foreground ,zenburn-fg :background ,zenburn-bg
                           :inherit fwoar-zenburn-face))))
    `(variable-pitch ((t (:family "Concourse 2" :height 160 :inherit default))))
