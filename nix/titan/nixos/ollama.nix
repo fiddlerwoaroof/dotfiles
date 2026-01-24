@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   hardware.amdgpu.opencl.enable = true;
-  hardware.amdgpu.amdvlk.enable = true;
+  #hardware.amdgpu.amdvlk.enable = true;
   services.xserver.videoDrivers = ["amdgpu"];
   hardware.graphics = {
     enable = true;

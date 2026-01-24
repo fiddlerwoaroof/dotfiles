@@ -21,6 +21,7 @@
     config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [
         "dropbox"
+        "firefox-bin"
       ];
   };
   emacs-pkgs = emacs-community.packages.${system};
