@@ -7,25 +7,42 @@
     echo "* $(cat "$HOME"/.ssh/id_ed25519.pub)" > "$HOME"/.ssh/allowed_signers
   '';
   programs = {
+    difftastic = {
+      enable = true;
+      git.enable = true;
+    };
     git = {
       enable = true;
-      userEmail = "el-github@elangley.org";
-      userName = "Edward Langley";
-      lfs.enable = true;
-      difftastic.enable = true;
-      extraConfig = {
-        commit = {gpgsign = true;};
-        github = {user = "fiddlerwoaroof";};
+      settings = {
+        user = {
+          email = "el-github@elangley.org";
+          name = "Edward Langley";
+          signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
+        };
+        commit = {
+          gpgsign = true;
+        };
+        github = {
+          user = "fiddlerwoaroof";
+        };
         gpg = {
           format = "ssh";
           allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
         };
-        init = {defaultBranch = "main";};
-        merge = {autoStash = true;};
-        pull = {rebase = false;};
-        rebase = {autoStash = true;};
-        user = {signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";};
+        init = {
+          defaultBranch = "main";
+        };
+        merge = {
+          autoStash = true;
+        };
+        pull = {
+          rebase = false;
+        };
+        rebase = {
+          autoStash = true;
+        };
       };
+      lfs.enable = true;
     };
   };
 }
