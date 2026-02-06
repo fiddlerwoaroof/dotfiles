@@ -35,6 +35,7 @@
   :build-pathname "zenburn"
   :entry-point "fwoar.zenburn:main"
   :depends-on (#:alexandria
+               #:yason
                #:dufy
                #:net.didierverna.clon
                #:serapeum

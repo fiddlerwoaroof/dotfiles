@@ -33,6 +33,8 @@ git-rb() {
 git-pwdurl () {
   set -x
   local -a parts
+  git_user=${FW_GIT_USER:-git}
+  repo_suffix=${FW_REPO_SUFFIX:-.git}
   parts=(${(s:/:)PWD})
   repo_root=${parts[(I)git_repos]}
   site_idx=$((repo_root + 1))
@@ -40,11 +42,11 @@ git-pwdurl () {
   repo=${(j:/:)parts[$repo_idx,-1]}
   site=${parts[$site_idx]}
   case "$1" in
-    git) echo "git://$site:$repo.git"
+    git) echo "git://$site:$repo$repo_suffix"
          ;;
-    ssh) echo git@$site:$repo.git
+    ssh) echo $git_user@$site:$repo$repo_suffix
          ;;
-    *) echo https://$site/$repo.git
+    *) echo https://$site/$repo$repo_suffix
        ;;
   esac
 }

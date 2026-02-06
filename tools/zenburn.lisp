@@ -331,12 +331,26 @@
            (zenburn-text () color (make-string 32 :initial-element #\space))
            (format t "  ~8<~a~> (~{~2x~^, ~}) ~:* (~{~3d~^, ~})~%" color values)))
 
+(defun json-summary (v-enc)
+  (let ((yason:*symbol-encoder* 'yason:encode-symbol-as-lowercase))
+    (yason:with-output (*standard-output* :indent t)
+      (yason:with-object ()
+        (loop for (color . vlaues) in *color-alist*
+              do
+                 (yason:encode-object-element color
+                                              (funcall v-enc color nil)))))))
+
 #+(or fw.dump fw.main)
 (defvar *synopsis*
   (net.didierverna.clon:defsynopsis (:postfix "[TEXT...]" :make-default nil)
     (flag :short-name "h" :long-name "help")
     (flag :short-name "a" :long-name "alt" :description "use alternate colors"
           :env-var "ZENBURN_ALT_PALETTE")
+    (flag :short-name "j" :long-name "json" :description "Show colors as JSON"
+          :env-var "ZENBURN_JSON")
+    (enum :short-name "e" :long-name "encoding" :description "color-encoding-to-use"
+          :env-var "ZENBURN_COLOR_ENCODING" :default-value 'html-color
+          :enum '(html-color hsv-color hsl-color oklab-color cielab-color))
     (enum :short-name "f" :long-name "fg" :enum (mapcar 'car *color-alist*)
           :description "Set the text's foreground color")
     (enum :short-name "b" :long-name "bg" :enum (mapcar 'car *color-alist*)
@@ -371,6 +385,10 @@
                                                   :long-name "list-names"))
          (alt (net.didierverna.clon:getopt :context context
                                            :long-name "alt"))
+         (json (net.didierverna.clon:getopt :context context
+                                            :long-name "json"))
+         (encoding (net.didierverna.clon:getopt :context context
+                                                :long-name "encoding"))
          (hsv (net.didierverna.clon:getopt :context context
                                            :long-name "hsv"))
          (hsl (net.didierverna.clon:getopt :context context
@@ -409,7 +427,9 @@
             (float
              (float-color float t))
             ((null remainder)
-             (summary))
+             (if json
+                 (json-summary encoding)
+                 (summary)))
             ((or foreground background)
              (zenburn-text foreground background "~{~a~^ ~}" remainder))
             (t

@@ -14,7 +14,7 @@ elif command -v vim 2>&1 >/dev/null; then
   export VISUAL=$(which vim)
 fi
 
-export EDITOR=vim
+export EDITOR="$EDITOR"
 
 vim() {
     stty -ixon

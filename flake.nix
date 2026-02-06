@@ -44,6 +44,15 @@
     packages = import ./nix/packages inputs;
     homeManagerModules = {
       common = import ./nix/common-module.nix;
+      emacs = {emacs-pkgs, ...}: {
+        home.packages = [
+          emacs-pkgs.emacs-git
+        ];
+        services.emacs = {
+          enable = true;
+          package = emacs-pkgs.emacs-git;
+        };
+      };
       fonts = {pkgs, ...}: {
         home.packages = [
           pkgs.lato
@@ -55,6 +64,23 @@
       git-config = import ./nix/git-config.nix;
       mac-apps = import ./nix/mac-apps;
       main = import ./nix/personal-flake/home.nix;
+      direnv = {
+        programs.direnv = {
+          enable = true;
+          nix-direnv = {enable = true;};
+        };
+      };
+      tmux = {
+        programs.tmux = {
+          enable = true;
+          clock24 = true;
+          escapeTime = 0;
+          extraConfig = builtins.readFile ./tmux.conf;
+          keyMode = "vi";
+          newSession = true;
+          terminal = "screen-256color";
+        };
+      };
     };
     homeConfigurations = {
       "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
@@ -70,6 +96,7 @@
           };
           home-manager = titan-home-manager;
         });
+      "srv2" = import ./nix/srv2/home.nix (withx8664Linux inputs);
     };
     apps.aarch64-darwin = let
       system = "aarch64-darwin";

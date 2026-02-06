@@ -31,6 +31,7 @@
   (normal-top-level-add-subdirs-to-load-path)
   (load "utils"))
 
+
 (when (window-system)
   (unless (font-info "Equity A")
     (display-warning 'fwoar-zenburn "Missing font Equity A" :error))
@@ -433,7 +434,8 @@
   (add-hook 'markdown-mode-hook 'variable-pitch-mode)
   (add-hook 'markdown-mode-hook 'fwoar:markdown-mode-hook))
 
-(use-package rainbow-delimiters :ensure t)
+(use-package rainbow-delimiters
+  :ensure t)
 
 (use-package ripgrep :ensure t)
 
@@ -622,10 +624,16 @@
         (evil-scroll-line-to-center (+ s -1 (ceiling (- e s) 2)))))))
 
 (use-package which-key-posframe
+  :after rainbow-delimiters
   :ensure t
   :config
   (which-key-mode 1)
   (which-key-posframe-mode 1))
+
+(use-package rustic
+  :ensure t
+  :config
+  (modify-syntax-entry ?_ "w"))
 
 (define-derived-mode zsh-mode sh-mode "ZSH" "Mode for zsh scripts"
   (setq-local sh-shell "zsh"))
