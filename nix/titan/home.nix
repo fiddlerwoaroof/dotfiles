@@ -1,6 +1,7 @@
 {
   alejandra,
   emacs-community,
+  cc-pkgs,
   home-manager,
   nixpkgs,
   self,
@@ -22,6 +23,8 @@
       builtins.elem (lib.getName pkg) [
         "dropbox"
         "firefox-bin"
+        "firefox"
+        "firefox-bin-unwrapped"
       ];
   };
   emacs-pkgs = emacs-community.packages.${system};
@@ -56,9 +59,10 @@ in
           packages =
             [
               pkgs.ncdu
-              (import ../lpass-nix {inherit pkgs;})
+              #(import ../lpass-nix {inherit pkgs;})
               openssl
               pkgs.awscli
+              cc-pkgs.claude-code
               pkgs.cachix
               pkgs.curl
               pkgs.cvs

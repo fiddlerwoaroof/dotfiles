@@ -61,6 +61,13 @@
       "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
         // {
           nixpkgs = titan-nixpkgs;
+          cc-pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfreePredicate = pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "claude-code"
+              ];
+          };
           home-manager = titan-home-manager;
         });
     };
