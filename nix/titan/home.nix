@@ -46,11 +46,20 @@ in
         };
       }
       {
+        home.packages = [
+          pkgs.pinentry-curses
+        ];
         programs = {
           gpg = {
             enable = true;
             mutableKeys = true;
             mutableTrust = true;
+          };
+        };
+        services = {
+          gpg-agent = {
+            enable = true;
+            pinentry = {package = pkgs.pinentry-curses;};
           };
         };
       }
