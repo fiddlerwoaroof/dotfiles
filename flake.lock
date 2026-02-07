@@ -22,6 +22,22 @@
         "type": "github"
       }
     },
+    "claude-nixpkgs": {
+      "locked": {
+        "lastModified": 1770443413,
+        "narHash": "sha256-GDsSIXRNWnJN32eRE67pDdjrfXFENhFmZ/x1McFTnvU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "293b472ef2853e16f476f3f27b21b8b03a0d35b2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "emacs-community": {
       "inputs": {
         "nixpkgs": "nixpkgs",
@@ -290,6 +306,7 @@
     "root": {
       "inputs": {
         "alejandra": "alejandra",
+        "claude-nixpkgs": "claude-nixpkgs",
         "emacs-community": "emacs-community",
         "emacs-hack": "emacs-hack",
         "home-manager": "home-manager",

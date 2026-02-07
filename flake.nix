@@ -1,6 +1,7 @@
 {
   inputs = {
     titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    claude-nixpkgs.url = "github:NixOS/nixpkgs/master";
     ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     alejandra = {
       url = "github:kamadorueda/alejandra";
@@ -33,6 +34,7 @@
     home-manager,
     nixpkgs,
     sops-nix,
+    claude-nixpkgs,
     titan-nixpkgs,
     titan-home-manager,
     ...
@@ -87,7 +89,7 @@
       "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
         // {
           nixpkgs = titan-nixpkgs;
-          cc-pkgs = import nixpkgs {
+          cc-pkgs = import claude-nixpkgs {
             system = "x86_64-linux";
             config.allowUnfreePredicate = pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
