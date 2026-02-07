@@ -46,6 +46,15 @@ in
         };
       }
       {
+        programs = {
+          gpg = {
+            enable = true;
+            mutableKeys = true;
+            mutableTrust = true;
+          };
+        };
+      }
+      {
         home.packages = [
           emacs-pkgs.emacs-git
         ];
