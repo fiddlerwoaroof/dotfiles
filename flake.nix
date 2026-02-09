@@ -1,17 +1,12 @@
 {
   inputs = {
-    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    claude-nixpkgs.url = "github:NixOS/nixpkgs/master";
-    ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     alejandra = {
       url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-nixpkgs.url = "github:NixOS/nixpkgs/master";
     emacs-community = {url = "github:nix-community/emacs-overlay";};
-    titan-home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "titan-nixpkgs";
-    };
+    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,8 +18,13 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
-    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
+    ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     sops-nix.url = "github:Mic92/sops-nix";
+    titan-home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "titan-nixpkgs";
+    };
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
   };
 
   outputs = {
