@@ -82,7 +82,8 @@
   :entry-point "git-pick-patch:main"
   :depends-on (#:alexandria
                #:serapeum
-               #:cl-ppcre)
+               #:cl-ppcre
+               #:net.didierverna.clon)
   :output-files (program-op (o c)
                             (let* ((exe-name (asdf/system:component-build-pathname c))
                                    (result (merge-pathnames exe-name
