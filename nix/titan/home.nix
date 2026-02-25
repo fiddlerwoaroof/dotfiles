@@ -1,6 +1,7 @@
 {
   alejandra,
   emacs-community,
+  cc-pkgs,
   home-manager,
   nixpkgs,
   self,
@@ -21,6 +22,9 @@
     config.allowUnfreePredicate = pkg:
       builtins.elem (lib.getName pkg) [
         "dropbox"
+        "firefox-bin"
+        "firefox"
+        "firefox-bin-unwrapped"
       ];
   };
   emacs-pkgs = emacs-community.packages.${system};
@@ -43,6 +47,24 @@ in
       }
       {
         home.packages = [
+          pkgs.pinentry-curses
+        ];
+        programs = {
+          gpg = {
+            enable = true;
+            mutableKeys = true;
+            mutableTrust = true;
+          };
+        };
+        services = {
+          gpg-agent = {
+            enable = true;
+            pinentry = {package = pkgs.pinentry-curses;};
+          };
+        };
+      }
+      {
+        home.packages = [
           emacs-pkgs.emacs-git
         ];
         services.emacs = {
@@ -55,9 +77,10 @@ in
           packages =
             [
               pkgs.ncdu
-              (import ../lpass-nix {inherit pkgs;})
+              #(import ../lpass-nix {inherit pkgs;})
               openssl
               pkgs.awscli
+              cc-pkgs.claude-code
               pkgs.cachix
               pkgs.curl
               pkgs.cvs

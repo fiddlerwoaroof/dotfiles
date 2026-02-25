@@ -226,6 +226,18 @@
     enable = true;
   };
 
+  #### expose tailscale
+  boot.kernel.sysctl = {
+    "net.ipv4.ip_forward" = 1;
+  };
+  networking.firewall.extraCommands = ''
+    iptables -A FORWARD -i eth0 -o tailscale0 -j ACCEPT
+    iptables -A FORWARD -i tailscale0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -t nat -I POSTROUTING 1 -s 172.16.0.0/12 -o tailscale0 -j MASQUERADE
+  '';
+
+  ####
+
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.

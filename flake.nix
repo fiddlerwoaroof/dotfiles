@@ -1,16 +1,12 @@
 {
   inputs = {
-    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     alejandra = {
       url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-nixpkgs.url = "github:NixOS/nixpkgs/master";
     emacs-community = {url = "github:nix-community/emacs-overlay";};
-    titan-home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "titan-nixpkgs";
-    };
+    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,8 +18,13 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
-    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
+    ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     sops-nix.url = "github:Mic92/sops-nix";
+    titan-home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "titan-nixpkgs";
+    };
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
   };
 
   outputs = {
@@ -33,6 +34,7 @@
     home-manager,
     nixpkgs,
     sops-nix,
+    claude-nixpkgs,
     titan-nixpkgs,
     titan-home-manager,
     ...
@@ -87,6 +89,13 @@
       "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
         // {
           nixpkgs = titan-nixpkgs;
+          cc-pkgs = import claude-nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfreePredicate = pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "claude-code"
+              ];
+          };
           home-manager = titan-home-manager;
         });
       "srv2" = import ./nix/srv2/home.nix (withx8664Linux inputs);
@@ -117,8 +126,10 @@
           nixpkgs.config.allowUnfreePredicate = pkg:
             builtins.elem (lib.getName pkg) [
               "dropbox"
+              "open-webui"
             ];
         })
+        (import ./nix/nixos-modules/tailscale.nix)
         ({pkgs, ...}: {
           environment.systemPackages = [
             pkgs.alejandra
@@ -130,6 +141,103 @@
             pkgs.vim
             pkgs.wget
           ];
+        })
+        ({pkgs, ...}: {
+          # In configuration.nix or flake.nix
+
+          environment.systemPackages = with pkgs; [motion];
+
+          # Create motion config file
+          environment.etc."motion/motion.conf" = {
+            text = ''
+              daemon on
+
+              video_device /dev/video0
+              video_params -1
+
+              width 640
+              height 480
+              framerate 3
+
+              picture_quality 80
+              picture_output when-motion
+              picture_type jpeg
+              picture_filename %Y%m%d_%H%M%S-%q
+
+
+              target_dir /var/lib/motion
+
+              threshold 1500
+              threshold_maximum 1800
+              despeckle_filter EedDl
+
+              # Video capture settings
+              movie_output on
+              movie_quality 60
+              movie_max_time 0
+              movie_timelapse 0
+
+              # Pre/post capture (in frames)
+              pre_capture 15
+              post_capture 15
+
+              stream_localhost off
+              stream_port 8081
+            '';
+          };
+
+          # Systemd service
+          systemd.services.motion = {
+            description = "Motion Detection";
+            after = ["network.target"];
+            wantedBy = ["multi-user.target"];
+
+            preStart = ''
+              mkdir -p /var/lib/motion /var/log/motion
+              chown motion:motion /var/lib/motion /var/log/motion
+            '';
+
+            serviceConfig = {
+              Type = "simple";
+              ExecStart = "${pkgs.motion}/bin/motion -c /etc/motion/motion.conf -n";
+              Restart = "on-failure";
+              RestartSec = 10;
+              User = "motion";
+              Group = "motion";
+              StandardOutput = "journal";
+              StandardError = "journal";
+            };
+          };
+
+          users.users.motion = {
+            isSystemUser = true;
+            group = "motion";
+            extraGroups = ["video"];
+
+            home = "/var/lib/motion";
+          };
+
+          users.groups.motion = {};
+
+          # Dropbox sync timer
+          systemd.timers.motion-to-dropbox = {
+            wantedBy = ["timers.target"];
+            timerConfig = {
+              OnBootSec = "2min";
+              OnUnitActiveSec = "5min";
+              Unit = "motion-to-dropbox.service";
+            };
+          };
+
+          systemd.services.motion-to-dropbox = {
+            description = "Sync motion captures to Dropbox";
+            serviceConfig = {
+              Type = "oneshot";
+              ExecStart = "${pkgs.rsync}/bin/rsync -rvh /var/lib/motion/ '/home/edwlan/.dropbox-hm/Langleys Dropbox/Edward Langley/motion/'";
+              ExecStartPost = "${pkgs.coreutils}/bin/chown -R edwlan: '/home/edwlan/.dropbox-hm/Langleys Dropbox/Edward Langley/motion/'";
+              User = "root";
+            };
+          };
         })
         ./nix/titan/nixos/ollama.nix
         ./nix/titan/nixos/configuration.nix
