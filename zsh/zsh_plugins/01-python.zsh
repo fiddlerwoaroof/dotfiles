@@ -2,12 +2,15 @@ alias ..python="PYTHONPATH=.. python"
 alias .python="PYTHONPATH=. python"
 
 activate_env() {
-  venv=.
+  local venv=.
   if [[ -e bin/activate ]]; then
     echo "sourcing local env: `pwd`/bin/activate"
   elif [[ -e venv/bin/activate ]]; then
     echo "sourcing local env: `pwd`/venv/bin/activate"
     venv=venv
+  elif [[ -e .venv/bin/activate ]]; then
+    echo "sourcing local env: `pwd`/.venv/bin/activate"
+    venv=.venv
   else
     env=$1
     pushd $HOME/python_envs/ > /dev/null

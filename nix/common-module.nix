@@ -47,6 +47,7 @@
     pkgs.sops
     pkgs.texinfoInteractive
     pkgs.tree
+    pkgs.uv
     pkgs.vim
     pkgs.visidata
     (pkgs.zsh

@@ -61,13 +61,58 @@
   (string-join (mapcar #'rebuild-file-patch patch-data)
                #\newline))
 
+(defvar *synopsis*
+  (net.didierverna.clon:defsynopsis (:postfix "RULE ..." :make-default nil)
+    (flag :short-name "h" :long-name "help")
+    (enum :short-name "m" :long-name "mode" :description "mode for interpreting rules"
+          :default-value '|regex|
+          :enum '(|number| |regex| |substring|))))
+
+(defun filter-patch (predicate s)
+  (serapeum:with-collector (collect-patch)
+    (loop for patch = (get-file-patch s)
+          for filtered = (filter-file-hunks patch predicate)
+          until (equal patch '("" nil))
+          when filtered do
+            (format t "~&~a~&" (rebuild-file-patch filtered)))))
+
 (defun main ()
-  (if (null (cadr sb-ext:*posix-argv*))
-      (format t "~&Must provide a pattern!")
-      (let* ((pattern (cadr sb-ext:*posix-argv*)))
-        (loop for patch = (get-file-patch *standard-input*)
-              for filtered = (when patch (filter-file-hunks patch
-                                                            (op (cl-ppcre:scan pattern _))))
-              until (equal patch '("" nil))
-              when filtered do
-                (format t "~&~a~&" (rebuild-file-patch filtered))))))
+  (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
+         (net.didierverna.clon:*context* context)
+         (patterns (net.didierverna.clon:remainder :context context))
+         (mode (net.didierverna.clon:getopt :context context
+                                            :long-name "mode")))
+    (cond ((or (net.didierverna.clon:getopt :context context
+                                            :long-name "help")
+               (null patterns)
+               (cdr patterns))
+           (net.didierverna.clon:help))
+          (t
+           (let ((pattern (car patterns)))
+             (loop for patch = (get-file-patch *standard-input*)
+                   for filtered = (when patch
+                                    (case mode
+                                      (|number|
+                                       (error "not implemented"))
+                                      (|substring|
+                                       (error "not implemented"))
+                                      (|regex|
+                                       (filter-file-hunks patch
+                                                          (op (cl-ppcre:scan pattern _))))))
+                   until (equal patch '("" nil))
+                   when filtered do
+                     (format t "~&~a~&" (rebuild-file-patch filtered))))))))
+
+
+#+(or fw.dump fw.main)
+(defun prepare-dump ()
+  (setf net.didierverna.clon:*context* nil
+        *features* (remove :fw.main (remove :fw.dump *features*))
+        *print-case* :downcase))
+#+(or fw.dump fw.main)
+(defun dump (&optional out-path)
+  (prepare-dump)
+  (net.didierverna.clon:dump (if out-path
+                                 (format nil "~a/zenburn" out-path)
+                                 "zenburn")
+                             main))

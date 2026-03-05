@@ -112,7 +112,11 @@
     "trivia_dot_level2",
     "closer-mop",
     "trivia_dot_level1",
-    "trivia_dot_level0"
+    "trivia_dot_level0",
+    "net_dot_didierverna_dot_clon",
+    "net_dot_didierverna_dot_clon_dot_termio",
+    "net_dot_didierverna_dot_clon_dot_core",
+    "net_dot_didierverna_dot_clon_dot_setup"
   ],
   "fwoar-tools/file-indexer":[
     "local-time",

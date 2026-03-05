@@ -27,9 +27,9 @@
 
 (defun setup-lisp-mode ()
   (unless (string= "*slime-scratch*" (buffer-name))
-             (smartparens-strict-mode 1)
-             (evil-smartparens-mode 1)
-             (aggressive-indent-mode 1))
+    (smartparens-strict-mode 1)
+    (evil-smartparens-mode 1)
+    (aggressive-indent-mode 1))
   (rainbow-delimiters-mode))
 
 (defun fwoar--clhs-lookup (&rest args)

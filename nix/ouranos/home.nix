@@ -47,6 +47,13 @@ in
       self.homeManagerModules.mac-apps
       (import ./info.nix)
       (import ./email.nix)
+      {
+        programs = {
+          gpg = {
+            enable = true;
+          };
+        };
+      }
       ({
         pkgs,
         nix-editor-pkgs,

@@ -2,6 +2,7 @@
   :ensure t
   :defer t
   :commands js2-mode
+  :mode "\\.js\\'"
   :config
   (define-key js-mode-map (kbd "M-.") nil)
   (define-key js2-mode-map (kbd "M-.") nil)
@@ -51,7 +52,7 @@
   (when (s-suffix-p ".tsx" buffer-file-name)
     (setq-local tree-sitter-language (tree-sitter-require 'tsx)))
   (flycheck-mode 1)
-  ;;(lsp)
+  (lsp-deferred)
   (prettier-js-mode 1)
   (tree-sitter-mode 1)
   (tree-sitter-hl-mode 1)
@@ -107,10 +108,11 @@
 
 (use-package rjsx-mode
   :ensure t
+  :mode "\\.jsx\\'"  ;; Only trigger for .jsx files
+  :hook
+  ( rjsx-mode . lsp-deferred)
   :config
-  ;; (add-hook 'js2-mode-hook 'lsp)
-  (define-key rjsx-mode-map (kbd "M-.") nil)
-  (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode)))
+  (define-key rjsx-mode-map (kbd "M-.") nil))
 
 (comment
  (use-package tern
@@ -194,7 +196,6 @@
 
 (defvar *tos-hook*
   (add-hook 'after-save-hook 'fwoar:test-on-save))
-
 (cl-macrolet ((def-js-like-find-system (mode)
 		            `(cl-defmethod fwoar--find-system (&context (major-mode ,mode))
 		               (find-package-json default-directory))))

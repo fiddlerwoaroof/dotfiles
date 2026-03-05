@@ -69,3 +69,8 @@ else
     echo "script_depends=(${(kv)script_depends})" >| ~/zshrc.depends
   fi
 fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/edwlan/.lmstudio/bin"
+# End of LM Studio CLI section
+
