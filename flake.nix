@@ -115,6 +115,7 @@
     nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
+        { documentation.info.enable = true ; }
         ({lib, ...}: {
           nix.registry.nixpkgs.flake = titan-nixpkgs;
           nix.nixPath = [
