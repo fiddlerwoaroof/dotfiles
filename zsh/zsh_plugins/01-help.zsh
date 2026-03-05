@@ -1,6 +1,11 @@
 #:depends-on:nix
 
-NIX_INFO="${${=NIX_PROFILES}[2]}"/share/info
+declare -T NIX_INFO nix_info ':'
+for p in ${=NIX_PROFILES}; do
+  if [[ -d "$p"/share/info ]]; then
+    nix_info=("${nix_info[@]}" "$p"/share/info)
+  fi
+done
 export INFOPATH="$HOME/info":"$NIX_INFO"
 
 NIX_MAN="${${=NIX_PROFILES}[2]}"/share/man
