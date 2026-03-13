@@ -6,7 +6,6 @@
     };
     claude-nixpkgs.url = "github:NixOS/nixpkgs/master";
     emacs-community = {url = "github:nix-community/emacs-overlay";};
-    emacs-hack = {url = "github:fiddlerwoaroof/emacs-nix-hack";};
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
