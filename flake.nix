@@ -84,7 +84,10 @@
       };
     };
     homeConfigurations = {
-      "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon inputs);
+      "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon {
+        inherit self alejandra emacs-community home-manager nixpkgs sops-nix;
+        nix-editor = inputs.nix-editor;
+      });
       "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
         // {
           nixpkgs = titan-nixpkgs;

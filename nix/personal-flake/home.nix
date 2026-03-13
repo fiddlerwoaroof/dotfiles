@@ -28,7 +28,6 @@ in {
     pkgs.libheif.dev
     pkgs.libssh2
     pkgs.mosh
-    pkgs.nixfmt-classic
     pkgs.nodejs
     pkgs.openssl
     pkgs.pandoc

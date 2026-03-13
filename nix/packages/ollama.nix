@@ -7,7 +7,6 @@
   stdenv,
   addDriverRunpath,
   nix-update-script,
-
   cmake,
   gitMinimal,
   clblast,
@@ -23,34 +22,27 @@
   vulkan-loader,
   shaderc,
   ccache,
-
   versionCheckHook,
   writableTmpDirAsHomeHook,
-
   # passthru
   nixosTests,
   ollama,
-
   config,
   # one of `[ null false "rocm" "cuda" "vulkan" ]`
   acceleration ? null,
 }:
-
 assert builtins.elem acceleration [
   null
   false
   "rocm"
   "cuda"
   "vulkan"
-];
-
-let
+]; let
   validateFallback = lib.warnIf (config.rocmSupport && config.cudaSupport) (lib.concatStrings [
     "both `nixpkgs.config.rocmSupport` and `nixpkgs.config.cudaSupport` are enabled, "
     "but they are mutually exclusive; falling back to cpu"
   ]) (!(config.rocmSupport && config.cudaSupport));
-  shouldEnable =
-    mode: fallback: (acceleration == mode) || (fallback && acceleration == null && validateFallback);
+  shouldEnable = mode: fallback: (acceleration == mode) || (fallback && acceleration == null && validateFallback);
 
   rocmRequested = shouldEnable "rocm" config.rocmSupport;
   cudaRequested = shouldEnable "cuda" config.cudaSupport;
@@ -93,7 +85,9 @@ let
     # ollama hardcodes the major version in the Makefile to support different variants.
     # - https://github.com/ollama/ollama/blob/v0.4.4/llama/Makefile#L17-L18
     name = "cuda-merged-${cudaMajorVersion}";
-    paths = map lib.getLib cudaLibs ++ [
+    paths =
+      map lib.getLib cudaLibs
+      ++ [
       (lib.getOutput "static" cudaPackages.cuda_cudart)
       (lib.getBin (cudaPackages.cuda_nvcc.__spliced.buildHost or cudaPackages.cuda_nvcc))
     ];
@@ -101,7 +95,8 @@ let
 
   cudaPath = lib.removeSuffix "-${cudaMajorVersion}" cudaToolkit;
 
-  wrapperOptions = [
+  wrapperOptions =
+    [
     # ollama embeds llama-cpp binaries which actually run the ai models
     # these llama-cpp binaries are unaffected by the ollama binary's DT_RUNPATH
     # LD_LIBRARY_PATH is temporarily required to use the gpu
@@ -122,14 +117,13 @@ let
   wrapperArgs = builtins.concatStringsSep " " wrapperOptions;
 
   goBuild =
-    if enableCuda then
-      buildGoModule.override { stdenv = cudaPackages.backendStdenv; }
-    else if enableRocm then
-      buildGoModule.override { stdenv = rocmPackages.stdenv; }
-    else if enableVulkan then
-      buildGoModule.override { stdenv = vulkan-tools.stdenv; }
-    else
-      buildGoModule;
+    if enableCuda
+    then buildGoModule.override {stdenv = cudaPackages.backendStdenv;}
+    else if enableRocm
+    then buildGoModule.override {stdenv = rocmPackages.stdenv;}
+    else if enableVulkan
+    then buildGoModule.override {stdenv = vulkan-tools.stdenv;}
+    else buildGoModule;
   inherit (lib) licenses platforms maintainers;
 in
 goBuild (finalAttrs: {
@@ -156,7 +150,8 @@ goBuild (finalAttrs: {
     // lib.optionalAttrs enableCuda { CUDA_PATH = cudaPath; }
     // lib.optionalAttrs enableVulkan { VULKAN_SDK = shaderc.bin; };
 
-  nativeBuildInputs = [
+    nativeBuildInputs =
+      [
     cmake
     gitMinimal
   ]
@@ -180,7 +175,8 @@ goBuild (finalAttrs: {
     ++ lib.optionals enableVulkan vulkanLibs;
 
   # replace inaccurate version number with actual release version
-  postPatch = ''
+    postPatch =
+      ''
     substituteInPlace version/version.go \
       --replace-fail 0.0.0 '${finalAttrs.version}'
     rm -r app
@@ -199,23 +195,20 @@ goBuild (finalAttrs: {
     }
   );
 
-  preBuild =
-    let
-      removeSMPrefix =
-        str:
-        let
+    preBuild = let
+      removeSMPrefix = str: let
           matched = builtins.match "sm_(.*)" str;
         in
-        if matched == null then str else builtins.head matched;
+        if matched == null
+        then str
+        else builtins.head matched;
 
       cudaArchitectures = builtins.concatStringsSep ";" (map removeSMPrefix cudaArches);
       rocmTargets = builtins.concatStringsSep ";" rocmGpuTargets;
 
       cmakeFlagsCudaArchitectures = lib.optionalString enableCuda "-DCMAKE_CUDA_ARCHITECTURES='${cudaArchitectures}'";
       cmakeFlagsRocmTargets = lib.optionalString enableRocm "-DAMDGPU_TARGETS='${rocmTargets}'";
-
-    in
-    ''
+    in ''
       cmake -B build \
         -DCMAKE_SKIP_BUILD_RPATH=ON \
         -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
@@ -251,14 +244,12 @@ goBuild (finalAttrs: {
     (allow iokit-open (iokit-user-client-class "AGXDeviceUserClient"))
   '';
 
-  checkFlags =
-    let
+    checkFlags = let
       # Skip tests that require network access
       skippedTests = [
         "TestPushHandler/unauthorized_push" # Writes to $HOME, se https://github.com/ollama/ollama/pull/12307#pullrequestreview-3249128660
       ];
-    in
-    [ "-skip=^${builtins.concatStringsSep "$|^" skippedTests}$" ];
+    in ["-skip=^${builtins.concatStringsSep "$|^" skippedTests}$"];
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [
@@ -267,8 +258,10 @@ goBuild (finalAttrs: {
   ];
   versionCheckKeepEnvironment = "HOME";
 
-  passthru = {
-    tests = {
+    passthru =
+      {
+        tests =
+          {
       inherit ollama;
     }
     // lib.optionalAttrs stdenv.hostPlatform.isLinux {
@@ -290,7 +283,9 @@ goBuild (finalAttrs: {
     changelog = "https://github.com/ollama/ollama/releases/tag/v${finalAttrs.version}";
     license = licenses.mit;
     platforms =
-      if (rocmRequested || cudaRequested || vulkanRequested) then platforms.linux else platforms.unix;
+        if (rocmRequested || cudaRequested || vulkanRequested)
+        then platforms.linux
+        else platforms.unix;
     mainProgram = "ollama";
     maintainers = with maintainers; [
       abysssol
