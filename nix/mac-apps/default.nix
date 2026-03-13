@@ -3,7 +3,6 @@
   config,
   pkgs,
   emacs-pkgs,
-  emacs-hack-pkgs,
   fwoar-pkgs,
   ...
 }: let
@@ -24,7 +23,7 @@ in {
       target_app="$new_nix_apps/$app_name"
       echo "Link '$real_app' to '$target_app'"
       mkdir -p $target_app
-      "${pkgs.xorg.lndir}"/bin/lndir "$real_app" "$target_app" 2>&1>/dev/null
+      "${pkgs.lndir}"/bin/lndir "$real_app" "$target_app" 2>&1>/dev/null
       rm "$target_app/Contents/Info.plist"
       cp "$real_app/Contents/Info.plist" "$target_app/Contents/Info.plist"
     done

@@ -5,7 +5,6 @@
   home-manager,
   nix-editor,
   nixpkgs,
-  emacs-hack,
   sops-nix,
   system,
   ...
@@ -94,6 +93,5 @@ in
       emacs-pkgs = emacs-community.packages.${system};
       intel-pkgs = nixpkgs.legacyPackages.x86_64-darwin;
       alejandra-pkgs = alejandra.packages.${system};
-      emacs-hack-pkgs = emacs-hack.packages.${system};
     };
   }
