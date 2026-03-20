@@ -1,4 +1,5 @@
 let
+  refIds = ["A" "B" "C" "D" "E" "F" "G" "H"];
   datasource = {
     type = "prometheus";
     uid = "PBFA97CFB590B2093";
@@ -24,7 +25,7 @@ let
           inherit datasource;
           expr = builtins.elemAt (builtins.map (e: e.expr) expr) i;
           legendFormat = builtins.elemAt (builtins.map (e: e.legend) expr) i;
-          refId = builtins.substring 0 1 (builtins.toString (65 + i));
+          refId = builtins.elemAt refIds i;
         }) (builtins.length expr)
       else [
         {
