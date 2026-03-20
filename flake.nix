@@ -137,6 +137,16 @@
                 }
               ];
             }
+            {
+              job_name = "titan";
+              scrape_interval = "10s";
+              static_configs = [
+                {
+                  targets = ["titan.h.elangley.org:9100"];
+                  labels = {host = "titan";};
+                }
+              ];
+            }
           ];
         };
 
@@ -182,6 +192,17 @@
             ];
         })
         (import ./nix/nixos-modules/tailscale.nix)
+        ({pkgs, ...}: {
+          services.prometheus.exporters.node = {
+            enable = true;
+            port = 9100;
+            enabledCollectors = ["hwmon" "drm" "systemd"];
+            # only allow srv2 to scrape
+            openFirewall = true;
+            # or manually:
+            # firewallFilter = "-i eth0 -s srv2.h.elangley.org -p tcp -m tcp --dport 9100";
+          };
+        })
         ({pkgs, ...}: {
           environment.systemPackages = [
             pkgs.alejandra
