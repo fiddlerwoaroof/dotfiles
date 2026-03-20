@@ -41,8 +41,8 @@ git-pwdurl () {
   repo_idx=$((repo_root + 2))
   repo=${(j:/:)parts[$repo_idx,-1]}
   site=${parts[$site_idx]}
-  case "$1" in
-    git) echo "git://$site:$repo$repo_suffix"
+  case "${${1:-$GIT_SSH_MODE}:-https}" in
+    git) echo "git://$site:$repo.git"
          ;;
     ssh) echo $git_user@$site:$repo$repo_suffix
          ;;
