@@ -116,6 +116,57 @@
     };
     nixosModules = {
       srv2-sops = import ./nix/srv2/sops.nix;
+      fwoar-grafana = {config, ...}: {
+        # Node exporter - collects hwmon/drm metrics including MI100 temps
+        services.prometheus.exporters.node = {
+          enable = true;
+          port = 9100;
+          enabledCollectors = ["hwmon" "drm" "systemd"];
+        };
+
+        # Prometheus - scrapes and stores metrics
+        services.prometheus = {
+          enable = true;
+          scrapeConfigs = [
+            {
+              job_name = "node";
+              scrape_interval = "10s";
+              static_configs = [
+                {
+                  targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
+                }
+              ];
+            }
+          ];
+        };
+
+        # Grafana - dashboards
+        services.grafana = {
+          enable = true;
+          settings.server = {
+            http_addr = "0.0.0.0";
+            http_port = 3000;
+          };
+          provision = {
+            datasources.settings.datasources = [
+              {
+                name = "Prometheus";
+                type = "prometheus";
+                url = "http://localhost:${toString config.services.prometheus.port}";
+                isDefault = true;
+              }
+            ];
+          };
+          #security = {
+          #  admin_user = "admin";
+          #  admin_password = "$__file{${config.sops.secrets.grafana_password.path}}";
+          #};
+        };
+        sops.secrets.grafana_password = {
+          owner = "grafana";
+          group = "grafana";
+        };
+      };
     };
     nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
