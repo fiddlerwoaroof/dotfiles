@@ -5,7 +5,6 @@
   home-manager,
   nix-editor,
   nixpkgs,
-  emacs-hack,
   sops-nix,
   system,
   ...
@@ -31,7 +30,7 @@ in
         sops = {
           # It's also possible to use a ssh key, but only when it has no password:
           age.sshKeyPaths = ["/Users/edwlan/.ssh/id_ed25519"];
-          defaultSopsFile = ./secrets.yml;
+          defaultSopsFile = ../../secrets/ouranos/secrets.yml;
           secrets.nginx_local_key = {
             # %r gets replaced with a runtime directory, use %% to specify a '%'
             # sign. Runtime dir is $XDG_RUNTIME_DIR on linux and
@@ -94,6 +93,5 @@ in
       emacs-pkgs = emacs-community.packages.${system};
       intel-pkgs = nixpkgs.legacyPackages.x86_64-darwin;
       alejandra-pkgs = alejandra.packages.${system};
-      emacs-hack-pkgs = emacs-hack.packages.${system};
     };
   }

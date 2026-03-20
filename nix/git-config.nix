@@ -13,6 +13,9 @@
     };
     git = {
       enable = true;
+      lfs = {
+        enable = true;
+      };
       settings = {
         user = {
           email = "el-github@elangley.org";
@@ -42,7 +45,6 @@
           autoStash = true;
         };
       };
-      lfs.enable = true;
     };
   };
 }

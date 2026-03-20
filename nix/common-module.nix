@@ -29,7 +29,6 @@
     pkgs.lorri
     pkgs.mosh
     pkgs.ncdu
-    pkgs.nixfmt-classic
     pkgs.pandoc
     pkgs.pkg-config
     pkgs.ripgrep

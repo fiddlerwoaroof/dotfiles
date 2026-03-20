@@ -1,0 +1,40 @@
+#compdef make
+#
+# Wrap _make with descriptions parsed from `make help` output.
+# Expects help lines matching:  "    target-name:  Description text"
+# Falls through to stock _make for flags, -C dirs, etc.
+
+typeset -gA _make_help_cache _make_help_cache_time
+
+_make-help-targets () {
+  local -a targets
+  local line basedir ttl=30
+
+  # Resolve the effective directory (respects -C flags already on the line)
+  basedir=${(j./.)${${~"${(@s.:.):-$PWD:${(Q)${opt_args[-C]:-$opt_args[--directory]}//\\:/$'\0'}}"}[(R)/*,-1]}//$'\0'/:}
+  [[ -d "$basedir" ]] || basedir=$PWD
+
+  # Return cached results if fresh enough
+  if (( SECONDS - ${_make_help_cache_time[$basedir]:-0} < ttl )) \
+     && [[ -n "${_make_help_cache[$basedir]}" ]]; then
+    targets=( "${(@f)_make_help_cache[$basedir]}" )
+  else
+    while IFS= read -r line; do
+      if [[ "$line" =~ '^ +([a-zA-Z_][a-zA-Z0-9_./-]*): +(.+)$' ]]; then
+        targets+=( "${match[1]}:${match[2]}" )
+      fi
+    done < <(command make -C "$basedir" help 2>/dev/null)
+    _make_help_cache[$basedir]="${(F)targets}"
+    _make_help_cache_time[$basedir]=$SECONDS
+  fi
+
+  (( ${#targets} )) || return 1
+  _describe 'make target' targets
+}
+
+_make-with-help () {
+  _make-help-targets
+  _make "$@"
+}
+
+compdef _make-with-help make

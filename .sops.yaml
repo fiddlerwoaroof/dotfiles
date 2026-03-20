@@ -3,10 +3,17 @@
 # Also see https://github.com/Mic92/dotfiles/blob/d6114726d859df36ccaa32891c4963ae5717ef7f/nixos/.sops.yaml
 # for a more complex example.
 keys:
+  - &server_srv2 age16wajfvptg3pns97v4789y608pefnqz98ud34s95uhayend43fpzs94ey3c
   - &admin_edwlan age1rqzmdt6jgxqxutfc2de576eatk58f8tvf8t6h0rgpgh647t974fsrvmlaa
   - &admin_edwlan_ouranos age1nt7zu7rujmrvmc9t2pwdnqe4wyfzuq2pq0fu04ucjrsnydchku6s8jaw7d
 creation_rules:
-  - path_regex: nix/ouranos/(.*/)?[^/]+\.(yml|yaml|json|env|ini)$
+  - path_regex: secrets/srv2/[^/]+\.(ya?ml|json|env|ini)$
+    key_groups:
+      - age:
+        - *server_srv2
+        - *admin_edwlan
+        - *admin_edwlan_ouranos
+  - path_regex: secrets/ouranos/(.*/)?[^/]+\.(yml|yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_edwlan
