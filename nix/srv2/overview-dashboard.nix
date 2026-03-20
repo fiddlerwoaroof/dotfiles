@@ -1,7 +1,7 @@
 let
   datasource = {
     type = "prometheus";
-    uid = "prometheus";
+    uid = "PBFA97CFB590B2093";
   };
   mkPanel = {
     title,
