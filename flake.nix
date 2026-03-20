@@ -114,6 +114,9 @@
         program = "${self-pkgs.cls}/bin/cls";
       };
     };
+    nixosModules = {
+      srv2-sops = import ./nix/srv2/sops.nix;
+    }
     nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
