@@ -157,10 +157,6 @@
               }
             ];
           };
-          #security = {
-          #  admin_user = "admin";
-          #  admin_password = "$__file{${config.sops.secrets.grafana_password.path}}";
-          #};
         };
         sops.secrets.grafana_password = {
           owner = "grafana";
