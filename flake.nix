@@ -116,7 +116,11 @@
     };
     nixosModules = {
       srv2-sops = import ./nix/srv2/sops.nix;
-      fwoar-grafana = {config, ...}: {
+      fwoar-grafana = {
+        config,
+        pkgs,
+        ...
+      }: {
         # Node exporter - collects hwmon/drm metrics including MI100 temps
         services.prometheus.exporters.node = {
           enable = true;
@@ -168,8 +172,26 @@
                 isDefault = true;
               }
             ];
+            dashboards.settings = {
+              apiVersion = 1;
+              providers = [
+                {
+                  name = "nixos-provisioned";
+                  options.path = "/etc/grafana-dashboards";
+                }
+              ];
+            };
           };
         };
+
+        environment.etc."grafana-dashboards/node-overview.json" = {
+          source =
+            pkgs.writeText "node-overview.json" (builtins.toJSON
+              (import ./nix/srv2/overview-dashboard.nix).dashboard);
+          user = "grafana";
+          group = "grafana";
+        };
+
         sops.secrets.grafana_password = {
           owner = "grafana";
           group = "grafana";
@@ -179,7 +201,7 @@
     nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        { documentation.info.enable = true ; }
+        {documentation.info.enable = true;}
         ({lib, ...}: {
           nix.registry.nixpkgs.flake = titan-nixpkgs;
           nix.nixPath = [
