@@ -68,16 +68,17 @@
                  (yason:encode dependencies))))))
 
 (defun clean-deps (deps)
-  (remove-duplicates
-   (remove-if (lambda (it)
-                (or (serapeum:string-prefix-p "sb-" (string-downcase it))
-                    (member it '("uiop"
-                                 "sb-posix")
-                            :test #'equal)))
-              (mapcar (lambda (it)
-                        (first (fwoar.string-utils:partition #\/ it)))
-                      deps))
-   :test #'equal))
+  (sort (remove-duplicates
+         (remove-if (lambda (it)
+                      (or (serapeum:string-prefix-p "sb-" (string-downcase it))
+                          (member it '("uiop"
+                                       "sb-posix")
+                                  :test #'equal)))
+                    (mapcar (lambda (it)
+                              (first (fwoar.string-utils:partition #\/ it)))
+                            deps))
+         :test #'equal)
+        #'string-lessp))
 
 (defun serialize-primary-and-secondary-system-deps (s system)
   (serialize-dependencies s

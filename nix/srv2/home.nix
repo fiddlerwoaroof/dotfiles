@@ -66,6 +66,43 @@ in
         #targets.genericLinux.enable = true;
         home.stateVersion = "25.05";
       }
+      {
+        home = {
+          packages = [self.packages.${system}.ddns-updater];
+        };
+        systemd.user = {
+          enable = true;
+          timers = {
+            ddns-updater = {
+              Unit = {
+                Description = "Update DDNS occasionally";
+                RefuseManualStart = false;
+                RefuseManualStop = false;
+              };
+
+              Timer = {
+                Persistent = false;
+                OnBootSec = "300min";
+                OnUnitActiveSec = "300min";
+                Unit = "ddns-updater.service";
+              };
+            };
+          };
+          services = {
+            ddns-updater = {
+              Unit = {
+                Description = "Sync DDNS records";
+                RefuseManualStart = false;
+                RefuseManualStop = true;
+              };
+              Service = {
+                Type = "oneshot";
+                ExecStart = "${self.packages.${system}.ddns-updater}/bin/ddns-updater";
+              };
+            };
+          };
+        };
+      }
     ];
     extraSpecialArgs = {
       inherit system;

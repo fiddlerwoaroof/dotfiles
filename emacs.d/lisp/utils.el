@@ -144,6 +144,7 @@
 
 (defun fwoar:force-info-init ()
   (interactive)
+  (require 'info)
   (setf Info-directory-list nil)
   (info-initialize))
 

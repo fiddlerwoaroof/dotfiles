@@ -124,3 +124,15 @@
                                       t)))
   :serial t
   :components ((:file "embedding-hash")))
+
+(defsystem :fwoar-tools/ddns-updater
+  :description "update ddns entries"
+  :author "Ed L <el-l@elangley.org>"
+  :license "MIT"
+  :build-pathname "ddns-updater"
+  :entry-point "fwoar.ddns-updater:main"
+  :depends-on (:alexandria :serapeum :drakma :flexi-streams :osicat
+                           :yason :trivia :net.didierverna.clon)
+  :class fw-tool-system
+  :serial t
+  :components ((:file "ddns_updater")))
