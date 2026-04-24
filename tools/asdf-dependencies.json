@@ -144,5 +144,17 @@
     "net_dot_didierverna_dot_clon",
     "net_dot_didierverna_dot_clon_dot_termio",
     "net_dot_didierverna_dot_clon_dot_core"
+  ],
+  "fwoar-tools/ddns-updater": [
+    "alexandria",
+    "serapeum",
+    "drakma",
+    "flexi-streams",
+    "osicat",
+    "yason",
+    "trivia",
+    "net_dot_didierverna_dot_clon",
+    "net_dot_didierverna_dot_clon_dot_termio",
+    "net_dot_didierverna_dot_clon_dot_core"
   ]
 }

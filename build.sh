@@ -25,7 +25,9 @@ installPhase() (
   set -x
   mkdir -p "$out"/bin
   mv "$HOME/$name" "$out"/bin
-  wrapProgram "$out/bin/$name"
+  #wrapProgram "$out/bin/$name"
+
+  eval "$postInstall"
 )
 
 genericBuild
