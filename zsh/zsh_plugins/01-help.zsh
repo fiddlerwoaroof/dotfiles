@@ -13,5 +13,7 @@ export MANPATH=/opt/local/share/man:"$NIX_MAN":/Applications/Xcode.app/Contents/
 
 if [[ -d "$HOME/.zsh_help" ]]; then
     export HELPDIR="$HOME/.zsh_help"
+elif [[ -d "$HOME"/.nix-profile/share/zsh/"$(zsh --version | cut -f2 -d' ')"/help ]]; then
+    export HELPDIR="$HOME"/.nix-profile/share/zsh/"$(zsh --version | cut -f2 -d' ')"/help
 fi
 alias run-help >/dev/null && unalias run-help
