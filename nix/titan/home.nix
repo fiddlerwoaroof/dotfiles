@@ -132,8 +132,9 @@ in
           };
         };
       }
+      self.homeManagerModules.personal-module-configs
       {
-        targets.genericLinux.enable = true;
+        #targets.genericLinux.enable = true;
         home.stateVersion = "21.03";
       }
     ];

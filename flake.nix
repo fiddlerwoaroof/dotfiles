@@ -45,6 +45,11 @@
     packages = import ./nix/packages inputs;
     homeManagerModules = {
       common = import ./nix/common-module.nix;
+      personal-module-configs = {
+        fwoar.info.fullName = "Edward Langley";
+        fwoar.github.username = "fiddlerwoaroof";
+        fwoar.git.email = "el-github@elangley.org";
+      };
       emacs = {emacs-pkgs, ...}: {
         home.packages = [
           emacs-pkgs.emacs-git

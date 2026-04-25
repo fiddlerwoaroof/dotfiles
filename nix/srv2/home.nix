@@ -63,10 +63,6 @@ in
         };
       }
       {
-        #targets.genericLinux.enable = true;
-        home.stateVersion = "25.05";
-      }
-      {
         home = {
           packages = [self.packages.${system}.ddns-updater];
         };
@@ -102,6 +98,11 @@ in
             };
           };
         };
+      }
+      self.homeManagerModules.personal-module-configs
+      {
+        #targets.genericLinux.enable = true;
+        home.stateVersion = "25.05";
       }
     ];
     extraSpecialArgs = {
