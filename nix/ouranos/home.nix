@@ -24,6 +24,9 @@ in
     modules = [
       sops-nix.homeManagerModules.sops
       {
+        nix.registry.nixpkgs.flake = nixpkgs;
+      }
+      {
         home.file = {
           "nginx-conf/ca.pem".source = ./ca.pem;
         };
