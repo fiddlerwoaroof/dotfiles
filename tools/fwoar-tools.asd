@@ -136,3 +136,14 @@
   :class fw-tool-system
   :serial t
   :components ((:file "ddns_updater")))
+
+(defsystem :fwoar-tools/tt
+  :description "text-template"
+  :author "Ed L <el-l@elangley.org>"
+  :license "MIT"
+  :build-pathname "tt"
+  :entry-point "fwoar.tt:main"
+  :depends-on (:net.didierverna.clon :alexandria :serapeum :yason :cl-mustache)
+  :class fw-tool-system
+  :serial t
+  :components ((:file "tt")))

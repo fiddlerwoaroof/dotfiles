@@ -8,6 +8,26 @@
   (:export ))
 (in-package :fwoar.nix-helper)
 
+(defvar *reset-nix-cache* nil)
+(defun nix-packaged-systems ()
+  (let ((cache (load-time-value (list nil)))
+        (lock (load-time-value (bt:make-lock))))
+    (bt:with-lock-held (lock)
+      (when (or (not (car cache))
+                *reset-nix-cache*)
+        (setf *reset-nix-cache* nil)
+        (rplaca cache
+                (alexandria:alist-hash-table
+                 (with-open-file (s #p"~/nixpkgs-installables.json")
+                   (loop for next = (handler-case (yason:parse s)
+                                      (end-of-file ()))
+                         for installable = (when next (gethash "installable" next))
+                         when (alexandria:starts-with-subseq #1="sbclPackages." installable)
+                           collect (cons (subseq installable #.(length #1#))
+                                         (gethash "meta" next))
+                         while next))))))
+    (car cache)))
+
 (defun replace-regexes (from to str)
   (assert (= (length from) (length to)))
   (if (null from)

@@ -60,4 +60,8 @@ in
       inherit system;
       name = "ddns-updater";
     };
+    tt = mkTool rec {
+      inherit system;
+      name = "tt";
+    };
   }
