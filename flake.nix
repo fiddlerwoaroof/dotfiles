@@ -203,7 +203,8 @@
         };
       };
     };
-    nixosConfigurations.titan = titan-nixpkgs.lib.nixosSystem {
+    nixosConfigurations = {
+      titan = titan-nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         {documentation.info.enable = true;}
@@ -353,5 +354,6 @@
         }
       ];
     };
+  };
   };
 }
