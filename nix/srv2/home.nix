@@ -62,6 +62,31 @@ in
           homeDirectory = "/home/${username}";
         };
       }
+      ({
+        config,
+        lib,
+        pkgs,
+        ...
+      }: let
+        hub-repo = "${config.home.homeDirectory}/git_repos/git.fiddlerwoaroof.com/u/edwlan/fwoar-hub/";
+      in {
+        systemd.user.services.hub = {
+          Unit.AssertPathExists = "${config.home.homeDirectory}/fwoar-hub";
+
+          Service = {
+            WorkingDirectory = "${config.home.homeDirectory}/fwoar-hub";
+            Environment = [
+              "LD_LIBRARY_PATH=${lib.makeLibraryPath [pkgs.zeromq pkgs.openssl pkgs.libev]}"
+            ];
+            ExecStart = "${hub-repo}/fwoar-hub";
+            Restart = "always";
+            PrivateTmp = false;
+            NoNewPrivileges = true;
+          };
+
+          Install.WantedBy = ["default.target"];
+        };
+      })
       {
         home = {
           packages = [self.packages.${system}.ddns-updater];
