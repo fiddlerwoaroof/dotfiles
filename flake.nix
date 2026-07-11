@@ -20,10 +20,10 @@
     ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     sops-nix.url = "github:Mic92/sops-nix";
     titan-home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "titan-nixpkgs";
     };
-    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
   };
 
   outputs = {

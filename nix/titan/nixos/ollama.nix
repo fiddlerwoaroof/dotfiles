@@ -12,7 +12,7 @@
   #  openFirewall = true;
   #};
   services.open-webui = {
-    enable = true;
+    enable = false;
     host = "0.0.0.0";
     openFirewall = true;
     port = 65080;
@@ -26,7 +26,7 @@
   };
   services.ollama = {
     enable = false;
-    acceleration = "rocm";
+    #acceleration = "rocm";
     host = "0.0.0.0";
     loadModels = ["codellama" "llama3.2" "gemma3:4b-it-qat" "nomic-embed-text:v1.5"];
     openFirewall = true;
