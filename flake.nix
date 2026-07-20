@@ -227,19 +227,19 @@
 
           mpd = {
             enable = true;
+            openFirewall = true;
             user = "edwlan";
 
-            musicDirectory = "/home/edwlan/oldhome/sorted_music";
-            extraConfig = ''
-              audio_output {
-                type "pipewire"
-                name "PipeWire"
-              }
-            '';
-            # Optional:
-            network.listenAddress = "any"; # if you want to allow non-localhost connections
-            #startWhenNeeded = true;
-            # systemd feature: only start MPD service upon connection to its socket
+            settings = {
+              audio_output = [
+                {
+                  type = "pipewire";
+                  name = "PipeWire";
+                }
+              ];
+              bind_to_address = "any";
+              music_directory = "/home/edwlan/oldhome/sorted_music";
+            };
           };
         };
         systemd.services.mpd.environment = {
