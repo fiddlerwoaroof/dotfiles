@@ -26,8 +26,8 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
         pkgs.callPackage ./iterm.nix {
-          version = "3.6.9";
-          hash = "sha256-u2/OYGomZ4bLxnrUigz4qF7eGXlXEvZc+r0x6jqrIKg=";
+          version = "3.6.11";
+          hash = "sha256-01QKUiXtL4WCq174sT/A5+iqmXe8HZt/Vih02spVRRs=";
         };
     };
 in
