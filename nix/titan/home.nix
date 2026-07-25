@@ -48,6 +48,7 @@ in
       {
         home.packages = [
           pkgs.pinentry-curses
+          pkgs.git-lfs-transfer
         ];
         programs = {
           gpg = {

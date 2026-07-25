@@ -12,6 +12,8 @@
     alejandra-pkgs.default
     fwoar-pkgs.gsed
     fwoar-pkgs.zenburn
+    fwoar-pkgs.cls
+    fwoar-pkgs.tt
     pkgs.clojure
     pkgs.coreutils-prefixed
     pkgs.difftastic

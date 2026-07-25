@@ -98,8 +98,11 @@
       "amdgpu.ppfeaturemask=0xffffffff"
     ];
     loader.systemd-boot.enable = true;
-    zfs.devNodes = "/dev/disk/by-id";
-    zfs.extraPools = ["zpool"];
+    zfs = {
+      devNodes = "/dev/disk/by-id";
+      extraPools = ["zpool"];
+      forceImportRoot = false;
+    };
   };
 
   services.zfs.trim.enable = true;
@@ -219,8 +222,9 @@
   services.displayManager.sddm.wayland.enable = false;
   services.desktopManager.plasma6.enable = true;
 
-  programs.vim.enable = true;
   programs.firefox.enable = true;
+  programs.nix-ld.enable = true;
+  programs.vim.enable = true;
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
