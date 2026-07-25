@@ -44,6 +44,8 @@ The script should do this: \(ai.prompt)</string>
 	<integer>0</integer>
 	<key>ConvertDosNewlines</key>
 	<true/>
+	<key>ConvertUnicodePunctuation</key>
+	<false/>
 	<key>Custom Color Presets</key>
 	<dict>
 		<key>Borland</key>
@@ -1244,7 +1246,7 @@ The script should do this: \(ai.prompt)</string>
 	<key>Default Bookmark Guid</key>
 	<string>21B8295E-63CF-46CF-8987-B5DFF935BB52</string>
 	<key>Default Browser Profile Guid</key>
-	<string>B263228D-A01D-4B6E-A23B-097C205A8B44</string>
+	<string>903DC125-D5A2-4842-99DB-FDEA9C668C3E</string>
 	<key>Default Toolbelt Width</key>
 	<real>344</real>
 	<key>DeleteProfile_SilenceUntil</key>
@@ -6520,7 +6522,7 @@ The script should do this: \(ai.prompt)</string>
 	<key>PasteSpecialSubstitution</key>
 	<string> </string>
 	<key>PasteSpecialUseRegexSubstitution</key>
-	<true/>
+	<false/>
 	<key>PasteTabToStringTabStopSize</key>
 	<integer>4</integer>
 	<key>PerformDNSLookups</key>
@@ -6617,12 +6619,14 @@ The script should do this: \(ai.prompt)</string>
 	<string>/-+\~_.</string>
 	<key>com.apple.WebPrivacy.ResourceMonitorURLsVersion</key>
 	<string>qrsAAAGXnXBrwGxMO6s=</string>
+	<key>disableMetalInLowPowerMode</key>
+	<false/>
 	<key>disableMetalWhenUnplugged</key>
 	<false/>
 	<key>findIgnoreCase_iTerm</key>
 	<true/>
 	<key>findMode_iTerm</key>
-	<integer>0</integer>
+	<integer>3</integer>
 	<key>findRegex_iTerm</key>
 	<false/>
 	<key>kCPKSelectionViewPreferredModeKey</key>
