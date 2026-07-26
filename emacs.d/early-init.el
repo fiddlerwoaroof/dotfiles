@@ -3,11 +3,16 @@
 ;; (require 'cl-generic)
 ;; (cl-defgeneric (setf seq-elt) (store sequence n))
 
-(when (equal 'darwin system-type)
-  (setq-default native-comp-driver-options
-                '("-Wl,-w"
-                  "-Wl,-L/nix/store/zl3aslw7dhrk6wb5nv960hnc2v27l3j5-libgccjit-14-20241116/lib/gcc/aarch64-apple-darwin/14.2.1"
-                  "-Wl,-L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib")))
+(add-variable-watcher
+ 'load-path
+ (lambda (_sym newval op where)
+   (when (and (eq op 'set) (null where)
+              (< (length newval) (length load-path)))
+     (message "load-path shrank: %d -> %d" (length load-path) (length newval))
+     (debug "load-path shrank: %d -> %d" (length load-path) (length newval)))))
+
+;; (setq native-comp-jit-compilation nil)
+;; (setq package-native-compile nil)
 
 
 (setq package-user-dir

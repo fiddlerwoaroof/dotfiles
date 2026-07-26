@@ -1,4 +1,4 @@
-;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil; -*-
+;; -*- mode: Emacs-Lisp;tab-width: 8;indent-tabs-mode: nil;  -*-
 (setq read-process-output-max (* 1024 1024))
 (setq gc-cons-threshold 100000000
       load-prefer-newer t
@@ -139,18 +139,10 @@
                   "https://git.fiddlerwoaroof.com/git/dotfiles.git"))
 
 (defun fwoar:setup-load-path ()
-  (let* ((new-load-path (cl-adjoin "~/.emacs.d/lisp/configurations/"
-                                   load-path
-                                   :test 'equal))
-         (new-load-path (cl-adjoin (concat *dotfiles-repo*
-                                           "emacs.d/lisp/configurations/")
-                                   new-load-path
-                                   :test 'equal))
-         (new-load-path (cl-adjoin (concat *dotfiles-repo*
-                                           "emacs.d/packages/")
-                                   new-load-path
-                                   :test 'equal)))
-    (setq load-path new-load-path)))
+  (dolist (d (list (expand-file-name "~/.emacs.d/lisp/configurations/")
+                   (concat *dotfiles-repo* "emacs.d/lisp/configurations/")
+                   (concat *dotfiles-repo* "emacs.d/packages/")))
+    (add-to-list 'load-path d)))
 
 (fwoar:setup-load-path)
 
@@ -175,8 +167,8 @@
   (let* ((local-configs)
          (git-configs (concat *dotfiles-repo*
                               "emacs.d/lisp/configurations/"))
-         (conf-file (concat (symbol-name package) "-conf.el"))
-         (load-path (list* local-configs git-configs load-path)))
+         (conf-file (concat (symbol-name package) "-conf.el")))
+    (add-to-list 'load-path git-configs)
     conf-file))
 
 (defun load-package-configuration (package)
@@ -630,8 +622,12 @@
   (which-key-mode 1)
   (which-key-posframe-mode 1))
 
+(use-package xterm-color
+  :ensure t)
+
 (use-package rustic
   :ensure t
+  :after xterm-color
   :config
   (modify-syntax-entry ?_ "w"))
 

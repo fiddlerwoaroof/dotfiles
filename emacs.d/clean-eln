@@ -1,0 +1,36 @@
+#!/usr/bin/env -S bash
+
+cleanup() {
+  while read -r; do
+    install_name_tool "$1" -delete_rpath "$REPLY";
+  done;
+}
+
+doit() {
+  while read -r; do
+    install_name_tool "$1" -add_rpath "$REPLY";
+  done;
+}
+
+
+calc_rpath() {
+  otool -l "$1" | grep -A2 LC_RPATH | awk -vRS=-- '{print $2" "$6}' | awk '!(rpaths[$2]) {print $2} {rpaths[$2]++}'
+}
+
+main() {
+  target_rpath_file="$(mktemp)"
+  cur_rpath_file="$(mktemp)"
+
+  otool -l "$1" | grep -A2 LC_RPATH | awk -vRS=-- '{print $2" "$6}' | sort | uniq -c
+  calc_rpath "$1" > "$target_rpath_file"
+
+  cur_rpath="$(calc_rpath "$1" | tee "$cur_rpath_file")"
+  while [[ -n "$cur_rpath" ]]; do
+    <"$cur_rpath_file" cleanup "$1"
+    cur_rpath="$(calc_rpath "$1" | tee "$cur_rpath_file")"
+  done
+
+  <"$target_rpath_file" doit "$1"
+}
+
+main "$1"
