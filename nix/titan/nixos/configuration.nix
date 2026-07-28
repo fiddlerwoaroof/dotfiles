@@ -91,7 +91,7 @@
   };
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_12;
+    kernelPackages = pkgs.linuxPackages_6_18;
     kernelParams = [
       "zfs.zfs_arc_max=12884901888"
       "amdgpu.vm_update_mode=3"
