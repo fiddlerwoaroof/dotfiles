@@ -352,12 +352,10 @@
 
 (load-package-configuration 'javascript)
 
-(use-package direnv
+(use-package envrc
   :ensure t
   :config
-  (direnv-mode 1)
-  (add-hook 'js2-mode-hook 'direnv-mode)
-  (add-hook 'typescript-mode-hook 'direnv-mode))
+  (envrc-global-mode 1))
 
 
 (use-package cl-generic
