@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (deftheme fwoar-zenburn
   "Created 2018-10-01.")
 

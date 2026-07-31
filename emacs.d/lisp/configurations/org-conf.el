@@ -1,3 +1,5 @@
+;;; -*-lexical-binding:t-*-
+
 (defun safe-files ()
   (let ((fn (expand-file-name "~/.safe-files")))
     (when (file-exists-p fn)

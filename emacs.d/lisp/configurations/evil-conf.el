@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun fwoar:wrap-with-doublequote (&optional arg)
   (interactive "P")
   (sp-wrap-with-pair "\""))

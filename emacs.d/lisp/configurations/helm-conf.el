@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun fwoar--paste-register-from-helm-current-buffer (register)
   (interactive (fwoar--read-register-name))
   (let ((filename (with-current-buffer helm-current-buffer

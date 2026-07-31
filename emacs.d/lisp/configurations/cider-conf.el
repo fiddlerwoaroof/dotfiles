@@ -1,3 +1,5 @@
+;;; -*-lexical-binding:t-*-
+
 (defun fwoar:clojure-hook ()
   (message "clojure-hook")
   (flycheck-mode 1)

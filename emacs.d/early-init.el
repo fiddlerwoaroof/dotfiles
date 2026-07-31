@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; (setq-default no-native-compile t)
 ;; (setq native-comp-deferred-compilation nil)
 ;; (require 'cl-generic)

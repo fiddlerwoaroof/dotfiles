@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;;; SLIME SETUP {{{
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 
