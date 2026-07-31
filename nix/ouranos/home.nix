@@ -74,7 +74,7 @@ in
           pkgs.cachix
           pkgs.libpq
           pkgs.libpg_query
-          pkgs.c2ffi
+          #pkgs.c2ffi
           pkgs.nginx
         ];
       })
