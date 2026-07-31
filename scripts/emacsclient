@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+cur_app=$(osascript -e 'tell application "System Events" to get unix id of first process whose frontmost is true' | xargs ps -o comm= | awk -F'.app/' '{print $1".app"}')
+
+"$HOME"/.nix-profile/bin/emacsclient "$@"
+
+open "$cur_app"
