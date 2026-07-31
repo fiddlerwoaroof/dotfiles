@@ -1,5 +1,5 @@
 export ALTERNATE_EDITOR=vim
-export FWOAR_REAL_EMACSCLIENT="$(command -v emacsclient)"
+export FWOAR_REAL_EMACSCLIENT="$HOME/bin/emacsclient"
 emacsclient() (
   unset TMPDIR
   "$FWOAR_REAL_EMACSCLIENT" "$@"
