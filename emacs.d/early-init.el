@@ -11,10 +11,10 @@
    (when (and (eq op 'set) (null where)
               (< (length newval) (length load-path)))
      (message "load-path shrank: %d -> %d" (length load-path) (length newval))
-     (debug "load-path shrank: %d -> %d" (length load-path) (length newval)))))
+     )))
 
-;; (setq native-comp-jit-compilation nil)
-;; (setq package-native-compile nil)
+(setq native-comp-jit-compilation nil)
+(setq package-native-compile nil)
 
 
 (setq package-user-dir

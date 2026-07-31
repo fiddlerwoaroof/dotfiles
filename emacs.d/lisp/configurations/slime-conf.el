@@ -82,24 +82,6 @@
         (slime-lisp-implementations nil))
     (slime)))
 
-(defun find-use-clause (current-form)
-  (when current-form
-    (cl-destructuring-bind (discriminator . packages) current-form
-      (cl-case discriminator
-        (:use (remove-if (fwoar:op (or (eql :cl _)))
-                         (cdr current-form)))
-        (defpackage (find-use-clause
-                     (find-if (lambda (f)
-                                (and (listp f)
-                                     (eql (car f) :use)))
-                              '(defpackage :tracking-sim
-                                           (:use :cl :alexandria :serapeum)
-                                           (:export)))))))))
-
-(defun load-package-uses ()
-  (interactive)
-  (slime-eval-async `(ql:quickload ',(find-use-clause (list-at-point)))))
-
 ;;(message (format "s-c-c is: %s" slime-company-completion))
 
 ;;;;; }}}
