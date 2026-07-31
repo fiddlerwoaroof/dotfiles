@@ -105,7 +105,7 @@
   (or (pathname-name pathname)
       (car (last (pathname-directory pathname)))))
 
-(defun list-path (path)
+(defun list-path (path orig)
   (yason:with-output (*standard-output*)
     (let ((yason:*symbol-key-encoder* 'yason:encode-symbol-as-lowercase)
           (yason:*symbol-encoder* 'yason:encode-symbol-as-lowercase)
@@ -130,13 +130,15 @@
               (yason:with-array ()
                 (loop for it in data
                       do (yason:encode-array-element
-                          (alexandria:plist-hash-table it))))))))
+                          (alexandria:plist-hash-table it)))))))
+        (yason:encode-object-element "orig" orig))
       (terpri *standard-output*))))
 
-(defun main-ld (paths)
+(defun main-ld (paths &optional orig)
+  "orig is the original object on stdin"
   (loop for path in paths
         do
-           (list-path path)))
+           (list-path path orig)))
 
 (defun main ()
   (let* ((context (net.didierverna.clon:make-context :synopsis *synopsis*))
@@ -153,9 +155,10 @@
                  (loop for input = (read-line *standard-input*
                                               nil)
                        while input
-                       for parsed = (coerce (gethash "path" (yason:parse input))
+                       for orig = (yason:parse input)
+                       for parsed = (coerce (gethash "path" orig)
                                             'simple-string)
-                       do (main-ld (list parsed)))))
+                       do (main-ld (list parsed) orig))))
            (fresh-line)))))
 
 (defun prepare-dump ()
