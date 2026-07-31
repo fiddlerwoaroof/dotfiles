@@ -6,43 +6,6 @@
                 "parameters": { "basic.to_if_alone_timeout_milliseconds": 200 },
                 "rules": [
                     {
-                        "description": "Open Basic Applications",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "f",
-                                    "modifiers": { "mandatory": ["left_option", "left_command", "left_control"] }
-                                },
-                                "to": [{ "shell_command": "open -a \"Finder\"" }],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "s",
-                                    "modifiers": { "mandatory": ["left_option", "left_command", "left_control"] }
-                                },
-                                "to": [{ "shell_command": "open -a \"Safari\"" }],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "l",
-                                    "modifiers": { "mandatory": ["left_option", "left_command", "left_control"] }
-                                },
-                                "to": [{ "shell_command": "open -a \"$HOME/Applications/Nix/iTerm2.app\"" }],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "j",
-                                    "modifiers": { "mandatory": ["left_option", "left_command", "left_control"] }
-                                },
-                                "to": [{ "shell_command": "open -a \"$HOME/Applications/Nix/Emacs.app\"" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Mouse Back/Forward",
                         "manipulators": [
                             {
