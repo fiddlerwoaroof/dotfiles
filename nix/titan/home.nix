@@ -35,6 +35,14 @@ in
       sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
       self.homeManagerModules.fonts
+      ({pkgs, ...}: {
+        home.packages = [
+          pkgs.gcc
+          pkgs.cmake
+          pkgs.libtool
+          pkgs.zeromq
+        ];
+      })
       (import ./legacy.nix)
       {
         sops = {
