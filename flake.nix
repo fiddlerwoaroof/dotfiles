@@ -125,6 +125,12 @@
       srv2-sops = import ./nix/srv2/sops.nix;
       fwoar-grafana = import ./nix/nixos-modules/grafana.nix;
       mpd-setup = import ./nix/nixos-modules/mpd.nix;
+      bincache-setup = {
+        nix.settings = {
+          substituters = ["http://titan:5000"];
+          trusted-public-keys = [(builtins.readFile ./nix/titan/cache-pub-key.pem)];
+        };
+      };
     };
     nixosConfigurations = {
       titan = import ./nix/titan/nix-system.nix {
