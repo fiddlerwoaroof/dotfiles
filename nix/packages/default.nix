@@ -7,7 +7,7 @@
     pkgs = nixpkgs.legacyPackages.${system};
   in
     pkgs.curl.override {
-      openssl = pkgs.quictls;
+      openssl = pkgs.openssl;
       http3Support = true;
     };
   tools = import ../../tools inputs;
