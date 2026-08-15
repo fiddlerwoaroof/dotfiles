@@ -69,7 +69,7 @@
   environment.etc."grafana-dashboards/node-overview.json" = {
     source =
       pkgs.writeText "node-overview.json" (builtins.toJSON
-        (import ./nix/srv2/overview-dashboard.nix).dashboard);
+        (import ../srv2/overview-dashboard.nix).dashboard);
     user = "grafana";
     group = "grafana";
   };
