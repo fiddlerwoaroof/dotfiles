@@ -147,6 +147,20 @@ nixpkgs.lib.nixosSystem {
     ./nixos/ollama.nix
     ./nixos/configuration.nix
     sops-nix.nixosModules.sops
+    {
+      sops.defaultSopsFile = ../../secrets/titan/main.yaml;
+      sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    }
+    {
+      services.harmonia = {
+        enable = true;
+        signKeyPaths = ["/run/secrets/nix_cache_priv_key"];
+      };
+      networking.firewall.allowedTCPPorts = [5000];
+      sops.secrets.nix_cache_priv_key = {
+        owner = "edwlan";
+      };
+    }
     home-manager.nixosModules.home-manager
     self.nixosModules.home-assistant
     {

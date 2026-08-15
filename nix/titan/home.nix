@@ -35,6 +35,9 @@ in
       sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
       self.homeManagerModules.fonts
+      {
+        nix.registry.nixpkgs.flake = nixpkgs;
+      }
       ({pkgs, ...}: {
         home.packages = [
           pkgs.gcc
