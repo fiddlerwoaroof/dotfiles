@@ -24,12 +24,15 @@
       user = "edwlan";
 
       musicDirectory = "/home/edwlan/oldhome/sorted_music";
-      extraConfig = ''
-        audio_output {
-          type "pipewire"
-          name "PipeWire"
-        }
-      '';
+      settings = {
+        audio_output = [
+          {
+            type = "pipewire";
+            name = "PipeWire";
+          }
+        ];
+      };
+
       # Optional:
       network.listenAddress = "any"; # if you want to allow non-localhost connections
       #startWhenNeeded = true;
