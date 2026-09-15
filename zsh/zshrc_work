@@ -65,7 +65,10 @@ else
     source "$x"
   done
 
+
   if ! [[ -f ~/zshrc.depends ]]; then
     echo "script_depends=(${(kv)script_depends})" >| ~/zshrc.depends
   fi
 fi
+
+source "$HOME/.zshrc.local"
