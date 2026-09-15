@@ -249,11 +249,10 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
                         (frame-color "#7fdf7f")
                         (line-color "#DCDCCC")
                         (lines nil))
-  (let ((fn (format nil "/tmp/~a.svg" (gensym))))
+  (let ((fn (format nil "/tmp/~a.png" (gensym))))
     (uiop:run-program (with-output-to-string (s)
                         (format (make-broadcast-stream s *error-output*)
-                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]; set logscale y;set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
-                                r
+                                "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]; set logscale y;set terminal png font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '< cat' lt rgb '~a' notitle ~:[~;with linespoint~]\""
                                 xrange-p xrange
                                 yrange-p yrange
                                 image-size-p image-size
@@ -277,9 +276,9 @@ Do NOT try to load a .asd file directly with CL:LOAD. Always use ASDF:LOAD-ASD."
                              (frame-color "#7fdf7f")
                              (line-color "#DCDCCC")
                              (lines nil))
-  (let ((fn (format nil "/tmp/~a.svg" (gensym))))
+  (let ((fn (format nil "/tmp/~a.png" (gensym))))
     (uiop:run-program (format (make-broadcast-stream s *error-output*)
-                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]; set logscale y;set terminal svg font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '~a' lt rgb '~a' notitle ~:[~;with linespoint~]\""
+                              "gnuplot -e \"~:[~*~;set xrange [~{~f~^:~}];~]~:[~*~;set yrange [~{~f~^:~}];~]; set logscale y;set terminal png font 'Alegreya,14' enhanced ~:[~*~;size ~{~a~^,~} ~]background '~a'; set border lw 3 lc rgb '~a';  plot '~a' lt rgb '~a' notitle ~:[~;with linespoint~]\""
                               r
                               xrange-p xrange
                               yrange-p yrange
