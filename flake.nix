@@ -11,6 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-editor = {url = "github:snowfallorg/nix-editor";};
+    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
     nixpkgs = {
       type = "github";
       owner = "nixos";
@@ -29,13 +30,14 @@
   outputs = {
     self,
     alejandra,
+    claude-nixpkgs,
     emacs-community,
     home-manager,
+    nix-minecraft,
     nixpkgs,
     sops-nix,
-    claude-nixpkgs,
-    titan-nixpkgs,
     titan-home-manager,
+    titan-nixpkgs,
     ...
   } @ inputs: let
     withSystem = system: attrSet: attrSet // {inherit system;};
@@ -136,7 +138,7 @@
       titan = import ./nix/titan/nix-system.nix {
         nixpkgs = titan-nixpkgs;
         home-manager = titan-home-manager;
-        inherit self sops-nix;
+        inherit self sops-nix nix-minecraft;
       };
     };
   };
