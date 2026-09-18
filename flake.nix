@@ -18,7 +18,6 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
-    ollama-nixpkgs.url = "github:NixOS/nixpkgs/ac4dd85979ee6eeac9a5f7aa95534f667a26e980";
     sops-nix.url = "github:Mic92/sops-nix";
     titan-home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
