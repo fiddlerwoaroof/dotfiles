@@ -3,6 +3,7 @@
   nixpkgs,
   sops-nix,
   home-manager,
+  nix-minecraft,
 }:
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
@@ -23,6 +24,39 @@ nixpkgs.lib.nixosSystem {
         ];
     })
     self.nixosModules.tailscale
+    nix-minecraft.nixosModules.minecraft-servers
+    ({pkgs, ...}: let
+      mine-port = 25565;
+    in {
+      nixpkgs.overlays = [nix-minecraft.overlay];
+      networking.firewall.allowedTCPPorts = [mine-port];
+      services.minecraft-servers = {
+        enable = true;
+        eula = true;
+        dataDir = "/world";
+        servers.main = {
+          enable = true;
+          package = let
+            jdk25 = pkgs.jdk25_headless;
+          in
+            pkgs.paperServers.paper-26_2.override {jre = jdk25;};
+          jvmOpts = " -Xms30G -Xmx30G -XX:+UseZGC -XX:+ZGenerational -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+UseNUMA -XX:+UseLargePages -XX:-OmitStackTraceInFastThrow -XX:+PerfDisableSharedMem -XX:+UseStringDeduplication -XX:+OptimizeStringConcat -XX:+UseCompressedOops -XX:+UseCompressedClassPointers -XX:MaxGCPauseMillis=50 -XX:SoftMaxHeapSize=3584M -XX:ConcGCThreads=2 -XX:ParallelGCThreads=4 -Dterminal.jline=false -Dlog4j2.formatMsgNoLookups=true --add-modules=jdk.incubator.vector -DPaper.IgnoreJavaVersion=true ";
+
+          serverProperties = {
+            server-port = mine-port;
+            gamemode = "survival";
+            motd = "NixOS Minecraft server on Tailscale!";
+            max-players = 15;
+            online-mode = false;
+            enable-rcon = true;
+            # This password can be used to administer your minecraft server.
+            # Exact details as to how will be explained later. If you want
+            # you can replace this with another password.
+            "rcon.password" = "hunter2";
+          };
+        };
+      };
+    })
 
     ({pkgs, ...}: {
       services.prometheus.exporters.node = {
