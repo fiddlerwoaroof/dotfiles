@@ -18,8 +18,10 @@
     pkgs.coreutils-prefixed
     pkgs.difftastic
     pkgs.direnv
+    pkgs.dolt
     pkgs.dtach
     pkgs.ecl
+    pkgs.envsubst
     pkgs.exiftool
     pkgs.gawk
     pkgs.gnumake
@@ -29,6 +31,7 @@
     pkgs.htop
     pkgs.jq
     pkgs.lorri
+    pkgs.mergiraf
     pkgs.mosh
     pkgs.ncdu
     pkgs.pandoc
@@ -48,6 +51,7 @@
     pkgs.sops
     pkgs.texinfoInteractive
     pkgs.tree
+    pkgs.universal-ctags
     pkgs.uv
     pkgs.vim
     pkgs.visidata
