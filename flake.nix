@@ -10,6 +10,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    beads.url = "github:gastownhall/beads/v1.3.0";
+    nix-sweep.url = "github:jzbor/nix-sweep";
     nix-editor = {url = "github:snowfallorg/nix-editor";};
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
     nixpkgs = {
@@ -29,10 +31,12 @@
   outputs = {
     self,
     alejandra,
+    beads,
     claude-nixpkgs,
     emacs-community,
     home-manager,
     nix-minecraft,
+    nix-sweep,
     nixpkgs,
     sops-nix,
     titan-home-manager,
@@ -46,6 +50,12 @@
     packages = import ./nix/packages inputs;
     homeManagerModules = {
       common = import ./nix/common-module.nix;
+      beads = {system, ...}: {
+        home.packages = [
+          beads.packages.${system}.default
+          nix-sweep.packages.${system}.default
+        ];
+      };
       personal-module-configs = {
         fwoar.info.fullName = "Edward Langley";
         fwoar.github.username = "fiddlerwoaroof";

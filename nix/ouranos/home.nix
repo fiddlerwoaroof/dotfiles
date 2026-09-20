@@ -43,6 +43,7 @@ in
         };
       }
       self.homeManagerModules.common
+      self.homeManagerModules.beads
       self.homeManagerModules.main
       self.homeManagerModules.git-config
       self.homeManagerModules.fonts
