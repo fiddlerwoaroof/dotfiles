@@ -1,14 +1,17 @@
 {
   self,
-  nixpkgs,
-  sops-nix,
+  ci-runners,
   home-manager,
   nix-minecraft,
+  nixpkgs,
+  sops-nix,
 }:
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
   modules = [
     {documentation.info.enable = true;}
+    ci-runners.nixosModules.default
+    ./nixos/ci-runners.nix
     ({lib, ...}: {
       nix.registry.nixpkgs.flake = nixpkgs;
       nix.nixPath = [

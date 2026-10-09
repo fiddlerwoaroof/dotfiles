@@ -26,12 +26,17 @@
       inputs.nixpkgs.follows = "titan-nixpkgs";
     };
     titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    ci-runners = {
+      url = "path:/home/edwlan/gh-runner/ci-runner-bundle";
+      inputs.nixpkgs.follows = "titan-nixpkgs";
+    };
   };
 
   outputs = {
     self,
     alejandra,
     beads,
+    ci-runners,
     claude-nixpkgs,
     emacs-community,
     home-manager,
@@ -147,7 +152,7 @@
       titan = import ./nix/titan/nix-system.nix {
         nixpkgs = titan-nixpkgs;
         home-manager = titan-home-manager;
-        inherit self sops-nix nix-minecraft;
+        inherit self sops-nix nix-minecraft ci-runners;
       };
     };
   };

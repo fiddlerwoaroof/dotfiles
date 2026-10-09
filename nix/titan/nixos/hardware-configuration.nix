@@ -13,7 +13,7 @@
   ];
 
   boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "usbhid"];
-  boot.initrd.kernelModules = [];
+  boot.initrd.kernelModules = ["kvm-amd"];
   boot.kernelModules = [];
   boot.extraModulePackages = [];
 
