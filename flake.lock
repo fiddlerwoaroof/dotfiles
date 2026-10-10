@@ -60,12 +60,12 @@
       "inputs": {
         "microvm": "microvm",
         "nixpkgs": [
-          "titan-nixpkgs"
+          "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1790224702,
-        "narHash": "sha256-H1E9iy3v4YoUi06W9puF5MHLja5mZDlBBBKAuL/qGKg=",
+        "lastModified": 1791654715,
+        "narHash": "sha256-I5MZhXTH+G7ba/lCzd/hAB8k/VIWEbTNnA9F/Q10cAE=",
         "path": "/home/edwlan/gh-runner/ci-runner-bundle",
         "type": "path"
       },
