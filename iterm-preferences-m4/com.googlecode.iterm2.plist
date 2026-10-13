@@ -21,9 +21,9 @@ The script should do this: \(ai.prompt)</string>
 	<key>AIVectorStore</key>
 	<integer>0</integer>
 	<key>AiMaxTokens</key>
-	<integer>400000</integer>
+	<integer>1050000</integer>
 	<key>AiModel</key>
-	<string>gpt-5.2</string>
+	<string>gpt-5.5</string>
 	<key>AiResponseMaxTokens</key>
 	<integer>128000</integer>
 	<key>AitermURL</key>
@@ -6618,7 +6618,7 @@ The script should do this: \(ai.prompt)</string>
 	<key>WordCharacters</key>
 	<string>/-+\~_.</string>
 	<key>com.apple.WebPrivacy.ResourceMonitorURLsVersion</key>
-	<string>qrsAAAGXnXBrwGxMO6s=</string>
+	<string>qrsAAAGf8zU7oGVPeIw=</string>
 	<key>disableMetalInLowPowerMode</key>
 	<false/>
 	<key>disableMetalWhenUnplugged</key>
