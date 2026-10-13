@@ -75,11 +75,11 @@
     },
     "claude-nixpkgs": {
       "locked": {
-        "lastModified": 1791867100,
-        "narHash": "sha256-MOgFoE8fOobtNlCi1sdUsWaewEk+wQEILWTxDBzl5kI=",
+        "lastModified": 1791871029,
+        "narHash": "sha256-hdGaOKJf0i6lKOIWQ1AGSo+dshisYyLJ7y38jGekClo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6b60f9a36961645ff43059bcd8ab220153ef5e6f",
+        "rev": "3b01d1fb998e25b12fe54ee32cf6a93943aef5f9",
         "type": "github"
       },
       "original": {
@@ -110,11 +110,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1791869575,
-        "narHash": "sha256-CFYAaIEolvzw2xt0ahmPCLywY/twJWpM4yGScWdHduI=",
+        "lastModified": 1791869784,
+        "narHash": "sha256-3/ggaHRCj6KGZ5e3eONLriE6yeSJOdICie7Ww2p3o1s=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "88a537e05cc09b454255b6e46d3a5eebb5eeb313",
+        "rev": "53bd7280e63b4ef0528cf1e6d3d54b2d76e0641b",
         "type": "github"
       },
       "original": {
@@ -293,6 +293,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1791878087,
+        "narHash": "sha256-9Bty7eacWH/c9p89bFVNhpbNXOJ2O47JUcTYYJl258k=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "db81a1d5ba9fc2b2ac5305557a7342a594e709e4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1791765022,
@@ -417,6 +433,7 @@
         "nix-minecraft": "nix-minecraft",
         "nix-sweep": "nix-sweep",
         "nixpkgs": "nixpkgs_6",
+        "nixpkgs-master": "nixpkgs-master",
         "sops-nix": "sops-nix",
         "titan-home-manager": "titan-home-manager",
         "titan-nixpkgs": "titan-nixpkgs"

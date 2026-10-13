@@ -21,7 +21,7 @@
     (mkTools system)
     // {
       ollama = nixpkgs.legacyPackages.${system}.callPackage ./ollama.nix {};
-      clasp-cl = nixpkgs.legacyPackages.x86_64-darwin.clasp-common-lisp;
+      #clasp-cl = nixpkgs.legacyPackages.aarch64-darwin.clasp-common-lisp;
       iterm2 = let
         pkgs = nixpkgs.legacyPackages.${system};
       in

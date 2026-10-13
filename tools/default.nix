@@ -1,4 +1,4 @@
-{nixpkgs, ...}: let
+{nixpkgs-master, ...}: let
   asdf-dependencies = builtins.fromJSON (builtins.readFile ./asdf-dependencies.json);
   getAsdfDependencies = s: p: builtins.map (s: builtins.getAttr s p) asdf-dependencies.${s};
   mkTool = {
@@ -6,8 +6,16 @@
     system,
     ...
   } @ rest: let
-    pkgs = nixpkgs.legacyPackages.${system};
-    sbcl = pkgs.sbcl.withPackages (getAsdfDependencies "fwoar-tools/${name}");
+    pkgs = nixpkgs-master.legacyPackages.${system};
+    sbcl = (pkgs.sbcl.withPackages (getAsdfDependencies "fwoar-tools/${name}")).overrideAttrs ({installPhase, ...}: {
+      installPhase = ''
+        assertNoEmptySegment() {
+          echo "NOTICE ME: qwer: $@" >&2
+        }
+
+        ${installPhase}
+      '';
+    });
   in
     pkgs.stdenv.mkDerivation {
       inherit system name;

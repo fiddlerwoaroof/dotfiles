@@ -8,6 +8,7 @@ setopt extended_glob
 setopt histexpiredupsfirst
 setopt histignorealldups
 setopt histverify
+setopt interactivecomments
 setopt listpacked
 setopt markdirs
 setopt nobeep

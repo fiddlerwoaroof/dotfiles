@@ -96,7 +96,6 @@ in
       fwoar-pkgs = self.packages.${system};
       nix-editor-pkgs = nix-editor.packages.${system};
       emacs-pkgs = emacs-community.packages.${system};
-      intel-pkgs = nixpkgs.legacyPackages.x86_64-darwin;
       alejandra-pkgs = alejandra.packages.${system};
     };
   }

@@ -14,6 +14,12 @@
     nix-sweep.url = "github:jzbor/nix-sweep";
     nix-editor = {url = "github:snowfallorg/nix-editor";};
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+    nixpkgs-master = {
+      type = "github";
+      owner = "nixos";
+      repo = "nixpkgs";
+      ref = "master";
+    };
     nixpkgs = {
       type = "github";
       owner = "nixos";
