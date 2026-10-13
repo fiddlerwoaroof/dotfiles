@@ -1,0 +1,37 @@
+test_connect_intent_is_logged (test_addon.AddonTests.test_connect_intent_is_logged) ... ok
+test_connect_lan_is_denied (test_addon.AddonTests.test_connect_lan_is_denied) ... ok
+test_error_details_not_logged (test_addon.AddonTests.test_error_details_not_logged) ... ok
+test_nested_connect_is_denied (test_addon.AddonTests.test_nested_connect_is_denied) ... ok
+test_optional_path_excludes_query (test_addon.AddonTests.test_optional_path_excludes_query) ... ok
+test_request_response_streaming_and_redaction (test_addon.AddonTests.test_request_response_streaming_and_redaction) ... ok
+test_unexpected_hook_error_terminates (test_addon.AddonTests.test_unexpected_hook_error_terminates) ... ok
+test_unknown_client (test_addon.AddonTests.test_unknown_client) ... ok
+test_unknown_upgrade_is_denied (test_addon.AddonTests.test_unknown_upgrade_is_denied) ... ok
+test_websocket_content_not_retained (test_addon.AddonTests.test_websocket_content_not_retained) ... ok
+test_websocket_optout (test_addon.AddonTests.test_websocket_optout) ... ok
+test_writer_failure_terminates (test_addon.AddonTests.test_writer_failure_terminates) ... ok
+test_case_and_root_dot (test_policy.PolicyTests.test_case_and_root_dot) ... ok
+test_connect_only_443 (test_policy.PolicyTests.test_connect_only_443) ... ok
+test_domain_allowlist_boundaries (test_policy.PolicyTests.test_domain_allowlist_boundaries) ... ok
+test_ipv6 (test_policy.PolicyTests.test_ipv6) ... ok
+test_lan_and_special_ranges (test_policy.PolicyTests.test_lan_and_special_ranges) ... ok
+test_legacy_numeric_addresses (test_policy.PolicyTests.test_legacy_numeric_addresses) ... ok
+test_local_hostnames (test_policy.PolicyTests.test_local_hostnames) ... ok
+test_malformed_authorities (test_policy.PolicyTests.test_malformed_authorities) ... ok
+test_public_hairpin_deny (test_policy.PolicyTests.test_public_hairpin_deny) ... ok
+test_public_http (test_policy.PolicyTests.test_public_http) ... ok
+test_public_https (test_policy.PolicyTests.test_public_https) ... ok
+test_query_fragment_redaction (test_policy.PolicyTests.test_query_fragment_redaction) ... ok
+test_scheme_and_port_pairs (test_policy.PolicyTests.test_scheme_and_port_pairs) ... ok
+test_closed_writer_refused (test_policy.WriterTests.test_closed_writer_refused) ... ok
+test_disk_error_propagates (test_policy.WriterTests.test_disk_error_propagates) ... ok
+test_fsync_error_propagates (test_policy.WriterTests.test_fsync_error_propagates) ... ok
+test_json_and_permissions (test_policy.WriterTests.test_json_and_permissions) ... ok
+test_partial_write_propagates (test_policy.WriterTests.test_partial_write_propagates) ... ok
+test_rotation_retention (test_policy.WriterTests.test_rotation_retention) ... ok
+test_symlink_refused (test_policy.WriterTests.test_symlink_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 0.009s
+
+OK

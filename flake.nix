@@ -26,12 +26,17 @@
       inputs.nixpkgs.follows = "titan-nixpkgs";
     };
     titan-nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    ci-runners = {
+      url = "path:./nix/ci-runner-bundle";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     alejandra,
     beads,
+    ci-runners,
     claude-nixpkgs,
     emacs-community,
     home-manager,
@@ -106,7 +111,7 @@
       });
       "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
         // {
-          nixpkgs = titan-nixpkgs;
+          #nixpkgs = titan-nixpkgs;
           cc-pkgs = import claude-nixpkgs {
             system = "x86_64-linux";
             config.allowUnfreePredicate = pkg:
@@ -114,7 +119,7 @@
                 "claude-code"
               ];
           };
-          home-manager = titan-home-manager;
+          #home-manager = titan-home-manager;
         });
       "srv2" = import ./nix/srv2/home.nix (withx8664Linux inputs);
     };
@@ -145,9 +150,9 @@
     };
     nixosConfigurations = {
       titan = import ./nix/titan/nix-system.nix {
-        nixpkgs = titan-nixpkgs;
-        home-manager = titan-home-manager;
-        inherit self sops-nix nix-minecraft;
+        #nixpkgs = titan-nixpkgs;
+        #home-manager = titan-home-manager;
+        inherit self sops-nix nix-minecraft ci-runners nixpkgs home-manager;
       };
     };
   };

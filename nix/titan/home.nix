@@ -47,6 +47,7 @@ in
         ];
       })
       (import ./legacy.nix)
+      ./improvise-ci-cache.nix
       {
         sops = {
           age.keyFile = "/home/${username}/.age-key.txt";
