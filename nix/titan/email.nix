@@ -68,7 +68,10 @@ in {
         preNew = "${syncMailNotArchive}";
         postNew = "${notmuchTag}";
       };
-      extraConfig = {index = {"header.dt" = "Delivered-To";};};
+
+      settings = {
+        index = {"header.dt" = "Delivered-To";};
+      };
     };
   };
 }
