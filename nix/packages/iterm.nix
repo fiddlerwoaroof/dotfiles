@@ -44,7 +44,9 @@ stdenvNoCC.mkDerivation rec {
     hydraPlatforms = []; # The build is little more than copying the binary
     license = licenses.gpl2;
     maintainers = with maintainers; [steinybot tricktron];
-    platforms = ["x86_64-darwin" "aarch64-darwin"];
+    platforms = [
+      "aarch64-darwin"
+    ];
     sourceProvenance = [sourceTypes.binaryNativeCode];
   };
 }
