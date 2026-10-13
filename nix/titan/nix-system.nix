@@ -190,8 +190,10 @@ nixpkgs.lib.nixosSystem {
     }
     {
       services.harmonia = {
-        enable = true;
-        signKeyPaths = ["/run/secrets/nix_cache_priv_key"];
+        cache = {
+          enable = true;
+          signKeyPaths = ["/run/secrets/nix_cache_priv_key"];
+        };
       };
       networking.firewall.allowedTCPPorts = [5000];
       sops.secrets.nix_cache_priv_key = {
