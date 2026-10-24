@@ -7,15 +7,9 @@
     ...
   } @ rest: let
     pkgs = nixpkgs-master.legacyPackages.${system};
-    sbcl = (pkgs.sbcl.withPackages (getAsdfDependencies "fwoar-tools/${name}")).overrideAttrs ({installPhase, ...}: {
-      installPhase = ''
-        assertNoEmptySegment() {
-          echo "assertNoEmptySegmentSuppressed"
-        }
-
-        ${installPhase}
-      '';
-    });
+    sbcl =
+      (pkgs.sbcl.withPackages (getAsdfDependencies "fwoar-tools/${name}")).overrideAttrs ({installPhase, ...}: {
+      });
   in
     pkgs.stdenv.mkDerivation {
       inherit system name;
