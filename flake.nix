@@ -10,10 +10,22 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    beads.url = "github:gastownhall/beads/v1.3.0";
-    nix-sweep.url = "github:jzbor/nix-sweep";
-    nix-editor = {url = "github:snowfallorg/nix-editor";};
-    nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+    beads = {
+      url = "github:gastownhall/beads/v1.3.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-sweep = {
+      url = "github:jzbor/nix-sweep";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-editor = {
+      url = "github:snowfallorg/nix-editor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-minecraft = {
+      url = "github:Infinidoge/nix-minecraft";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs-master = {
       type = "github";
       owner = "nixos";
@@ -26,7 +38,10 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
-    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix= {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     ci-runners = {
       url = "path:./nix/ci-runner-bundle";
       inputs.nixpkgs.follows = "nixpkgs";
