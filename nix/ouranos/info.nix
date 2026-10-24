@@ -18,6 +18,8 @@ in {
 
   # Rebuild the "dir" index at activation time so Emacs/info can find the top-level node.
   home.activation.rebuildInfoDir = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    (
+    #set -x
     mkdir -p "$HOME"/info
     BIN_INSTALL_INFO=${pkgs.texinfoInteractive}/bin/install-info
 
@@ -25,12 +27,18 @@ in {
       echo "warning: install-info not found at $BIN_INSTALL_INFO"
     fi
 
+    if [[ -e "$HOME"/info/dir.gz ]]; then
+      gunzip -f "$HOME"/info/dir.gz
+    fi
+
     for f in "${profileInfoDir}"/*.info "${profileInfoDir}"/*.info.gz; do
       [[ -e "$f" ]] || continue
-      "$BIN_INSTALL_INFO" --dir-file="$HOME/info/dir" "$f" || true
+      "$BIN_INSTALL_INFO" --dir-file="$HOME/info/dir.gz" "$f" || true
     done
+
     if [[ -e "$HOME/info/dir" ]]; then
       gzip -f "$HOME/info/dir"
     fi
+    )
   '';
 }
