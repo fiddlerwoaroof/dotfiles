@@ -6,7 +6,7 @@
 (defun embed-request (content)
   (let ((drakma:*text-content-types* '(("application" . "json"))))
     (yason:parse
-     (drakma:http-request "http://localhost:11434/api/embed"
+     (drakma:http-request "http://172.16.1.2:8002/v1"
                           :method :post
                           :content-type "application/json"
                           :external-format-out :utf-8
@@ -14,7 +14,7 @@
                           :content content)
      :json-arrays-as-vectors t)))
 
-(defun embed-ollama (title &optional (model "nomic-embed-text"))
+(defun embed-ollama (title &optional (model "nomic-ai/nomic-embed-text-v2-moe-GGUF:q8_0"))
   (let ((yason:*symbol-key-encoder* 'yason:encode-symbol-as-lowercase))
     (gethash "embeddings"
              (embed-request

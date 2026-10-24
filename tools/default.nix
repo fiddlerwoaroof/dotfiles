@@ -10,7 +10,7 @@
     sbcl = (pkgs.sbcl.withPackages (getAsdfDependencies "fwoar-tools/${name}")).overrideAttrs ({installPhase, ...}: {
       installPhase = ''
         assertNoEmptySegment() {
-          echo "NOTICE ME: qwer: $@" >&2
+          echo "assertNoEmptySegmentSuppressed"
         }
 
         ${installPhase}
