@@ -5,7 +5,7 @@ in {
     packages =
       [
         openssl
-        pkgs.awscli
+        pkgs.awscli2
         pkgs.cachix
         pkgs.curl
         pkgs.cvs

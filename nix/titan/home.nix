@@ -92,7 +92,7 @@ in
               pkgs.ncdu
               #(import ../lpass-nix {inherit pkgs;})
               openssl
-              pkgs.awscli
+              pkgs.awscli2
               cc-pkgs.claude-code
               pkgs.cachix
               pkgs.curl
