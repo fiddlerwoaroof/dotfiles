@@ -5,26 +5,32 @@
   ...
 }: let
   inherit (lib) mkIf mkOption types;
-  net = import ../lib/network.nix {inherit lib;};
-  cfg = config.services.microvm-github-runners;
-  proxy = config.services.ci-mitm-proxy;
-  hostStateVersion = config.system.stateVersion;
-  names = lib.attrNames cfg.runners;
   addresses = map (runner: runner.localAddress) (lib.attrValues cfg.runners);
-  stateDir = config.microvm.stateDir;
-  proxyURL = "http://${proxy.address}:${toString proxy.port}";
-  trustDir = "/run/ci-trust";
-  # Delivered per boot as a small read-only ext4 disk (see mkHostUnit).
-  secretsMount = "/ci-secrets";
-  workMount = "/var/lib/ci-work";
+  cfg = config.services.microvm-github-runners;
+  guestJournalPort = 8889;
   hostCache = cfg.nix.enable && cfg.nix.hostCache.enable;
   # Nix orders substituters by the Priority a cache advertises, not list
   # order. Harmonia advertises 50 and cache.nixos.org 40, so without this the
   # guests fetched from the internet (through the proxy) ahead of the host.
   hostCacheURL = "http://${cfg.hostAddress}:${toString cfg.nix.hostCache.port}?priority=10";
+  hostStateVersion = config.system.stateVersion;
+  # Deterministic, locally administered unicast MAC per runner name.
+  macFor = name: let
+    h = builtins.hashString "sha256" name;
+  in
+    lib.concatStringsSep ":" (["02"] ++ map (i: builtins.substring (2 * i) 2 h) (lib.range 0 4));
+  names = lib.attrNames cfg.runners;
+  net = import ../lib/network.nix {inherit lib;};
+  nixStoreMount = "/nix/.rw-store";
   # The host cache is reached directly over the tap, never through the proxy.
   noProxy = lib.concatStringsSep "," (["localhost" "127.0.0.1"] ++ lib.optional hostCache cfg.hostAddress);
-  nixStoreMount = "/nix/.rw-store";
+  proxy = config.services.ci-mitm-proxy;
+  proxyURL = "http://${proxy.address}:${toString proxy.port}";
+  secretsMount = "/ci-secrets"; # Delivered per boot as a small read-only ext4 disk (see mkHostUnit).
+  stateDir = config.microvm.stateDir;
+  tapName = name: "ci-${name}";
+  trustDir = "/run/ci-trust";
+  workMount = "/var/lib/ci-work";
   proxyEnvironment = {
     http_proxy = proxyURL;
     https_proxy = proxyURL;
@@ -39,12 +45,6 @@
     GIT_SSL_CAINFO = "${trustDir}/ca-bundle.crt";
     NODE_EXTRA_CA_CERTS = "${trustDir}/proxy-ca.crt";
   };
-  tapName = name: "ci-${name}";
-  # Deterministic, locally administered unicast MAC per runner name.
-  macFor = name: let
-    h = builtins.hashString "sha256" name;
-  in
-    lib.concatStringsSep ":" (["02"] ++ map (i: builtins.substring (2 * i) 2 h) (lib.range 0 4));
 
   runnerOptions = {
     options = {
@@ -188,6 +188,13 @@
         # No virtiofs: the guest's own closure boots from an erofs store disk,
         # so the host /nix/store is not exposed and no virtiofsd runs.
         shares = [];
+
+        cloud-hypervisor = {
+          platformOEMStrings = [
+            "io.systemd.credential:journal.forward_to_socket=vsock:2:${toString guestJournalPort}"
+          ];
+        };
+
         volumes =
           [
             {
@@ -506,7 +513,35 @@ in {
         })
         cfg.runners;
     };
-    systemd.services = lib.mapAttrs' mkHostUnit cfg.runners;
+
+    systemd.services =
+      lib.mapAttrs' mkHostUnit cfg.runners
+      // lib.mapAttrs' (name: _:
+        lib.nameValuePair "ci-guest-journal-${name}" {
+          serviceConfig = {
+            ExecStart =
+              "${config.systemd.package}/lib/systemd/systemd-journal-remote"
+              + " --split-mode=none --output=/var/log/ci-guests/${name}/guest.journal";
+            DynamicUser = true;
+            LogsDirectory = "ci-guests/${name}";
+            PrivateNetwork = true; # the activated socket still works
+          };
+        })
+      cfg.runners;
+
+    systemd.sockets = lib.mapAttrs' (name: _:
+      lib.nameValuePair "ci-guest-journal-${name}" {
+        wantedBy = ["sockets.target"];
+        before = ["microvm@${name}.service"];
+        socketConfig = {
+          ListenStream = "${stateDir}/${name}/notify.vsock_${toString guestJournalPort}";
+          SocketUser = "microvm"; # cloud-hypervisor runs as microvm:kvm
+          SocketMode = "0600";
+          RemoveOnStop = true;
+        };
+      })
+    cfg.runners;
+
     microvm.vms = lib.mapAttrs mkVM cfg.runners;
   };
 }
