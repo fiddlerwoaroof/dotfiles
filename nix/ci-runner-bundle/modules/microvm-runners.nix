@@ -166,6 +166,11 @@
 
       microvm = {
         hypervisor = "cloud-hypervisor";
+
+        # Store disk lives on host ZFS: STATX_DIOALIGN there is the recordsize,
+        # which cloud-hypervisor advertises as blk_size (>64K, guest rejects it).
+        storeDiskDirect = false;
+
         inherit (runner) vcpu;
         mem = runner.memoryMiB;
         # virtio-balloon with free page reporting: idle guest RAM goes back
