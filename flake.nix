@@ -4,8 +4,10 @@
       url = "github:kamadorueda/alejandra";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    claude-nixpkgs.url = "github:NixOS/nixpkgs/master";
-    emacs-community = {url = "github:nix-community/emacs-overlay";};
+    emacs-community = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -53,12 +55,12 @@
     alejandra,
     beads,
     ci-runners,
-    claude-nixpkgs,
     emacs-community,
     home-manager,
     nix-minecraft,
     nix-sweep,
     nixpkgs,
+    nixpkgs-master,
     sops-nix,
     ...
   } @ inputs: let
@@ -125,7 +127,7 @@
       });
       "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
         // {
-          cc-pkgs = import claude-nixpkgs {
+          cc-pkgs = import nixpkgs-master {
             system = "x86_64-linux";
             config.allowUnfreePredicate = pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
