@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env nix
+#!nix shell nixpkgs#python3 --command python
 
 import argparse
 import os.path
@@ -10,9 +11,12 @@ parser.add_argument("-r", "--read", action="store_true")
 parser.add_argument("-l", "--list", action="store_true")
 parser.add_argument("name", action="store", nargs='?')
 args = parser.parse_args()
-GPG = "/usr/bin/gpg"
-base = os.path.join(os.environ.get("HOME"), "Dropbox", "secure_notes")
-print base
+
+HOME=os.environ.get("HOME")
+GPG = os.path.join(HOME, ".nix-profile", "bin", "gpg")
+base = os.path.join(HOME, ".dropbox-hm", "Langleys Dropbox", "Edward Langley", "secure_notes")
+
+print(base)
 
 import subprocess
 
@@ -26,20 +30,20 @@ class Menu(object):
         return '\n'.join('%4d) %s' % x for x in  enumerate(self.choices, 1))
 
 if args.new:
-    print args.name
+    print(args.name)
     proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-o", os.path.join(base, args.name), "-e"])
 elif args.read:
-    print args.name
+    print(args.name)
     if args.name is None:
         menu = Menu(os.listdir(base))
-        print menu
-        choice = raw_input('choice? ').strip()
+        print(menu)
+        choice = input('choice? ').strip()
         if choice.isdigit():
             args.name = menu.choose(choice)
     proc = subprocess.call([GPG, "-r", "Fiddlerwoaroof <fiddler.wo.a.roof@gmail.com>", "-d", os.path.join(base, args.name)])
 elif args.list:
     files = os.listdir(base)
     max_itm = max(len(x) for x in files)
-    for x in range(len(files)/3 + 1):
+    for x in range(len(files)//3 + 1):
         items = files[x*3:(x+1)*3]
-        print ' '.join(item.ljust(max_itm+3) for item in items)
+        print(' '.join(item.ljust(max_itm+3) for item in items))
