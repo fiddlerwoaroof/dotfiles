@@ -529,18 +529,19 @@ in {
         })
       cfg.runners;
 
-    systemd.sockets = lib.mapAttrs' (name: _:
-      lib.nameValuePair "ci-guest-journal-${name}" {
-        wantedBy = ["sockets.target"];
-        before = ["microvm@${name}.service"];
-        socketConfig = {
-          ListenStream = "${stateDir}/${name}/notify.vsock_${toString guestJournalPort}";
-          SocketUser = "microvm"; # cloud-hypervisor runs as microvm:kvm
-          SocketMode = "0600";
-          RemoveOnStop = true;
-        };
-      })
-    cfg.runners;
+    systemd.sockets =
+      lib.mapAttrs' (name: _:
+        lib.nameValuePair "ci-guest-journal-${name}" {
+          wantedBy = ["sockets.target"];
+          before = ["microvm@${name}.service"];
+          socketConfig = {
+            ListenStream = "${stateDir}/${name}/notify.vsock_${toString guestJournalPort}";
+            SocketUser = "microvm"; # cloud-hypervisor runs as microvm:kvm
+            SocketMode = "0600";
+            RemoveOnStop = true;
+          };
+        })
+      cfg.runners;
 
     microvm.vms = lib.mapAttrs mkVM cfg.runners;
   };
