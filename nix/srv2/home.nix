@@ -133,7 +133,7 @@ in
     extraSpecialArgs = {
       inherit system;
       fwoar-pkgs = self.packages.${system};
-      emacs-pkgs = emacs-community.packages.${system};
+      emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
       alejandra-pkgs = alejandra.packages.${system};
     };
   }
