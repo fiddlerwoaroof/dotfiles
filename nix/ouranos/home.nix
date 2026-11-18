@@ -95,7 +95,7 @@ in
       inherit system;
       fwoar-pkgs = self.packages.${system};
       nix-editor-pkgs = nix-editor.packages.${system};
-      emacs-pkgs = emacs-community.packages.${system};
+      emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
       alejandra-pkgs = alejandra.packages.${system};
     };
   }

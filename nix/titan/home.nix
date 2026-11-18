@@ -27,7 +27,7 @@
         "firefox-bin-unwrapped"
       ];
   };
-  emacs-pkgs = emacs-community.packages.${system};
+  emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
 in
   home-manager.lib.homeManagerConfiguration {
     inherit pkgs;
@@ -154,7 +154,7 @@ in
     extraSpecialArgs = {
       inherit system;
       fwoar-pkgs = self.packages.${system};
-      emacs-pkgs = emacs-community.packages.${system};
+      emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
       alejandra-pkgs = alejandra.packages.${system};
     };
   }
