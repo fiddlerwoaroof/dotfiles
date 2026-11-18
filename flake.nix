@@ -67,8 +67,31 @@
     withSystem = system: attrSet: attrSet // {inherit system;};
     withAppleSilicon = withSystem "aarch64-darwin";
     withx8664Linux = withSystem "x86_64-linux";
+    basePackages = import ./nix/packages inputs;
+    mkInstaller = system:
+      nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          self.nixosModules.base
+          self.nixosModules.tailscale
+          ./nix/installer/iso.nix
+        ];
+      };
   in {
-    packages = import ./nix/packages inputs;
+    packages =
+      basePackages
+      // {
+        x86_64-linux =
+          basePackages.x86_64-linux
+          // {
+            installer-iso = self.nixosConfigurations.installer-iso.config.system.build.isoImage;
+          };
+        aarch64-linux =
+          basePackages.aarch64-linux
+          // {
+            installer-iso = self.nixosConfigurations.installer-iso-aarch64.config.system.build.isoImage;
+          };
+      };
     homeManagerModules = {
       common = import ./nix/common-module.nix;
       beads = {system, ...}: {
@@ -150,6 +173,7 @@
       };
     };
     nixosModules = {
+      base = import ./nix/nixos-modules/base.nix;
       tailscale = import ./nix/nixos-modules/tailscale.nix;
       home-assistant = import ./nix/nixos-modules/home-assistant.nix;
       srv2-sops = import ./nix/srv2/sops.nix;
@@ -166,6 +190,8 @@
       titan = import ./nix/titan/nix-system.nix {
         inherit self sops-nix nix-minecraft ci-runners nixpkgs home-manager;
       };
+      installer-iso = mkInstaller "x86_64-linux";
+      installer-iso-aarch64 = mkInstaller "aarch64-linux";
     };
   };
 }

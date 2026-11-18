@@ -9,6 +9,7 @@
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
   modules = [
+    self.nixosModules.base
     {documentation.info.enable = true;}
     ci-runners.nixosModules.default
     ./nixos/ci-runners.nix
@@ -71,18 +72,6 @@ nixpkgs.lib.nixosSystem {
         # or manually:
         # firewallFilter = "-i eth0 -s srv2.h.elangley.org -p tcp -m tcp --dport 9100";
       };
-    })
-    ({pkgs, ...}: {
-      environment.systemPackages = [
-        pkgs.alejandra
-        pkgs.dmidecode
-        pkgs.gitFull
-        pkgs.htop
-        pkgs.lsof
-        pkgs.sops
-        pkgs.vim
-        pkgs.wget
-      ];
     })
     ({pkgs, ...}: {
       # In configuration.nix or flake.nix

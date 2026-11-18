@@ -12,31 +12,8 @@
     ./hardware-configuration.nix
   ];
 
-  nix.settings = {
-    experimental-features = ["nix-command" "flakes"];
-    substituters = [
-      "https://cache.nixos.org"
-      "https://fwoar-greenhouse.cachix.org"
-      "https://hercules-ci.cachix.org"
-      "https://latex-sample.cachix.org"
-      "https://nix-community.cachix.org"
-      "https://siuta.cachix.org"
-    ];
-    trusted-public-keys = [
-      "fwoar-greenhouse.cachix.org-1:OSOY4mJ0TIscoZsGZjX0Y0IFQCjUoBYFQpQdDGGE/iM="
-      "fwoar-greenhouse.cachix.org-1:iQ+rkqzBJOebBlwcRyvctq3oZHoDBz5x9qHqWC7n9rg="
-      "hercules-ci.cachix.org-1:ZZeDl9Va+xe9j+KqdzoBZMFJHVQ42Uu/c/1/KMC5Lw0="
-      "latex-sample.cachix.org-1:wyrXgr9qt1PcnWdBbmyMpkRvl0Z1doFe+/ssbzz3OJw="
-      "siuta.cachix.org-1:aNWNdZez5khiQkgPeU64P9x4T3DHT5gw6VsPWvAYE20="
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
-    trusted-users = ["root" "edwlan"];
-  };
-
-  documentation = {
-    man.enable = true;
-  };
+  # nix.settings, documentation, base packages, the edwlan user, zsh/vim/nix-ld,
+  # the hardened sshd and locale/timezone all come from self.nixosModules.base.
 
   fileSystems = {
     "/" = {
@@ -105,27 +82,11 @@
     };
   };
 
-  time.timeZone = "America/Los_Angeles";
-
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  users.users.edwlan = {
-    isNormalUser = true;
-    extraGroups = ["wheel"];
-  };
-
+  # Desktop/hardware packages specific to titan; the base tooling lives in
+  # self.nixosModules.base.
   environment.systemPackages = with pkgs; [
     blueman
     bluez
-    file
-    findutils
-    git
-    man-pages
-    man-pages-posix
-    nvme-cli
-    pciutils
-    vim
-    wget
   ];
 
   networking = {
@@ -154,7 +115,8 @@
       commonHooks = [../gitolite-hooks/post-receive];
     };
     libinput.enable = true;
-    openssh.enable = true;
+    # openssh (hardened, with the trusted SSH CA) is provided by
+    # self.nixosModules.base.
     xserver.enable = true;
     zfs = {
       trim.enable = true;
@@ -164,11 +126,7 @@
 
   programs = {
     firefox.enable = true;
-    nix-ld.enable = true;
-    vim.enable = true;
-    zsh.enable = true;
   };
-  users.defaultUserShell = pkgs.zsh;
 
   hardware.bluetooth = {
     enable = true;
