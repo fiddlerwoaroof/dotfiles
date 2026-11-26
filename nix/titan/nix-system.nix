@@ -1,6 +1,5 @@
 {
   self,
-  ci-runners,
   home-manager,
   nix-minecraft,
   nixpkgs,
@@ -11,7 +10,7 @@ nixpkgs.lib.nixosSystem {
   modules = [
     self.nixosModules.base
     {documentation.info.enable = true;}
-    ci-runners.nixosModules.default
+    self.nixosModules.ci-runners
     ./nixos/ci-runners.nix
     ({lib, ...}: {
       fwoar.base.nixpkgsFlake = nixpkgs;

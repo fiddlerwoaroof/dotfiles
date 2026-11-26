@@ -44,8 +44,8 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    ci-runners = {
-      url = "path:./nix/ci-runner-bundle";
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -54,7 +54,7 @@
     self,
     alejandra,
     beads,
-    ci-runners,
+    microvm,
     emacs-community,
     home-manager,
     nix-minecraft,
@@ -191,16 +191,51 @@
           trusted-public-keys = [(builtins.readFile ./nix/titan/cache-pub-key.pem)];
         };
       };
+      # Proxy-only GitHub Actions runners in microVMs; see nix/ci-runner-bundle.
+      ci-mitm-proxy = import ./nix/ci-runner-bundle/modules/mitm-proxy.nix;
+      ci-runners = {
+        imports = [
+          microvm.nixosModules.host
+          ./nix/ci-runner-bundle/modules/microvm-runners.nix
+        ];
+      };
     };
     nixosConfigurations = {
       srv2 = import ./nix/srv2/nix-system.nix {
         inherit self nixpkgs nixpkgs-master sops-nix;
       };
       titan = import ./nix/titan/nix-system.nix {
-        inherit self sops-nix nix-minecraft ci-runners nixpkgs home-manager;
+        inherit self sops-nix nix-minecraft nixpkgs home-manager;
       };
       installer-iso = mkInstaller "x86_64-linux";
       installer-iso-aarch64 = mkInstaller "aarch64-linux";
+    };
+    checks.x86_64-linux = let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    in {
+      # The sample host build also exercises NixOS's nftables ruleset checker.
+      ci-runners-example =
+        (nixpkgs.lib.nixosSystem {
+          modules = [
+            self.nixosModules.ci-runners
+            ./nix/ci-runner-bundle/examples/ci-host.nix
+            ./nix/ci-runner-bundle/examples/hardware-configuration.nix
+          ];
+        })
+        .config
+        .system
+        .build
+        .toplevel;
+      ci-runners-audit-unit-tests =
+        pkgs.runCommand "ci-audit-unit-tests" {
+          nativeBuildInputs = [pkgs.python3];
+        } ''
+          cp -r ${./nix/ci-runner-bundle/proxy} proxy
+          cp -r ${./nix/ci-runner-bundle/tests} tests
+          export PYTHONDONTWRITEBYTECODE=1
+          python -m unittest discover -s tests -v
+          touch "$out"
+        '';
     };
   };
 }

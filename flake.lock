@@ -58,23 +58,6 @@
         "type": "github"
       }
     },
-    "ci-runners": {
-      "inputs": {
-        "microvm": "microvm",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "path": "./nix/ci-runner-bundle",
-        "type": "path"
-      },
-      "original": {
-        "path": "./nix/ci-runner-bundle",
-        "type": "path"
-      },
-      "parent": []
-    },
     "crane": {
       "locked": {
         "lastModified": 1762538466,
@@ -188,7 +171,6 @@
     "microvm": {
       "inputs": {
         "nixpkgs": [
-          "ci-runners",
           "nixpkgs"
         ],
         "spectrum": "spectrum"
@@ -323,9 +305,9 @@
       "inputs": {
         "alejandra": "alejandra",
         "beads": "beads",
-        "ci-runners": "ci-runners",
         "emacs-community": "emacs-community",
         "home-manager": "home-manager",
+        "microvm": "microvm",
         "nix-editor": "nix-editor",
         "nix-minecraft": "nix-minecraft",
         "nix-sweep": "nix-sweep",

@@ -54,8 +54,8 @@ before the GitHub runner starts. The host's global trust store is not modified.
   runtime CA installation, GitHub registration.
 - `modules/mitm-proxy.nix`: host proxy service, namespace, nftables, NAT, CA,
   restricted resolvers, structured audit configuration.
-- `flake.nix` and `examples/`: sample `nixosConfigurations.ci-host` plus reusable
-  module exports. Hardware, interface, host address, GitHub URLs and secrets are
+- `examples/`: sample host, built as the dotfiles flake's
+  `checks.x86_64-linux.ci-runners-example`. Hardware, interface, host address, GitHub URLs and secrets are
   placeholders; runner auto-start is deliberately off in the sample.
 - `proxy/`: request policy and JSONL audit addon, with internal size-based rotation
   and fail-closed handling of audit write/hook failures.
@@ -71,24 +71,21 @@ before the GitHub runner starts. The host's global trust store is not modified.
 
 Read **`docs/DEPLOYMENT.md` before switching a host**. After replacing placeholders:
 
+From the dotfiles repo root:
+
 ```sh
-nix flake lock
 nix flake check --no-build
-nix build .#checks.x86_64-linux.audit-unit-tests
-sudo nixos-rebuild build --flake .#ci-host
+nix build .#checks.x86_64-linux.ci-runners-audit-unit-tests
+nix build .#checks.x86_64-linux.ci-runners-example
 ```
 
-The archive does not include a fabricated `flake.lock`. Generate, review, and
-commit one; use that same lock for checks and deployment. The input follows
-`nixos-unstable` until locked. The modules were written against the upstream
+nixpkgs and microvm.nix are locked by the dotfiles `flake.lock`. The modules were written against the upstream
 interfaces referenced in `docs/REFERENCES.md`, not runtime-certified against a
 particular locked revision.
 
-To consume the modules from an existing flake, import
-`inputs.ci-runners.nixosModules.default`, or copy the directories and import
-`./modules/microvm-runners.nix` (plus microvm.nix's host module). The runner
-module imports the proxy module;
-`nixosModules.mitm-proxy` is also exported separately.
+The dotfiles flake exports these as `nixosModules.ci-runners` (microvm.nix's host
+module plus `modules/microvm-runners.nix`, which imports the proxy module) and
+`nixosModules.ci-mitm-proxy`. Titan imports `self.nixosModules.ci-runners`.
 
 ## Scope
 

@@ -55,12 +55,12 @@ The lack of runtime validation is the reason the sample leaves runner auto-start
 
 ## Required target-system validation
 
-After editing the sample host and generating/reviewing `flake.lock`:
+From the dotfiles repo root, after editing the sample host or modules:
 
 ```sh
 nix flake check --no-build
-nix build .#checks.x86_64-linux.audit-unit-tests
-sudo nixos-rebuild build --flake .#ci-host
+nix build .#checks.x86_64-linux.ci-runners-audit-unit-tests
+nix build .#checks.x86_64-linux.ci-runners-example
 ```
 
 The full build retains NixOS's nftables ruleset check. Then follow the disposable-host

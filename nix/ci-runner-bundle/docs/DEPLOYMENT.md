@@ -97,16 +97,15 @@ registration; guest root must therefore be treated as able to access it.
 
 ## 4. Lock, check, build, then deploy
 
-No lock file is included because the configuration has not been evaluated against
-a fetched/pinned nixpkgs revision in the packaging environment.
+These modules are part of the dotfiles flake (repo root), which locks nixpkgs and
+microvm.nix. From the repo root:
 
 ```sh
-nix flake lock
-# Review flake.lock, then commit it with all module/addon/example files.
 # Git flakes exclude untracked files: git add the source files before building.
 nix flake check --no-build
-nix build .#checks.x86_64-linux.audit-unit-tests
-sudo nixos-rebuild build --flake .#ci-host
+nix build .#checks.x86_64-linux.ci-runners-audit-unit-tests
+nix build .#checks.x86_64-linux.ci-runners-example   # sample host
+nixos-rebuild build --flake .#titan                   # the real host
 ```
 
 The full host build has `networking.nftables.checkRuleset = true`; leave it enabled.
