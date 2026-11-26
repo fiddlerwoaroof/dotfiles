@@ -71,7 +71,6 @@
         inherit system;
         modules = [
           self.nixosModules.base
-          self.nixosModules.tailscale
           ./nix/installer/iso.nix
         ];
       };
@@ -171,7 +170,6 @@
     };
     nixosModules = {
       base = import ./nix/nixos-modules/base.nix;
-      tailscale = import ./nix/nixos-modules/tailscale.nix;
       home-assistant = import ./nix/nixos-modules/home-assistant.nix;
       srv2-sops = import ./nix/srv2/sops.nix;
       fwoar-grafana = import ./nix/nixos-modules/grafana.nix;

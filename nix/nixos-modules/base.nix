@@ -70,6 +70,10 @@ in {
       '';
     };
 
+    tailscale.enable =
+      lib.mkEnableOption "Tailscale"
+      // {default = true;};
+
     nodeExporter.enable = lib.mkEnableOption ''
       the Prometheus node exporter (hwmon/drm/systemd collectors) on port
       9100, opened in the firewall
@@ -138,6 +142,9 @@ in {
       nix.channel.enable = false;
       nix.nixPath = ["nixpkgs=/etc/channels/nixpkgs"];
       nix.registry.nixpkgs.flake = cfg.nixpkgsFlake;
+    })
+    (lib.mkIf cfg.tailscale.enable {
+      services.tailscale.enable = true;
     })
     (lib.mkIf cfg.nodeExporter.enable {
       services.prometheus.exporters.node = {

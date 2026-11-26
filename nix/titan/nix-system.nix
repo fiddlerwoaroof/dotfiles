@@ -21,7 +21,6 @@ nixpkgs.lib.nixosSystem {
           "open-webui"
         ];
     })
-    self.nixosModules.tailscale
     nix-minecraft.nixosModules.minecraft-servers
     ({pkgs, ...}: let
       mine-port = 25565;
