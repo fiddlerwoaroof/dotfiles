@@ -17,6 +17,16 @@
       builtins.filter
       (patch: !(builtins.elem (patch.name or patch) alreadyOnMaster))
       old.patches;
+    # ffap--darwin-bypass-xcode-p does (zerop (ignore-errors (call-process
+    # "xcode-select" ...))).  xcode-select isn't on PATH in the build sandbox,
+    # so that is (zerop nil) -> wrong-type-argument, which breaks the org.texi
+    # export (org requires ffap).  Drop once fixed upstream.
+    postPatch =
+      (old.postPatch or "")
+      + ''
+        substituteInPlace lisp/ffap.el \
+          --replace-fail '(not (zerop (ignore-errors' '(not (eql 0 (ignore-errors'
+      '';
     # keep emacs-git.pkgs building against the patched emacs
     passthru =
       old.passthru
