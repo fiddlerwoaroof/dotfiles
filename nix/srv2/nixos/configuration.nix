@@ -39,12 +39,6 @@
     #networkmanager.enable = true;
   };
 
-  # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
     LC_IDENTIFICATION = "en_US.UTF-8";
@@ -64,8 +58,9 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  # openssh (key-only, trusted SSH CA) comes from self.nixosModules.base;
+  # these extras keep VLC able to connect.
   services.openssh = {
-    enable = true;
     settings = {
       HostKeyAlgorithms = "+ssh-rsa";
       Macs = [
@@ -107,14 +102,11 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
+  # isNormalUser, wheel and the zsh login shell come from self.nixosModules.base.
   users.users.edwlan = {
-    isNormalUser = true;
     homeMode = "701";
     description = "Edward Langley";
-    extraGroups = ["networkmanager" "wheel"];
-    shell = "/home/edwlan/.nix-profile/bin/zsh";
-    packages = with pkgs; [
-    ];
+    extraGroups = ["networkmanager"];
   };
 
   # Install firefox.

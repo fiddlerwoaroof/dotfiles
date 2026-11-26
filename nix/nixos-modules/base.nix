@@ -63,10 +63,7 @@ in {
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      nix.settings = {
-        experimental-features = ["nix-command" "flakes"];
-        trusted-users = ["root" "@wheel"];
-      };
+      nix.settings.experimental-features = ["nix-command" "flakes"];
 
       documentation.man.enable = true;
 
