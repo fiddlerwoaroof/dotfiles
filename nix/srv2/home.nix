@@ -21,6 +21,7 @@ in
     modules = [
       sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
+      self.homeManagerModules.pin-nixpkgs
       self.homeManagerModules.fonts
       self.homeManagerModules.emacs
       #{

@@ -94,6 +94,12 @@
       };
     homeManagerModules = {
       common = import ./nix/common-module.nix;
+      # Pin `nixpkgs#…` (user registry) and `<nixpkgs>` (declarative channel)
+      # to this flake's nixpkgs input so they can't drift from the dotfiles lock.
+      pin-nixpkgs = {
+        nix.registry.nixpkgs.flake = nixpkgs;
+        nix.channels.nixpkgs = nixpkgs;
+      };
       beads = {system, ...}: {
         home.packages = [
           beads.packages.${system}.default

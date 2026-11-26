@@ -59,6 +59,21 @@ in {
       default = true;
       description = "Configure the fwoar binary cache substituters and keys.";
     };
+
+    nixpkgsFlake = lib.mkOption {
+      type = lib.types.nullOr lib.types.raw;
+      default = null;
+      description = ''
+        The nixpkgs flake input this system is built from. When set, pin it in
+        the flake registry and expose it at /etc/channels/nixpkgs for NIX_PATH
+        so `<nixpkgs>` and `nixpkgs#…` match the running system.
+      '';
+    };
+
+    nodeExporter.enable = lib.mkEnableOption ''
+      the Prometheus node exporter (hwmon/drm/systemd collectors) on port
+      9100, opened in the firewall
+    '';
   };
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
@@ -115,6 +130,23 @@ in {
         openssh.authorizedKeys.keys = cfg.authorizedKeys;
       };
     }
+    (lib.mkIf (cfg.nixpkgsFlake != null) {
+      # `<nixpkgs>` and `nixpkgs#…` both resolve to the input the system was
+      # built from. Stateful channels are disabled so nothing else can shadow
+      # or drift from it.
+      environment.etc."channels/nixpkgs".source = cfg.nixpkgsFlake.outPath;
+      nix.channel.enable = false;
+      nix.nixPath = ["nixpkgs=/etc/channels/nixpkgs"];
+      nix.registry.nixpkgs.flake = cfg.nixpkgsFlake;
+    })
+    (lib.mkIf cfg.nodeExporter.enable {
+      services.prometheus.exporters.node = {
+        enable = true;
+        port = 9100;
+        openFirewall = true;
+        enabledCollectors = ["hwmon" "drm" "systemd"];
+      };
+    })
     (lib.mkIf cfg.binaryCaches.enable {
       nix.settings = {
         substituters = [

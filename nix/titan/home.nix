@@ -34,10 +34,8 @@ in
     modules = [
       sops-nix.homeManagerModules.sops
       self.homeManagerModules.common
+      self.homeManagerModules.pin-nixpkgs
       self.homeManagerModules.fonts
-      {
-        nix.registry.nixpkgs.flake = nixpkgs;
-      }
       ({pkgs, ...}: {
         home.packages = [
           pkgs.gcc

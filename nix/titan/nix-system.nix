@@ -14,13 +14,8 @@ nixpkgs.lib.nixosSystem {
     ci-runners.nixosModules.default
     ./nixos/ci-runners.nix
     ({lib, ...}: {
-      nix.registry.nixpkgs.flake = nixpkgs;
-      nix.nixPath = [
-        "nixpkgs=/etc/channels/nixpkgs"
-        "nixos-config=/etc/nixos/configuration.nix"
-        "/nix/var/nix/profiles/per-user/root/channels"
-      ];
-      environment.etc."channels/nixpkgs".source = nixpkgs.outPath;
+      fwoar.base.nixpkgsFlake = nixpkgs;
+      fwoar.base.nodeExporter.enable = true;
       nixpkgs.config.allowUnfreePredicate = pkg:
         builtins.elem (lib.getName pkg) [
           "dropbox"
@@ -62,17 +57,6 @@ nixpkgs.lib.nixosSystem {
       };
     })
 
-    ({pkgs, ...}: {
-      services.prometheus.exporters.node = {
-        enable = true;
-        port = 9100;
-        enabledCollectors = ["hwmon" "drm" "systemd"];
-        # only allow srv2 to scrape
-        openFirewall = true;
-        # or manually:
-        # firewallFilter = "-i eth0 -s srv2.h.elangley.org -p tcp -m tcp --dport 9100";
-      };
-    })
     ({pkgs, ...}: {
       # In configuration.nix or flake.nix
 

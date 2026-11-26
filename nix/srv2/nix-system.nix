@@ -17,15 +17,7 @@ in
       self.nixosModules.fwoar-grafana
       self.nixosModules.mpd-setup
       self.nixosModules.bincache-setup
-      {
-        environment.etc."channels/nixpkgs".source = nixpkgs.outPath;
-        nix.nixPath = [
-          "nixpkgs=/etc/channels/nixpkgs"
-          "nixos-config=/etc/nixos/configuration.nix"
-          "/nix/var/nix/profiles/per-user/root/channels"
-        ];
-        nix.registry.nixpkgs.flake = nixpkgs;
-      }
+      {fwoar.base.nixpkgsFlake = nixpkgs;}
       ({pkgs, ...}: {
         environment.systemPackages = [
           pkgs.libdrm
