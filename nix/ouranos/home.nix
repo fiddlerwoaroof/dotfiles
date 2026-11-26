@@ -1,65 +1,37 @@
 {
   self,
-  alejandra,
-  emacs-community,
-  home-manager,
+  mkHome,
   nix-editor,
-  nixpkgs,
-  sops-nix,
-  system,
   ...
 }: let
-  pkgs = import nixpkgs {
-    inherit system;
-    overlays = [
-      (import ../personal-flake/elangley-overlay)
-    ];
-  };
+  system = "aarch64-darwin";
 in
-  home-manager.lib.homeManagerConfiguration {
-    pkgs = pkgs;
-
-    # Specify your home configuration modules here, for example,
-    # the path to your home.nix.
+  mkHome {
+    inherit system;
+    extraSpecialArgs.nix-editor-pkgs = nix-editor.packages.${system};
     modules = [
-      sops-nix.homeManagerModules.sops
-      self.homeManagerModules.pin-nixpkgs
-      {
-        home.file = {
-          "nginx-conf/ca.pem".source = ./ca.pem;
-        };
-        sops = {
-          # It's also possible to use a ssh key, but only when it has no password:
-          age.sshKeyPaths = ["/Users/edwlan/.ssh/id_ed25519"];
-          defaultSopsFile = ../../secrets/ouranos/secrets.yml;
-          secrets.nginx_local_key = {
-            # %r gets replaced with a runtime directory, use %% to specify a '%'
-            # sign. Runtime dir is $XDG_RUNTIME_DIR on linux and
-            # $(getconf DARWIN_USER_TEMP_DIR) on darwin.
-            path = "/Users/edwlan/nginx-conf/ca-key.pem";
-          };
-        };
-      }
-      self.homeManagerModules.common
       self.homeManagerModules.beads
       self.homeManagerModules.main
-      self.homeManagerModules.git-config
-      self.homeManagerModules.fonts
       self.homeManagerModules.mac-apps
-      (import ./info.nix)
-      (import ./email.nix)
-      {
-        programs = {
-          gpg = {
-            enable = true;
-          };
-        };
-      }
+      ./info.nix
+      ./email.nix
       ({
+        config,
         pkgs,
         nix-editor-pkgs,
         ...
       }: {
+        home.file."nginx-conf/ca.pem".source = ./ca.pem;
+        sops = {
+          # It's also possible to use a ssh key, but only when it has no password:
+          age.sshKeyPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
+          defaultSopsFile = ../../secrets/ouranos/secrets.yml;
+          # %r gets replaced with a runtime directory, use %% to specify a '%'
+          # sign. Runtime dir is $XDG_RUNTIME_DIR on linux and
+          # $(getconf DARWIN_USER_TEMP_DIR) on darwin.
+          secrets.nginx_local_key.path = "${config.home.homeDirectory}/nginx-conf/ca-key.pem";
+        };
+        programs.gpg.enable = true;
         home.packages = [
           nix-editor-pkgs.default
           pkgs.protobuf
@@ -75,25 +47,12 @@ in
           pkgs.libpg_query
           #pkgs.c2ffi
           pkgs.nginx
+          pkgs.aria2
         ];
-      })
-      self.homeManagerModules.personal-module-configs
-      {
         # You can update Home Manager without changing this value. See
         # the Home Manager release notes for a list of state version
         # changes in each release.
         home.stateVersion = "22.05";
-        home.packages = [pkgs.aria2];
-      }
+      })
     ];
-
-    # Optionally use extraSpecialArgs
-    # to pass through arguments to home.nix
-    extraSpecialArgs = {
-      inherit system;
-      fwoar-pkgs = self.packages.${system};
-      nix-editor-pkgs = nix-editor.packages.${system};
-      emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
-      alejandra-pkgs = alejandra.packages.${system};
-    };
   }

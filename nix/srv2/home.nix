@@ -1,68 +1,18 @@
 {
-  alejandra,
-  emacs-community,
-  home-manager,
-  nixpkgs,
   self,
-  sops-nix,
-  system,
+  mkHome,
   ...
 }: let
-  username = "edwlan";
-  pkgs = import nixpkgs {
-    inherit system;
-    overlays = [
-      (import ../personal-flake/elangley-overlay)
-    ];
-  };
+  system = "x86_64-linux";
 in
-  home-manager.lib.homeManagerConfiguration {
-    inherit pkgs;
+  mkHome {
+    inherit system;
     modules = [
-      sops-nix.homeManagerModules.sops
-      self.homeManagerModules.common
-      self.homeManagerModules.pin-nixpkgs
-      self.homeManagerModules.fonts
       self.homeManagerModules.emacs
-      #{
-      #  sops = {
-      #    age.keyFile = "/home/${username}/.age-key.txt";
-      #    defaultSopsFile = ./secrets.json;
-      #    secrets.mail-password = {
-      #      path = "%r/mail-password.txt";
-      #    };
-      #  };
-      #}
       self.homeManagerModules.direnv
       self.homeManagerModules.tmux
-      (import ./programs.nix)
-      #(import ./sops.nix)
-      self.homeManagerModules.git-config
-      #(import ./email.nix)
-      {
-        home.file = {
-          ".vimrc".source = ../../vimrc_work;
-          ".vim/repos/github.com/Shougo/dein.vim".source =
-            (pkgs.fetchFromGitHub {
-              owner = "Shougo";
-              repo = "dein.vim";
-              rev = "master";
-              hash = "sha256-/DmbdiFO1O/fz4biTAynRJ0JgAp8FbY7XMW1oO9kCnM=";
-            }).outPath;
-          ".zshrc".source = ../../zsh/zshrc_work;
-          ".zsh.d/nix-zsh-completions".source = ../../3dp/nix-zsh-completions;
-          ".zsh.d" = {
-            source = ../../zsh/zsh_plugins;
-            recursive = true;
-          };
-        };
-      }
-      {
-        home = {
-          inherit username;
-          homeDirectory = "/home/${username}";
-        };
-      }
+      self.homeManagerModules.cli-tools
+      self.homeManagerModules.shell-dotfiles
       ({
         config,
         lib,
@@ -89,52 +39,36 @@ in
         };
       })
       {
-        home = {
-          packages = [self.packages.${system}.ddns-updater];
-        };
+        home.packages = [self.packages.${system}.ddns-updater];
         systemd.user = {
           enable = true;
-          timers = {
-            ddns-updater = {
-              Unit = {
-                Description = "Update DDNS occasionally";
-                RefuseManualStart = false;
-                RefuseManualStop = false;
-              };
+          timers.ddns-updater = {
+            Unit = {
+              Description = "Update DDNS occasionally";
+              RefuseManualStart = false;
+              RefuseManualStop = false;
+            };
 
-              Timer = {
-                Persistent = false;
-                OnBootSec = "300min";
-                OnUnitActiveSec = "300min";
-                Unit = "ddns-updater.service";
-              };
+            Timer = {
+              Persistent = false;
+              OnBootSec = "300min";
+              OnUnitActiveSec = "300min";
+              Unit = "ddns-updater.service";
             };
           };
-          services = {
-            ddns-updater = {
-              Unit = {
-                Description = "Sync DDNS records";
-                RefuseManualStart = false;
-                RefuseManualStop = true;
-              };
-              Service = {
-                Type = "oneshot";
-                ExecStart = "${self.packages.${system}.ddns-updater}/bin/ddns-updater";
-              };
+          services.ddns-updater = {
+            Unit = {
+              Description = "Sync DDNS records";
+              RefuseManualStart = false;
+              RefuseManualStop = true;
+            };
+            Service = {
+              Type = "oneshot";
+              ExecStart = "${self.packages.${system}.ddns-updater}/bin/ddns-updater";
             };
           };
         };
       }
-      self.homeManagerModules.personal-module-configs
-      {
-        #targets.genericLinux.enable = true;
-        home.stateVersion = "25.05";
-      }
+      {home.stateVersion = "25.05";}
     ];
-    extraSpecialArgs = {
-      inherit system;
-      fwoar-pkgs = self.packages.${system};
-      emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
-      alejandra-pkgs = alejandra.packages.${system};
-    };
   }

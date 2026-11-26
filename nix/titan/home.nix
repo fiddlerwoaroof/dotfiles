@@ -1,158 +1,69 @@
 {
-  alejandra,
-  emacs-community,
-  cc-pkgs,
-  home-manager,
-  nixpkgs,
   self,
-  sops-nix,
-  system,
+  mkHome,
+  nixpkgs,
+  nixpkgs-master,
   ...
 }: let
-  openssl = pkgs.openssl.overrideAttrs (oldAttrs: {meta = oldAttrs.meta // {outputsToInstall = oldAttrs.meta.outputsToInstall or ["out"] ++ ["dev"];};});
-  username = "edwlan";
-  common_home = import ../common.nix {inherit pkgs;};
-  utils = common_home.utils;
-  lib = nixpkgs.lib;
-  pkgs = import nixpkgs {
+  system = "x86_64-linux";
+  cc-pkgs = import nixpkgs-master {
     inherit system;
-    overlays = [
-      (import ../personal-flake/elangley-overlay)
-    ];
     config.allowUnfreePredicate = pkg:
-      builtins.elem (lib.getName pkg) [
-        "dropbox"
-        "firefox-bin"
-        "firefox"
-        "firefox-bin-unwrapped"
-      ];
+      builtins.elem (nixpkgs.lib.getName pkg) ["claude-code"];
   };
-  emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
 in
-  home-manager.lib.homeManagerConfiguration {
-    inherit pkgs;
+  mkHome {
+    inherit system;
+    unfree = [
+      "dropbox"
+      "firefox-bin"
+      "firefox"
+      "firefox-bin-unwrapped"
+    ];
     modules = [
-      sops-nix.homeManagerModules.sops
-      self.homeManagerModules.common
-      self.homeManagerModules.pin-nixpkgs
-      self.homeManagerModules.fonts
-      ({pkgs, ...}: {
+      self.homeManagerModules.emacs
+      self.homeManagerModules.direnv
+      self.homeManagerModules.tmux
+      self.homeManagerModules.cli-tools
+      self.homeManagerModules.shell-dotfiles
+      ./improvise-ci-cache.nix
+      ./sops.nix
+      ./email.nix
+      ({
+        config,
+        pkgs,
+        ...
+      }: let
+        common_home = import ../common.nix {inherit pkgs;};
+      in {
         home.packages = [
+          cc-pkgs.claude-code
           pkgs.gcc
           pkgs.cmake
           pkgs.libtool
           pkgs.zeromq
-        ];
-      })
-      (import ./legacy.nix)
-      ./improvise-ci-cache.nix
-      {
-        sops = {
-          age.keyFile = "/home/${username}/.age-key.txt";
-          defaultSopsFile = ./secrets.json;
-          secrets.mail-password = {
-            path = "%r/mail-password.txt";
-          };
-        };
-      }
-      {
-        home.packages = [
           pkgs.pinentry-curses
           pkgs.git-lfs-transfer
         ];
-        programs = {
-          gpg = {
-            enable = true;
-            mutableKeys = true;
-            mutableTrust = true;
-          };
+        home.file."sbcl-source".source = common_home.utils.untar pkgs.sbcl.src;
+        sops = {
+          age.keyFile = "${config.home.homeDirectory}/.age-key.txt";
+          defaultSopsFile = ./secrets.json;
+          secrets.mail-password.path = "%r/mail-password.txt";
+        };
+        programs.gpg = {
+          enable = true;
+          mutableKeys = true;
+          mutableTrust = true;
         };
         services = {
           gpg-agent = {
             enable = true;
-            pinentry = {package = pkgs.pinentry-curses;};
+            pinentry.package = pkgs.pinentry-curses;
           };
+          dropbox.enable = true;
         };
-      }
-      {
-        home.packages = [
-          emacs-pkgs.emacs-git
-        ];
-        services.emacs = {
-          enable = true;
-          package = emacs-pkgs.emacs-git;
-        };
-      }
-      {
-        home = {
-          packages =
-            [
-              pkgs.ncdu
-              #(import ../lpass-nix {inherit pkgs;})
-              openssl
-              pkgs.awscli2
-              cc-pkgs.claude-code
-              pkgs.cachix
-              pkgs.curl
-              pkgs.cvs
-              pkgs.direnv
-              pkgs.glibcLocales
-              pkgs.gron
-              pkgs.libssh2
-              pkgs.lorri
-              pkgs.nix
-              pkgs.pass
-              pkgs.sqlite
-              pkgs.sqlite.dev
-              pkgs.sqlite.out
-              pkgs.visidata
-              pkgs.zeromq
-            ]
-            ++ (with pkgs; [
-              ccl
-              ecl
-              #gcl
-              cmucl_binary
-              nixpkgs-fmt
-            ]);
-        };
-      }
-      {
-        services.dropbox = {
-          enable = true;
-        };
-      }
-      (import ./sops.nix)
-      self.homeManagerModules.git-config
-      (import ./email.nix)
-      {
-        home.file = {
-          ".vimrc".source = ../../vimrc_work;
-          ".vim/repos/github.com/Shougo/dein.vim".source =
-            (pkgs.fetchFromGitHub {
-              owner = "Shougo";
-              repo = "dein.vim";
-              rev = "master";
-              hash = "sha256-whrWIex57PwSSIOViLby71slC6VXDOapdaICO7o6Oms";
-            }).outPath;
-          ".zshrc".source = ../../zsh/zshrc_work;
-          ".zsh.d/nix-zsh-completions".source = ../../3dp/nix-zsh-completions;
-          ".zsh.d" = {
-            source = ../../zsh/zsh_plugins;
-            recursive = true;
-          };
-        };
-      }
-      self.homeManagerModules.personal-module-configs
-      {
-        #targets.genericLinux.enable = true;
         home.stateVersion = "21.03";
-      }
+      })
     ];
-    extraSpecialArgs = {
-      inherit system;
-      fwoar-pkgs = self.packages.${system};
-      emacs-pkgs = import ../emacs-pkgs.nix {inherit emacs-community system;};
-      alejandra-pkgs = alejandra.packages.${system};
-    };
   }

@@ -64,10 +64,8 @@
     sops-nix,
     ...
   } @ inputs: let
-    withSystem = system: attrSet: attrSet // {inherit system;};
-    withAppleSilicon = withSystem "aarch64-darwin";
-    withx8664Linux = withSystem "x86_64-linux";
     basePackages = import ./nix/packages inputs;
+    mkHome = import ./nix/lib/mk-home.nix inputs;
     mkInstaller = system:
       nixpkgs.lib.nixosSystem {
         inherit system;
@@ -128,6 +126,8 @@
           pkgs.alegreya-sans
         ];
       };
+      cli-tools = import ./nix/home-modules/cli-tools.nix;
+      shell-dotfiles = import ./nix/home-modules/shell-dotfiles.nix;
       git-config = import ./nix/git-config.nix;
       mac-apps = import ./nix/mac-apps;
       main = import ./nix/personal-flake/home.nix;
@@ -149,22 +149,12 @@
         };
       };
     };
-    homeConfigurations = {
-      "ouranos" = import ./nix/ouranos/home.nix (withAppleSilicon {
-        inherit self alejandra emacs-community home-manager nixpkgs sops-nix;
-        nix-editor = inputs.nix-editor;
-      });
-      "titan" = import ./nix/titan/home.nix ((withx8664Linux inputs)
-        // {
-          cc-pkgs = import nixpkgs-master {
-            system = "x86_64-linux";
-            config.allowUnfreePredicate = pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "claude-code"
-              ];
-          };
-        });
-      "srv2" = import ./nix/srv2/home.nix (withx8664Linux inputs);
+    homeConfigurations = let
+      args = inputs // {inherit mkHome;};
+    in {
+      ouranos = import ./nix/ouranos/home.nix args;
+      titan = import ./nix/titan/home.nix args;
+      srv2 = import ./nix/srv2/home.nix args;
     };
     apps.aarch64-darwin = let
       system = "aarch64-darwin";
