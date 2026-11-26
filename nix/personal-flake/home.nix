@@ -40,18 +40,6 @@ in {
     pkgs.zstd.dev
   ];
 
-  programs = {
-    tmux = {
-      enable = true;
-      terminal = "screen-256color";
-      escapeTime = 0;
-      clock24 = true;
-      newSession = true;
-      keyMode = "vi";
-      extraConfig = builtins.readFile ./tmux.conf;
-    };
-  };
-
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = username;

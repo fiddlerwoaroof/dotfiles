@@ -13,6 +13,8 @@ in
       self.homeManagerModules.beads
       self.homeManagerModules.main
       self.homeManagerModules.mac-apps
+      self.homeManagerModules.direnv
+      self.homeManagerModules.tmux
       ./info.nix
       ./email.nix
       ({
