@@ -37,7 +37,8 @@ assert builtins.elem acceleration [
   "rocm"
   "cuda"
   "vulkan"
-]; let
+];
+let
   validateFallback = lib.warnIf (config.rocmSupport && config.cudaSupport) (lib.concatStrings [
     "both `nixpkgs.config.rocmSupport` and `nixpkgs.config.cudaSupport` are enabled, "
     "but they are mutually exclusive; falling back to cpu"
