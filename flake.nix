@@ -169,7 +169,7 @@
       };
     };
     nixosModules = {
-      base = import ./nix/nixos-modules/base.nix;
+      base = import ./nix/nixos-modules/base.nix {inherit nixpkgs;};
       home-assistant = import ./nix/nixos-modules/home-assistant.nix;
       srv2-sops = import ./nix/srv2/sops.nix;
       fwoar-grafana = import ./nix/nixos-modules/grafana.nix;

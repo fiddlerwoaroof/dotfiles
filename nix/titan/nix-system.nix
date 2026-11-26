@@ -12,8 +12,6 @@ nixpkgs.lib.nixosSystem {
     self.nixosModules.ci-runners
     ./nixos/ci-runners.nix
     ({lib, ...}: {
-      fwoar.base.nixpkgsFlake = nixpkgs;
-      fwoar.base.nodeExporter.enable = true;
       nixpkgs.config.allowUnfreePredicate = pkg:
         builtins.elem (lib.getName pkg) [
           "dropbox"

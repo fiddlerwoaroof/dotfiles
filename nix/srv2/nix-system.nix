@@ -17,7 +17,6 @@ in
       self.nixosModules.fwoar-grafana
       self.nixosModules.mpd-setup
       self.nixosModules.bincache-setup
-      {fwoar.base.nixpkgsFlake = nixpkgs;}
       ({pkgs, ...}: {
         environment.systemPackages = [
           pkgs.libdrm

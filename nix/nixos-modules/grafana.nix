@@ -3,10 +3,6 @@
   pkgs,
   ...
 }: {
-  # Node exporter - collects hwmon/drm metrics including MI100 temps.
-  # Requires self.nixosModules.base, which defines this option.
-  fwoar.base.nodeExporter.enable = true;
-
   # Prometheus - scrapes and stores metrics
   services.prometheus = {
     enable = true;

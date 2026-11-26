@@ -12,6 +12,10 @@
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
   ];
 
+  # nixpkgs comes from base (pinned to the dotfiles input, channels disabled);
+  # don't also bundle and seed a stateful "nixos" channel.
+  system.installer.channel.enable = false;
+
   # titan uses ZFS on root; the installer needs to be able to create/import it.
   boot.supportedFilesystems = ["zfs"];
   boot.zfs.forceImportRoot = false;
