@@ -84,7 +84,10 @@ in {
     {
       nix.settings.experimental-features = ["nix-command" "flakes"];
 
-      documentation.man.enable = true;
+      documentation = {
+        man.enable = true;
+        info.enable = true;
+      };
 
       environment.systemPackages =
         (with pkgs; [

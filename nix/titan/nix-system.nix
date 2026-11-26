@@ -9,7 +9,6 @@ nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
   modules = [
     self.nixosModules.base
-    {documentation.info.enable = true;}
     self.nixosModules.ci-runners
     ./nixos/ci-runners.nix
     ({lib, ...}: {
