@@ -187,6 +187,9 @@
       };
     };
     nixosConfigurations = {
+      srv2 = import ./nix/srv2/nix-system.nix {
+        inherit self nixpkgs nixpkgs-master sops-nix;
+      };
       titan = import ./nix/titan/nix-system.nix {
         inherit self sops-nix nix-minecraft ci-runners nixpkgs home-manager;
       };
