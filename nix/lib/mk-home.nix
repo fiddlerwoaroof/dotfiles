@@ -34,6 +34,7 @@ in
         self.homeManagerModules.common
         self.homeManagerModules.pin-nixpkgs
         self.homeManagerModules.git-config
+        self.homeManagerModules.gpg
         self.homeManagerModules.fonts
         self.homeManagerModules.personal-module-configs
         {

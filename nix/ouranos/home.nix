@@ -31,7 +31,6 @@ in
           # $(getconf DARWIN_USER_TEMP_DIR) on darwin.
           secrets.nginx_local_key.path = "${config.home.homeDirectory}/nginx-conf/ca-key.pem";
         };
-        programs.gpg.enable = true;
         home.packages = [
           nix-editor-pkgs.default
           pkgs.protobuf

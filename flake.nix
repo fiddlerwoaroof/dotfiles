@@ -128,6 +128,7 @@
       };
       cli-tools = import ./nix/home-modules/cli-tools.nix;
       shell-dotfiles = import ./nix/home-modules/shell-dotfiles.nix;
+      gpg = import ./nix/home-modules/gpg.nix;
       git-config = import ./nix/git-config.nix;
       mac-apps = import ./nix/mac-apps;
       main = import ./nix/personal-flake/home.nix;

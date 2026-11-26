@@ -42,7 +42,6 @@ in
           pkgs.cmake
           pkgs.libtool
           pkgs.zeromq
-          pkgs.pinentry-curses
           pkgs.git-lfs-transfer
         ];
         home.file."sbcl-source".source = common_home.utils.untar pkgs.sbcl.src;
@@ -51,16 +50,7 @@ in
           defaultSopsFile = ./secrets.json;
           secrets.mail-password.path = "%r/mail-password.txt";
         };
-        programs.gpg = {
-          enable = true;
-          mutableKeys = true;
-          mutableTrust = true;
-        };
         services = {
-          gpg-agent = {
-            enable = true;
-            pinentry.package = pkgs.pinentry-curses;
-          };
           dropbox.enable = true;
         };
         home.stateVersion = "21.03";
