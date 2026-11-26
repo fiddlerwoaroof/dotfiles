@@ -36,6 +36,15 @@ in {
     ];
   };
 
+  # Keep the store from growing without bound: drop profile generations older
+  # than 30 days and anything unreachable weekly, and hard-link duplicates.
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+  nix.optimise.automatic = true;
+
   # `<nixpkgs>` and `nixpkgs#…` both resolve to the dotfiles nixpkgs input.
   # Stateful channels are disabled so nothing else can shadow or drift from it.
   environment.etc."channels/nixpkgs".source = nixpkgs.outPath;
