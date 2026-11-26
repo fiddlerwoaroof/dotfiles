@@ -20,9 +20,7 @@ in
       ({pkgs, ...}: {
         environment.systemPackages = [
           pkgs.libdrm
-          pkgs.lm_sensors
           pkgs.pkg-config
-          pkgs.smartmontools
         ];
       })
       self.nixosModules.srv2-sops

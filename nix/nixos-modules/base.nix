@@ -55,11 +55,13 @@ in {
     findutils
     gitFull
     htop
+    lm_sensors
     lsof
     man-pages
     man-pages-posix
     nvme-cli
     pciutils
+    smartmontools
     sops
     vim
     wget
